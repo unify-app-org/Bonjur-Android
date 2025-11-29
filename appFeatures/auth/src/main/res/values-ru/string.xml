@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_activity_registration">registration</string>
+
+    <string name="common_ok">He blat</string>
+    <string name="common_cancel">Net Blat</string>
+    <string name="common_save">Soxrani blat</string>
+    <string name="common_delete">Udalit blat</string>
+
+</resources>
