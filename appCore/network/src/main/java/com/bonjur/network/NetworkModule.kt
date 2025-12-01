@@ -56,8 +56,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNetworkLogger(): NetworkLogger {
-        return NetworkLogger()
+    fun provideNetworkLogger(configs: AppConfig): NetworkLogger {
+        return NetworkLogger(configs)
     }
 
     @Provides

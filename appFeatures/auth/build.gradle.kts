@@ -24,11 +24,15 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        create("staging") {
+            isMinifyEnabled = false
         }
     }
     compileOptions {
@@ -47,6 +51,8 @@ dependencies {
     // app modules
     implementation(project(":appCore:designSystem"))
     implementation(project(":appCore:navigation"))
+    implementation(project(":appCore:appUtils"))
+    implementation(project(":appCore:network"))
 
     // serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")

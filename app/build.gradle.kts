@@ -26,13 +26,24 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("debug")
+        }
+
+        create("staging") {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -41,6 +52,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -49,7 +61,8 @@ dependencies {
     // app modules
     implementation(project(":appFeatures:auth"))
     implementation(project(":appCore:navigation"))
-    implementation(project(":appCore:designSystem"))
+    implementation(project(":appCore:storage"))
+    implementation(project(":appCore:appUtils"))
 
     // DI
     implementation("com.google.dagger:hilt-android:2.57.2")

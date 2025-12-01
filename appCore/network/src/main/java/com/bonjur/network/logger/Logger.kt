@@ -1,6 +1,7 @@
 package com.bonjur.network.logger
 
 import android.util.Log
+import com.bonjur.network.AppConfig
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.request
@@ -9,34 +10,38 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NetworkLogger @Inject constructor() {
+class NetworkLogger @Inject constructor(
+    private val configs: AppConfig
+) {
 
     companion object {
         private const val TAG = "NetworkLogger"
     }
 
     fun logRequest(request: HttpRequestBuilder, body: String?) {
-        Log.d(TAG, "\n🚀 ============ REQUEST START ============")
-        Log.d(TAG, "📍 ${request.method.value} ${request.url}")
+        if (configs.enableLogging) {
+            Log.d(TAG, "\n🚀 ============ REQUEST START ============")
+            Log.d(TAG, "📍 ${request.method.value} ${request.url}")
 
-        if (request.headers.entries().isNotEmpty()) {
-            Log.d(TAG, "\n📋 Headers:")
-            request.headers.entries().forEach { (key, values) ->
-                val value = values.firstOrNull() ?: ""
-                if (key.lowercase() == "authorization") {
-                    Log.d(TAG, "  $key: Bearer ***")
-                } else {
-                    Log.d(TAG, "  $key: $value")
+            if (request.headers.entries().isNotEmpty()) {
+                Log.d(TAG, "\n📋 Headers:")
+                request.headers.entries().forEach { (key, values) ->
+                    val value = values.firstOrNull() ?: ""
+                    if (key.lowercase() == "authorization") {
+                        Log.d(TAG, "  $key: Bearer ***")
+                    } else {
+                        Log.d(TAG, "  $key: $value")
+                    }
                 }
             }
-        }
 
-        body?.let {
-            Log.d(TAG, "\n📦 Body:")
-            Log.d(TAG, prettyPrintJson(it))
-        }
+            body?.let {
+                Log.d(TAG, "\n📦 Body:")
+                Log.d(TAG, prettyPrintJson(it))
+            }
 
-        Log.d(TAG, "============ REQUEST END ============\n")
+            Log.d(TAG, "============ REQUEST END ============\n")
+        }
     }
 
     fun logResponse(
@@ -44,23 +49,25 @@ class NetworkLogger @Inject constructor() {
         bodyText: String,
         durationMs: Long
     ) {
-        val emoji = statusEmoji(response.status.value)
+        if (configs.enableLogging) {
+            val emoji = statusEmoji(response.status.value)
 
-        Log.d(TAG, "\n$emoji ============ RESPONSE START ============")
-        Log.d(TAG, "📍 ${response.status.value} ${response.request.url}")
+            Log.d(TAG, "\n$emoji ============ RESPONSE START ============")
+            Log.d(TAG, "📍 ${response.status.value} ${response.request.url}")
 
-        val durationSeconds = durationMs / 1000.0
-        Log.d(TAG, "⏱️  Duration: %.3fs".format(durationSeconds))
+            val durationSeconds = durationMs / 1000.0
+            Log.d(TAG, "⏱️  Duration: %.3fs".format(durationSeconds))
 
-        Log.d(TAG, "\n📋 Headers:")
-        response.headers.entries().forEach { (key, values) ->
-            Log.d(TAG, "  $key: ${values.firstOrNull()}")
+            Log.d(TAG, "\n📋 Headers:")
+            response.headers.entries().forEach { (key, values) ->
+                Log.d(TAG, "  $key: ${values.firstOrNull()}")
+            }
+
+            Log.d(TAG, "\n📦 Response Body (${bodyText.length} bytes):")
+            Log.d(TAG, prettyPrintJson(bodyText))
+
+            Log.d(TAG, "============ RESPONSE END ============\n")
         }
-
-        Log.d(TAG, "\n📦 Response Body (${bodyText.length} bytes):")
-        Log.d(TAG, prettyPrintJson(bodyText))
-
-        Log.d(TAG, "============ RESPONSE END ============\n")
     }
 
     fun logError(
@@ -69,23 +76,25 @@ class NetworkLogger @Inject constructor() {
         statusCode: Int? = null,
         errorBody: String? = null
     ) {
-        Log.e(TAG, "\n❌ ============ ERROR START ============")
-        url?.let { Log.e(TAG, "📍 URL: $it") }
+        if (configs.enableLogging) {
+            Log.e(TAG, "\n❌ ============ ERROR START ============")
+            url?.let { Log.e(TAG, "📍 URL: $it") }
 
-        statusCode?.let {
-            val emoji = statusEmoji(it)
-            Log.e(TAG, "$emoji Status Code: $it")
+            statusCode?.let {
+                val emoji = statusEmoji(it)
+                Log.e(TAG, "$emoji Status Code: $it")
+            }
+
+            Log.e(TAG, "⚠️  Error: ${error.message}")
+
+            errorBody?.let {
+                Log.e(TAG, "\n📦 Error Response:")
+                Log.e(TAG, prettyPrintJson(it))
+            }
+
+            Log.e(TAG, "Stack trace:", error)
+            Log.e(TAG, "============ ERROR END ============\n")
         }
-
-        Log.e(TAG, "⚠️  Error: ${error.message}")
-
-        errorBody?.let {
-            Log.e(TAG, "\n📦 Error Response:")
-            Log.e(TAG, prettyPrintJson(it))
-        }
-
-        Log.e(TAG, "Stack trace:", error)
-        Log.e(TAG, "============ ERROR END ============\n")
     }
 
     private fun prettyPrintJson(json: String): String {

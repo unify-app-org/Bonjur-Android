@@ -35,7 +35,7 @@ class ApiClient @Inject constructor(
     private val json: Json,
     private val tokenManager: TokenManager,
     private val logger: NetworkLogger,
-    private val configs:  AppConfig
+    private val configs: AppConfig
 ) : ApiClientProtocol {
 
     override suspend fun <T> request(endpoint: AppEndpoint): T {
