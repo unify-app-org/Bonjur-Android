@@ -62,13 +62,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideBaseUrl(): String {
-        // TODO: Replace with your actual base URL or use BuildConfig
-        return "https://api.bonjur.app/v1"
-    }
-
-    @Provides
-    @Singleton
     fun provideTokenManager(
         storage: SecureStorage
     ): TokenManager {
@@ -79,13 +72,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideAppConfig(): AppConfig {
+        return AppConfig()
+    }
+
+    @Provides
+    @Singleton
     fun provideApiClient(
         client: HttpClient,
         json: Json,
         tokenManager: TokenManager,
         logger: NetworkLogger,
-        baseUrl: String
+        appConfig: AppConfig
     ): ApiClientProtocol {
-        return ApiClient(client, json, tokenManager, logger, baseUrl)
+        return ApiClient(client, json, tokenManager, logger, appConfig)
     }
 }

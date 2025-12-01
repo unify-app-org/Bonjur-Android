@@ -8,18 +8,17 @@ import javax.inject.Singleton
 
 @Singleton
 class Navigator @Inject constructor() {
-    
     private val _navigationCommands = Channel<NavigationCommand>(Channel.BUFFERED)
     val navigationCommands: Flow<NavigationCommand> = _navigationCommands.receiveAsFlow()
-    
+
     suspend fun navigateUp() {
         _navigationCommands.send(NavigationCommand.NavigateUp)
     }
-    
+
     suspend fun navigateTo(route: String) {
         _navigationCommands.send(NavigationCommand.NavigateTo(route))
     }
-    
+
     suspend fun navigateAndClearStack(route: String) {
         _navigationCommands.send(NavigationCommand.NavigateAndClearStack(route))
     }

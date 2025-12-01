@@ -1,10 +1,11 @@
 package com.bonjur.network.APIClient
 
+import com.bonjur.network.AppConfig
+import com.bonjur.network.logger.NetworkLogger
+import com.bonjur.network.manager.TokenManager
 import com.bonjur.network.model.ApiException
 import com.bonjur.network.model.BaseResponse
 import com.bonjur.network.model.NetworkError
-import com.bonjur.network.logger.NetworkLogger
-import com.bonjur.network.manager.TokenManager
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
@@ -12,16 +13,16 @@ import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
+import io.ktor.http.contentType
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
-import io.ktor.http.contentType
-import io.ktor.http.ContentType
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 interface ApiClientProtocol {
     suspend fun <T> request(endpoint: AppEndpoint): T
@@ -34,7 +35,7 @@ class ApiClient @Inject constructor(
     private val json: Json,
     private val tokenManager: TokenManager,
     private val logger: NetworkLogger,
-    private val baseUrl: String = "YOUR_BASE_URL" // Inject from BuildConfig or DI
+    private val configs:  AppConfig
 ) : ApiClientProtocol {
 
     override suspend fun <T> request(endpoint: AppEndpoint): T {
@@ -234,7 +235,7 @@ class ApiClient @Inject constructor(
     }
 
     private fun buildUrl(endpoint: AppEndpoint): String {
-        val url = baseUrl + endpoint.path
+        val url = configs.apiBaseUrl + endpoint.path
 
         return if (endpoint.queryParameters != null) {
             val params = endpoint.queryParameters!!

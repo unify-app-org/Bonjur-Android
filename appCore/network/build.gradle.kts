@@ -10,10 +10,11 @@ plugins {
 
 android {
     namespace = "com.bonjur.network"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         minSdk = 24
 
@@ -22,12 +23,33 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+
+            buildConfigField("String", "API_BASE_URL", "\"https://test-api.bonjur.app\"")
+            buildConfigField("String", "ENVIRONMENT", "\"TEST\"")
+            buildConfigField("boolean", "ENABLE_LOGGING", "true")
+        }
+
+        create("staging") {
+            isMinifyEnabled = false
+
+            buildConfigField("String", "API_BASE_URL", "\"https://api.bonjur.app\"")
+            buildConfigField("String", "ENVIRONMENT", "\"STAGING\"")
+            buildConfigField("boolean", "ENABLE_LOGGING", "true")
+        }
+
+        release {
+            isMinifyEnabled = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String", "API_BASE_URL", "\"https://api.bonjur.app\"")
+            buildConfigField("String", "ENVIRONMENT", "\"RELEASE\"")
+            buildConfigField("boolean", "ENABLE_LOGGING", "false")
         }
     }
     compileOptions {
