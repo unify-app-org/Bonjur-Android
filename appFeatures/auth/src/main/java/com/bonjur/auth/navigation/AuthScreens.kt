@@ -7,6 +7,9 @@ import kotlinx.serialization.json.Json
 
 sealed interface AuthScreens {
     @Serializable
+    data object Test : AuthScreens
+
+    @Serializable
     data object Login : AuthScreens
 
     @Serializable

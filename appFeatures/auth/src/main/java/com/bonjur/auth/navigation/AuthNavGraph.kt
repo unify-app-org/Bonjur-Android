@@ -8,6 +8,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.bonjur.auth.ForgotPass
 import com.bonjur.auth.RegistrationGreeting
+import com.bonjur.auth.example.ExampleInputData
+import com.bonjur.auth.example.ExampleScreen
 import com.bonjur.navigation.AppScreens
 import kotlinx.serialization.json.Json
 
@@ -15,6 +17,10 @@ fun NavGraphBuilder.authNavGraph() {
     navigation<AppScreens.Auth>(
         startDestination = AuthScreens.Login
     ) {
+        composable<AuthScreens.Test> {
+            ExampleScreen(inputData = ExampleInputData())
+        }
+
         composable<AuthScreens.Login> {
             RegistrationGreeting(
                 name = "Login"

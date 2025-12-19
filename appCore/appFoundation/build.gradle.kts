@@ -2,14 +2,10 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("org.jetbrains.kotlin.plugin.serialization")
-    // DI
-    id("com.google.dagger.hilt.android")
-    kotlin("kapt")
 }
 
 android {
-    namespace = "com.bonjur.auth"
+    namespace = "com.bonjur.appfoundation"
     compileSdk {
         version = release(36)
     }
@@ -19,7 +15,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        resourceConfigurations += listOf("en", "az", "ru")
+
     }
 
     buildTypes {
@@ -30,7 +26,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-
         create("staging") {
             isMinifyEnabled = false
         }
@@ -43,26 +38,12 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
 
 dependencies {
-    // app modules
-    implementation(project(":appCore:designSystem"))
-    implementation(project(":appCore:navigation"))
-    implementation(project(":appCore:appUtils"))
-    implementation(project(":appCore:appFoundation"))
-    implementation(project(":appCore:network"))
-
-    // serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-
-    // DI
-    implementation("com.google.dagger:hilt-android:2.57.2")
-    kapt("com.google.dagger:hilt-compiler:2.57.2")
-    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -63,6 +63,7 @@ dependencies {
     implementation(project(":appCore:navigation"))
     implementation(project(":appCore:storage"))
     implementation(project(":appCore:appUtils"))
+    implementation(project(":appCore:designSystem"))
 
     // DI
     implementation("com.google.dagger:hilt-android:2.57.2")

@@ -62,16 +62,13 @@ class RegistrationVM @Inject constructor(
 
     fun forgetClicked(email: String) {
         viewModelScope.launch {
-            val forgotPass = ForgotPass(email)
-            navigator.navigateTo(
-                AuthScreens.ForgotPassword.createRoute(forgotPass)
-            )
+            navigator.navigateTo(AuthScreens.Test.route)
         }
     }
 
     fun backClicked() {
         viewModelScope.launch {
-            navigator.popToRoute(AuthScreens.Login.route)
+            navigator.popToRoute(AuthScreens.Test.route)
         }
     }
 }
