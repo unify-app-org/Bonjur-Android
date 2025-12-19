@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExportableFileTemplateSettings">
+    <default_templates>
+      <template name="App Feature Model.kt" file-name="${NAME}Model" reformat="true" live-template-enabled="false" />
+      <template name="App Feature Screen.kt" file-name="${NAME}Screen" reformat="true" live-template-enabled="false" />
+      <template name="App Feature View.kt" file-name="${NAME}View" reformat="true" live-template-enabled="false" />
+      <template name="App Feature ViewModel.kt" file-name="${NAME}ViewModel" reformat="true" live-template-enabled="false" />
+    </default_templates>
+  </component>
+</project>
