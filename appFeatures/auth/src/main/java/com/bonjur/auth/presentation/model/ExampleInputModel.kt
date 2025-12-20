@@ -1,4 +1,4 @@
-package com.bonjur.auth.example
+package com.bonjur.auth.presentation.model
 
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState

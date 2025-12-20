@@ -2,6 +2,7 @@ package com.bonjur.network.manager
 
 import com.bonjur.storage.securePreference.SecureStorage
 import com.bonjur.storage.securePreference.SecureStorageKey
+import javax.inject.Inject
 import javax.inject.Singleton
 
 interface TokenManager {
@@ -15,7 +16,7 @@ interface TokenManager {
 }
 
 @Singleton
-class TokenManagerImpl(
+class TokenManagerImpl @Inject constructor(
     val securePreference: SecureStorage
 ): TokenManager {
 

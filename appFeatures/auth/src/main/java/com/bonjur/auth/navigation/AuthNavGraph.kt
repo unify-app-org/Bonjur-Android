@@ -8,8 +8,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.bonjur.auth.ForgotPass
 import com.bonjur.auth.RegistrationGreeting
-import com.bonjur.auth.example.ExampleInputData
-import com.bonjur.auth.example.ExampleScreen
+import com.bonjur.auth.presentation.model.ExampleInputData
+import com.bonjur.auth.presentation.ExampleScreen
 import com.bonjur.navigation.AppScreens
 import kotlinx.serialization.json.Json
 

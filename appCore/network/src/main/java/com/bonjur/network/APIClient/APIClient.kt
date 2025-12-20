@@ -58,7 +58,7 @@ class ApiClient @Inject constructor(
 
             durationMs = measureTimeMillis {
                 response = client.request(url) {
-                    method = endpoint.method
+                    method = endpoint.method.toKtor()
 
                     endpoint.headers?.forEach { (key, value) ->
                         header(key, value)
@@ -111,7 +111,7 @@ class ApiClient @Inject constructor(
 
             durationMs = measureTimeMillis {
                 response = client.request(url) {
-                    method = endpoint.method
+                    method = endpoint.method.toKtor()
 
                     endpoint.headers?.forEach { (key, value) ->
                         header(key, value)
@@ -255,7 +255,7 @@ class ApiClient @Inject constructor(
             // Create refresh endpoint
             val refreshEndpoint = object : AppEndpoint {
                 override val path = "/auth/refresh"
-                override val method = HttpMethod.Post
+                override val method = NetworkMethod.POST
                 override val requiresAuth = false
                 override val body = mapOf("refreshToken" to refreshToken)
             }
@@ -276,4 +276,14 @@ class ApiClient @Inject constructor(
             throw ApiException.Unauthorized
         }
     }
+
+    internal fun NetworkMethod.toKtor(): HttpMethod =
+        when (this) {
+            NetworkMethod.GET -> HttpMethod.Get
+            NetworkMethod.POST -> HttpMethod.Post
+            NetworkMethod.PUT -> HttpMethod.Put
+            NetworkMethod.PATCH -> HttpMethod.Patch
+            NetworkMethod.DELETE -> HttpMethod.Delete
+        }
+
 }

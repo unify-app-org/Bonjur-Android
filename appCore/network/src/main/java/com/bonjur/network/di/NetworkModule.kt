@@ -1,16 +1,13 @@
-package com.bonjur.network
+package com.bonjur.network.di
 
-import com.bonjur.network.APIClient.ApiClient
-import com.bonjur.network.APIClient.ApiClientProtocol
+import com.bonjur.network.AppConfig
 import com.bonjur.network.logger.NetworkLogger
-import com.bonjur.network.manager.TokenManager
-import com.bonjur.network.manager.TokenManagerImpl
-import com.bonjur.storage.securePreference.SecureStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -62,29 +59,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideTokenManager(
-        storage: SecureStorage
-    ): TokenManager {
-        return TokenManagerImpl(
-            storage
-        )
-    }
-
-    @Provides
-    @Singleton
     fun provideAppConfig(): AppConfig {
         return AppConfig()
-    }
-
-    @Provides
-    @Singleton
-    fun provideApiClient(
-        client: HttpClient,
-        json: Json,
-        tokenManager: TokenManager,
-        logger: NetworkLogger,
-        appConfig: AppConfig
-    ): ApiClientProtocol {
-        return ApiClient(client, json, tokenManager, logger, appConfig)
     }
 }

@@ -1,4 +1,4 @@
-package com.bonjur.storage
+package com.bonjur.storage.di
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -19,19 +19,21 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object StorageModule {
+
     private const val SECURE_PREF_NAME = "secure_prefs"
     private const val PREF_NAME = "app_prefs"
 
     @Provides
     @Singleton
+    @PlainPrefs
     fun provideSharedPreferences(
         @ApplicationContext context: Context
-    ): SharedPreferences {
-        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-    }
+    ): SharedPreferences =
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
     @Provides
     @Singleton
+    @EncryptedPrefs
     fun provideEncryptedSharedPreferences(
         @ApplicationContext context: Context
     ): SharedPreferences {
@@ -51,18 +53,14 @@ object StorageModule {
     @Provides
     @Singleton
     fun provideDefaultStorage(
-        sharedPreferences: SharedPreferences
-    ): DefaultStorage {
-        return DefaultStorageImpl(sharedPreferences)
-    }
-
+        @PlainPrefs sharedPreferences: SharedPreferences
+    ): DefaultStorage =
+        DefaultStorageImpl(sharedPreferences)
 
     @Provides
     @Singleton
     fun provideSecureStorage(
-        sharedPreferences: SharedPreferences
-    ): SecureStorage {
-        return SecureStorageImpl(sharedPreferences)
-    }
+        @EncryptedPrefs sharedPreferences: SharedPreferences
+    ): SecureStorage =
+        SecureStorageImpl(sharedPreferences)
 }
-
