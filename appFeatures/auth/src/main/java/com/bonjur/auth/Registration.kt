@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bonjur.auth.navigation.AuthScreens
 import com.bonjur.designSystem.ui.theme.BonjurTheme
+import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,6 +39,7 @@ fun RegistrationGreeting(
 
         Text(
             text = stringResource(R.string.common_save),
+            style = AppTypography.TitleL.medium,
             modifier = modifier
                 .clickable {
                     viewModel.backClicked()
