@@ -1,4 +1,4 @@
-package com.bonjur.designSystem.ui.theme
+package com.bonjur.designSystem.ui.theme.colors
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

@@ -11,7 +11,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bonjur.auth.navigation.AuthScreens
-import com.bonjur.designSystem.ui.theme.BonjurTheme
+import com.bonjur.designSystem.ui.theme.colors.BonjurTheme
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route

@@ -1,4 +1,4 @@
-package com.bonjur.designSystem.ui.theme
+package com.bonjur.designSystem.ui.theme.colors
 
 import androidx.compose.ui.graphics.Color
 
