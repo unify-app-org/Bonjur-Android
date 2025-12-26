@@ -1,4 +1,4 @@
-package com.bonjur.auth.presentation
+package com.bonjur.auth.presentation.example
 
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
@@ -7,10 +7,10 @@ import com.bonjur.auth.ForgotPass
 import com.bonjur.auth.data.DTOs.RegisterRequest
 import com.bonjur.auth.domain.useCase.AuthUseCase
 import com.bonjur.auth.navigation.AuthScreens
-import com.bonjur.auth.presentation.model.ExampleAction
-import com.bonjur.auth.presentation.model.ExampleInputData
-import com.bonjur.auth.presentation.model.ExampleSideEffect
-import com.bonjur.auth.presentation.model.ExampleViewState
+import com.bonjur.auth.presentation.example.model.ExampleAction
+import com.bonjur.auth.presentation.example.model.ExampleInputData
+import com.bonjur.auth.presentation.example.model.ExampleSideEffect
+import com.bonjur.auth.presentation.example.model.ExampleViewState
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

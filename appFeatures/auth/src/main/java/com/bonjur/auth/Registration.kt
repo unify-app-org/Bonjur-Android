@@ -11,6 +11,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bonjur.auth.navigation.AuthScreens
+import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.ui.theme.colors.BonjurTheme
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.navigation.Navigator
@@ -27,6 +28,9 @@ fun RegistrationGreeting(
     viewModel: RegistrationVM = hiltViewModel()
 ) {
     Column() {
+        AppButton("Salam", onClick = {
+
+        })
         Text(
             text = "Hello $name!",
             modifier = modifier

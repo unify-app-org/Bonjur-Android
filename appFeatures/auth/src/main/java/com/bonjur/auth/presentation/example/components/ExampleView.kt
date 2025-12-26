@@ -1,4 +1,4 @@
-package com.bonjur.auth.presentation.components
+package com.bonjur.auth.presentation.example.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
-import com.bonjur.auth.presentation.model.ExampleAction
-import com.bonjur.auth.presentation.model.ExampleSideEffect
-import com.bonjur.auth.presentation.model.ExampleViewState
+import com.bonjur.auth.presentation.example.model.ExampleAction
+import com.bonjur.auth.presentation.example.model.ExampleSideEffect
+import com.bonjur.auth.presentation.example.model.ExampleViewState
 
 @Composable
 fun ExampleView(

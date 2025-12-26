@@ -55,6 +55,9 @@ dependencies {
     implementation(project(":appCore:appFoundation"))
     implementation(project(":appCore:network"))
 
+    // Async images
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
     // serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 

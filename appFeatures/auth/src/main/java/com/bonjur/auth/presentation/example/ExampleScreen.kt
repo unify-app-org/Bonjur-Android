@@ -1,12 +1,12 @@
-package com.bonjur.auth.presentation
+package com.bonjur.auth.presentation.example
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
-import com.bonjur.auth.presentation.components.ExampleView
-import com.bonjur.auth.presentation.model.ExampleInputData
-import com.bonjur.auth.presentation.model.ExampleSideEffect
+import com.bonjur.auth.presentation.example.components.ExampleView
+import com.bonjur.auth.presentation.example.model.ExampleInputData
+import com.bonjur.auth.presentation.example.model.ExampleSideEffect
 
 @Composable
 fun ExampleScreen(
