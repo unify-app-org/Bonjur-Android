@@ -32,5 +32,8 @@ object Images {
 
         @Composable
         fun resume() = painterResource(R.drawable.big_people_groups)
+
+        @Composable
+        fun search() = painterResource(R.drawable.ic_search)
     }
 }

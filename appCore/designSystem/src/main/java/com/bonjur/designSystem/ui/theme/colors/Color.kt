@@ -21,6 +21,6 @@ object Palette {
     val grayPrimary = Color(0xFF575E60) // #575E60
 
     val graySecondary = Color(0xFF929292) // #929292
-
     val grayTeritary = Color(0xFFC8C8C8) // #C8C8C8
+    val grayQuaternary = Color(0xFFF3F3F3) // #F3F3F3
 }

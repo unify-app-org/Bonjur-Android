@@ -59,7 +59,7 @@ fun AuthOptionalInfoView(
                 .padding(16.dp)
         ) { page ->
             when (page) {
-                0 -> Text("Test")
+                0 -> AuthOptionalBirthdayView()
                 1 -> Text("Test2")
                 2 -> Text("Test3")
             }
