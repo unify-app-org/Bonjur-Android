@@ -4,6 +4,7 @@ import com.bonjur.auth.data.DTOs.RegisterRequest
 import com.bonjur.auth.domain.models.ChooseUniversityUIModel
 import com.bonjur.auth.domain.models.OnboardingUIModel
 import com.bonjur.auth.domain.models.RegisterModel
+import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 
 interface AuthUseCase {
     suspend fun register(
@@ -15,5 +16,9 @@ interface AuthUseCase {
     suspend fun chooseUniversity(): List<ChooseUniversityUIModel>
 
     fun welcome(name: String): OnboardingUIModel
+
+    fun genders(): List<SelectableListItemModel>
+
+    fun languages(): List<SelectableListItemModel>
 
 }

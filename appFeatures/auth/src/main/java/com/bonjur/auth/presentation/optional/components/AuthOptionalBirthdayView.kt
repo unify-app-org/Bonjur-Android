@@ -1,40 +1,89 @@
 package com.bonjur.auth.presentation.optional.components
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bonjur.appfoundation.FeatureStore
+import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
+import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
+import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoViewState
+import com.bonjur.designSystem.ui.theme.Typography.AppTypography
+import com.bonjur.designSystem.ui.theme.colors.Palette
+import com.bonjur.designSystem.ui.theme.image.Images
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthOptionalBirthdayView() {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = System.currentTimeMillis()
-    )
-
-    // Update selectedDate when date picker changes
-    LaunchedEffect(datePickerState.selectedDateMillis) {
-        datePickerState.selectedDateMillis?.let { millis ->
-            selectedDate = LocalDate.ofEpochDay(millis / (24 * 60 * 60 * 1000))
-        }
-    }
+fun AuthOptionalBirthdayView(
+    store: FeatureStore<AuthOptionalInfoViewState, AuthOptionalInfoAction, AuthOptionalInfoSideEffect>
+) {
+    val state = store.state
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(36.dp)
     ) {
         TopView()
-        DatePickerView(datePickerState = datePickerState)
+        InputField(
+            date = state.birthDate,
+            onTap = {
+                store.send(AuthOptionalInfoAction.OpenDatePicker)
+            }
+        )
+    }
+}
+
+@Composable
+private fun InputField(
+    date: LocalDate?,
+    onTap: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onTap() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 0.5.dp,
+                    color = Palette.grayPrimary,
+                    shape = androidx.compose.foundation.shape.CircleShape
+                )
+                .padding(horizontal = 24.dp, vertical = 15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (date != null) {
+                Text(
+                    text = date.format(java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy")),
+                    modifier = Modifier.weight(1f),
+                    color = Palette.blackHigh
+                )
+            } else {
+                Text(
+                    text = "Date of birth",
+                    modifier = Modifier.weight(1f),
+                    color = Palette.blackDisabled
+                )
+            }
+
+            Icon(
+                painter = Images.Icons.calendar(),
+                contentDescription = "Calendar",
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 
@@ -46,27 +95,15 @@ private fun TopView() {
     ) {
         Text(
             text = "Your Birthday",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.ExtraBold,
+            style = AppTypography.TitleXL.extraBold,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
             text = "What's your date of birth?",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
+            style = AppTypography.BodyTextMd.regular,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.fillMaxWidth()
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DatePickerView(datePickerState: DatePickerState) {
-    DatePicker(
-        state = datePickerState,
-        modifier = Modifier.fillMaxWidth(),
-        showModeToggle = false
-    )
 }

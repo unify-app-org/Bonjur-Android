@@ -35,5 +35,8 @@ object Images {
 
         @Composable
         fun search() = painterResource(R.drawable.ic_search)
+
+        @Composable
+        fun calendar() = painterResource(R.drawable.ic_calendar)
     }
 }

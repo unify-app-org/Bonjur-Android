@@ -6,6 +6,7 @@ import com.bonjur.auth.data.dataSource.AuthDataSource
 import com.bonjur.auth.domain.models.ChooseUniversityUIModel
 import com.bonjur.auth.domain.models.OnboardingUIModel
 import com.bonjur.auth.domain.models.RegisterModel
+import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.designSystem.ui.theme.image.Images
 import javax.inject.Inject
 
@@ -73,6 +74,54 @@ class AuthUseCaseImpl @Inject constructor(
             title = "Welcome $name",
             subtitle = "Complete your profile for better interaction.It will take only 5 minutes.",
             image = { Images.Icons.resume() },
+        )
+    }
+
+    override fun genders(): List<SelectableListItemModel> {
+        return listOf(
+            SelectableListItemModel(
+                title = "Male",
+                selected = false
+            ),
+            SelectableListItemModel(
+                title = "Female",
+                selected = false
+            )
+        )
+    }
+
+    override fun languages(): List<SelectableListItemModel> {
+        return listOf(
+            SelectableListItemModel(
+                title = "Azerbaijan",
+                selected = false,
+                style = SelectableListItemModel.Style.MultiSelect
+            ),
+            SelectableListItemModel(
+                title = "English",
+                selected = false,
+                style = SelectableListItemModel.Style.MultiSelect
+            ),
+            SelectableListItemModel(
+                title = "Female",
+                selected = false,
+                style = SelectableListItemModel.Style.MultiSelect
+            ),
+            SelectableListItemModel(
+                title = "Russian",
+                selected = false,
+                style = SelectableListItemModel.Style.MultiSelect
+            ),
+            SelectableListItemModel(
+                title = "French",
+                selected = false,
+                style = SelectableListItemModel.Style.MultiSelect
+            ),
+            SelectableListItemModel(
+                title = "Turkish",
+                selected = false,
+                style = SelectableListItemModel.Style.MultiSelect
+            )
         )
     }
 }
