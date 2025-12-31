@@ -107,13 +107,13 @@ private fun TopView() {
             .spacedBy(16.dp)
     ) {
         Text(
-            text = "Upload your photos",
+            text = "Your profile photo",
             style = AppTypography.TitleXL.extraBold,
             color = Palette.black,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Upload 1 images to get started",
+            text = "Upload a photo to get started",
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary,
             modifier = Modifier.fillMaxWidth()

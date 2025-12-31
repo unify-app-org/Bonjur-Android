@@ -49,7 +49,7 @@ private fun TopView() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Which language do you know?",
+            text = "About you",
             style = AppTypography.TitleXL.extraBold,
             color = Palette.black,
             modifier = Modifier.fillMaxWidth()

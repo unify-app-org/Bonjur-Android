@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters.previous
 import javax.inject.Inject
 
 @HiltViewModel
@@ -150,9 +151,13 @@ class AuthOptionalInfoViewModel @Inject constructor(
     }
 
     private fun nextTapped() {
-        updateState (
-            state.copy(currentStep = state.currentStep + 1)
-        )
+        if (state.currentStep <= 6) {
+            updateState(
+                state.copy(currentStep = state.currentStep + 1)
+            )
+        } else {
+
+        }
     }
 
     private fun pageChange(step: Int) {

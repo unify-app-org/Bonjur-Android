@@ -46,7 +46,7 @@ fun AuthOptionalInfoView(
         ),
         AuthOptionalInfoStep(
             id = 2,
-            content = { AuthOptionalSelectLanguagesView(store) }
+            content = { AuthOptionalInterestsView(store)  }
         ),
         AuthOptionalInfoStep(
             id = 3,
@@ -54,11 +54,11 @@ fun AuthOptionalInfoView(
         ),
         AuthOptionalInfoStep(
             id = 4,
-            content = { AuthOptionalUploadPhotoView(store) }
+            content = { AuthOptionalSelectLanguagesView(store) }
         ),
         AuthOptionalInfoStep(
             id = 5,
-            content = { AuthOptionalInterestsView(store) }
+            content = { AuthOptionalUploadPhotoView(store) }
         )
     )
 

@@ -61,7 +61,7 @@ private fun TopView() {
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Write something about yourself",
+            text = "Select languages you know",
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary,
             modifier = Modifier.fillMaxWidth()
