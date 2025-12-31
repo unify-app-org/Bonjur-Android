@@ -38,5 +38,14 @@ object Images {
 
         @Composable
         fun calendar() = painterResource(R.drawable.ic_calendar)
+
+        @Composable
+        fun camera() = painterResource(R.drawable.ic_camera)
+
+        @Composable
+        fun plus() = painterResource(R.drawable.ic_plus)
+
+        @Composable
+        fun emojiLaugh() = painterResource(R.drawable.ic_emoji_laugh)
     }
 }

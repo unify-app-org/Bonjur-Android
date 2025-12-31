@@ -15,7 +15,6 @@ import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoViewState
 import com.bonjur.designSystem.components.selectableList.SelectableListItem
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.designSystem.ui.theme.colors.Palette
-import kotlin.collections.forEachIndexed
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.Text
 import com.bonjur.designSystem.components.serach.SearchView
@@ -42,8 +41,8 @@ fun AuthOptionalSelectLanguagesView(
         )
         LanguagesView(
             languages = state.languages,
-            onGenderSelected = { index ->
-                store.send(AuthOptionalInfoAction.SelectedLanguage(index))
+            onGenderSelected = { id ->
+                store.send(AuthOptionalInfoAction.SelectedLanguage(id))
             }
         )
     }
@@ -79,11 +78,11 @@ private fun LanguagesView(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        languages.forEachIndexed { index, language ->
+        languages.forEach { language ->
             SelectableListItem(
                 model = language,
                 onClick = {
-                    onGenderSelected(index)
+                    onGenderSelected(language.id)
                 }
             )
         }

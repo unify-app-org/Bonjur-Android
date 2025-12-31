@@ -3,9 +3,10 @@ package com.bonjur.auth.domain.useCase
 import androidx.compose.ui.input.key.Key.Companion.I
 import com.bonjur.auth.data.DTOs.RegisterRequest
 import com.bonjur.auth.data.dataSource.AuthDataSource
-import com.bonjur.auth.domain.models.ChooseUniversityUIModel
+import com.bonjur.auth.domain.models.AuthInterestsModel
 import com.bonjur.auth.domain.models.OnboardingUIModel
 import com.bonjur.auth.domain.models.RegisterModel
+import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.designSystem.ui.theme.image.Images
 import javax.inject.Inject
@@ -48,20 +49,20 @@ class AuthUseCaseImpl @Inject constructor(
         )
     }
 
-    override suspend fun chooseUniversity(): List<ChooseUniversityUIModel> {
+    override suspend fun chooseUniversity(): List<SelectableListItemModel> {
         return listOf(
-            ChooseUniversityUIModel(
-                id = "1",
+            SelectableListItemModel(
+                id = 1,
                 title = "UFAZ",
                 selected = false
             ),
-            ChooseUniversityUIModel(
-                id = "1",
+            SelectableListItemModel(
+                id = 2,
                 title = "BHOS",
                 selected = false
             ),
-            ChooseUniversityUIModel(
-                id = "1",
+            SelectableListItemModel(
+                id = 3,
                 title = "ADNSU",
                 selected = false
             )
@@ -77,50 +78,152 @@ class AuthUseCaseImpl @Inject constructor(
         )
     }
 
-    override fun genders(): List<SelectableListItemModel> {
+    override suspend fun genders(): List<SelectableListItemModel> {
         return listOf(
             SelectableListItemModel(
+                id = 1,
                 title = "Male",
                 selected = false
             ),
             SelectableListItemModel(
+                id = 2,
                 title = "Female",
                 selected = false
             )
         )
     }
 
-    override fun languages(): List<SelectableListItemModel> {
+    override suspend fun languages(): List<SelectableListItemModel> {
         return listOf(
             SelectableListItemModel(
+                id = 1,
                 title = "Azerbaijan",
                 selected = false,
                 style = SelectableListItemModel.Style.MultiSelect
             ),
             SelectableListItemModel(
+                id = 2,
                 title = "English",
                 selected = false,
                 style = SelectableListItemModel.Style.MultiSelect
             ),
             SelectableListItemModel(
-                title = "Female",
-                selected = false,
-                style = SelectableListItemModel.Style.MultiSelect
-            ),
-            SelectableListItemModel(
+                id = 3,
                 title = "Russian",
                 selected = false,
                 style = SelectableListItemModel.Style.MultiSelect
             ),
             SelectableListItemModel(
+                id = 4,
                 title = "French",
                 selected = false,
                 style = SelectableListItemModel.Style.MultiSelect
             ),
             SelectableListItemModel(
+                id = 5,
                 title = "Turkish",
                 selected = false,
                 style = SelectableListItemModel.Style.MultiSelect
+            )
+        )
+    }
+
+    override suspend fun interests(): List<AuthInterestsModel> {
+        return listOf(
+            AuthInterestsModel(
+                title = "Example",
+                interests = listOf(
+                    CategoriesChipModel(
+                        id = 1,
+                        title = "love",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 2,
+                        title = "beautiful",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 3,
+                        title = "fashion",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 4,
+                        title = "dog",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 5,
+                        title = "art",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 6,
+                        title = "cat",
+                        selected = false
+                    )
+                )
+            ),
+            AuthInterestsModel(
+                title = "Example",
+                interests = listOf(
+                    CategoriesChipModel(
+                        id = 7,
+                        title = "love",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 8,
+                        title = "beautiful",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 9,
+                        title = "fashion",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 10,
+                        title = "dog",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 11,
+                        title = "art",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 12,
+                        title = "cat",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 13,
+                        title = "beautiful",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 14,
+                        title = "fashion",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 15,
+                        title = "dog",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 16,
+                        title = "art",
+                        selected = false
+                    ),
+                    CategoriesChipModel(
+                        id = 17,
+                        title = "cat",
+                        selected = false
+                    )
+                )
             )
         )
     }

@@ -6,6 +6,7 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import androidx.compose.ui.graphics.Color
 
 data class SelectableListItemModel(
+    val id: Int,
     val title: String,
     val selected: Boolean,
     val style: Style = Style.Default

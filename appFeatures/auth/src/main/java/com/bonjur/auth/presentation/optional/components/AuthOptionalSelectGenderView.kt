@@ -6,9 +6,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
@@ -34,8 +32,8 @@ fun AuthOptionalSelectGenderView(
         TopView()
         GendersView(
             genders = state.genders,
-            onGenderSelected = { index ->
-                store.send(AuthOptionalInfoAction.SelectedGender(index))
+            onGenderSelected = { id ->
+                store.send(AuthOptionalInfoAction.SelectedGender(id))
             }
         )
     }
@@ -71,12 +69,11 @@ private fun GendersView(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        genders.forEachIndexed { index, gender ->
+        genders.forEach { gender ->
             SelectableListItem (
                 model = gender,
                 onClick = {
-                    onGenderSelected(index)
-
+                    onGenderSelected(gender.id)
                 }
             )
         }

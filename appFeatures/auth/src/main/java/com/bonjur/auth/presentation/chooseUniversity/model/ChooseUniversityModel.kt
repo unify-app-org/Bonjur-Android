@@ -1,14 +1,14 @@
 package com.bonjur.auth.presentation.chooseUniversity.model
 
 import com.bonjur.appfoundation.*
-import com.bonjur.auth.domain.models.ChooseUniversityUIModel
+import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 
 data class ChooseUniversityInputData(
     val example: String = ""
 )
 
 data class ChooseUniversityViewState(
-    val uiModel: List<ChooseUniversityUIModel> = emptyList(),
+    val uiModel: List<SelectableListItemModel> = emptyList(),
     val enabled: Boolean = false
 ) : FeatureState
 

@@ -1,6 +1,10 @@
 package com.bonjur.auth.presentation.optional
 
 import android.R.attr.action
+import android.R.attr.category
+import android.R.attr.data
+import android.util.Log.i
+import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.auth.domain.useCase.AuthUseCase
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
@@ -8,6 +12,7 @@ import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoInputData
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.sql.Date
 import java.time.LocalDate
 import javax.inject.Inject
@@ -45,10 +50,10 @@ class AuthOptionalInfoViewModel @Inject constructor(
             }
             AuthOptionalInfoAction.FetchData -> fetchData()
             is AuthOptionalInfoAction.SelectedGender -> {
-                selectedGender(action.index)
+                selectedGender(action.id)
             }
             is AuthOptionalInfoAction.SelectedLanguage -> {
-                selectedLanguage(action.index)
+                selectedLanguage(action.id)
             }
             is AuthOptionalInfoAction.BioChange -> {
                 bioChange(action.text)
@@ -56,7 +61,35 @@ class AuthOptionalInfoViewModel @Inject constructor(
             is AuthOptionalInfoAction.LanguageTextChange -> {
                 languageSearchTextChange(action.text)
             }
+            is AuthOptionalInfoAction.SelectImage -> {
+                selectedImage(action.data)
+            }
+            is AuthOptionalInfoAction.SelectedInterests -> {
+                selectedInterests(action.id)
+            }
         }
+    }
+
+    private fun selectedInterests(id: Int) {
+        updateState(
+            state.copy(
+                interests = state.interests.map { interest ->
+                    interest.copy(
+                        interests = interest.interests.map { category ->
+                            if (category.id == id) {
+                                category.copy(selected = !category.selected)
+                            } else {
+                                category
+                            }
+                        }
+                    )
+                }
+            )
+        )
+    }
+
+    private fun selectedImage(data: ByteArray) {
+        updateState(state.copy(selectedImage = data))
     }
 
     private fun languageSearchTextChange(text: String) {
@@ -71,30 +104,33 @@ class AuthOptionalInfoViewModel @Inject constructor(
         )
     }
 
-    private fun selectedLanguage(index: Int) {
+    private fun selectedLanguage(id: Int) {
         updateState(
             state.copy(
-                languages = state.languages.mapIndexed { i, language ->
-                    if (i == index) language.copy(selected = !language.selected)
+                languages = state.languages.map { language ->
+                    if (language.id == id) language.copy(selected = !language.selected)
                     else language
                 }
             )
         )
     }
 
-    private fun selectedGender(index: Int) {
+    private fun selectedGender(id: Int) {
         updateState(
             state.copy(
-                genders = state.genders.mapIndexed { i, gender ->
-                    gender.copy(selected = i == index)
+                genders = state.genders.map { gender ->
+                    gender.copy(selected = gender.id == id)
                 }
             )
         )
     }
 
     private fun fetchData() {
-        updateState(state.copy(genders = dependencies.useCase.genders()))
-        updateState(state.copy(languages = dependencies.useCase.languages()))
+        viewModelScope.launch {
+            updateState(state.copy(genders = dependencies.useCase.genders()))
+            updateState(state.copy(languages = dependencies.useCase.languages()))
+            updateState(state.copy(interests = dependencies.useCase.interests()))
+        }
     }
 
     private fun openDatePicker() {

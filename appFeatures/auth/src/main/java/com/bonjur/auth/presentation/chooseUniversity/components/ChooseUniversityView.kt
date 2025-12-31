@@ -60,11 +60,7 @@ fun ChooseUniversityView(
         ) {
             itemsIndexed(state.uiModel) { index, university ->
                 SelectableListItem(
-                    model = SelectableListItemModel(
-                        title = university.title,
-                        style = Style.Default,
-                        selected = university.selected
-                    ),
+                    model = university,
                     onClick = {
                         store.send(ChooseUniversityAction.SelectedCell(index))
                     }

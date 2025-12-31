@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.auth.domain.models.AuthInterestsModel
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import java.time.LocalDate
 
@@ -17,9 +18,12 @@ data class AuthOptionalInfoViewState(
     val showDatePicker: Boolean = false,
     val genders: List<SelectableListItemModel> = emptyList(),
     val languages: List<SelectableListItemModel> = emptyList(),
+    val interests: List<AuthInterestsModel> = emptyList(),
     val biography: String? = null,
-    val languageSearchText: String? = null
-) : FeatureState
+    val languageSearchText: String? = null,
+    val selectedImage: ByteArray? = null,
+    val interestsSearchText: String? = null
+    ) : FeatureState
 
 data class AuthOptionalInfoStep(
     val id: Int,
@@ -35,11 +39,12 @@ sealed class AuthOptionalInfoAction : FeatureAction {
     object CloseDatePicker : AuthOptionalInfoAction()
     object OpenDatePicker : AuthOptionalInfoAction()
     object Skip : AuthOptionalInfoAction()
-    data class SelectedGender(val index: Int) : AuthOptionalInfoAction()
-    data class SelectedLanguage(val index: Int) : AuthOptionalInfoAction()
+    data class SelectedGender(val id: Int) : AuthOptionalInfoAction()
+    data class SelectedLanguage(val id: Int) : AuthOptionalInfoAction()
     data class BioChange(val text: String) : AuthOptionalInfoAction()
     data class LanguageTextChange(val text: String) : AuthOptionalInfoAction()
-
+    data class SelectImage(val data: ByteArray) : AuthOptionalInfoAction()
+    data class SelectedInterests(val id: Int) : AuthOptionalInfoAction()
 }
 
 sealed class AuthOptionalInfoSideEffect : SideEffect {
