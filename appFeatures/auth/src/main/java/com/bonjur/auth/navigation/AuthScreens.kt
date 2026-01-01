@@ -3,17 +3,12 @@ package com.bonjur.auth.navigation
 import android.net.Uri
 import com.bonjur.auth.ForgotPass
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeInputData
-import com.bonjur.navigation.AppScreens
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 
 sealed interface AuthScreens {
     @Serializable
     data object Test : AuthScreens
-
-    @Serializable
-    data object Login : AuthScreens
 
     @Serializable
     data object Onboarding : AuthScreens

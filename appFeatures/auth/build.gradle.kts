@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("org.jetbrains.kotlin.plugin.serialization")
+    // serialization
+    id("kotlinx-serialization")
     // DI
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
@@ -50,6 +51,7 @@ android {
 dependencies {
     // app modules
     implementation(project(":appCore:designSystem"))
+    implementation(project(":appCore:storage"))
     implementation(project(":appCore:navigation"))
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:appFoundation"))

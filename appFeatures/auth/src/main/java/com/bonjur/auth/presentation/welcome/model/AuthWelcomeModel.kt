@@ -27,6 +27,7 @@ data class AuthWelcomeViewState(
 
 sealed class AuthWelcomeAction: FeatureAction {
     object FetchData : AuthWelcomeAction()
-    object Dismiss : AuthWelcomeAction()
     object ContinueTapped : AuthWelcomeAction()
+    object SkipTapped : AuthWelcomeAction()
+
 }

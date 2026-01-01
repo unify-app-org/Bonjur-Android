@@ -1,5 +1,6 @@
 package com.bonjur.auth.presentation.optional.components
 
+import android.R.attr.onClick
 import android.app.DatePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -116,7 +117,7 @@ fun AuthOptionalInfoView(
         TopSection(
             count = steps.count(),
             currentStep = state.currentStep,
-            onBack = { store.send(AuthOptionalInfoAction.Back) }
+            onBack = { store.send(AuthOptionalInfoAction.Skip) }
         )
 
         HorizontalPager(
@@ -129,7 +130,8 @@ fun AuthOptionalInfoView(
         }
 
         BottomSection(
-            onSkip = { store.send(AuthOptionalInfoAction.Skip) },
+            currentStep = pagerState.currentPage,
+            onSkip = { store.send(AuthOptionalInfoAction.Back) },
             onNext = { store.send(AuthOptionalInfoAction.Next) }
         )
     }
@@ -141,33 +143,34 @@ private fun TopSection(
     currentStep: Int,
     onBack: () -> Unit
 ) {
-    Box(
+    Row (
         modifier = Modifier
-            .padding(horizontal = 16.dp)
+            .padding(16.dp)
             .height(44.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(25.dp)
     ) {
-        Icon(
-            painter = Images.Icons.arrowLeft01(),
-            contentDescription = "Back",
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .clickable { onBack() }
-                .size(28.dp)
-        )
-
         AppProgressView(
             currentStep = currentStep,
             totalSteps = count,
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 32.dp)
+                .weight(1f)
+        )
+
+        Icon(
+            painter = Images.Icons.xmark(),
+            contentDescription = "Back",
+            modifier = Modifier
+                .clickable { onBack() }
+                .size(28.dp)
         )
     }
 }
 
 @Composable
 private fun BottomSection(
+    currentStep: Int,
     onSkip: () -> Unit,
     onNext: () -> Unit
 ) {
@@ -177,11 +180,13 @@ private fun BottomSection(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        AppButton(
-            title = "Skip",
-            model = AppButtonModel(type = ButtonType.Tertiary),
-            onClick = onSkip
-        )
+        if (currentStep > 0) {
+            AppButton(
+                title = "Back",
+                model = AppButtonModel(type = ButtonType.Tertiary),
+                onClick = onSkip
+            )
+        }
         AppButton(
             title = "Next",
             model = AppButtonModel(contentSize = ContentSize.Fill),

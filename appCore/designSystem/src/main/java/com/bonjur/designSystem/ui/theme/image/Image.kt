@@ -47,5 +47,17 @@ object Images {
 
         @Composable
         fun emojiLaugh() = painterResource(R.drawable.ic_emoji_laugh)
+
+        @Composable
+        fun home() = painterResource(R.drawable.ic_home)
+
+        @Composable
+        fun profile() = painterResource(R.drawable.ic_profile)
+
+        @Composable
+        fun userGroups() = painterResource(R.drawable.ic_users_group)
+
+        @Composable
+        fun clipboardList() = painterResource(R.drawable.ic_clipboard_list)
     }
 }

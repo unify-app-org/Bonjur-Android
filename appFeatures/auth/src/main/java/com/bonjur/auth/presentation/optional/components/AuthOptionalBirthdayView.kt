@@ -96,13 +96,13 @@ private fun TopView() {
         Text(
             text = "Your Birthday",
             style = AppTypography.TitleXL.extraBold,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = Palette.blackHigh,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
             text = "What's your date of birth?",
             style = AppTypography.BodyTextMd.regular,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = Palette.grayPrimary,
             modifier = Modifier.fillMaxWidth()
         )
     }

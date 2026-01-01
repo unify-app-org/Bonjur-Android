@@ -11,6 +11,11 @@ import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoInputData
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoViewState
+import com.bonjur.navigation.AppScreens
+import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
+import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.sql.Date
@@ -20,13 +25,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthOptionalInfoViewModel @Inject constructor(
-    val dependencies: Dependencies
+    private val navigator: Navigator,
+    private val dependencies: Dependencies
 ) : FeatureViewModel<AuthOptionalInfoViewState, AuthOptionalInfoAction, AuthOptionalInfoSideEffect>(
     AuthOptionalInfoViewState()
 ) {
 
     data class Dependencies @Inject constructor(
-        val useCase: AuthUseCase
+        val useCase: AuthUseCase,
+        val storage: DefaultStorage
     )
 
     private lateinit var inputData: AuthOptionalInfoInputData
@@ -147,16 +154,19 @@ class AuthOptionalInfoViewModel @Inject constructor(
     }
 
     private fun skipTapped() {
-
+        dependencies.storage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, true)
+        viewModelScope.launch {
+            navigator.navigateAndClearStack(AppScreens.Main.route)
+        }
     }
 
     private fun nextTapped() {
-        if (state.currentStep <= 6) {
+        if (state.currentStep < 6) {
             updateState(
                 state.copy(currentStep = state.currentStep + 1)
             )
         } else {
-
+            skipTapped()
         }
     }
 

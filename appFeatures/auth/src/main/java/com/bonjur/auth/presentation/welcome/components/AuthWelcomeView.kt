@@ -40,15 +40,15 @@ fun AuthWelcomeView(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(modifier = Modifier.weight(1f))
             Image(
                 painter = Images.Icons.xmark(),
                 contentDescription = null,
                 modifier = Modifier
                     .clickable{
-                        store.send(AuthWelcomeAction.Dismiss)
+                        store.send(AuthWelcomeAction.SkipTapped)
                     }
             )
-            Spacer(modifier = Modifier.weight(1f))
         }
 
         Text(
@@ -69,22 +69,12 @@ fun AuthWelcomeView(
             modifier = Modifier.fillMaxWidth().weight(1f)
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            AppButton(
-                title = "Skip",
-                model = AppButtonModel(type = ButtonType.Tertiary),
-                onClick = {}
-            )
-            AppButton(
-                title = "Continue",
-                model = AppButtonModel(contentSize = ContentSize.Fill),
-                onClick = {
-                    store.send(AuthWelcomeAction.ContinueTapped)
-                }
-            )
-        }
+        AppButton(
+            title = "Continue",
+            model = AppButtonModel(contentSize = ContentSize.Fill),
+            onClick = {
+                store.send(AuthWelcomeAction.ContinueTapped)
+            }
+        )
     }
 }

@@ -47,7 +47,7 @@ class ChooseUniversityViewModel @Inject constructor(
     private fun nextTapped() {
         viewModelScope.launch {
             val welcomeInputData = AuthWelcomeInputData("Huseyn")
-            navigator.navigateTo(AuthScreens.Welcome.createRoute(welcomeInputData))
+            navigator.navigateAndClearStack(AuthScreens.Welcome.createRoute(welcomeInputData))
         }
     }
 
