@@ -1,7 +1,6 @@
 package com.bonjur.auth.navigation
 
 import android.net.Uri
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -17,10 +16,11 @@ import com.bonjur.auth.presentation.onboarding.model.OnboardingInputData
 import com.bonjur.auth.presentation.onboarding.OnboardingScreen
 import com.bonjur.auth.presentation.optional.AuthOptionalInfoScreen
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoInputData
+import com.bonjur.auth.presentation.signIn.model.SignInInputData
+import com.bonjur.auth.presentation.signIn.SignInScreen
 import com.bonjur.auth.presentation.welcome.AuthWelcomeScreen
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeInputData
 import com.bonjur.navigation.AppScreens
-import com.bonjur.navigation.route
 import kotlinx.serialization.json.Json
 
 fun NavGraphBuilder.authNavGraph() {
@@ -34,6 +34,12 @@ fun NavGraphBuilder.authNavGraph() {
         composable<AuthScreens.Onboarding> {
             OnboardingScreen(
                 OnboardingInputData()
+            )
+        }
+
+        composable<AuthScreens.SignIn> {
+            SignInScreen(
+                SignInInputData()
             )
         }
 

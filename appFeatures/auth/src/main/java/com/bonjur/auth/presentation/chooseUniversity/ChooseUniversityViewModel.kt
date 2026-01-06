@@ -11,6 +11,7 @@ import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversitySideE
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityViewState
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeInputData
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,8 +47,13 @@ class ChooseUniversityViewModel @Inject constructor(
 
     private fun nextTapped() {
         viewModelScope.launch {
-            val welcomeInputData = AuthWelcomeInputData("Huseyn")
-            navigator.navigateAndClearStack(AuthScreens.Welcome.createRoute(welcomeInputData))
+            val selectedUniversity = state.uiModel.first { item -> item.selected }
+            if (selectedUniversity.id == 1) {
+                val welcomeInputData = AuthWelcomeInputData("Huseyn")
+                navigator.navigateAndClearStack(AuthScreens.Welcome.createRoute(welcomeInputData))
+            } else {
+                navigator.navigateTo(AuthScreens.SignIn.route)
+            }
         }
     }
 

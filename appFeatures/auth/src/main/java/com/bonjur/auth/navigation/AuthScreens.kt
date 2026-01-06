@@ -20,6 +20,9 @@ sealed interface AuthScreens {
     data object Optionals : AuthScreens
 
     @Serializable
+    data object SignIn : AuthScreens
+
+    @Serializable
     data class Welcome(val welcome: AuthWelcomeInputData): AuthScreens {
         companion object {
             const val ROUTE = "welcome/{welcomeJson}"
