@@ -59,5 +59,11 @@ object Images {
 
         @Composable
         fun clipboardList() = painterResource(R.drawable.ic_clipboard_list)
+
+        @Composable
+        fun twoUsers() = painterResource(R.drawable.ic_two_users)
+
+        @Composable
+        fun chat() = painterResource(R.drawable.ic_chat)
     }
 }

@@ -13,3 +13,13 @@ sealed class TabItem(
     object MyPlans : TabItem("My plans", { Images.Icons.clipboardList() })
     object Profile : TabItem("Profile", { Images.Icons.userGroups() })
 }
+
+data class CreateMenuItem(
+    val title: String,
+    val icon: Painter,
+    val type: CreateType
+)
+
+enum class CreateType {
+    CLUB, EVENT, HANGOUT
+}
