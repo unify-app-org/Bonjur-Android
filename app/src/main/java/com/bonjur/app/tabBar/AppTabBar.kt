@@ -61,6 +61,7 @@ fun AppTabBar() {
             bottomBar = {
                 Row(
                     modifier = Modifier
+                        .padding(bottom = 16.dp)
                         .fillMaxWidth()
                         .height(80.dp)
                         .background(Color.White),
@@ -322,7 +323,7 @@ fun CreateMenu(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .padding(bottom = 60.dp)
+                    .padding(bottom = 75.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .background(Color.White)
                     .padding(vertical = 24.dp)

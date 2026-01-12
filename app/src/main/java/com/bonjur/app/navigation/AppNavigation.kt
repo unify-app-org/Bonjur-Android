@@ -20,8 +20,7 @@ import com.bonjur.storage.defaultPreference.DefaultStorageKey
 @Composable
 fun AppNavigation(
     navigator: Navigator = hiltViewModel<AppNavigationViewModel>().navigator,
-    defaultStorage: DefaultStorage = hiltViewModel<AppNavigationViewModel>().defaultStorage,
-    padding: PaddingValues
+    defaultStorage: DefaultStorage = hiltViewModel<AppNavigationViewModel>().defaultStorage
 ) {
     val navController = rememberNavController()
 
@@ -40,8 +39,7 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = if (isAuthenticated) AppScreens.Main else AppScreens.Auth,
-        modifier = Modifier.padding(padding)
+        startDestination = if (isAuthenticated) AppScreens.Main else AppScreens.Auth
     ) {
         authNavGraph()
         mainNavGraph()

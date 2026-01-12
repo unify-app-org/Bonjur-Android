@@ -1,6 +1,10 @@
 package com.bonjur.auth.presentation.welcome
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
 import com.bonjur.auth.presentation.welcome.components.AuthWelcomeView
@@ -24,6 +28,12 @@ fun AuthWelcomeScreen(
             }
         }
     ) { store ->
-        AuthWelcomeView(store)
+
+        Column(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+        ) {
+            AuthWelcomeView(store)
+        }
     }
 }

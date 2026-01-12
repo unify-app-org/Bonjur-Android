@@ -36,11 +36,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             BonjurTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavigation(
-                        padding = innerPadding
-                    )
-                }
+                AppNavigation()
             }
         }
     }

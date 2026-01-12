@@ -36,7 +36,10 @@ fun SignInScreen(
             }
         }
     ) { store ->
-        Column() {
+        Column(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+        ) {
             Icon(
                 painter = Images.Icons.arrowLeft01(),
                 contentDescription = "Back",
