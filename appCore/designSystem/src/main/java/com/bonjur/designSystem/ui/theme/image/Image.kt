@@ -71,5 +71,8 @@ object Images {
 
         @Composable
         fun chevronDown02() = painterResource(R.drawable.ic_chevron_02_down)
+
+        @Composable
+        fun user() = painterResource(R.drawable.ic_user)
     }
 }
