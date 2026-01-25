@@ -6,7 +6,8 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 data class AppButtonModel(
     val type: ButtonType = ButtonType.Primary,
     val style: ButtonStyle = ButtonStyle.Default,
-    val contentSize: ContentSize = ContentSize.Fit
+    val contentSize: ContentSize = ContentSize.Fit,
+    val size: AppButtonSize = AppButtonSize.Large
 ) {
     val backgroundColor: Color
         get() = when (type) {
@@ -24,8 +25,14 @@ data class AppButtonModel(
             }
         }
 
-    val horizontalPadding: Float = 43f
-    val verticalPadding: Float = 16f
+    val horizontalPadding: Float = 23f
+
+    val verticalPadding: Float
+        get() = when (size) {
+            AppButtonSize.Large -> 16f
+            AppButtonSize.Medium -> 12f
+            AppButtonSize.Small -> 10f
+        }
 
     val foregroundColor: Color = Palette.black
 
@@ -41,6 +48,12 @@ data class AppButtonModel(
             ButtonType.Secondary -> 0.5f
             else -> 0f
         }
+}
+
+enum class AppButtonSize {
+    Large,
+    Medium,
+    Small
 }
 
 enum class ContentSize {

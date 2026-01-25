@@ -65,5 +65,11 @@ object Images {
 
         @Composable
         fun chat() = painterResource(R.drawable.ic_chat)
+
+        @Composable
+        fun filter() = painterResource(R.drawable.ic_filter)
+
+        @Composable
+        fun chevronDown02() = painterResource(R.drawable.ic_chevron_02_down)
     }
 }

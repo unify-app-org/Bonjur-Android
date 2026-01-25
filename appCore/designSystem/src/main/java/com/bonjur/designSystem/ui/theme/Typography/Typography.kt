@@ -48,6 +48,14 @@ object AppTypography {
     }
 
     object TitleL {
+        val extraBold = TextStyle(
+            fontFamily = Manrope,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = TypographyTokens.FontSize.titleL,
+            lineHeight = TypographyTokens.LineHeight.titleL,
+            letterSpacing = TypographyTokens.LetterSpacing.none
+        )
+
         val bold = TextStyle(
             fontFamily = Manrope,
             fontWeight = FontWeight.Bold,
