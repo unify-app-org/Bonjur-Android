@@ -1,29 +1,28 @@
 //
-//  ClubCardView.kt
-//  AppFoundation
+//  CommunityCardView.kt
+//  AppUIKit
 //
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.clubs
+package com.bonjur.communities
 
 import CardBackgroundView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
@@ -31,62 +30,99 @@ import com.bonjur.designSystem.components.pressTapModifier
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
-import kotlin.collections.take
 
 @Composable
-fun ClubCardView(
-    model: ClubCardModel,
+fun CommunityCardView(
+    model: CommunityCardModel,
     onTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     CardBackgroundView(
-        modifier = modifier.pressTapModifier { onTap() },
-        cardType = AppUIEntities.ActivityType.CLUBS,
+        modifier = modifier.pressTapModifier() { onTap() },
+        cardType = AppUIEntities.ActivityType.COMMUNITY,
         bgColorType = model.bgType
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(27.dp)
+            verticalArrangement = Arrangement.spacedBy(48.dp)
         ) {
-            TopLeftView(model = model)
-            BottomView(model = model)
+            TopView(model = model)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                MembersView(model = model)
+            }
         }
     }
 }
 
 @Composable
-private fun TopLeftView(model: ClubCardModel) {
-    Column(
+private fun TopView(model: CommunityCardModel) {
+    Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        LogoImage(logoUrl = model.logoURL)
+        LogoView(logoUrl = model.logoURL)
         
-        Text(
-            text = model.name,
-            style = AppTypography.TitleMd.bold,
-            color = model.bgType.foregroundColor,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start
-        )
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = model.name,
+                style = AppTypography.TitleMd.bold,
+                color = model.bgType.foregroundColor,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start
+            )
+            
+            Text(
+                text = model.subTitle,
+                style = AppTypography.TextMd.regular,
+                color = model.bgType.foregroundColor,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Start
+            )
+        }
         
-        Text(
-            text = model.communityName,
-            style = AppTypography.TextMd.regular,
-            color = model.bgType.foregroundColor,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start
-        )
+        // View all button
+        Surface(
+            shape = RoundedCornerShape(50),
+            color = model.bgType.arrowBgColor
+        ) {
+            Row(
+                modifier = Modifier.padding(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "view all",
+                    style = AppTypography.TextMd.medium,
+                    color = model.bgType.arrowTint
+                )
+                
+                Icon(
+                    painter = Images.Icons.arrowLeft01(),
+                    contentDescription = "View all",
+                    tint = model.bgType.arrowTint,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .rotate(135f)
+                )
+            }
+        }
     }
 }
 
 @Composable
-private fun LogoImage(logoUrl: String) {
+private fun LogoView(logoUrl: String) {
     CachedAsyncImage(
         url = logoUrl,
-        contentDescription = "Club Logo",
+        contentDescription = "Community Logo",
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape),
@@ -114,7 +150,7 @@ private fun LogoImage(logoUrl: String) {
             ) {
                 Text(
                     text = "🤙",
-                    fontSize = 20.sp,
+                    style = AppTypography.TitleSm.regular,
                     color = Palette.black
                 )
             }
@@ -122,7 +158,7 @@ private fun LogoImage(logoUrl: String) {
     ) { imageBitmap ->
         androidx.compose.foundation.Image(
             bitmap = imageBitmap,
-            contentDescription = "Club Logo",
+            contentDescription = "Community Logo",
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape),
@@ -132,56 +168,20 @@ private fun LogoImage(logoUrl: String) {
 }
 
 @Composable
-private fun BottomView(model: ClubCardModel) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        MembersView(
-            members = model.members,
-            memberCount = model.memberCount,
-            foregroundColor = model.bgType.foregroundColor
-        )
-        
-        Spacer(modifier = Modifier.width(20.dp))
-        
-        // Arrow icon
-        Surface(
-            shape = CircleShape,
-            color = model.bgType.arrowBgColor,
-            modifier = Modifier.size(40.dp)
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = Images.Icons.arrowLeft01(),
-                    contentDescription = "Navigate",
-                    tint = model.bgType.arrowTint,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .rotate(135f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun MembersView(
-    members: List<AppUIEntities.Member>,
-    memberCount: Int,
-    foregroundColor: Color
-) {
+private fun MembersView(model: CommunityCardModel) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Overlapping member avatars
+        Text(
+            text = "${model.memberCount} members",
+            style = AppTypography.TextMd.regular,
+            color = model.bgType.foregroundColor,
+            textAlign = TextAlign.End
+        )
+        
         Box {
-            members.take(3).forEachIndexed { index, member ->
+            model.members.take(3).forEachIndexed { index, member ->
                 MemberAvatar(
                     profileImage = member.profileImage,
                     memberId = member.id,
@@ -189,15 +189,6 @@ private fun MembersView(
                 )
             }
         }
-
-        Spacer(modifier = Modifier.width((members.size.coerceAtMost(3) * 6).dp))
-
-        Text(
-            text = "$memberCount members",
-            style = AppTypography.TextMd.regular,
-            color = foregroundColor,
-            textAlign = TextAlign.Start
-        )
     }
 }
 
@@ -258,18 +249,18 @@ fun memberPlaceHolder() {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewClubCardView() {
+fun PreviewCommunityCardView() {
     androidx.compose.foundation.lazy.LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(ClubCardMocks.previewData.size) { index ->
-            ClubCardView(
-                model = ClubCardMocks.previewData[index],
+        items(CommunityCardMocks.mock.size) { index ->
+            CommunityCardView(
+                model = CommunityCardMocks.mock[index],
                 onTap = {
-                    println("Tapped on ${ClubCardMocks.previewData[index].name}")
+                    println("Card tapped: ${CommunityCardMocks.mock[index].name}")
                 }
             )
         }
