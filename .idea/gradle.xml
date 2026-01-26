@@ -22,6 +22,7 @@
             <option value="$PROJECT_DIR$/appFeatures/auth" />
             <option value="$PROJECT_DIR$/appFeatures/clubs" />
             <option value="$PROJECT_DIR$/appFeatures/communities" />
+            <option value="$PROJECT_DIR$/appFeatures/discover" />
             <option value="$PROJECT_DIR$/appFeatures/events" />
             <option value="$PROJECT_DIR$/appFeatures/hangouts" />
           </set>
