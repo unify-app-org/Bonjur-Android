@@ -7,11 +7,8 @@
 
 package com.bonjur.designSystem.components.filter
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,11 +24,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -53,7 +53,8 @@ import com.yourapp.discover.viewmodel.FilterViewModelFactory
 fun FilterView(
     model: List<FilterView.Model>,
     selectedItems: (List<FilterView.Items>) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onChipsHeightChanged: (Dp) -> Unit = {}
 ) {
     val viewModel: FilterViewModel = viewModel(
         factory = FilterViewModelFactory(
@@ -65,6 +66,21 @@ fun FilterView(
     var presentFilter by remember { mutableStateOf(false) }
     val modelState by viewModel.model.collectAsState()
     val selectedItem by viewModel.selectedItem.collectAsState()
+    val density = LocalDensity.current
+
+    val visible = selectedItem != null
+
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(200),
+        label = "dropdown-alpha"
+    )
+
+    val offsetY by animateFloatAsState(
+        targetValue = if (visible) 0f else -16f,
+        animationSpec = tween(200),
+        label = "dropdown-offset"
+    )
 
     LaunchedEffect(model) {
         viewModel.updateModel(model)
@@ -98,43 +114,31 @@ fun FilterView(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .zIndex(1f), // Middle layer
-            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             ChipsView(
                 viewModel = viewModel,
                 modelState = modelState,
-                onFilterClick = { presentFilter = true }
+                onFilterClick = { presentFilter = true },
+                modifier = Modifier.onGloballyPositioned { coordinates ->
+                    onChipsHeightChanged(with(density) { coordinates.size.height.toDp() })
+                }
             )
-        }
 
-        // Overlay for sub-items selection - TOP LAYER
-        AnimatedVisibility(
-            visible = selectedItem != null,
-            enter = fadeIn(animationSpec = tween(250)),
-            exit = fadeOut(animationSpec = tween(250)),
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .zIndex(2f) // Top layer - above everything
-        ) {
-            SelectSubItems(
-                items = selectedItem?.items ?: emptyList(),
-                viewModel = viewModel,
-                modifier = Modifier
-                    .offset(y = 64.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 0.dp,
-                            topEnd = 0.dp,
-                            bottomStart = 16.dp,
-                            bottomEnd = 16.dp
-                        )
-                    )
-            )
+            // Dropdown overlay
+            if (selectedItem != null) {
+                SelectSubItems(
+                    items = selectedItem?.items ?: emptyList(),
+                    viewModel = viewModel,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            this.alpha = alpha
+                            translationY = offsetY
+                        }
+                )
+            }
         }
     }
 
-    // Full screen filter dialog - PROPER MODAL
     if (presentFilter) {
         Dialog(
             onDismissRequest = { presentFilter = false },
@@ -162,80 +166,85 @@ private fun SelectSubItems(
     viewModel: FilterViewModel,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color.White)
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(
+            bottomStart = 16.dp,
+            bottomEnd = 16.dp
+        ),
+        color = Color.White
     ) {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(184.dp)
-                .padding(top = 16.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp)
-        ) {
-            items(items, key = { it.uuid }) { item ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { viewModel.toggleSubItem(item) },
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = if (item.selected) {
-                            Images.Icons.selectedCheckBox()
-                        } else {
-                            Images.Icons.notSelectedCheckBox()
-                        },
-                        contentDescription = null,
-                        tint = Color.Unspecified
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = item.title,
-                        style = AppTypography.BodyTextSm.regular,
-                        color = Palette.black
-                    )
+        Column {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(184.dp)
+                    .padding(top = 16.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(items, key = { it.uuid }) { item ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { viewModel.toggleSubItem(item) },
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = if (item.selected) {
+                                Images.Icons.selectedCheckBox()
+                            } else {
+                                Images.Icons.notSelectedCheckBox()
+                            },
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = item.title,
+                            style = AppTypography.BodyTextSm.regular,
+                            color = Palette.black
+                        )
+                    }
                 }
             }
-        }
 
-        HorizontalDivider()
+            HorizontalDivider()
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(18.dp)
-        ) {
-            AppButton(
-                title = "Remove",
-                model = AppButtonModel(
-                    type = ButtonType.Secondary,
-                    contentSize = ContentSize.Fill,
-                    size = AppButtonSize.Small
-                ),
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    viewModel.removeSelection()
-                }
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(18.dp)
+            ) {
+                AppButton(
+                    title = "Remove",
+                    model = AppButtonModel(
+                        type = ButtonType.Secondary,
+                        contentSize = ContentSize.Fill,
+                        size = AppButtonSize.Small
+                    ),
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        viewModel.removeSelection()
+                    }
+                )
 
-            AppButton(
-                title = "Apply",
-                model = AppButtonModel(
-                    contentSize = ContentSize.Fill,
-                    size = AppButtonSize.Small
-                ),
-                modifier = Modifier.weight(1f),
-                onClick = {
-                    viewModel.confirmSelection()
-                }
-            )
+                AppButton(
+                    title = "Apply",
+                    model = AppButtonModel(
+                        contentSize = ContentSize.Fill,
+                        size = AppButtonSize.Small
+                    ),
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        viewModel.confirmSelection()
+                    }
+                )
+            }
         }
     }
 }
@@ -285,7 +294,6 @@ private fun FilterChip(
     Box(
         modifier = Modifier
             .padding(start = 16.dp)
-            .padding(vertical = 14.dp)
     ) {
         Surface(
             onClick = onFilterClick,
@@ -379,8 +387,6 @@ private fun ChipItem(
             null
         },
         modifier = Modifier.padding(
-            top = 12.dp,
-            bottom = 12.dp,
             end = if (isLast) 16.dp else 0.dp
         )
     ) {

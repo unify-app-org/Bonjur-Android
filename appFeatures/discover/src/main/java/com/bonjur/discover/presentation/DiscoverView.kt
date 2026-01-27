@@ -7,6 +7,7 @@
 
 package com.bonjur.discover.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.ClubCardModel
 import com.bonjur.clubs.ClubCardView
@@ -59,11 +61,13 @@ fun DiscoverView(
     val state = store.state
 
     val density = LocalDensity.current
-    var topViewHeight by remember { mutableStateOf(0.dp) }
     var scrollOffset by remember { mutableStateOf(0f) }
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
+
+    var topViewHeight by remember { mutableStateOf(0.dp) }
+    var profileViewHeight by remember { mutableStateOf(0.dp) }
+    var filterViewHeight by remember { mutableStateOf(0.dp) }
 
     val nestedScrollConnection = remember {
         object : NestedScrollConnection {
@@ -78,7 +82,15 @@ fun DiscoverView(
         store.send(DiscoverAction.FetchData)
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    LaunchedEffect(profileViewHeight, filterViewHeight) {
+        topViewHeight = profileViewHeight + filterViewHeight
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .zIndex(0f)
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(topViewHeight))
 
@@ -119,20 +131,33 @@ fun DiscoverView(
             }
         }
 
-        // Top view overlay
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .align(Alignment.TopStart)
                 .background(Palette.white)
+                .zIndex(1f)
                 .onGloballyPositioned { coordinates ->
-                    topViewHeight = with(density) { coordinates.size.height.toDp() }
+                    profileViewHeight = with(density) { coordinates.size.height.toDp() }
                 }
         ) {
             ProfileView(user = state.uiModel.user)
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopStart)
+                .zIndex(2f)
+                .padding(top = 64.dp)
+        ) {
             FilterView(
                 model = state.uiModel.filters,
                 selectedItems = { items ->
-                    // Handle selected items
+
+                },
+                onChipsHeightChanged = { height ->
+                    filterViewHeight = height
                 }
             )
         }
@@ -188,45 +213,52 @@ private fun ProfileView(user: UserModel) {
                     }
                 }
             ) { imageBitmap ->
-                androidx.compose.foundation.Image(
-                    bitmap = imageBitmap,
-                    contentDescription = "Profile",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(14.dp)),
-                    contentScale = ContentScale.Crop
-                )
+                Image(
+                     bitmap = imageBitmap,
+                     contentDescription = "Profile",
+                     modifier = Modifier
+                         .size(40.dp)
+                         .clip(RoundedCornerShape(14.dp)),
+                     contentScale = ContentScale.Crop
+                 )
             }
         }
 
-        // User info
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             Text(
                 text = user.greeting,
                 style = AppTypography.TextMd.regular,
                 color = Palette.grayPrimary,
-                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
             )
             Text(
                 text = user.name,
                 style = AppTypography.BodyTextSm.medium,
                 color = Palette.black,
-                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
             )
         }
 
-        // Notification bell
-        IconButton(onClick = { /* Handle notification click */ }) {
-            Icon(
-                painter = Images.Icons.bell(),
-                contentDescription = "Notifications",
+        IconButton(
+            onClick = { /* Handle notification click */ },
+            modifier = Modifier
+                .size(48.dp)
+        ) {
+            Box(
                 modifier = Modifier
-                    .size(24.dp)
-                    .padding(12.dp),
-                tint = Palette.graySecondary
-            )
+                    .size(40.dp)
+                    .background(Palette.grayQuaternary, RoundedCornerShape(14.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = Images.Icons.bell(),
+                    contentDescription = "Notifications",
+                    modifier = Modifier.size(24.dp),
+                    tint = Palette.black
+                )
+            }
         }
     }
 }
