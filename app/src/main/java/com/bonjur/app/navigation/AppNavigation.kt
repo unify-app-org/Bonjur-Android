@@ -29,7 +29,7 @@ fun AppNavigation(
     )
 
     LaunchedEffect(UInt) {
-        defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, false)
+//        defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, false)
     }
 
     NavigationEffect(

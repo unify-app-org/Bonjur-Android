@@ -1,0 +1,49 @@
+package com.bonjur.discover.domain.useCase
+
+import android.R.attr.name
+import com.bonjur.clubs.ClubCardMocks
+import com.bonjur.clubs.ClubCardModel
+import com.bonjur.communities.CommunityCardMocks
+import com.bonjur.communities.CommunityCardModel
+import com.bonjur.designSystem.components.filter.FilterView
+import com.bonjur.designSystem.components.filter.FilterViewMocks
+import com.bonjur.discover.data.dataSources.DiscoverDataSource
+import com.bonjur.discover.domain.models.UserModel
+import com.bonjur.events.EventsCardMocks
+import com.bonjur.events.EventsCardModel
+import com.bonjur.hangouts.HangoutsCardMocks
+import com.bonjur.hangouts.HangoutsCardModel
+import javax.inject.Inject
+
+class DiscoverUseCaseImpl @Inject constructor(
+    val dataSource: DiscoverDataSource
+): DiscoverUseCase {
+
+    override suspend fun fetchUserData(): UserModel {
+        return UserModel(
+            id = 1,
+            name = "Huseyn Hasanov",
+            profileImage = null,
+            greeting = "Welcome to the world of SwiftUI"
+        )
+    }
+    override suspend fun fetchFilterData(): List<FilterView.Model> {
+        return FilterViewMocks.mockData
+    }
+
+    override suspend fun fetchCommunitiesData(): List<CommunityCardModel> {
+        return CommunityCardMocks.mock
+    }
+
+    override suspend fun fetchClubsData(): List<ClubCardModel> {
+        return ClubCardMocks.previewData
+    }
+
+    override suspend fun fetchEvents(): List<EventsCardModel> {
+        return EventsCardMocks.previewMock
+    }
+
+    override suspend fun fetchHangoutsData(): List<HangoutsCardModel> {
+        return HangoutsCardMocks.previewMock
+    }
+}

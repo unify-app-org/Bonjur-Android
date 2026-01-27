@@ -47,6 +47,7 @@ import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import com.yourapp.discover.viewmodel.FilterViewModel
+import com.yourapp.discover.viewmodel.FilterViewModelFactory
 
 @Composable
 fun FilterView(
@@ -243,11 +244,12 @@ private fun SelectSubItems(
 private fun ChipsView(
     viewModel: FilterViewModel,
     modelState: List<FilterView.Model>,
-    onFilterClick: () -> Unit
+    onFilterClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     if (modelState.isNotEmpty()) {
         LazyRow(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .background(Color.White),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -365,7 +367,7 @@ private fun ChipItem(
             else -> Palette.grayQuaternary
         },
         border = if (isSelected || hasSelectedSubItems) {
-            androidx.compose.foundation.BorderStroke(
+            BorderStroke(
                 width = 1.dp,
                 color = when {
                     hasSelectedSubItems && isSelected -> Palette.black
@@ -412,18 +414,5 @@ fun PreviewFilterView() {
                 println("Selected items: ${items.map { it.title }}")
             }
         )
-    }
-}
-
-class FilterViewModelFactory(
-    private val initialModel: List<FilterView.Model>,
-    private val onItemsSelected: (List<FilterView.Items>) -> Unit
-) : androidx.lifecycle.ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FilterViewModel::class.java)) {
-            return FilterViewModel(initialModel, onItemsSelected) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

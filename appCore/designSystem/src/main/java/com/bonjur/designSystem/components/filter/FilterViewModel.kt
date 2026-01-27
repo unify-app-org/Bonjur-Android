@@ -211,3 +211,16 @@ class FilterViewModel(
         return items.sortedBy { it.title.lowercase() }
     }
 }
+
+class FilterViewModelFactory(
+    private val initialModel: List<FilterView.Model>,
+    private val onItemsSelected: (List<FilterView.Items>) -> Unit
+) : androidx.lifecycle.ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(FilterViewModel::class.java)) {
+            return FilterViewModel(initialModel, onItemsSelected) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}

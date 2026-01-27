@@ -74,5 +74,8 @@ object Images {
 
         @Composable
         fun user() = painterResource(R.drawable.ic_user)
+
+        @Composable
+        fun bell() = painterResource(R.drawable.ic_bell)
     }
 }

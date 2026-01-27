@@ -9,5 +9,13 @@ sealed interface AppScreens {
     data object Main : AppScreens
 }
 
+sealed interface MainScreen {
+    @Serializable
+    object TabBar : MainScreen
+
+    @Serializable
+    object Discover : MainScreen
+}
+
 val Any.route: String
     get() = this::class.qualifiedName!!

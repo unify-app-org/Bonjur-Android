@@ -1,0 +1,139 @@
+//
+//  DiscoverViewModel.kt
+//  Discover
+//
+//  Created by Huseyn Hasanov on 11.01.26
+//
+
+package com.bonjur.discover.presentation
+
+import androidx.lifecycle.viewModelScope
+import com.bonjur.appfoundation.FeatureViewModel
+import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.discover.domain.useCase.DiscoverUseCase
+import com.bonjur.navigation.Navigator
+import com.bonjur.network.model.ApiException
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class DiscoverViewModel @Inject constructor(
+    private val navigator: Navigator,
+    private val useCase: DiscoverUseCase
+) : FeatureViewModel<DiscoverViewState, DiscoverAction, DiscoverSideEffect>(
+    DiscoverViewState()
+) {
+    private lateinit var inputData: DiscoverInputData
+
+    fun init(inputData: DiscoverInputData) {
+        if (::inputData.isInitialized) return
+        this.inputData = inputData
+    }
+
+    override fun handle(action: DiscoverAction) {
+        when (action) {
+            DiscoverAction.FetchData -> fetchData()
+            is DiscoverAction.ViewAllTapped -> viewAllTapped(action.type)
+        }
+    }
+
+    private fun fetchData() {
+        viewModelScope.launch {
+            fetchUserData()
+            fetchFilterData()
+            fetchCommunitiesData()
+            fetchClubsData()
+            fetchEventsData()
+            fetchHangoutsData()
+        }
+    }
+
+    private fun viewAllTapped(type: AppUIEntities.ActivityType) {
+        viewModelScope.launch {
+            when (type) {
+                AppUIEntities.ActivityType.COMMUNITY -> {
+                    // Handle community view all
+                }
+                AppUIEntities.ActivityType.EVENTS -> {
+                    navigator.navigateTo("events_list")
+                }
+                AppUIEntities.ActivityType.CLUBS -> {
+                    navigator.navigateTo("clubs_list")
+                }
+                AppUIEntities.ActivityType.HANG_OUTS -> {
+                    navigator.navigateTo("hangouts_list")
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchUserData() {
+        postEffect(DiscoverSideEffect.Loading(true))
+        try {
+            val data = useCase.fetchUserData()
+            updateState (
+                state.copy(uiModel = state.uiModel.copy(user = data))
+            )
+        } catch (e: ApiException) {
+            postEffect(DiscoverSideEffect.Error(e))
+        }
+    }
+
+    private suspend fun fetchCommunitiesData() {
+        try {
+            val data = useCase.fetchCommunitiesData()
+            updateState (
+                state.copy(uiModel = state.uiModel.copy(communities = data))
+            )
+        } catch (e: ApiException) {
+            postEffect(DiscoverSideEffect.Error(e))
+        }
+    }
+
+    private suspend fun fetchFilterData() {
+        try {
+            val data = useCase.fetchFilterData()
+            updateState (
+                state.copy(uiModel = state.uiModel.copy(filters = data))
+            )
+        } catch (e: ApiException) {
+            postEffect(DiscoverSideEffect.Error(e))
+        }
+    }
+
+    private suspend fun fetchClubsData() {
+        try {
+            val data = useCase.fetchClubsData()
+            updateState (
+                state.copy(uiModel = state.uiModel.copy(clubs = data))
+            )
+        } catch (e: ApiException) {
+            postEffect(DiscoverSideEffect.Error(e))
+        }
+    }
+
+    private suspend fun fetchEventsData() {
+        try {
+            val data = useCase.fetchEvents()
+            updateState (
+                state.copy(uiModel = state.uiModel.copy(events = data))
+            )
+        } catch (e: ApiException) {
+            postEffect(DiscoverSideEffect.Error(e))
+        }
+    }
+
+    private suspend fun fetchHangoutsData() {
+        try {
+            val data = useCase.fetchHangoutsData()
+            updateState (
+                state.copy(uiModel = state.uiModel.copy(hangouts = data))
+            )
+        } catch (e: ApiException) {
+            postEffect(DiscoverSideEffect.Error(e))
+        } finally {
+            postEffect(DiscoverSideEffect.Loading(false))
+        }
+    }
+}

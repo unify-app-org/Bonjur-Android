@@ -40,6 +40,8 @@ import androidx.compose.ui.zIndex
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
+import com.bonjur.discover.navigation.DiscoverScreens
+import com.bonjur.discover.presentation.DiscoverScreen
 
 @Composable
 fun AppTabBar() {
@@ -117,7 +119,7 @@ fun AppTabBar() {
                     .background(Color.White)
             ) {
                 when (selectedTab) {
-                    TabItem.Discover -> Text("Discover Tab", modifier = Modifier.padding(16.dp))
+                    TabItem.Discover -> DiscoverScreen()
                     TabItem.Clubs -> Text("Clubs Tab", modifier = Modifier.padding(16.dp))
                     TabItem.MyPlans -> Text("My Plans Tab", modifier = Modifier.padding(16.dp))
                     TabItem.Profile -> Text("Profile Tab", modifier = Modifier.padding(16.dp))

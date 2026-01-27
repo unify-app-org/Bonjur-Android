@@ -5,6 +5,7 @@ import androidx.navigation.compose.composable
 import com.bonjur.navigation.AppScreens
 import androidx.navigation.navigation
 import com.bonjur.app.tabBar.AppTabBar
+import com.bonjur.navigation.MainScreen
 
 fun NavGraphBuilder.mainNavGraph() {
     navigation<AppScreens.Main>(

@@ -54,7 +54,7 @@ fun AppTabView(
             currentPage = pagerState.currentPage,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(bottom = 20.dp)
+                .padding(top = 8.dp)
         )
     }
 }
