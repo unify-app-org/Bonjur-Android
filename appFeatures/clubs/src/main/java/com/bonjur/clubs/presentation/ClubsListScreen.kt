@@ -1,26 +1,26 @@
 //
-//  DiscoverScreen.kt
-//  Discover
+//  ClubsListScreen.kt
+//  Clubs
 //
-//  Created by Huseyn Hasanov on 11.01.26
+//  Created by Huseyn Hasanov on 17.01.26
 //
 
-package com.bonjur.discover.presentation
+package com.bonjur.clubs.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
-import com.bonjur.discover.presentation.components.DiscoverView
-import com.bonjur.discover.presentation.models.DiscoverInputData
-import com.bonjur.discover.presentation.models.DiscoverSideEffect
+import com.bonjur.clubs.presentation.components.ClubsListView
+import com.bonjur.clubs.presentation.models.ClubsListInputData
+import com.bonjur.clubs.presentation.models.ClubsListSideEffect
 
 @Preview(showBackground = true)
 @Composable
-fun DiscoverScreen(
-    inputData: DiscoverInputData = DiscoverInputData(),
-    viewModel: DiscoverViewModel = hiltViewModel()
+fun ClubsListScreen(
+    inputData: ClubsListInputData = ClubsListInputData(),
+    viewModel: ClubsListViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData)
@@ -30,15 +30,15 @@ fun DiscoverScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is DiscoverSideEffect.Loading -> {
+                is ClubsListSideEffect.Loading -> {
                     // Handle loading effect
                 }
-                is DiscoverSideEffect.Error -> {
+                is ClubsListSideEffect.Error -> {
                     // Handle error effect
                 }
             }
         }
     ) { store ->
-        DiscoverView(store = store)
+        ClubsListView(store = store)
     }
 }

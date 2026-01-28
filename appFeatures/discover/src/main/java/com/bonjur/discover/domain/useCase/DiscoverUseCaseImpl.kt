@@ -1,8 +1,7 @@
 package com.bonjur.discover.domain.useCase
 
-import android.R.attr.name
-import com.bonjur.clubs.ClubCardMocks
-import com.bonjur.clubs.ClubCardModel
+import com.bonjur.clubs.presentation.models.ClubCardMocks
+import com.bonjur.clubs.presentation.models.ClubCardModel
 import com.bonjur.communities.CommunityCardMocks
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.designSystem.components.filter.FilterView

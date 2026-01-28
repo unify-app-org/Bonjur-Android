@@ -5,11 +5,13 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.clubs
+package com.bonjur.clubs.presentation.components
 
 import CardBackgroundView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -19,12 +21,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.bonjur.clubs.presentation.models.ClubCardMocks
+import com.bonjur.clubs.presentation.models.ClubCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.pressTapModifier
@@ -120,7 +123,7 @@ private fun LogoImage(logoUrl: String) {
             }
         }
     ) { imageBitmap ->
-        androidx.compose.foundation.Image(
+        Image(
             bitmap = imageBitmap,
             contentDescription = "Club Logo",
             modifier = Modifier
@@ -227,7 +230,7 @@ private fun MemberAvatar(
                 memberPlaceHolder()
             }
         ) { imageBitmap ->
-            androidx.compose.foundation.Image(
+            Image(
                 bitmap = imageBitmap,
                 contentDescription = "Member $memberId",
                 modifier = Modifier
@@ -259,7 +262,7 @@ fun memberPlaceHolder() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewClubCardView() {
-    androidx.compose.foundation.lazy.LazyColumn(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),

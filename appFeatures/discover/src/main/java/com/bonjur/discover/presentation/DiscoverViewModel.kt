@@ -11,6 +11,10 @@ import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.discover.domain.useCase.DiscoverUseCase
+import com.bonjur.discover.presentation.models.DiscoverAction
+import com.bonjur.discover.presentation.models.DiscoverInputData
+import com.bonjur.discover.presentation.models.DiscoverSideEffect
+import com.bonjur.discover.presentation.models.DiscoverViewState
 import com.bonjur.navigation.Navigator
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel

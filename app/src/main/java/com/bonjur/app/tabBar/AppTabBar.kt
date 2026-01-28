@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.bonjur.clubs.presentation.ClubsListScreen
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -120,7 +121,7 @@ fun AppTabBar() {
             ) {
                 when (selectedTab) {
                     TabItem.Discover -> DiscoverScreen()
-                    TabItem.Clubs -> Text("Clubs Tab", modifier = Modifier.padding(16.dp))
+                    TabItem.Clubs -> ClubsListScreen()
                     TabItem.MyPlans -> Text("My Plans Tab", modifier = Modifier.padding(16.dp))
                     TabItem.Profile -> Text("Profile Tab", modifier = Modifier.padding(16.dp))
                 }

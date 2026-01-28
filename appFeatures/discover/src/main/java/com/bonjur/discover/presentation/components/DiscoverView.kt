@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 11.01.26
 //
 
-package com.bonjur.discover.presentation
+package com.bonjur.discover.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.bonjur.appfoundation.FeatureStore
-import com.bonjur.clubs.ClubCardModel
-import com.bonjur.clubs.ClubCardView
+import com.bonjur.clubs.presentation.models.ClubCardModel
+import com.bonjur.clubs.presentation.components.ClubCardView
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.communities.CommunityCardView
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -48,6 +48,9 @@ import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.discover.domain.models.UserModel
+import com.bonjur.discover.presentation.models.DiscoverAction
+import com.bonjur.discover.presentation.models.DiscoverSideEffect
+import com.bonjur.discover.presentation.models.DiscoverViewState
 import com.bonjur.events.EventsCardModel
 import com.bonjur.events.EventsCardView
 import com.bonjur.hangouts.HangoutsCardModel
@@ -149,7 +152,7 @@ fun DiscoverView(
                 .fillMaxWidth()
                 .align(Alignment.TopStart)
                 .zIndex(2f)
-                .padding(top = 64.dp)
+                .padding(top = profileViewHeight)
         ) {
             FilterView(
                 model = state.uiModel.filters,

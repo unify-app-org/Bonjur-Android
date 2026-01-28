@@ -61,6 +61,7 @@ android {
 dependencies {
     // app modules
     implementation(project(":appFeatures:auth"))
+    implementation(project(":appFeatures:clubs"))
     implementation(project(":appFeatures:discover"))
     implementation(project(":appCore:navigation"))
     implementation(project(":appCore:storage"))

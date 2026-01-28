@@ -5,12 +5,12 @@
 //  Created by Huseyn Hasanov on 11.01.26
 //
 
-package com.bonjur.discover.presentation
+package com.bonjur.discover.presentation.models
 
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
-import com.bonjur.clubs.ClubCardModel
+import com.bonjur.clubs.presentation.models.ClubCardModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
