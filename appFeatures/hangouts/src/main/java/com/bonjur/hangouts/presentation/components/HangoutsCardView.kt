@@ -5,10 +5,12 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.hangouts
+package com.bonjur.hangouts.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -27,6 +29,8 @@ import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.pressTapModifier
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
+import com.bonjur.hangouts.presentation.model.HangoutsCardMocks
+import com.bonjur.hangouts.presentation.model.HangoutsCardModel
 
 @Composable
 fun HangoutsCardView(
@@ -70,7 +74,7 @@ private fun TopView(model: HangoutsCardModel) {
             Surface(
                 shape = CircleShape,
                 color = if (isPrivate) Palette.white else Palette.blackHigh,
-                border = androidx.compose.foundation.BorderStroke(
+                border = BorderStroke(
                     width = 1.dp,
                     color = Palette.blackHigh
                 )
@@ -87,7 +91,7 @@ private fun TopView(model: HangoutsCardModel) {
             Surface(
                 shape = CircleShape,
                 color = Palette.white,
-                border = androidx.compose.foundation.BorderStroke(
+                border = BorderStroke(
                     width = 1.dp,
                     color = Palette.blackHigh
                 )
@@ -175,7 +179,7 @@ private fun BottomView(
 @Preview(showBackground = true)
 @Composable
 fun PreviewHangoutsCardView() {
-    androidx.compose.foundation.lazy.LazyColumn(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),

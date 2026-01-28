@@ -68,7 +68,7 @@ class DiscoverViewModel @Inject constructor(
                     navigator.navigateTo("clubs_list")
                 }
                 AppUIEntities.ActivityType.HANG_OUTS -> {
-                    navigator.navigateTo("hangouts_list")
+                    navigator.navigateTo(MainScreen.Hangouts.route)
                 }
             }
         }

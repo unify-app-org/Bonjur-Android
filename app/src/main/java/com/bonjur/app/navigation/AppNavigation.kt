@@ -12,6 +12,7 @@ import com.bonjur.app.tabBar.navigation.mainNavGraph
 import com.bonjur.auth.navigation.authNavGraph
 import com.bonjur.discover.navigation.discoverNavGraph
 import com.bonjur.events.navigation.eventsNavGraph
+import com.bonjur.hangouts.navigation.hangoutsNavGraph
 import com.bonjur.navigation.AppScreens
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
@@ -47,5 +48,6 @@ fun AppNavigation(
         mainNavGraph()
         eventsNavGraph()
         discoverNavGraph()
+        hangoutsNavGraph()
     }
 }

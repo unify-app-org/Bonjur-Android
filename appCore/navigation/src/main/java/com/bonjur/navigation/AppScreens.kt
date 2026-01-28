@@ -21,6 +21,9 @@ sealed interface MainScreen {
 
     @Serializable
     object Events : MainScreen
+
+    @Serializable
+    object Hangouts : MainScreen
 }
 
 val Any.route: String
