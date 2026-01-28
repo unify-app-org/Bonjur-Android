@@ -18,10 +18,12 @@ import com.bonjur.discover.domain.models.UserModel
 import com.bonjur.events.presentation.models.EventsCardModel
 import com.bonjur.hangouts.presentation.model.HangoutsCardModel
 import com.bonjur.network.model.ApiException
+import com.google.android.material.tabs.TabItem
 
 // MARK: - Input Data
 data class DiscoverInputData(
-    val initialValue: String = ""
+    val initialValue: String = "",
+    val onTabChange: (() -> Unit)? = null
 )
 
 // MARK: - Side Effects

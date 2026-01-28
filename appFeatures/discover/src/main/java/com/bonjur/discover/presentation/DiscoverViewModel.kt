@@ -19,6 +19,7 @@ import com.bonjur.navigation.MainScreen
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
+import com.google.android.material.tabs.TabItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -65,7 +66,7 @@ class DiscoverViewModel @Inject constructor(
                     navigator.navigateTo(MainScreen.Events.route)
                 }
                 AppUIEntities.ActivityType.CLUBS -> {
-                    navigator.navigateTo("clubs_list")
+                    inputData.onTabChange?.invoke()
                 }
                 AppUIEntities.ActivityType.HANG_OUTS -> {
                     navigator.navigateTo(MainScreen.Hangouts.route)
