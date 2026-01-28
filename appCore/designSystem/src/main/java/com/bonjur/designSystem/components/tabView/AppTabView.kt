@@ -7,10 +7,16 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppTabView(
@@ -25,17 +31,25 @@ fun AppTabView(
         pageCount = { pageCount }
     )
 
+    val coroutineScope = rememberCoroutineScope()
+    var isUpdatingFromExternal by remember { mutableStateOf(false) }
+
     LaunchedEffect(currentPage) {
-        pagerState.animateScrollToPage(currentPage)
-        if (pagerState.currentPage != currentPage) {
-            onPageChange(pagerState.currentPage)
+        if (pagerState.currentPage != currentPage && !isUpdatingFromExternal) {
+            isUpdatingFromExternal = true
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(currentPage)
+                isUpdatingFromExternal = false
+            }
         }
     }
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .collect { newPage ->
-                onPageChange(newPage)
+                if (!isUpdatingFromExternal && newPage != currentPage) {
+                    onPageChange(newPage)
+                }
             }
     }
 

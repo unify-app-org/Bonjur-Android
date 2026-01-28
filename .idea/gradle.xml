@@ -24,6 +24,7 @@
             <option value="$PROJECT_DIR$/appFeatures/communities" />
             <option value="$PROJECT_DIR$/appFeatures/discover" />
             <option value="$PROJECT_DIR$/appFeatures/events" />
+            <option value="$PROJECT_DIR$/appFeatures/groups" />
             <option value="$PROJECT_DIR$/appFeatures/hangouts" />
           </set>
         </option>

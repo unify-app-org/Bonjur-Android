@@ -43,6 +43,7 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.discover.navigation.DiscoverScreens
 import com.bonjur.discover.presentation.DiscoverScreen
+import com.bonjur.groups.presentation.GroupsListScreen
 
 @Composable
 fun AppTabBar() {
@@ -122,7 +123,7 @@ fun AppTabBar() {
                 when (selectedTab) {
                     TabItem.Discover -> DiscoverScreen()
                     TabItem.Clubs -> ClubsListScreen()
-                    TabItem.MyPlans -> Text("My Plans Tab", modifier = Modifier.padding(16.dp))
+                    TabItem.MyPlans -> GroupsListScreen()
                     TabItem.Profile -> Text("Profile Tab", modifier = Modifier.padding(16.dp))
                 }
             }
