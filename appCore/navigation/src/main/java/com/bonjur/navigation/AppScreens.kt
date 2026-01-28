@@ -15,6 +15,12 @@ sealed interface MainScreen {
 
     @Serializable
     object Discover : MainScreen
+
+    @Serializable
+    object Clubs : MainScreen
+
+    @Serializable
+    object Events : MainScreen
 }
 
 val Any.route: String

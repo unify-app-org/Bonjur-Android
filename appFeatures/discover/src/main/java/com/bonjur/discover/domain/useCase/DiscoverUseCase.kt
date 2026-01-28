@@ -4,7 +4,7 @@ import com.bonjur.clubs.presentation.models.ClubCardModel
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.discover.domain.models.UserModel
-import com.bonjur.events.EventsCardModel
+import com.bonjur.events.presentation.models.EventsCardModel
 import com.bonjur.hangouts.HangoutsCardModel
 
 interface DiscoverUseCase {

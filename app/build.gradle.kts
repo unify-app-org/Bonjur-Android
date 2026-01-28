@@ -62,6 +62,9 @@ dependencies {
     // app modules
     implementation(project(":appFeatures:auth"))
     implementation(project(":appFeatures:clubs"))
+    implementation(project(":appFeatures:events"))
+    implementation(project(":appFeatures:hangouts"))
+    implementation(project(":appFeatures:communities"))
     implementation(project(":appFeatures:discover"))
     implementation(project(":appCore:navigation"))
     implementation(project(":appCore:storage"))

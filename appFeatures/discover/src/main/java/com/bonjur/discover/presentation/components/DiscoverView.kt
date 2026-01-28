@@ -51,8 +51,8 @@ import com.bonjur.discover.domain.models.UserModel
 import com.bonjur.discover.presentation.models.DiscoverAction
 import com.bonjur.discover.presentation.models.DiscoverSideEffect
 import com.bonjur.discover.presentation.models.DiscoverViewState
-import com.bonjur.events.EventsCardModel
-import com.bonjur.events.EventsCardView
+import com.bonjur.events.presentation.models.EventsCardModel
+import com.bonjur.events.presentation.components.EventsCardView
 import com.bonjur.hangouts.HangoutsCardModel
 import com.bonjur.hangouts.HangoutsCardView
 import kotlin.collections.isNotEmpty

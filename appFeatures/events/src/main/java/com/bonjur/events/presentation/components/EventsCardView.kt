@@ -5,12 +5,15 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.events
+package com.bonjur.events.presentation.components
 
 import CardBackgroundView
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -32,6 +35,8 @@ import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.pressTapModifier
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
+import com.bonjur.events.presentation.models.EventsCardMocks
+import com.bonjur.events.presentation.models.EventsCardModel
 
 @Composable
 fun EventsCardView(
@@ -142,7 +147,7 @@ private fun CoverView(
                         )
                     }
                 ) { imageBitmap ->
-                    androidx.compose.foundation.Image(
+                    Image(
                         bitmap = imageBitmap,
                         contentDescription = "Event Cover",
                         modifier = Modifier
@@ -183,7 +188,7 @@ private fun TopChipsView(model: EventsCardModel) {
         Surface(
             shape = CircleShape,
             color = if (isPrivate) Palette.white else Palette.blackHigh,
-            border = androidx.compose.foundation.BorderStroke(
+            border = BorderStroke(
                 width = 1.dp,
                 color = Palette.blackHigh
             )
@@ -199,7 +204,7 @@ private fun TopChipsView(model: EventsCardModel) {
         Surface(
             shape = CircleShape,
             color = Palette.white,
-            border = androidx.compose.foundation.BorderStroke(
+            border = BorderStroke(
                 width = 1.dp,
                 color = Palette.blackHigh
             )
@@ -268,7 +273,7 @@ private fun BottomView(
 @Preview(showBackground = true)
 @Composable
 fun PreviewEventsCardView() {
-    androidx.compose.foundation.lazy.LazyColumn(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),

@@ -15,7 +15,9 @@ import com.bonjur.discover.presentation.models.DiscoverAction
 import com.bonjur.discover.presentation.models.DiscoverInputData
 import com.bonjur.discover.presentation.models.DiscoverSideEffect
 import com.bonjur.discover.presentation.models.DiscoverViewState
+import com.bonjur.navigation.MainScreen
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -60,7 +62,7 @@ class DiscoverViewModel @Inject constructor(
                     // Handle community view all
                 }
                 AppUIEntities.ActivityType.EVENTS -> {
-                    navigator.navigateTo("events_list")
+                    navigator.navigateTo(MainScreen.Events.route)
                 }
                 AppUIEntities.ActivityType.CLUBS -> {
                     navigator.navigateTo("clubs_list")
