@@ -77,5 +77,11 @@ object Images {
 
         @Composable
         fun bell() = painterResource(R.drawable.ic_bell)
+
+        @Composable
+        fun penLine() = painterResource(R.drawable.ic_pen_line_1)
+
+        @Composable
+        fun ellipsis02() = painterResource(R.drawable.ic_ellipsis_02)
     }
 }

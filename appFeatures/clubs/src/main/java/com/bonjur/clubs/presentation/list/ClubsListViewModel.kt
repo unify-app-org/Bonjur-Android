@@ -5,17 +5,20 @@
 //  Created by Huseyn Hasanov on 17.01.26
 //
 
-package com.bonjur.clubs.presentation
+package com.bonjur.clubs.presentation.list
 
+import android.R.attr.text
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.clubs.domain.useCase.ClubsUseCase
-import com.bonjur.clubs.presentation.models.ClubsListAction
-import com.bonjur.clubs.presentation.models.ClubsListInputData
-import com.bonjur.clubs.presentation.models.ClubsListSideEffect
-import com.bonjur.clubs.presentation.models.ClubsListViewState
+import com.bonjur.clubs.navigation.ClubsScreens
+import com.bonjur.clubs.presentation.list.models.ClubsListAction
+import com.bonjur.clubs.presentation.list.models.ClubsListInputData
+import com.bonjur.clubs.presentation.list.models.ClubsListSideEffect
+import com.bonjur.clubs.presentation.list.models.ClubsListViewState
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -38,6 +41,7 @@ class ClubsListViewModel @Inject constructor(
     override fun handle(action: ClubsListAction) {
         when (action) {
             ClubsListAction.FetchData -> fetchData()
+            is ClubsListAction.clubItemTapped -> handleSelectedItem(action.id)
             is ClubsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is ClubsListAction.FilterSelected -> handleFilterSelected(action.items)
         }
@@ -79,6 +83,12 @@ class ClubsListViewModel @Inject constructor(
         updateState(
             state.copy(uiModel = state.uiModel.copy(searchText = text))
         )
+    }
+
+    private fun handleSelectedItem(id: Int) {
+        viewModelScope.launch {
+            navigator.navigateTo(ClubsScreens.Details.route)
+        }
     }
 
     private fun handleFilterSelected(items: List<FilterView.Items>) {

@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.clubs.presentation.components
+package com.bonjur.clubs.presentation.list.components
 
 import CardBackgroundView
 import androidx.compose.foundation.Image
@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.bonjur.clubs.presentation.models.ClubCardMocks
-import com.bonjur.clubs.presentation.models.ClubCardModel
+import com.bonjur.clubs.presentation.list.models.ClubCardMocks
+import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.pressTapModifier

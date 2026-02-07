@@ -15,16 +15,20 @@ fun NavigationEffect(
         navigationFlow.collect { command ->
             when (command) {
                 is NavigationCommand.NavigateTo -> {
-                    navController.navigate(command.route)
+                    navController.navigate(command.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
 
                 is NavigationCommand.NavigateAndClearStack -> {
-                    navController.navigate(
-                        command.route,
-                        navOptions {
-                            popUpTo(navController.graph.id) { inclusive = true }
+                    navController.navigate(command.route) {
+                        popUpTo(AppScreens.Main.route) {
+                            inclusive = false
                         }
-                    )
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
 
                 is NavigationCommand.NavigateUp -> {

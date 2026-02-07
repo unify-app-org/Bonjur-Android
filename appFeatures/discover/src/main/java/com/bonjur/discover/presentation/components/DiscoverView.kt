@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.bonjur.appfoundation.FeatureStore
-import com.bonjur.clubs.presentation.models.ClubCardModel
-import com.bonjur.clubs.presentation.components.ClubCardView
+import com.bonjur.clubs.presentation.list.models.ClubCardModel
+import com.bonjur.clubs.presentation.list.components.ClubCardView
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.communities.CommunityCardView
 import com.bonjur.designSystem.commonModel.AppUIEntities

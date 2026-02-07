@@ -21,7 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
-import com.bonjur.clubs.presentation.components.ClubCardView
+import com.bonjur.clubs.presentation.list.components.ClubCardView
+import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
@@ -44,10 +45,9 @@ import kotlin.collections.isNotEmpty
 fun GroupsListView(
     store: FeatureStore<GroupsListViewState, GroupsListAction, GroupsListSideEffect>
 ) {
-    val state = store.state
 
     val pagerState = rememberPagerState(
-        initialPage = state.selectedSegment.toIndex(),
+        initialPage = store.state.selectedSegment.toIndex(),
         pageCount = { 3 }
     )
     val coroutineScope = rememberCoroutineScope()
@@ -63,7 +63,7 @@ fun GroupsListView(
             .collect { currentPage ->
                 if (!isUpdatingFromPager) {
                     val segment = GroupsListViewState.SegmentType.fromIndex(currentPage)
-                    if (state.selectedSegment != segment) {
+                    if (store.state.selectedSegment != segment) {
                         store.send(GroupsListAction.SegmentChanged(segment))
                     }
                 }
@@ -71,8 +71,8 @@ fun GroupsListView(
     }
 
     // Listen to segment changes (from picker tap)
-    LaunchedEffect(state.selectedSegment) {
-        val targetPage = state.selectedSegment.toIndex()
+    LaunchedEffect(store.state.selectedSegment) {
+        val targetPage = store.state.selectedSegment.toIndex()
         if (pagerState.currentPage != targetPage) {
             isUpdatingFromPager = true
             coroutineScope.launch {
@@ -88,7 +88,7 @@ fun GroupsListView(
             .background(Color.White)
     ) {
         TopView(
-            selectedSegment = state.selectedSegment,
+            selectedSegment = store.state.selectedSegment,
             onSegmentChanged = { segment ->
                 store.send(GroupsListAction.SegmentChanged(segment))
             },
@@ -101,9 +101,9 @@ fun GroupsListView(
             modifier = Modifier.weight(1f)
         ) { page ->
             when (page) {
-                0 -> ClubsScrollView(clubs = state.uiModel.clubs)
-                1 -> EventsScrollView(events = state.uiModel.events)
-                2 -> HangoutsScrollView(hangouts = state.uiModel.hangouts)
+                0 -> ClubsScrollView(clubs = store.state.uiModel.clubs)
+                1 -> EventsScrollView(events = store.state.uiModel.events)
+                2 -> HangoutsScrollView(hangouts = store.state.uiModel.hangouts)
             }
         }
     }
@@ -177,7 +177,7 @@ private fun TopView(
 }
 
 @Composable
-private fun ClubsScrollView(clubs: List<com.bonjur.clubs.presentation.models.ClubCardModel>) {
+private fun ClubsScrollView(clubs: List<ClubCardModel>) {
     if (clubs.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

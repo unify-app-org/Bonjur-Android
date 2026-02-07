@@ -52,4 +52,9 @@ object Palette {
     val whiteHigh = Color(0xFFFFFFFF).copy(alpha = 0.9f) // White 90%
 
     val white = Color(0xFFFFFFFF) // #FFFFFF
+
+    val whiteMedium = Color(0xFFFFFFFF).copy(alpha = 0.6f) //  White 60%
+
+    val appBlue = Color(0xFF6D8DFF) // #FFFFFF
+
 }

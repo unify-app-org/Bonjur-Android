@@ -1,7 +1,7 @@
 package com.bonjur.groups.domain.useCase
 
-import com.bonjur.clubs.presentation.models.ClubCardMocks
-import com.bonjur.clubs.presentation.models.ClubCardModel
+import com.bonjur.clubs.presentation.list.models.ClubCardMocks
+import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.communities.CommunityCardMocks
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.designSystem.components.filter.FilterView

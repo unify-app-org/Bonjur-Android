@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 17.01.26
 //
 
-package com.bonjur.clubs.presentation.components
+package com.bonjur.clubs.presentation.list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,9 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.bonjur.appfoundation.FeatureStore
-import com.bonjur.clubs.presentation.models.ClubsListAction
-import com.bonjur.clubs.presentation.models.ClubsListSideEffect
-import com.bonjur.clubs.presentation.models.ClubsListViewState
+import com.bonjur.clubs.presentation.list.models.ClubsListAction
+import com.bonjur.clubs.presentation.list.models.ClubsListSideEffect
+import com.bonjur.clubs.presentation.list.models.ClubsListViewState
 import com.bonjur.designSystem.components.emptyView.AppEmptyModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.filter.FilterView
@@ -67,7 +67,7 @@ fun ClubsListView(
                         ClubCardView(
                             model = club,
                             onTap = {
-
+                                store.send(ClubsListAction.clubItemTapped(id = club.id))
                             }
                         )
                     }

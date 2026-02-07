@@ -10,7 +10,7 @@ package com.bonjur.discover.presentation.models
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
-import com.bonjur.clubs.presentation.models.ClubCardModel
+import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -18,7 +18,6 @@ import com.bonjur.discover.domain.models.UserModel
 import com.bonjur.events.presentation.models.EventsCardModel
 import com.bonjur.hangouts.presentation.model.HangoutsCardModel
 import com.bonjur.network.model.ApiException
-import com.google.android.material.tabs.TabItem
 
 // MARK: - Input Data
 data class DiscoverInputData(

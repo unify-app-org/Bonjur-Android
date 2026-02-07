@@ -116,4 +116,13 @@ object AppUIEntities {
         CLUBS,
         HANG_OUTS
     }
+
+    enum class UserActivityRole(val title: String) {
+        MEMBER("Members"),
+        PRESIDENT("President"),
+        VISE_PRESIDENT("Vise president"),
+        EVENT_CREATOR("Event creators"),
+        NOT_JOINED("")
+    }
+
 }

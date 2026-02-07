@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.clubs.presentation.models
+package com.bonjur.clubs.presentation.list.models
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import java.util.UUID

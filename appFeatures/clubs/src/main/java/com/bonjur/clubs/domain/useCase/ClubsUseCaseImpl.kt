@@ -1,11 +1,12 @@
 package com.bonjur.clubs.domain.useCase
 
 import com.bonjur.clubs.data.dataSource.ClubsDataSource
-import com.bonjur.clubs.presentation.models.ClubCardMocks
-import com.bonjur.clubs.presentation.models.ClubCardModel
+import com.bonjur.clubs.domain.models.ClubsDetails
+import com.bonjur.clubs.domain.models.ClubsDetailsMockData
+import com.bonjur.clubs.presentation.list.models.ClubCardMocks
+import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
-import com.yourapp.discover.viewmodel.FilterViewModel
 import javax.inject.Inject
 
 class ClubsUseCaseImpl @Inject constructor(
@@ -17,5 +18,9 @@ class ClubsUseCaseImpl @Inject constructor(
 
     override suspend fun fetchFilterData(): List<FilterView.Model> {
         return FilterViewMocks.mockData
+    }
+
+    override suspend fun fetchClubsDetails(clubId: Int): ClubsDetails.UIModel {
+        return ClubsDetailsMockData
     }
 }

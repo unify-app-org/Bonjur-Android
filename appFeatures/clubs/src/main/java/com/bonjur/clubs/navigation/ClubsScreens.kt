@@ -4,5 +4,7 @@ import kotlinx.serialization.Serializable
 
 sealed interface ClubsScreens {
     @Serializable
+    data object List : ClubsScreens
+    @Serializable
     data object Details : ClubsScreens
 }

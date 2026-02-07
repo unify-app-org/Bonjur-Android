@@ -1,15 +1,13 @@
 package com.bonjur.app.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.bonjur.app.tabBar.navigation.mainNavGraph
 import com.bonjur.auth.navigation.authNavGraph
+import com.bonjur.clubs.navigation.clubsNavGraph
 import com.bonjur.discover.navigation.discoverNavGraph
 import com.bonjur.events.navigation.eventsNavGraph
 import com.bonjur.groups.navigation.groupsNavGraph
@@ -17,7 +15,6 @@ import com.bonjur.hangouts.navigation.hangoutsNavGraph
 import com.bonjur.navigation.AppScreens
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
-import com.bonjur.navigation.route
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
 
@@ -51,5 +48,6 @@ fun AppNavigation(
         discoverNavGraph()
         hangoutsNavGraph()
         groupsNavGraph()
+        clubsNavGraph()
     }
 }
