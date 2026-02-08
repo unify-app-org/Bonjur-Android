@@ -31,8 +31,8 @@ import com.bonjur.designSystem.components.serach.SearchView
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
-import com.bonjur.events.presentation.components.EventsCardView
-import com.bonjur.events.presentation.models.EventsCardModel
+import com.bonjur.events.presentation.list.components.EventsCardView
+import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.groups.presentation.models.GroupsListAction
 import com.bonjur.groups.presentation.models.GroupsListSideEffect
 import com.bonjur.groups.presentation.models.GroupsListViewState

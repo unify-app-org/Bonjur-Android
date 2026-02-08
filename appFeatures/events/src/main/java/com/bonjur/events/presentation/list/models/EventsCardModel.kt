@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.events.presentation.models
+package com.bonjur.events.presentation.list.models
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import java.util.UUID

@@ -7,11 +7,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.bonjur.app.tabBar.navigation.mainNavGraph
 import com.bonjur.auth.navigation.authNavGraph
-import com.bonjur.clubs.navigation.clubsNavGraph
-import com.bonjur.discover.navigation.discoverNavGraph
-import com.bonjur.events.navigation.eventsNavGraph
-import com.bonjur.groups.navigation.groupsNavGraph
-import com.bonjur.hangouts.navigation.hangoutsNavGraph
 import com.bonjur.navigation.AppScreens
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
@@ -43,11 +38,6 @@ fun AppNavigation(
         startDestination = if (isAuthenticated) AppScreens.Main else AppScreens.Auth
     ) {
         authNavGraph()
-        mainNavGraph()
-        eventsNavGraph()
-        discoverNavGraph()
-        hangoutsNavGraph()
-        groupsNavGraph()
-        clubsNavGraph()
+        mainNavGraph(navigator)
     }
 }

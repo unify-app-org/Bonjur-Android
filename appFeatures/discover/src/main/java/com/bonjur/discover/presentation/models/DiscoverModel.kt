@@ -15,7 +15,7 @@ import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.discover.domain.models.UserModel
-import com.bonjur.events.presentation.models.EventsCardModel
+import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.hangouts.presentation.model.HangoutsCardModel
 import com.bonjur.network.model.ApiException
 
@@ -54,4 +54,7 @@ data class DiscoverViewState(
 sealed class DiscoverAction : FeatureAction {
     object FetchData : DiscoverAction()
     data class ViewAllTapped(val type: AppUIEntities.ActivityType) : DiscoverAction()
+    data class CLubItemTapped(val clubId: Int) : DiscoverAction()
+    data class EventItemTapped(val eventId: String) : DiscoverAction()
+
 }

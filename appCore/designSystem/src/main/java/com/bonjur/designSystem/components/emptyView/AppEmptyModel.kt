@@ -10,7 +10,7 @@ package com.bonjur.designSystem.components.emptyView
 import androidx.compose.ui.graphics.painter.Painter
 
 data class AppEmptyModel(
-    val icon: Painter,
+    val icon: Painter?,
     val text: String,
     val buttonTitle: String
 )

@@ -51,8 +51,8 @@ import com.bonjur.discover.domain.models.UserModel
 import com.bonjur.discover.presentation.models.DiscoverAction
 import com.bonjur.discover.presentation.models.DiscoverSideEffect
 import com.bonjur.discover.presentation.models.DiscoverViewState
-import com.bonjur.events.presentation.models.EventsCardModel
-import com.bonjur.events.presentation.components.EventsCardView
+import com.bonjur.events.presentation.list.models.EventsCardModel
+import com.bonjur.events.presentation.list.components.EventsCardView
 import com.bonjur.hangouts.presentation.model.HangoutsCardModel
 import com.bonjur.hangouts.presentation.components.HangoutsCardView
 import kotlin.collections.isNotEmpty
@@ -111,7 +111,7 @@ fun DiscoverView(
                 ClubsView(
                     screenWidth = screenWidth,
                     clubs = state.uiModel.clubs,
-                    onClubTap = { /* Handle tap */ },
+                    onClubTap = { item -> store.send(DiscoverAction.CLubItemTapped(item.id)) },
                     onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.CLUBS)) }
                 )
 
@@ -119,7 +119,7 @@ fun DiscoverView(
                     screenWidth = screenWidth,
                     events = state.uiModel.events,
                     clubs = state.uiModel.clubs,
-                    onEventTap = { /* Handle tap */ },
+                    onEventTap = { item -> store.send(DiscoverAction.EventItemTapped(item.id)) },
                     onButtonTap = { /* Handle button */ },
                     onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.EVENTS)) }
                 )

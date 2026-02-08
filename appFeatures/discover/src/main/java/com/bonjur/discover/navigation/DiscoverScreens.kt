@@ -6,4 +6,6 @@ sealed interface DiscoverScreens {
     @Serializable
     data object Discover : DiscoverScreens
 
+    @Serializable
+    data object EventsList : DiscoverScreens
 }

@@ -15,15 +15,17 @@ import com.bonjur.appfoundation.FeatureScreen
 import com.bonjur.hangouts.presentation.components.HangoutsListView
 import com.bonjur.hangouts.presentation.model.HangoutsListInputData
 import com.bonjur.hangouts.presentation.model.HangoutsListSideEffect
+import com.bonjur.navigation.Navigator
 
-@Preview(showBackground = true)
+
 @Composable
 fun HangoutsListScreen(
     inputData: HangoutsListInputData = HangoutsListInputData(),
+    navigator: Navigator,
     viewModel: HangoutsListViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
-        viewModel.init(inputData)
+        viewModel.init(inputData, navigator)
     }
 
     FeatureScreen(

@@ -23,16 +23,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HangoutsListViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val useCase: HangoutsUseCase
 ) : FeatureViewModel<HangoutsListViewState, HangoutsListAction, HangoutsListSideEffect>(
     HangoutsListViewState()
 ) {
     private lateinit var inputData: HangoutsListInputData
+    private lateinit var navigator: Navigator
 
-    fun init(inputData: HangoutsListInputData) {
+    fun init(inputData: HangoutsListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
+        this.navigator = navigator
     }
 
     override fun handle(action: HangoutsListAction) {

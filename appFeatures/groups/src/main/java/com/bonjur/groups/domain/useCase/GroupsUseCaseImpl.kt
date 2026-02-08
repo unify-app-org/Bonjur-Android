@@ -6,8 +6,8 @@ import com.bonjur.communities.CommunityCardMocks
 import com.bonjur.communities.CommunityCardModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
-import com.bonjur.events.presentation.models.EventsCardMocks
-import com.bonjur.events.presentation.models.EventsCardModel
+import com.bonjur.events.presentation.list.models.EventsCardMocks
+import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.groups.data.dataSource.GroupsDataSource
 import com.bonjur.hangouts.presentation.model.HangoutsCardMocks
 import com.bonjur.hangouts.presentation.model.HangoutsCardModel

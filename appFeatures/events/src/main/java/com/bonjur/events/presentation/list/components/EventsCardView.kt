@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.events.presentation.components
+package com.bonjur.events.presentation.list.components
 
 import CardBackgroundView
 import androidx.compose.foundation.BorderStroke
@@ -35,8 +35,8 @@ import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.pressTapModifier
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
-import com.bonjur.events.presentation.models.EventsCardMocks
-import com.bonjur.events.presentation.models.EventsCardModel
+import com.bonjur.events.presentation.list.models.EventsCardMocks
+import com.bonjur.events.presentation.list.models.EventsCardModel
 
 @Composable
 fun EventsCardView(

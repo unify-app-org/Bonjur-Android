@@ -11,7 +11,7 @@ import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
-import com.bonjur.events.presentation.models.EventsCardModel
+import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.hangouts.presentation.model.HangoutsCardModel
 import com.bonjur.network.model.ApiException
 

@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ClubDetailsViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val dependencies: Dependencies
 ) : FeatureViewModel<ClubDetailsViewState, ClubDetailsAction, ClubDetailsSideEffect>(
     ClubDetailsViewState()
@@ -22,10 +21,11 @@ class ClubDetailsViewModel @Inject constructor(
     )
 
     private lateinit var inputData: ClubDetailsInputData
-
-    fun init(inputData: ClubDetailsInputData) {
+    private lateinit var navigator: Navigator
+    fun init(inputData: ClubDetailsInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
+        this.navigator = navigator
         fetchData()
     }
 

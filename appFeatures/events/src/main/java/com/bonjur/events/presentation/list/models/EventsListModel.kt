@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 22.01.26
 //
 
-package com.bonjur.events.presentation.models
+package com.bonjur.events.presentation.list.models
 
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
@@ -41,4 +41,5 @@ sealed class EventsListAction : FeatureAction {
     object Dismiss: EventsListAction()
     data class SearchTextChanged(val text: String) : EventsListAction()
     data class FilterSelected(val items: List<FilterView.Items>) : EventsListAction()
+    data class EventItemTapped(val id: String): EventsListAction()
 }

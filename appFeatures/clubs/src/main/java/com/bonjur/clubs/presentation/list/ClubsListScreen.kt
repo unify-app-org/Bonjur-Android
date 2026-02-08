@@ -9,21 +9,22 @@ package com.bonjur.clubs.presentation.list
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
 import com.bonjur.clubs.presentation.list.components.ClubsListView
 import com.bonjur.clubs.presentation.list.models.ClubsListInputData
 import com.bonjur.clubs.presentation.list.models.ClubsListSideEffect
+import com.bonjur.navigation.Navigator
 
-@Preview(showBackground = true)
+
 @Composable
 fun ClubsListScreen(
     inputData: ClubsListInputData = ClubsListInputData(),
+    navigator: Navigator,
     viewModel: ClubsListViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
-        viewModel.init(inputData)
+        viewModel.init(inputData, navigator)
     }
 
     FeatureScreen(

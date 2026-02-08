@@ -9,39 +9,43 @@ package com.bonjur.discover.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
+import com.bonjur.clubs.navigation.ClubsScreens
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.discover.domain.useCase.DiscoverUseCase
 import com.bonjur.discover.presentation.models.DiscoverAction
 import com.bonjur.discover.presentation.models.DiscoverInputData
 import com.bonjur.discover.presentation.models.DiscoverSideEffect
 import com.bonjur.discover.presentation.models.DiscoverViewState
+import com.bonjur.events.navigation.EventsScreens
 import com.bonjur.navigation.MainScreen
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
-import com.google.android.material.tabs.TabItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val useCase: DiscoverUseCase
 ) : FeatureViewModel<DiscoverViewState, DiscoverAction, DiscoverSideEffect>(
     DiscoverViewState()
 ) {
     private lateinit var inputData: DiscoverInputData
+    private lateinit var navigator: Navigator
 
-    fun init(inputData: DiscoverInputData) {
+    fun init(inputData: DiscoverInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
+        this.navigator = navigator
     }
 
     override fun handle(action: DiscoverAction) {
         when (action) {
             DiscoverAction.FetchData -> fetchData()
             is DiscoverAction.ViewAllTapped -> viewAllTapped(action.type)
+            is DiscoverAction.CLubItemTapped -> clubItemTapped(action.clubId)
+            is DiscoverAction.EventItemTapped -> eventItemTapped(action.eventId)
         }
     }
 
@@ -53,6 +57,18 @@ class DiscoverViewModel @Inject constructor(
             fetchClubsData()
             fetchEventsData()
             fetchHangoutsData()
+        }
+    }
+
+    private fun clubItemTapped(id: Int) {
+        viewModelScope.launch {
+            navigator.navigateTo(ClubsScreens.Details.route)
+        }
+    }
+
+    private fun eventItemTapped(id: String) {
+        viewModelScope.launch {
+            navigator.navigateTo(EventsScreens.Details.route)
         }
     }
 

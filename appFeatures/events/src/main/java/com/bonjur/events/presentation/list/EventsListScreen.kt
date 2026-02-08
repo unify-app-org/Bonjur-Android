@@ -5,25 +5,25 @@
 //  Created by Huseyn Hasanov on 22.01.26
 //
 
-package com.bonjur.events.presentation
+package com.bonjur.events.presentation.list
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
-import com.bonjur.events.presentation.components.EventsListView
-import com.bonjur.events.presentation.models.EventsListInputData
-import com.bonjur.events.presentation.models.EventsListSideEffect
+import com.bonjur.events.presentation.list.components.EventsListView
+import com.bonjur.events.presentation.list.models.EventsListInputData
+import com.bonjur.events.presentation.list.models.EventsListSideEffect
+import com.bonjur.navigation.Navigator
 
-@Preview(showBackground = true)
 @Composable
 fun EventsListScreen(
     inputData: EventsListInputData = EventsListInputData(),
+    navigator: Navigator,
     viewModel: EventsListViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
-        viewModel.init(inputData)
+        viewModel.init(inputData, navigator)
     }
 
     FeatureScreen(

@@ -1,24 +1,22 @@
-package com.bonjur.clubs.domain.models
+package com.bonjur.events.domain.models
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
-import com.bonjur.events.presentation.list.models.EventsCardMocks
-import com.bonjur.events.presentation.list.models.EventsCardModel
+import com.bonjur.designSystem.components.attachments.AttachmentItemModel
 import java.util.UUID
 
-object ClubsDetails {
+object EventsDetails {
 
     data class UIModel(
         val name: String,
         val communityName: String,
         val membersCount: Int,
-        val logo: String?,
         val coverImage: String?,
         val coverColorType: AppUIEntities.BackgroundType,
         val userActivityType: AppUIEntities.UserActivityRole,
         val accessType: AppUIEntities.AccessType,
         val tags: List<AppUIEntities.Tags>,
         val infoData: List<Info>,
-        val eventsData: List<EventsCardModel>
+        val attachments: List<AttachmentItemModel>
     )
 
     data class Info(
@@ -35,11 +33,10 @@ object ClubsDetails {
     )
 }
 
-val ClubsDetailsMockData = ClubsDetails.UIModel(
-    name = "Football Club",
-    communityName = "UFAZ community",
+val EventsDetailsMockData = EventsDetails.UIModel(
+    name = "Basketball Event",
+    communityName = "Sports Club",
     membersCount = 12,
-    logo = null,
     coverImage = null,
     coverColorType = AppUIEntities.BackgroundType.Secondary,
     userActivityType = AppUIEntities.UserActivityRole.NOT_JOINED,
@@ -51,49 +48,49 @@ val ClubsDetailsMockData = ClubsDetails.UIModel(
         AppUIEntities.Tags(id = 4, type = "SPORT", title = "Basketball")
     ),
     infoData = listOf(
-        ClubsDetails.Info(
+        EventsDetails.Info(
             title = "About",
             subItems = listOf(
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = null,
                     description = "I want to have a coffee and then go to the film I have one free ticket to the concert for the Sunday evening if someone want just contact."
                 )
             )
         ),
-        ClubsDetails.Info(
+        EventsDetails.Info(
             title = "Event info",
             subItems = listOf(
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = "Created/Updated Data",
                     description = "30 noyabr 2025"
                 ),
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = "Owner contact",
                     description = "+994 123 45 67"
                 ),
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = "Capacity",
                     description = "161/200 members"
                 ),
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = "Rules",
                     description = "Everyone can come"
                 ),
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = "Location",
                     description = "Cafetaria, 2nd floor"
                 )
             )
         ),
-        ClubsDetails.Info(
+        EventsDetails.Info(
             title = "Link",
             subItems = listOf(
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = "Whatsapp Link",
                     description = "https://www.ufaz.az/en",
                     isLink = true
                 ),
-                ClubsDetails.SubInfo(
+                EventsDetails.SubInfo(
                     title = "Telegram link",
                     description = "https://www.ufaz.az/en",
                     isLink = true
@@ -101,5 +98,18 @@ val ClubsDetailsMockData = ClubsDetails.UIModel(
             )
         )
     ),
-    eventsData = EventsCardMocks.previewMock
+    attachments = listOf(
+        AttachmentItemModel(
+            id = 1,
+            name = "Career_fair_2025.pdf",
+            size = "16 kb",
+            type = AttachmentItemModel.AttachmentType.PDF
+        ),
+        AttachmentItemModel(
+            id = 2,
+            name = "Career_fair_2025.image",
+            size = "14 mb",
+            type = AttachmentItemModel.AttachmentType.PDF
+        )
+    )
 )

@@ -26,16 +26,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ClubsListViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val useCase: ClubsUseCase
 ) : FeatureViewModel<ClubsListViewState, ClubsListAction, ClubsListSideEffect>(
     ClubsListViewState()
 ) {
     private lateinit var inputData: ClubsListInputData
+    private lateinit var navigator: Navigator
 
-    fun init(inputData: ClubsListInputData) {
+    fun init(inputData: ClubsListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
+        this.navigator = navigator
     }
 
     override fun handle(action: ClubsListAction) {

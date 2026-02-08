@@ -1,4 +1,4 @@
-package com.bonjur.clubs.presentation.components
+package com.bonjur.events.presentation.details.components
 
 import CardBackgroundView
 import androidx.compose.animation.AnimatedVisibility
@@ -6,10 +6,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,9 +21,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -35,10 +34,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.bonjur.appfoundation.FeatureStore
-import com.bonjur.clubs.domain.models.ClubsDetails
-import com.bonjur.clubs.presentation.model.*
+import com.bonjur.events.domain.models.EventsDetails
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.InfoContainer.AppInfoContainer
+import com.bonjur.designSystem.components.attachments.AttachmentItemModel
+import com.bonjur.designSystem.components.attachments.AttachmentItemView
 import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.components.button.AppButtonModel
 import com.bonjur.designSystem.components.button.AppButtonSize
@@ -51,21 +51,22 @@ import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
-import com.bonjur.events.presentation.list.components.EventsCardView
-import com.bonjur.events.presentation.list.models.EventsCardModel
+import com.bonjur.events.presentation.details.model.EventDetailsAction
+import com.bonjur.events.presentation.details.model.EventDetailsSideEffect
+import com.bonjur.events.presentation.details.model.EventDetailsViewState
 import kotlinx.coroutines.launch
+import kotlin.collections.isNotEmpty
 import kotlin.math.max
 
 @Composable
-fun ClubDetailsView(
-    store: FeatureStore<ClubDetailsViewState, ClubDetailsAction, ClubDetailsSideEffect>
+fun EventDetailsView(
+    store: FeatureStore<EventDetailsViewState, EventDetailsAction, EventDetailsSideEffect>
 ) {
-
     val density = LocalDensity.current
     val listState = rememberLazyListState()
     val pagerState = rememberPagerState(
         initialPage = store.state.selectedSegment.toIndex(),
-        pageCount = { 3 }
+        pageCount = { 2 }
     )
     val coroutineScope = rememberCoroutineScope()
 
@@ -81,9 +82,9 @@ fun ClubDetailsView(
         snapshotFlow { pagerState.currentPage }
             .collect { currentPage ->
                 if (!isUpdatingFromPager) {
-                    val segment = ClubDetailsViewState.SegmentTypes.fromIndex(index = currentPage)
+                    val segment = EventDetailsViewState.SegmentTypes.fromIndex(index = currentPage)
                     if (store.state.selectedSegment != segment) {
-                        store.send(ClubDetailsAction.SegmentChanged(segment))
+                        store.send(EventDetailsAction.SegmentChanged(segment))
                     }
                 }
             }
@@ -118,8 +119,7 @@ fun ClubDetailsView(
         // Main content
         LazyColumn(
             state = listState,
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
         ) {
             // Stretchable header
             item(key = "header") {
@@ -134,19 +134,11 @@ fun ClubDetailsView(
                 )
             }
 
-            // Logo view
-            item(key = "logo") {
-                LogoView(
-                    logoUrl = store.state.uiModel?.logo,
-                    onEditClick = { /* Handle edit */ },
-                    onCameraClick = { /* Handle camera */ }
-                )
-            }
-
-            // Club info
-            item(key = "club_info") {
-                ClubInfoView(
+            // Event info
+            item(key = "event_info") {
+                EventInfoView(
                     uiModel = store.state.uiModel,
+                    isFileUploadReachedMaxLimit = store.state.isFileUploadReachedMaxLimit,
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -161,7 +153,7 @@ fun ClubDetailsView(
                         .fillMaxWidth()
                         .background(Color.White)
                         .padding(horizontal = 16.dp)
-                        .padding(top = 20.dp)
+                        .padding(top = 16.dp)
                         .onGloballyPositioned { coordinates ->
                             val yPosition = coordinates.positionInRoot().y
                             val navBarBottom = with(density) { navBarHeight.toPx() }
@@ -172,10 +164,8 @@ fun ClubDetailsView(
                         SegmentPicker(
                             selectedSegment = store.state.selectedSegment,
                             onSegmentSelected = { segment ->
-                                store.send(ClubDetailsAction.SegmentChanged(segment))
-                            },
-                            modifier = Modifier
-                                .offset(y = (-26).dp)
+                                store.send(EventDetailsAction.SegmentChanged(segment))
+                            }
                         )
                     } else {
                         Spacer(modifier = Modifier.height(40.dp))
@@ -183,15 +173,13 @@ fun ClubDetailsView(
                 }
             }
 
-            // Tab content with dynamic height
+            // Tab content
             item(key = "tabs") {
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier
-                        .offset(y = (-26).dp)
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) { page ->
-                    val segment = ClubDetailsViewState.SegmentTypes.values()[page]
+                    val segment = EventDetailsViewState.SegmentTypes.values()[page]
 
                     Column(
                         modifier = Modifier
@@ -199,13 +187,10 @@ fun ClubDetailsView(
                             .padding(horizontal = 16.dp)
                     ) {
                         when (segment) {
-                            ClubDetailsViewState.SegmentTypes.ABOUT ->
+                            EventDetailsViewState.SegmentTypes.ABOUT ->
                                 InfoTab(store.state.uiModel?.infoData ?: emptyList())
 
-                            ClubDetailsViewState.SegmentTypes.EVENTS ->
-                                EventsTab(store.state.uiModel?.eventsData ?: emptyList())
-
-                            ClubDetailsViewState.SegmentTypes.MEMBERS ->
+                            EventDetailsViewState.SegmentTypes.MEMBERS ->
                                 MembersTab()
                         }
                     }
@@ -223,13 +208,13 @@ fun ClubDetailsView(
             isScrolled = isScrolled,
             isNameVisible = isNameVisible,
             isSegmentSticky = isSegmentSticky,
-            clubName = store.state.uiModel?.name ?: "",
+            eventName = store.state.uiModel?.name ?: "",
             selectedSegment = store.state.selectedSegment,
-            onBackClick = { store.send(ClubDetailsAction.BackTapped) },
+            onBackClick = { store.send(EventDetailsAction.BackTapped) },
             onMoreClick = { /* Handle more */ },
             onCameraClick = { /* Handle camera */ },
             onSegmentSelected = { segment ->
-                store.send(ClubDetailsAction.SegmentChanged(segment))
+                store.send(EventDetailsAction.SegmentChanged(segment))
             },
             onNavBarPositioned = { height ->
                 navBarHeight = height
@@ -258,7 +243,6 @@ fun ClubDetailsView(
     }
 }
 
-
 @Composable
 private fun StretchableHeader(
     imageUrl: String?,
@@ -266,7 +250,7 @@ private fun StretchableHeader(
     scrollOffset: Int
 ) {
     val density = LocalDensity.current
-    val baseHeight = 200.dp
+    val baseHeight = 164.dp
     val pullDown = max(-scrollOffset, 0)
     val extraHeight = with(density) { pullDown.toDp() }
     val totalHeight = baseHeight + extraHeight
@@ -283,7 +267,7 @@ private fun StretchableHeader(
             contentScale = ContentScale.Crop,
             placeholder = {
                 CardBackgroundView(
-                    cardType = AppUIEntities.ActivityType.CLUBS,
+                    cardType = AppUIEntities.ActivityType.EVENTS,
                     bgColorType = colorType ?: AppUIEntities.BackgroundType.Primary,
                     modifier = Modifier.fillMaxSize(),
                     cornerRadius = 0.dp
@@ -291,7 +275,7 @@ private fun StretchableHeader(
             },
             error = {
                 CardBackgroundView(
-                    cardType = AppUIEntities.ActivityType.CLUBS,
+                    cardType = AppUIEntities.ActivityType.EVENTS,
                     bgColorType = colorType ?: AppUIEntities.BackgroundType.Primary,
                     modifier = Modifier.fillMaxSize(),
                     cornerRadius = 0.dp
@@ -315,108 +299,42 @@ private fun StretchableHeader(
 }
 
 @Composable
-private fun LogoView(
-    logoUrl: String?,
-    onEditClick: () -> Unit,
-    onCameraClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .offset(y = (-44).dp)
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Bottom
-    ) {
-        Box {
-            Box(
-                modifier = Modifier
-                    .size(88.dp)
-                    .background(Palette.grayQuaternary, RoundedCornerShape(20.dp))
-                    .border(
-                        width = 3.dp,
-                        color = Palette.grayTeritary.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(20.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                CachedAsyncImage(
-                    url = logoUrl,
-                    modifier = Modifier
-                        .size(88.dp)
-                        .clip(RoundedCornerShape(20.dp)),
-                    contentScale = ContentScale.Crop,
-                    placeholder = {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            tint = Palette.blackMedium,
-                            modifier = Modifier.size(44.dp)
-                        )
-                    },
-                    error = {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            tint = Palette.blackMedium,
-                            modifier = Modifier.size(44.dp)
-                        )
-                    }
-                )
-            }
-
-            // Camera button
-            Box(
-                modifier = Modifier
-                    .offset(x = 4.dp, y = 4.dp)
-                    .align(Alignment.BottomEnd)
-                    .background(Palette.grayQuaternary, CircleShape)
-                    .border(2.dp, Palette.whiteHigh, CircleShape)
-                    .clickable(onClick = onCameraClick)
-                    .padding(7.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = Images.Icons.camera(),
-                    contentDescription = "Camera",
-                    tint = Palette.blackMedium,
-                    modifier = Modifier.size(18.dp)  // Exact 18x18 icon
-                )
-            }
-        }
-
-        IconButton(onClick = onEditClick) {
-            Icon(
-                painter = Images.Icons.penLine(),
-                contentDescription = "Edit",
-                tint = Palette.blackHigh
-            )
-        }
-    }
-}
-
-@Composable
-private fun ClubInfoView(
-    uiModel: ClubsDetails.UIModel?,
+private fun EventInfoView(
+    uiModel: EventsDetails.UIModel?,
+    isFileUploadReachedMaxLimit: Boolean,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
         modifier = Modifier
-            .offset(y= (-26).dp)
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Club name
-        Text(
-            text = uiModel?.name ?: "",
-            style = AppTypography.TitleL.extraBold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    onNamePositioned(coordinates.positionInRoot().y)
-                }
-        )
+        // Event name with edit button
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = uiModel?.name ?: "",
+                style = AppTypography.TitleL.extraBold,
+                modifier = Modifier
+                    .weight(1f)
+                    .onGloballyPositioned { coordinates ->
+                        onNamePositioned(coordinates.positionInRoot().y)
+                    }
+            )
+
+            IconButton(onClick = { /* Handle edit */ }) {
+                Icon(
+                    painter = Images.Icons.penLine(),
+                    contentDescription = "Edit",
+                    tint = Palette.blackHigh
+                )
+            }
+        }
 
         // Access type and community
         Row(
@@ -427,7 +345,7 @@ private fun ClubInfoView(
             Surface(
                 shape = CircleShape,
                 color = if (isPrivate) Palette.white else Palette.blackHigh,
-                border = androidx.compose.foundation.BorderStroke(
+                border = BorderStroke(
                     0.5.dp,
                     Palette.blackHigh
                 )
@@ -457,38 +375,113 @@ private fun ClubInfoView(
             color = Palette.blackHigh
         )
 
-        // Tags
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            uiModel?.tags?.forEach { item ->
-                Surface(
-                    shape = CircleShape,
-                    color = Palette.grayQuaternary
-                ) {
-                    Text(
-                        text = "#${item.title.lowercase()}",
-                        style = AppTypography.TextSm.regular,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                    )
+        // Tags and reminder button
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            // Tags
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                uiModel?.tags?.forEach { item ->
+                    Surface(
+                        shape = CircleShape,
+                        color = Palette.grayQuaternary
+                    ) {
+                        Text(
+                            text = "#${item.title.lowercase()}",
+                            style = AppTypography.TextSm.regular,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
                 }
+            }
+
+            // Reminder button
+            AppButton(
+                title = "Reminder",
+                model = AppButtonModel(
+                    contentSize = ContentSize.Fill,
+                    size = AppButtonSize.Medium
+                ),
+                onClick = { /* Handle reminder */ }
+            )
+        }
+
+        // Attachments
+        AttachmentsView(
+            attachments = uiModel?.attachments ?: emptyList(),
+            isFileUploadReachedMaxLimit = isFileUploadReachedMaxLimit
+        )
+    }
+}
+
+@Composable
+private fun AttachmentsView(
+    attachments: List<AttachmentItemModel>,
+    isFileUploadReachedMaxLimit: Boolean
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Header
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = "Attachments",
+                style = AppTypography.HeadingXL.medium,
+                color = Palette.black
+            )
+
+            if (attachments.isNotEmpty()) {
+                Text(
+                    text = "You can upload files up to 15 MB total for this event.",
+                    style = AppTypography.BodyTextSm.regular,
+                    color = Palette.blackMedium
+                )
             }
         }
 
-        // Create event button
-        AppButton(
-            title = "Create new event +",
-            model = AppButtonModel(
-                type = ButtonType.Secondary,
-                contentSize = ContentSize.Fill,
-                size = AppButtonSize.Medium
-            ),
-            onClick = { /* Handle create event */ }
-        )
+        if (attachments.isNotEmpty()) {
+            // Attachment items
+            attachments.forEach { attachment ->
+                AttachmentItemView(
+                    model = AttachmentItemModel(
+                        id = attachment.id,
+                        name = attachment.name,
+                        size = attachment.size,
+                        type = attachment.type,
+                        canEdit = true
+                    ),
+                    onDeleteClick = { /* Handle delete attachment with id: ${attachment.id} */ }
+                )
+            }
+
+            // Add button (if not reached limit)
+            if (!isFileUploadReachedMaxLimit) {
+                AppButton(
+                    title = "Add +",
+                    model = AppButtonModel(
+                        type = ButtonType.Secondary,
+                        contentSize = ContentSize.Fill,
+                        size = AppButtonSize.Small
+                    ),
+                    onClick = { /* Handle add attachment */ }
+                )
+            }
+        } else {
+            // Empty state
+            AppEmptyView(
+                model = AppEmptyModel(
+                    icon = null,
+                    text = "You can upload files up to 15 MB total for this event.",
+                    buttonTitle = "Add +"
+                ),
+                onButtonClick = { /* Handle add attachment */ }
+            )
+        }
     }
 }
 
@@ -497,12 +490,12 @@ private fun NavigationOverlay(
     isScrolled: Boolean,
     isNameVisible: Boolean,
     isSegmentSticky: Boolean,
-    clubName: String,
-    selectedSegment: ClubDetailsViewState.SegmentTypes,
+    eventName: String,
+    selectedSegment: EventDetailsViewState.SegmentTypes,
     onBackClick: () -> Unit,
     onMoreClick: () -> Unit,
     onCameraClick: () -> Unit,
-    onSegmentSelected: (ClubDetailsViewState.SegmentTypes) -> Unit,
+    onSegmentSelected: (EventDetailsViewState.SegmentTypes) -> Unit,
     onNavBarPositioned: (Dp) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -548,7 +541,7 @@ private fun NavigationOverlay(
                     }
                 }
 
-                // Title overlay - Show when name is NOT visible
+                // Title overlay
                 this@Column.AnimatedVisibility(
                     visible = !isNameVisible,
                     enter = fadeIn(),
@@ -562,7 +555,7 @@ private fun NavigationOverlay(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = clubName,
+                            text = eventName,
                             style = AppTypography.HeadingXL.bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -581,11 +574,11 @@ private fun NavigationOverlay(
             Surface(
                 color = Color.White,
                 modifier = Modifier.fillMaxWidth()
-            )  {
+            ) {
                 SegmentPicker(
                     selectedSegment = selectedSegment,
                     onSegmentSelected = onSegmentSelected,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
         }
@@ -594,7 +587,7 @@ private fun NavigationOverlay(
 
 @Composable
 private fun NavBarButton(
-    icon: androidx.compose.ui.graphics.painter.Painter,
+    icon: Painter,
     isScrolled: Boolean,
     onClick: () -> Unit
 ) {
@@ -618,12 +611,12 @@ private fun NavBarButton(
 
 @Composable
 private fun SegmentPicker(
-    selectedSegment: ClubDetailsViewState.SegmentTypes,
-    onSegmentSelected: (ClubDetailsViewState.SegmentTypes) -> Unit,
+    selectedSegment: EventDetailsViewState.SegmentTypes,
+    onSegmentSelected: (EventDetailsViewState.SegmentTypes) -> Unit,
     modifier: Modifier = Modifier
 ) {
     CapsuleSegmentedPicker(
-        options = ClubDetailsViewState.SegmentTypes.values().toList(),
+        options = EventDetailsViewState.SegmentTypes.values().toList(),
         selectedOption = selectedSegment,
         onOptionSelected = onSegmentSelected,
         modifier = modifier.fillMaxWidth()
@@ -631,12 +624,12 @@ private fun SegmentPicker(
 }
 
 @Composable
-private fun InfoTab(infoData: List<ClubsDetails.Info>) {
+private fun InfoTab(infoData: List<EventsDetails.Info>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (infoData.isEmpty()) {
             Box(
@@ -671,7 +664,7 @@ private fun InfoTab(infoData: List<ClubsDetails.Info>) {
 }
 
 @Composable
-private fun InfoSubItem(subItem: ClubsDetails.SubInfo) {
+private fun InfoSubItem(subItem: EventsDetails.SubInfo) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         subItem.title?.let { title ->
             Text(
@@ -688,35 +681,6 @@ private fun InfoSubItem(subItem: ClubsDetails.SubInfo) {
             color = if (subItem.isLink) Palette.appBlue else Palette.blackHigh,
             modifier = Modifier.fillMaxWidth()
         )
-    }
-}
-
-@Composable
-private fun EventsTab(events: List<EventsCardModel>) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        if (events.isEmpty()) {
-            AppEmptyView(
-                model = AppEmptyModel(
-                    icon = Images.Icons.twoUsers(),
-                    text = "There are no events for this club yet. Be the pioneer and start the very first one now!",
-                    buttonTitle = "Create an event +"
-                ),
-                onButtonClick = { /* Handle create event */ }
-            )
-        } else {
-            events.forEach { event ->
-                EventsCardView(
-                    model = event,
-                    onTap = { /* Handle tap */ },
-                    onButtonTap = { /* Handle button tap */ }
-                )
-            }
-        }
     }
 }
 

@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 22.01.26
 //
 
-package com.bonjur.events.presentation.components
+package com.bonjur.events.presentation.list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,9 +29,9 @@ import com.bonjur.designSystem.components.serach.SearchView
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
-import com.bonjur.events.presentation.models.EventsListAction
-import com.bonjur.events.presentation.models.EventsListSideEffect
-import com.bonjur.events.presentation.models.EventsListViewState
+import com.bonjur.events.presentation.list.models.EventsListAction
+import com.bonjur.events.presentation.list.models.EventsListSideEffect
+import com.bonjur.events.presentation.list.models.EventsListViewState
 
 @Composable
 fun EventsListView(
@@ -75,7 +75,7 @@ fun EventsListView(
                                 // Handle button tap
                             },
                             onTap = {
-                                // Handle event tap
+                                store.send(EventsListAction.EventItemTapped(event.id))
                             }
                         )
                     }

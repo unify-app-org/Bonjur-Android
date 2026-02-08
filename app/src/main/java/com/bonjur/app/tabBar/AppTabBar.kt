@@ -29,20 +29,31 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.bonjur.clubs.presentation.list.ClubsListScreen
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.bonjur.clubs.navigation.ClubsScreens
+import com.bonjur.clubs.navigation.clubsNavGraph
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
-import com.bonjur.discover.presentation.DiscoverScreen
-import com.bonjur.discover.presentation.models.DiscoverInputData
-import com.bonjur.groups.presentation.GroupsListScreen
+import com.bonjur.discover.navigation.DiscoverScreens
+import com.bonjur.discover.navigation.discoverNavGraph
+import com.bonjur.events.navigation.eventsNavGraph
+import com.bonjur.groups.navigation.GroupsScreens
+import com.bonjur.groups.navigation.groupsNavGraph
+import com.bonjur.hangouts.navigation.hangoutsNavGraph
+import com.bonjur.navigation.NavigationEffect
+import com.bonjur.navigation.Navigator
 
 @Composable
-fun AppTabBar() {
+fun AppTabBar(
+    navigator: Navigator
+) {
     val items = listOf(
         TabItem.Discover,
         TabItem.Clubs,
@@ -55,78 +66,139 @@ fun AppTabBar() {
     var plusButtonPosition by remember { mutableStateOf(Offset.Zero) }
     var plusButtonSize by remember { mutableStateOf(44.dp) }
 
+    // Create separate NavControllers for each tab
+    val discoverNavController = rememberNavController()
+    val clubsNavController = rememberNavController()
+    val myPlansNavController = rememberNavController()
+    val profileNavController = rememberNavController()
+
+    // Create separate Navigator instances for each tab
+    val discoverNavigator = remember { Navigator() }
+    val clubsNavigator = remember { Navigator() }
+    val myPlansNavigator = remember { Navigator() }
+    val profileNavigator = remember { Navigator() }
+
+    // Track if bottom bar should be shown
+    val shouldShowBottomBar = remember { mutableStateOf(true) }
+
+    // Observe navigation changes for the currently selected tab
+    val currentNavController = when (selectedTab) {
+        TabItem.Discover -> discoverNavController
+        TabItem.Clubs -> clubsNavController
+        TabItem.MyPlans -> myPlansNavController
+        TabItem.Profile -> profileNavController
+    }
+
+    // Update bottom bar visibility based on current destination
+    val navBackStackEntry by currentNavController.currentBackStackEntryAsState()
+    LaunchedEffect(navBackStackEntry) {
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        // Define root routes where bottom bar should be visible
+        shouldShowBottomBar.value = when (currentRoute) {
+            DiscoverScreens.Discover::class.qualifiedName,
+            ClubsScreens.List::class.qualifiedName,
+            GroupsScreens.List::class.qualifiedName,
+            null -> true
+            else -> false
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = Color.White,
             bottomBar = {
-                Row(
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .background(Color.White),
-                    verticalAlignment = Alignment.CenterVertically
+                // Conditionally show bottom bar
+                AnimatedVisibility(
+                    visible = shouldShowBottomBar.value,
+                    enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                    exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
                 ) {
-                    TabBarItem(
-                        item = items[0],
-                        selected = selectedTab == items[0],
-                        onClick = { selectedTab = items[0] },
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    TabBarItem(
-                        item = items[1],
-                        selected = selectedTab == items[1],
-                        onClick = { selectedTab = items[1] },
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    FloatingPlusButton(
-                        isMenuOpen = isMenuOpen,
-                        onClick = {
-                            isMenuOpen = !isMenuOpen
-                        },
-                        onPositionChanged = { position, size ->
-                            plusButtonPosition = position
-                            plusButtonSize = size
-                        },
+                    Row(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                    )
+                            .padding(bottom = 16.dp)
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .background(Color.White),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TabBarItem(
+                            item = items[0],
+                            selected = selectedTab == items[0],
+                            onClick = { selectedTab = items[0] },
+                            modifier = Modifier.weight(1f)
+                        )
 
-                    TabBarItem(
-                        item = items[2],
-                        selected = selectedTab == items[2],
-                        onClick = { selectedTab = items[2] },
-                        modifier = Modifier.weight(1f)
-                    )
+                        TabBarItem(
+                            item = items[1],
+                            selected = selectedTab == items[1],
+                            onClick = { selectedTab = items[1] },
+                            modifier = Modifier.weight(1f)
+                        )
 
-                    TabBarItem(
-                        item = items[3],
-                        selected = selectedTab == items[3],
-                        onClick = { selectedTab = items[3] },
-                        modifier = Modifier.weight(1f)
-                    )
+                        FloatingPlusButton(
+                            isMenuOpen = isMenuOpen,
+                            onClick = { isMenuOpen = !isMenuOpen },
+                            onPositionChanged = { position, size ->
+                                plusButtonPosition = position
+                                plusButtonSize = size
+                            },
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+
+                        TabBarItem(
+                            item = items[2],
+                            selected = selectedTab == items[2],
+                            onClick = { selectedTab = items[2] },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        TabBarItem(
+                            item = items[3],
+                            selected = selectedTab == items[3],
+                            onClick = { selectedTab = items[3] },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                 }
             }
         ) { padding ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
+                    // Only apply padding when bottom bar is visible
+                    .padding(if (shouldShowBottomBar.value) padding else PaddingValues(0.dp))
                     .background(Color.White)
             ) {
-                when (selectedTab) {
-                    TabItem.Discover -> DiscoverScreen(
-                        inputData = DiscoverInputData(
-                            onTabChange = {
+                // Show/hide tabs based on selection to preserve their state
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (selectedTab == TabItem.Discover) {
+                        DiscoverTabContent(
+                            navController = discoverNavController,
+                            navigator = discoverNavigator,
+                            seeAllClubs = {
                                 selectedTab = TabItem.Clubs
                             }
                         )
-                    )
-                    TabItem.Clubs -> ClubsListScreen()
-                    TabItem.MyPlans -> GroupsListScreen()
-                    TabItem.Profile -> Text("Profile Tab", modifier = Modifier.padding(16.dp))
+                    }
+                }
+
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (selectedTab == TabItem.Clubs) {
+                        ClubsTabContent(clubsNavController, clubsNavigator)
+                    }
+                }
+
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (selectedTab == TabItem.MyPlans) {
+                        MyPlansTabContent(myPlansNavController, myPlansNavigator)
+                    }
+                }
+
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (selectedTab == TabItem.Profile) {
+                        ProfileTabContent(profileNavController, profileNavigator)
+                    }
                 }
             }
         }
@@ -145,6 +217,72 @@ fun AppTabBar() {
             }
         )
     }
+}
+
+@Composable
+fun ClubsTabContent(
+    navController: NavHostController,
+    navigator: Navigator
+) {
+    NavigationEffect(
+        navController = navController,
+        navigationFlow = navigator.navigationCommands
+    )
+
+    NavHost(
+        navController = navController,
+        startDestination = ClubsScreens.List
+    ) {
+        clubsNavGraph(navigator)
+    }
+}
+
+@Composable
+fun DiscoverTabContent(
+    navController: NavHostController,
+    navigator: Navigator,
+    seeAllClubs: (() -> Unit)?
+) {
+    NavigationEffect(
+        navController = navController,
+        navigationFlow = navigator.navigationCommands
+    )
+
+    NavHost(
+        navController = navController,
+        startDestination = DiscoverScreens.Discover
+    ) {
+        discoverNavGraph(navigator, seeAllClubs)
+        eventsNavGraph(navigator)
+        hangoutsNavGraph(navigator)
+        clubsNavGraph(navigator)
+    }
+}
+
+@Composable
+fun MyPlansTabContent(
+    navController: NavHostController,
+    navigator: Navigator
+) {
+    NavigationEffect(
+        navController = navController,
+        navigationFlow = navigator.navigationCommands
+    )
+
+    NavHost(
+        navController = navController,
+        startDestination = GroupsScreens.List
+    ) {
+        groupsNavGraph(navigator)
+    }
+}
+
+@Composable
+fun ProfileTabContent(
+    navController: NavHostController,
+    navigator: Navigator
+) {
+    Text("Profile Tab", modifier = Modifier.padding(16.dp))
 }
 
 @Composable
@@ -406,10 +544,4 @@ fun CreateMenuItem(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AppTabBarPreview() {
-    AppTabBar()
 }

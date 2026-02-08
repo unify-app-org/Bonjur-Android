@@ -15,15 +15,16 @@ import com.bonjur.appfoundation.FeatureScreen
 import com.bonjur.discover.presentation.components.DiscoverView
 import com.bonjur.discover.presentation.models.DiscoverInputData
 import com.bonjur.discover.presentation.models.DiscoverSideEffect
+import com.bonjur.navigation.Navigator
 
-@Preview(showBackground = true)
 @Composable
 fun DiscoverScreen(
     inputData: DiscoverInputData = DiscoverInputData(),
+    navigator: Navigator,
     viewModel: DiscoverViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
-        viewModel.init(inputData)
+        viewModel.init(inputData, navigator)
     }
 
     FeatureScreen(

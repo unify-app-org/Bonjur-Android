@@ -1,17 +1,18 @@
-package com.bonjur.clubs.presentation
+package com.bonjur.events.presentation.details
 
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
-import com.bonjur.clubs.presentation.components.ClubDetailsView
-import com.bonjur.clubs.presentation.model.*
+import com.bonjur.events.presentation.details.components.EventDetailsView
+import com.bonjur.events.presentation.details.model.EventDetailsInputData
+import com.bonjur.events.presentation.details.model.EventDetailsSideEffect
 import com.bonjur.navigation.Navigator
 
 @Composable
-fun ClubDetailsScreen(
-    inputData: ClubDetailsInputData,
+fun EventDetailsScreen(
+    inputData: EventDetailsInputData,
     navigator: Navigator,
-    viewModel: ClubDetailsViewModel = hiltViewModel()
+    viewModel: EventDetailsViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
@@ -21,14 +22,12 @@ fun ClubDetailsScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is ClubDetailsSideEffect.Loading -> {
+                is EventDetailsSideEffect.Loading -> {
                     // Show/hide loading
                 }
             }
         }
     ) { store ->
-        ClubDetailsView(
-            store = store
-        )
+        EventDetailsView(store = store)
     }
 }

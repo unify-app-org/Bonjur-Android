@@ -83,5 +83,11 @@ object Images {
 
         @Composable
         fun ellipsis02() = painterResource(R.drawable.ic_ellipsis_02)
+
+        @Composable
+        fun trash() = painterResource(R.drawable.ic_trash)
+
+        @Composable
+        fun fileAttachment() = painterResource(R.drawable.ic_file_attachment)
     }
 }

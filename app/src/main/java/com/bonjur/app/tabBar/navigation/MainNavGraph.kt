@@ -6,13 +6,14 @@ import com.bonjur.navigation.AppScreens
 import androidx.navigation.navigation
 import com.bonjur.app.tabBar.AppTabBar
 import com.bonjur.navigation.MainScreen
+import com.bonjur.navigation.Navigator
 
-fun NavGraphBuilder.mainNavGraph() {
+fun NavGraphBuilder.mainNavGraph(navigator: Navigator) {
     navigation<AppScreens.Main>(
         startDestination = MainScreen.TabBar
     ) {
         composable<MainScreen.TabBar> {
-            AppTabBar()
+            AppTabBar(navigator)
         }
     }
 }

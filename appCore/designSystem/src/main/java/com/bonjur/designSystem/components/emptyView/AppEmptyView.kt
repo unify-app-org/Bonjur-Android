@@ -68,14 +68,16 @@ fun AppEmptyView(
                     shape = RoundedCornerShape(16.dp),
                     color = Palette.grayQuaternary
                 ) {
-                    Icon(
-                        painter = model.icon,
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .size(24.dp)
-                    )
+                    if (model.icon != null) {
+                        Icon(
+                            painter = model.icon,
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .size(24.dp)
+                        )
+                    }
                 }
 
                 // Text
