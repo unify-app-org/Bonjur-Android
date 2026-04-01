@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     // serialization
@@ -10,19 +10,17 @@ plugins {
 }
 
 android {
-    namespace = "com.bonjur.app"
+    namespace = "com.bonjur.profile"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.bonjur.app"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
+        resourceConfigurations += listOf("en", "az", "ru")
     }
 
     buildTypes {
@@ -32,19 +30,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
         }
 
         create("staging") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -53,35 +44,37 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-        buildConfig = true
         compose = true
     }
 }
 
 dependencies {
     // app modules
-    implementation(project(":appFeatures:auth"))
     implementation(project(":appFeatures:clubs"))
     implementation(project(":appFeatures:events"))
-    implementation(project(":appFeatures:groups"))
     implementation(project(":appFeatures:hangouts"))
-    implementation(project(":appFeatures:communities"))
-    implementation(project(":appFeatures:discover"))
-    implementation(project(":appFeatures:profile"))
-    implementation(project(":appCore:navigation"))
-    implementation(project(":appCore:storage"))
-    implementation(project(":appCore:appUtils"))
+
     implementation(project(":appCore:designSystem"))
+    implementation(project(":appCore:storage"))
+    implementation(project(":appCore:navigation"))
+    implementation(project(":appCore:appUtils"))
+    implementation(project(":appCore:appFoundation"))
+    implementation(project(":appCore:network"))
+
+    // Async images
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
     // DI
     implementation("com.google.dagger:hilt-android:2.57.2")
     kapt("com.google.dagger:hilt-compiler:2.57.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
-    // Splash screen
-    implementation("androidx.core:core-splashscreen:1.0.1")
-
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))

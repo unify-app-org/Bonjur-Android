@@ -49,6 +49,8 @@ import com.bonjur.groups.navigation.groupsNavGraph
 import com.bonjur.hangouts.navigation.hangoutsNavGraph
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
+import com.bonjur.profile.presentation.ProfileDetailScreen
+import com.bonjur.profile.presentation.models.ProfileDetailInputData
 
 @Composable
 fun AppTabBar(
@@ -282,7 +284,10 @@ fun ProfileTabContent(
     navController: NavHostController,
     navigator: Navigator
 ) {
-    Text("Profile Tab", modifier = Modifier.padding(16.dp))
+    ProfileDetailScreen(
+        inputData = ProfileDetailInputData(),
+        navigator = navigator
+    )
 }
 
 @Composable

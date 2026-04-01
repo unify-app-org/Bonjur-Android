@@ -26,6 +26,7 @@
             <option value="$PROJECT_DIR$/appFeatures/events" />
             <option value="$PROJECT_DIR$/appFeatures/groups" />
             <option value="$PROJECT_DIR$/appFeatures/hangouts" />
+            <option value="$PROJECT_DIR$/appFeatures/profile" />
           </set>
         </option>
       </GradleProjectSettings>
