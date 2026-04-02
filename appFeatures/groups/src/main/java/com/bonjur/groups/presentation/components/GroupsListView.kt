@@ -36,8 +36,8 @@ import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.groups.presentation.models.GroupsListAction
 import com.bonjur.groups.presentation.models.GroupsListSideEffect
 import com.bonjur.groups.presentation.models.GroupsListViewState
-import com.bonjur.hangouts.presentation.components.HangoutsCardView
-import com.bonjur.hangouts.presentation.model.HangoutsCardModel
+import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import kotlinx.coroutines.launch
 import kotlin.collections.isNotEmpty
 

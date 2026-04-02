@@ -11,8 +11,8 @@ import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.segmentView.SegmentedPickerOption
 import com.bonjur.events.presentation.list.models.EventsCardMocks
 import com.bonjur.events.presentation.list.models.EventsCardModel
-import com.bonjur.hangouts.presentation.model.HangoutsCardMocks
-import com.bonjur.hangouts.presentation.model.HangoutsCardModel
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardMocks
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 
 // MARK: - Input Data
 data class ProfileDetailInputData(

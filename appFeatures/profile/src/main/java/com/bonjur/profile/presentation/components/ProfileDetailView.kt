@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -39,8 +38,8 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.events.presentation.list.components.EventsCardView
 import com.bonjur.events.presentation.list.models.EventsCardModel
-import com.bonjur.hangouts.presentation.components.HangoutsCardView
-import com.bonjur.hangouts.presentation.model.HangoutsCardModel
+import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import com.bonjur.profile.presentation.models.ProfileDetailAction
 import com.bonjur.profile.presentation.models.ProfileDetailSideEffect
 import com.bonjur.profile.presentation.models.ProfileDetailViewState

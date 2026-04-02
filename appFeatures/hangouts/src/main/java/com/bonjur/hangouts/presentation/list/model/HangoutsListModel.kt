@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 22.01.26
 //
 
-package com.bonjur.hangouts.presentation.model
+package com.bonjur.hangouts.presentation.list.model
 
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
@@ -40,5 +40,6 @@ sealed class HangoutsListAction : FeatureAction {
     object FetchData : HangoutsListAction()
     object Dismiss : HangoutsListAction()
     data class SearchTextChanged(val text: String) : HangoutsListAction()
+    data class ItemSelected(val id: String) : HangoutsListAction()
     data class FilterSelected(val items: List<FilterView.Items>) : HangoutsListAction()
 }

@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 22.01.26
 //
 
-package com.bonjur.hangouts.presentation.components
+package com.bonjur.hangouts.presentation.list.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -29,9 +29,9 @@ import com.bonjur.designSystem.components.serach.SearchView
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
-import com.bonjur.hangouts.presentation.model.HangoutsListAction
-import com.bonjur.hangouts.presentation.model.HangoutsListSideEffect
-import com.bonjur.hangouts.presentation.model.HangoutsListViewState
+import com.bonjur.hangouts.presentation.list.model.HangoutsListAction
+import com.bonjur.hangouts.presentation.list.model.HangoutsListSideEffect
+import com.bonjur.hangouts.presentation.list.model.HangoutsListViewState
 
 @Composable
 fun HangoutsListView(
@@ -75,7 +75,7 @@ fun HangoutsListView(
                                 // Handle button tap
                             },
                             onTap = {
-                                // Handle hangout tap
+                                store.send(HangoutsListAction.ItemSelected(hangout.id))
                             }
                         )
                     }

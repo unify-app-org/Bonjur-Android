@@ -10,8 +10,8 @@ import com.bonjur.discover.data.dataSources.DiscoverDataSource
 import com.bonjur.discover.domain.models.UserModel
 import com.bonjur.events.presentation.list.models.EventsCardMocks
 import com.bonjur.events.presentation.list.models.EventsCardModel
-import com.bonjur.hangouts.presentation.model.HangoutsCardMocks
-import com.bonjur.hangouts.presentation.model.HangoutsCardModel
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardMocks
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import javax.inject.Inject
 
 class DiscoverUseCaseImpl @Inject constructor(

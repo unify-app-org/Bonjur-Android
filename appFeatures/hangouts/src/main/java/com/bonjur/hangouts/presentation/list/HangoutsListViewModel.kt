@@ -5,17 +5,19 @@
 //  Created by Huseyn Hasanov on 22.01.26
 //
 
-package com.bonjur.hangouts.presentation
+package com.bonjur.hangouts.presentation.list
 
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.hangouts.domain.useCase.HangoutsUseCase
-import com.bonjur.hangouts.presentation.model.HangoutsListAction
-import com.bonjur.hangouts.presentation.model.HangoutsListInputData
-import com.bonjur.hangouts.presentation.model.HangoutsListSideEffect
-import com.bonjur.hangouts.presentation.model.HangoutsListViewState
+import com.bonjur.hangouts.navigation.HangoutsScreens
+import com.bonjur.hangouts.presentation.list.model.HangoutsListAction
+import com.bonjur.hangouts.presentation.list.model.HangoutsListInputData
+import com.bonjur.hangouts.presentation.list.model.HangoutsListSideEffect
+import com.bonjur.hangouts.presentation.list.model.HangoutsListViewState
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -42,6 +44,13 @@ class HangoutsListViewModel @Inject constructor(
             HangoutsListAction.Dismiss -> dismiss()
             is HangoutsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is HangoutsListAction.FilterSelected -> handleFilterSelected(action.items)
+            is HangoutsListAction.ItemSelected -> handleItemSelect(action.id)
+        }
+    }
+
+    private fun handleItemSelect(id: String) {
+        viewModelScope.launch {
+            navigator.navigateTo(HangoutsScreens.Details.route)
         }
     }
 

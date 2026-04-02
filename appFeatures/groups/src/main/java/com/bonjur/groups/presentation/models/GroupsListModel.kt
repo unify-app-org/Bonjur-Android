@@ -12,7 +12,7 @@ import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.events.presentation.list.models.EventsCardModel
-import com.bonjur.hangouts.presentation.model.HangoutsCardModel
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import com.bonjur.network.model.ApiException
 
 // MARK: - Input Data

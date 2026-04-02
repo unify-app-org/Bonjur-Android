@@ -5,16 +5,15 @@
 //  Created by Huseyn Hasanov on 22.01.26
 //
 
-package com.bonjur.hangouts.presentation
+package com.bonjur.hangouts.presentation.list
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
-import com.bonjur.hangouts.presentation.components.HangoutsListView
-import com.bonjur.hangouts.presentation.model.HangoutsListInputData
-import com.bonjur.hangouts.presentation.model.HangoutsListSideEffect
+import com.bonjur.hangouts.presentation.list.components.HangoutsListView
+import com.bonjur.hangouts.presentation.list.model.HangoutsListInputData
+import com.bonjur.hangouts.presentation.list.model.HangoutsListSideEffect
 import com.bonjur.navigation.Navigator
 
 

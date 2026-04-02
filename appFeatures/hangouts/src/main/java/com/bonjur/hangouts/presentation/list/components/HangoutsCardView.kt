@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.hangouts.presentation.components
+package com.bonjur.hangouts.presentation.list.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -29,8 +29,8 @@ import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.pressTapModifier
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
-import com.bonjur.hangouts.presentation.model.HangoutsCardMocks
-import com.bonjur.hangouts.presentation.model.HangoutsCardModel
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardMocks
+import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 
 @Composable
 fun HangoutsCardView(
