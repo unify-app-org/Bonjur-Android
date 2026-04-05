@@ -1,10 +1,9 @@
-package com.bonjur.profile.presentation.components
+package com.bonjur.profile.presentation.detail.components
 
 import CardBackgroundView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -21,7 +20,7 @@ import com.bonjur.designSystem.components.pressTapModifier
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
-import com.bonjur.profile.presentation.models.UserCardModel
+import com.bonjur.profile.presentation.detail.models.UserCardModel
 
 @Composable
 fun UserCardView(
@@ -45,6 +44,7 @@ fun UserCardView(
         if (model.backgroundCover != null) {
             CardBackgroundView(
                 bgColorType = model.backgroundCover,
+                cardType = AppUIEntities.ActivityType.CLUBS,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 UserInfoContent(model = model, modifier = contentModifier)

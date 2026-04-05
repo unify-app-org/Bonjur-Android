@@ -1,4 +1,4 @@
-package com.bonjur.profile.presentation.components
+package com.bonjur.profile.presentation.detail.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
@@ -40,10 +41,10 @@ import com.bonjur.events.presentation.list.components.EventsCardView
 import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
-import com.bonjur.profile.presentation.models.ProfileDetailAction
-import com.bonjur.profile.presentation.models.ProfileDetailSideEffect
-import com.bonjur.profile.presentation.models.ProfileDetailViewState
-import com.bonjur.profile.presentation.models.ProfileDetail
+import com.bonjur.profile.presentation.detail.models.ProfileDetail
+import com.bonjur.profile.presentation.detail.models.ProfileDetailAction
+import com.bonjur.profile.presentation.detail.models.ProfileDetailSideEffect
+import com.bonjur.profile.presentation.detail.models.ProfileDetailViewState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -377,7 +378,7 @@ private fun UserInfoView(
 
 @Composable
 private fun UserInfoCell(
-    icon: androidx.compose.ui.graphics.painter.Painter,
+    icon: Painter,
     title: String,
     subtitle: String
 ) {

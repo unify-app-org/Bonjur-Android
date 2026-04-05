@@ -112,7 +112,9 @@ fun AuthOptionalInfoView(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
     ) {
         TopSection(
             count = steps.count(),

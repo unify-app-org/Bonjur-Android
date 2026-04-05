@@ -1,14 +1,17 @@
-package com.bonjur.profile.presentation
+package com.bonjur.profile.presentation.detail
 
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
 import com.bonjur.profile.domain.usecase.ProfileUseCase
-import com.bonjur.profile.presentation.models.ProfileDetailAction
-import com.bonjur.profile.presentation.models.ProfileDetailInputData
-import com.bonjur.profile.presentation.models.ProfileDetailSideEffect
-import com.bonjur.profile.presentation.models.ProfileDetailViewState
+import com.bonjur.profile.navigation.ProfileScreens
+import com.bonjur.profile.presentation.detail.models.ProfileDetailAction
+import com.bonjur.profile.presentation.detail.models.ProfileDetailInputData
+import com.bonjur.profile.presentation.detail.models.ProfileDetailSideEffect
+import com.bonjur.profile.presentation.detail.models.ProfileDetailViewState
+import com.bonjur.profile.presentation.studentCard.models.StudentCardInputData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,7 +42,7 @@ class ProfileDetailViewModel @Inject constructor(
             ProfileDetailAction.FetchData -> fetchData()
 
             is ProfileDetailAction.ClubsItemTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileDetailRoute.ClubsDetails(action.id))
+//                navigator.navigateTo(ProfileScreens.ClubsDetails(action.id).route)
             }
 
             is ProfileDetailAction.SegmentTapped -> viewModelScope.launch {
@@ -47,19 +50,28 @@ class ProfileDetailViewModel @Inject constructor(
             }
 
             is ProfileDetailAction.EventsItemTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileDetailRoute.EventsDetails(action.id))
+//                navigator.navigateTo(ProfileScreens.EventsDetails(action.id).route)
             }
 
             is ProfileDetailAction.HangoutsItemTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileDetailRoute.HangoutsDetails(action.id))
+//                navigator.navigateTo(ProfileScreens.HangoutsDetails(action.id).route)
             }
 
             ProfileDetailAction.SettingsTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileDetailRoute.Settings)
+//                navigator.navigateTo(ProfileScreens.Settings.route)
             }
 
             ProfileDetailAction.UserCardTapped -> viewModelScope.launch {
-//                val userCardModel = state.uiModel?.userCardModel ?: return@launch
+                val userCardModel = state.uiModel?.userCardModel ?: return@launch
+                navigator.navigateTo(
+                    ProfileScreens.StudentCard.route,
+                    StudentCardInputData(
+                        userCardModel = userCardModel,
+                        onSave = { cover ->
+                            handle(ProfileDetailAction.UserCardCoverSaved(cover))
+                        }
+                    )
+                )
             }
 
             is ProfileDetailAction.UserCardCoverSaved -> applyUserCardCover(action.backgroundType)

@@ -1,16 +1,19 @@
 package com.bonjur.profile.navigation
 
-import com.bonjur.designSystem.commonModel.AppUIEntities
-import com.bonjur.profile.presentation.models.UserCardModel
 import kotlinx.serialization.Serializable
 
-sealed class ProfileDetailRoute {
+sealed interface ProfileScreens {
     @Serializable
-    data class ClubsDetails(val id: Int) : ProfileDetailRoute()
+    data object ProfileDetail : ProfileScreens
+
     @Serializable
-    data class EventsDetails(val id: String) : ProfileDetailRoute()
+    data object StudentCard : ProfileScreens
     @Serializable
-    data class HangoutsDetails(val id: String) : ProfileDetailRoute()
+    data class ClubsDetails(val id: Int) : ProfileScreens
     @Serializable
-    object Settings : ProfileDetailRoute()
+    data class EventsDetails(val id: String) : ProfileScreens
+    @Serializable
+    data class HangoutsDetails(val id: String) : ProfileScreens
+    @Serializable
+    object Settings : ProfileScreens
 }

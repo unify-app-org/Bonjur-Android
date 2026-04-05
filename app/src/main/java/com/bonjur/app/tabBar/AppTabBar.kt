@@ -38,6 +38,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bonjur.clubs.navigation.ClubsScreens
 import com.bonjur.clubs.navigation.clubsNavGraph
+import com.bonjur.communities.navigation.communitiesNavGraph
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -49,8 +50,8 @@ import com.bonjur.groups.navigation.groupsNavGraph
 import com.bonjur.hangouts.navigation.hangoutsNavGraph
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
-import com.bonjur.profile.presentation.ProfileDetailScreen
-import com.bonjur.profile.presentation.models.ProfileDetailInputData
+import com.bonjur.profile.navigation.ProfileScreens
+import com.bonjur.profile.navigation.profileNavGraph
 
 @Composable
 fun AppTabBar(
@@ -101,6 +102,7 @@ fun AppTabBar(
             DiscoverScreens.Discover::class.qualifiedName,
             ClubsScreens.List::class.qualifiedName,
             GroupsScreens.List::class.qualifiedName,
+            ProfileScreens.ProfileDetail::class.qualifiedName,
             null -> true
             else -> false
         }
@@ -255,6 +257,7 @@ fun DiscoverTabContent(
         startDestination = DiscoverScreens.Discover
     ) {
         discoverNavGraph(navigator, seeAllClubs)
+        communitiesNavGraph(navigator)
         eventsNavGraph(navigator)
         hangoutsNavGraph(navigator)
         clubsNavGraph(navigator)
@@ -284,10 +287,17 @@ fun ProfileTabContent(
     navController: NavHostController,
     navigator: Navigator
 ) {
-    ProfileDetailScreen(
-        inputData = ProfileDetailInputData(),
-        navigator = navigator
+    NavigationEffect(
+        navController = navController,
+        navigationFlow = navigator.navigationCommands
     )
+
+    NavHost(
+        navController = navController,
+        startDestination = ProfileScreens.ProfileDetail
+    ) {
+        profileNavGraph(navigator)
+    }
 }
 
 @Composable

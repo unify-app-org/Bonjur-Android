@@ -12,7 +12,7 @@ import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.components.filter.FilterView
-import com.bonjur.communities.CommunityCardModel
+import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.discover.domain.models.UserModel
 import com.bonjur.events.presentation.list.models.EventsCardModel
@@ -54,7 +54,8 @@ data class DiscoverViewState(
 sealed class DiscoverAction : FeatureAction {
     object FetchData : DiscoverAction()
     data class ViewAllTapped(val type: AppUIEntities.ActivityType) : DiscoverAction()
+    data class CommunityItemTapped(val communityId: Int) : DiscoverAction()
     data class CLubItemTapped(val clubId: Int) : DiscoverAction()
     data class EventItemTapped(val eventId: String) : DiscoverAction()
-
+    data class HangoutItemTapped(val hangoutId: String) : DiscoverAction()
 }

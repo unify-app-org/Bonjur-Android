@@ -3,6 +3,7 @@ package com.bonjur.auth.presentation.example
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
 import com.bonjur.auth.ForgotPass
 import com.bonjur.auth.data.DTOs.RegisterRequest
 import com.bonjur.auth.domain.useCase.AuthUseCase
@@ -40,9 +41,12 @@ class ExampleViewModel @Inject constructor(
                 updateState(state.copy(counter = state.counter + 1))
             }
             ExampleAction.Decrement -> {
-                val forgotPass = ForgotPass("husein10.hasanov@gmail.com")
-                navigate(AuthScreens.ForgotPassword.createRoute(forgotPass))
-//                updateState(state.copy(counter = state.counter - 1))
+                viewModelScope.launch {
+                    navigator.navigateTo(
+                        AuthScreens.ForgotPassword.route,
+                        ForgotPass("husein10.hasanov@gmail.com")
+                    )
+                }
             }
         }
     }

@@ -1,10 +1,8 @@
 package com.bonjur.auth.navigation
 
-import android.net.Uri
+import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.bonjur.auth.ForgotPass
 import com.bonjur.auth.RegistrationGreeting
@@ -21,7 +19,7 @@ import com.bonjur.auth.presentation.signIn.SignInScreen
 import com.bonjur.auth.presentation.welcome.AuthWelcomeScreen
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeInputData
 import com.bonjur.navigation.AppScreens
-import kotlinx.serialization.json.Json
+import com.bonjur.navigation.NavArgs
 
 fun NavGraphBuilder.authNavGraph() {
     navigation<AppScreens.Auth>(
@@ -55,18 +53,9 @@ fun NavGraphBuilder.authNavGraph() {
             )
         }
 
-        composable(
-            route = AuthScreens.Welcome.ROUTE,
-            arguments = listOf(navArgument("welcomeJson") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("welcomeJson") ?: ""
-            val welcome = Json.decodeFromString(
-                AuthWelcomeInputData.serializer(),
-                Uri.decode(json)
-            )
-            AuthWelcomeScreen(
-                welcome
-            )
+        composable<AuthScreens.Welcome> {
+            val inputData = remember { NavArgs.get<AuthWelcomeInputData>() ?: AuthWelcomeInputData() }
+            AuthWelcomeScreen(inputData)
         }
 
         composable<AuthScreens.SignUp> {
@@ -75,15 +64,8 @@ fun NavGraphBuilder.authNavGraph() {
             )
         }
 
-        composable(
-            route = AuthScreens.ForgotPassword.ROUTE,
-            arguments = listOf(navArgument("forgotPassJson") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("forgotPassJson") ?: ""
-            val forgotPass = Json.decodeFromString(
-                ForgotPass.serializer(),
-                Uri.decode(json)
-            )
+        composable<AuthScreens.ForgotPassword> {
+            val forgotPass = remember { NavArgs.get<ForgotPass>() ?: ForgotPass(email = "") }
             RegistrationGreeting(name = forgotPass.email)
         }
     }

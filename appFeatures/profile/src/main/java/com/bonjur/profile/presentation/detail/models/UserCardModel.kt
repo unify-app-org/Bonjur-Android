@@ -1,4 +1,4 @@
-package com.bonjur.profile.presentation.models
+package com.bonjur.profile.presentation.detail.models
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
 

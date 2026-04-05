@@ -36,8 +36,8 @@ import androidx.compose.ui.zIndex
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.clubs.presentation.list.components.ClubCardView
-import com.bonjur.communities.CommunityCardModel
-import com.bonjur.communities.CommunityCardView
+import com.bonjur.communities.presentation.list.model.CommunityCardModel
+import com.bonjur.communities.presentation.list.components.CommunityCardView
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.emptyView.AppEmptyModel
@@ -105,7 +105,7 @@ fun DiscoverView(
             ) {
                 CommunitiesView(
                     communities = state.uiModel.communities,
-                    onCommunityTap = { /* Handle tap */ }
+                    onCommunityTap = { item -> store.send(DiscoverAction.CommunityItemTapped(item.id)) }
                 )
 
                 ClubsView(
@@ -127,7 +127,7 @@ fun DiscoverView(
                 HangoutsView(
                     screenWidth = screenWidth,
                     hangouts = state.uiModel.hangouts,
-                    onHangoutTap = { /* Handle tap */ },
+                    onHangoutTap = { item -> store.send(DiscoverAction.HangoutItemTapped(item.id)) },
                     onButtonTap = { /* Handle button */ },
                     onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.HANG_OUTS)) }
                 )

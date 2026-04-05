@@ -5,7 +5,7 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.communities
+package com.bonjur.communities.presentation.list.model
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import java.util.UUID

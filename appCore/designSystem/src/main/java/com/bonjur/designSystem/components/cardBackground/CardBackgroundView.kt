@@ -50,8 +50,7 @@ fun CardBackgroundView(
                 size = coordinates.size
             }
     ) {
-        // Draw circles
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier.matchParentSize()) {
             val width = size.width.toFloat()
             val height = size.height.toFloat()
             val strokeWidthPx = with(density) { strokeWidth.toPx() }

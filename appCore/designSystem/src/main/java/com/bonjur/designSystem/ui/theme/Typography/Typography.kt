@@ -98,6 +98,14 @@ object AppTypography {
             letterSpacing = TypographyTokens.LetterSpacing.none
         )
 
+        val extraBold = TextStyle(
+            fontFamily = Manrope,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = TypographyTokens.FontSize.titleMd,
+            lineHeight = TypographyTokens.LineHeight.titleMd,
+            letterSpacing = TypographyTokens.LetterSpacing.none
+        )
+
         val semiBold = TextStyle(
             fontFamily = Manrope,
             fontWeight = FontWeight.SemiBold,

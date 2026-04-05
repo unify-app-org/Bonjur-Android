@@ -111,6 +111,7 @@ fun EventsListView(
                 .onGloballyPositioned { coordinates ->
                     searchAndTextHeight = with(density) { coordinates.size.height.toDp() }
                 }
+                .statusBarsPadding()
         ) {
             IconButton(
                 modifier = Modifier.padding(top = 16.dp),

@@ -35,6 +35,7 @@ fun AuthWelcomeView(
         verticalArrangement = Arrangement.spacedBy(32.dp),
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .padding(16.dp)
     ) {
         Row(

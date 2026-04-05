@@ -13,16 +13,15 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -93,6 +92,7 @@ fun HangoutDetailsView(
         snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
             .collect { (index, offset) ->
                 isScrolled = index > 0 || offset > 30
+                isNameVisible = index == 0
             }
     }
 
@@ -119,10 +119,6 @@ fun HangoutDetailsView(
                 item(key = "hangout_info") {
                     HangoutInfoView(
                         uiModel = store.state.uiModel,
-                        onNamePositioned = { yPos ->
-                            val navBarPx = with(density) { navBarHeight.toPx() }
-                            isNameVisible = yPos > navBarPx
-                        },
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
@@ -276,21 +272,22 @@ private fun HangoutNavigationOverlay(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Back button
                     NavBarButton(
                         icon = Images.Icons.arrowLeft01(),
+                        isScrolled = isScrolled,
                         onClick = onBackClick
                     )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        // More button (always visible)
                         NavBarButton(
                             icon = Images.Icons.ellipsis02(),
+                            isScrolled = isScrolled,
                             onClick = onMoreClick
                         )
                         AnimatedVisibility(visible = !isScrolled) {
                             NavBarButton(
                                 icon = Images.Icons.penLine(),
+                                isScrolled = isScrolled,
                                 onClick = onEditClick
                             )
                         }
@@ -344,15 +341,23 @@ private fun HangoutNavigationOverlay(
 @Composable
 private fun NavBarButton(
     icon: Painter,
+    isScrolled: Boolean,
     onClick: () -> Unit
 ) {
     IconButton(
-        onClick = onClick
+        onClick = onClick,
+        modifier = Modifier
+            .size(44.dp)
+            .background(
+                color = if (isScrolled) Palette.grayQuaternary else Palette.whiteMedium,
+                shape = RoundedCornerShape(12.dp)
+            )
     ) {
         Icon(
             painter = icon,
             contentDescription = null,
-            tint = Palette.blackHigh
+            tint = Palette.blackHigh,
+            modifier = Modifier.size(20.dp)
         )
     }
 }
@@ -378,7 +383,6 @@ private fun HangoutSegmentPicker(
 @Composable
 private fun HangoutInfoView(
     uiModel: HangoutDetails.UIModel?,
-    onNamePositioned: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -389,11 +393,7 @@ private fun HangoutInfoView(
         Text(
             text = uiModel?.name ?: "",
             style = AppTypography.TitleL.extraBold,
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    onNamePositioned(coordinates.boundsInWindow().top)
-                }
+            modifier = Modifier.fillMaxWidth()
         )
 
         // Access type + community link

@@ -5,12 +5,14 @@
 //  Created by Huseyn Hasanov on 16.01.26
 //
 
-package com.bonjur.communities
+package com.bonjur.communities.presentation.list.components
 
 import CardBackgroundView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -24,6 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.bonjur.communities.presentation.list.model.CommunityCardMocks
+import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.pressTapModifier
@@ -156,7 +160,7 @@ private fun LogoView(logoUrl: String) {
             }
         }
     ) { imageBitmap ->
-        androidx.compose.foundation.Image(
+        Image(
             bitmap = imageBitmap,
             contentDescription = "Community Logo",
             modifier = Modifier
@@ -218,7 +222,7 @@ private fun MemberAvatar(
                 memberPlaceHolder()
             }
         ) { imageBitmap ->
-            androidx.compose.foundation.Image(
+            Image(
                 bitmap = imageBitmap,
                 contentDescription = "Member $memberId",
                 modifier = Modifier
@@ -250,7 +254,7 @@ fun memberPlaceHolder() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewCommunityCardView() {
-    androidx.compose.foundation.lazy.LazyColumn(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),

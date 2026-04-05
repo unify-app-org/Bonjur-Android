@@ -2,8 +2,8 @@ package com.bonjur.discover.domain.useCase
 
 import com.bonjur.clubs.presentation.list.models.ClubCardMocks
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
-import com.bonjur.communities.CommunityCardMocks
-import com.bonjur.communities.CommunityCardModel
+import com.bonjur.communities.presentation.list.model.CommunityCardMocks
+import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
 import com.bonjur.discover.data.dataSources.DiscoverDataSource

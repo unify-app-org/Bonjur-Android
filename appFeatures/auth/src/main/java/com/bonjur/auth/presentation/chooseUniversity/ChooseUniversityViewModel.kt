@@ -49,8 +49,10 @@ class ChooseUniversityViewModel @Inject constructor(
         viewModelScope.launch {
             val selectedUniversity = state.uiModel.first { item -> item.selected }
             if (selectedUniversity.id == 1) {
-                val welcomeInputData = AuthWelcomeInputData("Huseyn")
-                navigator.navigateAndClearStack(AuthScreens.Welcome.createRoute(welcomeInputData))
+                navigator.navigateAndClearStack(
+                    AuthScreens.Welcome.route,
+                    AuthWelcomeInputData("Huseyn")
+                )
             } else {
                 navigator.navigateTo(AuthScreens.SignIn.route)
             }

@@ -3,6 +3,7 @@ package com.bonjur.auth.presentation.signIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ fun SignInScreen(
     ) { store ->
         Column(
             modifier = Modifier
+                .statusBarsPadding()
                 .padding(vertical = 16.dp)
         ) {
             Icon(

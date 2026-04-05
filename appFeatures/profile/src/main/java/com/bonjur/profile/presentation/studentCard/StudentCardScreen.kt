@@ -1,19 +1,19 @@
-package com.bonjur.profile.presentation
+package com.bonjur.profile.presentation.studentCard
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
 import com.bonjur.navigation.Navigator
-import com.bonjur.profile.presentation.components.ProfileDetailView
-import com.bonjur.profile.presentation.models.ProfileDetailInputData
-import com.bonjur.profile.presentation.models.ProfileDetailSideEffect
+import com.bonjur.profile.presentation.studentCard.components.StudentCardView
+import com.bonjur.profile.presentation.studentCard.models.StudentCardInputData
+import com.bonjur.profile.presentation.studentCard.models.StudentCardSideEffect
 
 @Composable
-fun ProfileDetailScreen(
-    inputData: ProfileDetailInputData,
+fun StudentCardScreen(
+    inputData: StudentCardInputData,
     navigator: Navigator,
-    viewModel: ProfileDetailViewModel = hiltViewModel()
+    viewModel: StudentCardViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
@@ -23,12 +23,12 @@ fun ProfileDetailScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is ProfileDetailSideEffect.Loading -> {
+                is StudentCardSideEffect.Loading -> {
                     // Show/hide loading
                 }
             }
         }
     ) { store ->
-        ProfileDetailView(store = store)
+        StudentCardView(store = store)
     }
 }

@@ -19,6 +19,16 @@ class Navigator @Inject constructor() {
         _navigationCommands.send(NavigationCommand.NavigateTo(route))
     }
 
+    suspend fun navigateTo(route: String, inputData: Any) {
+        NavArgs.put(inputData)
+        _navigationCommands.send(NavigationCommand.NavigateTo(route))
+    }
+
+    suspend fun navigateAndClearStack(route: String, inputData: Any) {
+        NavArgs.put(inputData)
+        _navigationCommands.send(NavigationCommand.NavigateAndClearStack(route))
+    }
+
     suspend fun navigateAndClearStack(route: String) {
         _navigationCommands.send(NavigationCommand.NavigateAndClearStack(route))
     }
