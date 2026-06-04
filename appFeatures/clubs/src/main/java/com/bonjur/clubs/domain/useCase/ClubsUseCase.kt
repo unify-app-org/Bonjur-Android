@@ -10,4 +10,27 @@ interface ClubsUseCase {
     suspend fun fetchClubsDetails(clubId: Int): ClubsDetails.UIModel
 
     suspend fun fetchFilterData(): List<FilterView.Model>
+
+    suspend fun createClub(
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean
+    )
+
+    suspend fun editClub(
+        clubId: Int,
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean
+    )
+
+    suspend fun joinClub(clubId: Int)
 }

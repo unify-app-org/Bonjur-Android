@@ -48,14 +48,12 @@ class ChooseUniversityViewModel @Inject constructor(
     private fun nextTapped() {
         viewModelScope.launch {
             val selectedUniversity = state.uiModel.first { item -> item.selected }
-            if (selectedUniversity.id == 1) {
-                navigator.navigateAndClearStack(
-                    AuthScreens.Welcome.route,
-                    AuthWelcomeInputData("Huseyn")
+            navigator.navigateTo(
+                AuthScreens.SignIn.route,
+                com.bonjur.auth.presentation.signIn.model.SignInInputData(
+                    communityId = selectedUniversity.id
                 )
-            } else {
-                navigator.navigateTo(AuthScreens.SignIn.route)
-            }
+            )
         }
     }
 

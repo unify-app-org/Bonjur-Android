@@ -35,11 +35,11 @@ object NetworkModule {
     fun provideHttpClient(json: Json): HttpClient {
         return HttpClient(Android) {
 
-            install(ContentNegotiation.Plugin) {
+            install(ContentNegotiation) {
                 json(json)
             }
 
-            install(HttpTimeout.Plugin) {
+            install(HttpTimeout) {
                 requestTimeoutMillis = 30_000
                 connectTimeoutMillis = 30_000
                 socketTimeoutMillis = 30_000

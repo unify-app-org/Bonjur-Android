@@ -10,4 +10,27 @@ interface HangoutsUseCase {
     suspend fun fetchFilterData(): List<FilterView.Model>
 
     suspend fun fetchDetailData(id: String): HangoutDetails.UIModel
+
+    suspend fun createHangout(
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean,
+        hangoutDate: String
+    )
+
+    suspend fun editHangout(
+        hangoutId: String,
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean,
+        hangoutDate: String
+    )
 }

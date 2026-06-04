@@ -34,6 +34,9 @@ fun SignInScreen(
                 is SignInSideEffect.Loading -> {
                     // show / hide loader
                 }
+                is SignInSideEffect.Error -> {
+                    // show error
+                }
             }
         }
     ) { store ->

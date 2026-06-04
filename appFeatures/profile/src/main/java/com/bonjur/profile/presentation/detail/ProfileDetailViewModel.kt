@@ -3,6 +3,8 @@ package com.bonjur.profile.presentation.detail
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.alert.AppAlert
+import com.bonjur.designSystem.components.alert.AppAlertPresenter
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import com.bonjur.profile.domain.usecase.ProfileUseCase
@@ -58,7 +60,7 @@ class ProfileDetailViewModel @Inject constructor(
             }
 
             ProfileDetailAction.SettingsTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileScreens.Settings.route)
+                navigator.navigateTo(ProfileScreens.Settings.route)
             }
 
             ProfileDetailAction.UserCardTapped -> viewModelScope.launch {

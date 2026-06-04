@@ -23,6 +23,7 @@ data class AppButtonModel(
                 if (style == ButtonStyle.Default) Color.Transparent
                 else Palette.black.copy(alpha = 0.05f)
             }
+            ButtonType.Destructive -> Palette.cardBgRed
         }
 
     val horizontalPadding: Float = 23f
@@ -34,7 +35,11 @@ data class AppButtonModel(
             AppButtonSize.Small -> 10f
         }
 
-    val foregroundColor: Color = Palette.black
+    val foregroundColor: Color
+        get() = when (type) {
+            ButtonType.Destructive -> Palette.white
+            else -> Palette.black
+        }
 
     val borderColor: Color
         get() = if (style == ButtonStyle.Default) {
@@ -64,7 +69,8 @@ enum class ContentSize {
 enum class ButtonType {
     Primary,
     Secondary,
-    Tertiary
+    Tertiary,
+    Destructive
 }
 
 enum class ButtonStyle {

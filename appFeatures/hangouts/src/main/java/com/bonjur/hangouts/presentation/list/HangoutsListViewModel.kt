@@ -50,7 +50,10 @@ class HangoutsListViewModel @Inject constructor(
 
     private fun handleItemSelect(id: String) {
         viewModelScope.launch {
-            navigator.navigateTo(HangoutsScreens.Details.route)
+            navigator.navigateTo(
+                HangoutsScreens.Details.route,
+                com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData(hangoutId = id)
+            )
         }
     }
 

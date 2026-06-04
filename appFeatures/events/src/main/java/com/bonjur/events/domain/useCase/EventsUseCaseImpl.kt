@@ -11,16 +11,61 @@ import javax.inject.Inject
 
 class EventsUseCaseImpl @Inject constructor(
     val dataSource: EventsDataSource
-): EventsUseCase {
-    override suspend fun fetchEventsData(): List<EventsCardModel> {
-        return EventsCardMocks.previewMock
+) : EventsUseCase {
+
+    override suspend fun fetchEventsData(): List<EventsCardModel> = EventsCardMocks.previewMock
+
+    override suspend fun fetchFilterData(): List<FilterView.Model> = FilterViewMocks.mockData
+
+    override suspend fun fetchDetailsData(id: String): EventsDetails.UIModel = EventsDetailsMockData
+
+    override suspend fun createEvent(
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean,
+        eventDate: String
+    ) {
+        dataSource.createEvent(
+            com.bonjur.events.data.DTOs.EventCreateRequest(
+                name = name,
+                about = about,
+                location = location,
+                ownerContact = ownerContact,
+                capacity = capacity,
+                rules = rules.ifBlank { null },
+                visibility = if (isPublic) "PUBLIC" else "PRIVATE",
+                eventDate = eventDate
+            )
+        )
     }
 
-    override suspend fun fetchFilterData(): List<FilterView.Model> {
-        return FilterViewMocks.mockData
-    }
-
-    override suspend fun fetchDetailsData(id: String): EventsDetails.UIModel {
-        return EventsDetailsMockData
+    override suspend fun editEvent(
+        eventId: String,
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean,
+        eventDate: String
+    ) {
+        dataSource.editEvent(
+            eventId = eventId,
+            request = com.bonjur.events.data.DTOs.EventCreateRequest(
+                name = name,
+                about = about,
+                location = location,
+                ownerContact = ownerContact,
+                capacity = capacity,
+                rules = rules.ifBlank { null },
+                visibility = if (isPublic) "PUBLIC" else "PRIVATE",
+                eventDate = eventDate
+            )
+        )
     }
 }

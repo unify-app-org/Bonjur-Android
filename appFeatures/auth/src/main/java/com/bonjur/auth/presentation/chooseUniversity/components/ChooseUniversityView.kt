@@ -25,8 +25,6 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 fun ChooseUniversityView(
     store: FeatureStore<ChooseUniversityViewState, ChooseUniversityAction, ChooseUniversitySideEffect>
 ) {
-    val state = store.state
-
     LaunchedEffect(Unit) {
         store.send(ChooseUniversityAction.FetchData)
     }
@@ -58,7 +56,7 @@ fun ChooseUniversityView(
                 .fillMaxWidth()
                 .weight(1f)
         ) {
-            itemsIndexed(state.uiModel) { index, university ->
+            itemsIndexed(store.state.uiModel) { index, university ->
                 SelectableListItem(
                     model = university,
                     onClick = {
@@ -77,7 +75,7 @@ fun ChooseUniversityView(
                 store.send(ChooseUniversityAction.NextTapped)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = state.enabled
+            enabled = store.state.enabled
         )
     }
 }

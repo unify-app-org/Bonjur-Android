@@ -15,5 +15,8 @@ sealed interface ProfileScreens {
     @Serializable
     data class HangoutsDetails(val id: String) : ProfileScreens
     @Serializable
-    object Settings : ProfileScreens
+    data object EditProfile : ProfileScreens
+
+    @Serializable
+    data object Settings : ProfileScreens
 }

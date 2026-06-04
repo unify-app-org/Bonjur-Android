@@ -88,7 +88,10 @@ class ClubsListViewModel @Inject constructor(
 
     private fun handleSelectedItem(id: Int) {
         viewModelScope.launch {
-            navigator.navigateTo(ClubsScreens.Details.route)
+            navigator.navigateTo(
+                ClubsScreens.Details.route,
+                com.bonjur.clubs.presentation.model.ClubDetailsInputData(clubId = id)
+            )
         }
     }
 

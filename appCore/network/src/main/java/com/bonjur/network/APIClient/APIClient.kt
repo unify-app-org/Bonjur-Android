@@ -4,7 +4,6 @@ import com.bonjur.network.AppConfig
 import com.bonjur.network.logger.NetworkLogger
 import com.bonjur.network.manager.TokenManager
 import com.bonjur.network.model.ApiException
-import com.bonjur.network.model.BaseResponse
 import com.bonjur.network.model.NetworkError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -16,16 +15,18 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.system.measureTimeMillis
 
 interface ApiClientProtocol {
-    suspend fun <T> request(endpoint: AppEndpoint): T
+    suspend fun <T> request(endpoint: AppEndpoint, serializer: KSerializer<T>): T
     suspend fun requestRawData(endpoint: AppEndpoint): ByteArray
 }
 
@@ -38,12 +39,11 @@ class ApiClient @Inject constructor(
     private val configs: AppConfig
 ) : ApiClientProtocol {
 
-    override suspend fun <T> request(endpoint: AppEndpoint): T {
+    override suspend fun <T> request(endpoint: AppEndpoint, serializer: KSerializer<T>): T {
         val data = performRequest(endpoint)
 
         return try {
-            val response = json.decodeFromString<BaseResponse<T>>(data)
-            response.data
+            json.decodeFromString(serializer, data)
         } catch (e: SerializationException) {
             throw ApiException.DecodingError(e)
         }
@@ -266,7 +266,7 @@ class ApiClient @Inject constructor(
                 val refreshToken: String
             )
 
-            val newTokens: RefreshTokenData = request(refreshEndpoint)
+            val newTokens: RefreshTokenData = request(refreshEndpoint, serializer())
 
             tokenManager.saveAccessToken(newTokens.accessToken)
             tokenManager.saveRefreshToken(newTokens.refreshToken)

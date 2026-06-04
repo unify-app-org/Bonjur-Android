@@ -11,7 +11,7 @@ sealed class TabItem(
     object Discover : TabItem("Discover", { Images.Icons.home() })
     object Clubs : TabItem("Clubs", { Images.Icons.userGroups() })
     object MyPlans : TabItem("My plans", { Images.Icons.clipboardList() })
-    object Profile : TabItem("Profile", { Images.Icons.userGroups() })
+    object Profile : TabItem("Profile", { Images.Icons.profile() })
 }
 
 data class CreateMenuItem(

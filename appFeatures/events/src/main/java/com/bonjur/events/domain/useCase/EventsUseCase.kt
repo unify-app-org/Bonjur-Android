@@ -10,5 +10,28 @@ interface EventsUseCase {
     suspend fun fetchFilterData(): List<FilterView.Model>
 
     suspend fun fetchDetailsData(id: String): EventsDetails.UIModel
+
+    suspend fun createEvent(
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean,
+        eventDate: String
+    )
+
+    suspend fun editEvent(
+        eventId: String,
+        name: String,
+        about: String,
+        location: String,
+        ownerContact: String,
+        capacity: Int?,
+        rules: String,
+        isPublic: Boolean,
+        eventDate: String
+    )
 }
 

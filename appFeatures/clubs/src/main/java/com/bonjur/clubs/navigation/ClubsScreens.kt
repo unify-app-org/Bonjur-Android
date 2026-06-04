@@ -7,4 +7,8 @@ sealed interface ClubsScreens {
     data object List : ClubsScreens
     @Serializable
     data object Details : ClubsScreens
+    @Serializable
+    data object Create : ClubsScreens
+    @Serializable
+    data class Edit(val clubId: Int) : ClubsScreens
 }

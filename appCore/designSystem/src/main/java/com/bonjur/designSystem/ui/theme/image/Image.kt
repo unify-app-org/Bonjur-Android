@@ -89,5 +89,29 @@ object Images {
 
         @Composable
         fun fileAttachment() = painterResource(R.drawable.ic_file_attachment)
+
+        @Composable
+        fun chevronRight() = painterResource(R.drawable.ic_chevron_02_down)
+
+        @Composable
+        fun notification() = painterResource(R.drawable.ic_bell)
+
+        @Composable
+        fun globe() = painterResource(R.drawable.ic_search)
+
+        @Composable
+        fun helpCircle() = painterResource(R.drawable.ic_ellipsis_02)
+
+        @Composable
+        fun fileText() = painterResource(R.drawable.ic_file_attachment)
+
+        @Composable
+        fun logOut() = painterResource(R.drawable.arrow_left_01)
+
+        @Composable
+        fun delete() = painterResource(R.drawable.ic_trash)
+
+        @Composable
+        fun settings() = painterResource(R.drawable.ic_ellipsis_02)
     }
 }

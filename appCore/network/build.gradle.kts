@@ -26,14 +26,14 @@ android {
         debug {
             isMinifyEnabled = false
 
-            buildConfigField("String", "API_BASE_URL", "\"https://test-api.bonjur.app\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://66.70.191.74:8080/\"")
             buildConfigField("boolean", "ENABLE_LOGGING", "true")
         }
 
         create("staging") {
             isMinifyEnabled = false
 
-            buildConfigField("String", "API_BASE_URL", "\"https://api.bonjur.app\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://66.70.191.74:8080/\"")
             buildConfigField("boolean", "ENABLE_LOGGING", "true")
         }
 

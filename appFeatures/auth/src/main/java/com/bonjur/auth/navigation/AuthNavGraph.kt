@@ -8,8 +8,6 @@ import com.bonjur.auth.ForgotPass
 import com.bonjur.auth.RegistrationGreeting
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityInputData
 import com.bonjur.auth.presentation.chooseUniversity.ChooseUniversityScreen
-import com.bonjur.auth.presentation.example.model.ExampleInputData
-import com.bonjur.auth.presentation.example.ExampleScreen
 import com.bonjur.auth.presentation.onboarding.model.OnboardingInputData
 import com.bonjur.auth.presentation.onboarding.OnboardingScreen
 import com.bonjur.auth.presentation.optional.AuthOptionalInfoScreen
@@ -25,10 +23,6 @@ fun NavGraphBuilder.authNavGraph() {
     navigation<AppScreens.Auth>(
         startDestination = AuthScreens.Onboarding
     ) {
-        composable<AuthScreens.Test> {
-            ExampleScreen(inputData = ExampleInputData())
-        }
-
         composable<AuthScreens.Onboarding> {
             OnboardingScreen(
                 OnboardingInputData()
@@ -36,9 +30,8 @@ fun NavGraphBuilder.authNavGraph() {
         }
 
         composable<AuthScreens.SignIn> {
-            SignInScreen(
-                SignInInputData()
-            )
+            val inputData = remember { NavArgs.get<SignInInputData>() ?: SignInInputData() }
+            SignInScreen(inputData)
         }
 
         composable<AuthScreens.ChooseUniversity> {

@@ -23,11 +23,10 @@ fun NavigationEffect(
 
                 is NavigationCommand.NavigateAndClearStack -> {
                     navController.navigate(command.route) {
-                        popUpTo(AppScreens.Main.route) {
-                            inclusive = false
+                        popUpTo(0) {
+                            inclusive = true
                         }
                         launchSingleTop = true
-                        restoreState = true
                     }
                 }
 

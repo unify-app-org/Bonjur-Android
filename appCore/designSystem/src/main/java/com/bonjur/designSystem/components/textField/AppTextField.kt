@@ -24,9 +24,12 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 fun AppTextField(
     text: String,
     onTextChange: (String) -> Unit,
-    placeHolder: String,
+    placeHolder: String = "",
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    trailingIcon: @Composable (() -> Unit)? = null,
     model: AppTextFieldModel = AppTextFieldModel()
 ) {
     var isFocused by remember { mutableStateOf(false) }
@@ -55,6 +58,9 @@ fun AppTextField(
             value = text,
             onValueChange = onTextChange,
             placeholder = { Text(placeHolder) },
+            enabled = enabled,
+            readOnly = readOnly,
+            trailingIcon = trailingIcon,
             visualTransformation = when (model.type) {
                 FieldType.Secure -> PasswordVisualTransformation()
                 FieldType.Normal -> VisualTransformation.None
