@@ -20,7 +20,7 @@ class AuthUseCaseImpl @Inject constructor(
     val defaultStorage: DefaultStorage
 ) : AuthUseCase {
 
-    override suspend fun login(communityId: Int, email: String, password: String): Boolean {
+    override suspend fun login(communityId: Int, email: String, password: String?): Boolean {
         val response = dataSource.login(
             LoginRequest(
                 mail = email,

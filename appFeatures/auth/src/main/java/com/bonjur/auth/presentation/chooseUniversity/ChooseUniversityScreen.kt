@@ -1,5 +1,9 @@
 package com.bonjur.auth.presentation.chooseUniversity
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -7,6 +11,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
@@ -16,11 +21,22 @@ import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityInput
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversitySideEffect
 import com.bonjur.designSystem.ui.theme.image.Images
 
+private fun Context.findActivity(): Activity? {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
+}
+
 @Composable
 fun ChooseUniversityScreen(
     inputData: ChooseUniversityInputData,
     viewModel: ChooseUniversityViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     LaunchedEffect(inputData) {
         viewModel.init(inputData)
     }
@@ -31,6 +47,14 @@ fun ChooseUniversityScreen(
             when (effect) {
                 is ChooseUniversitySideEffect.Loading -> {
 
+                }
+                is ChooseUniversitySideEffect.LaunchMicrosoftSignIn -> {
+                    context.findActivity()?.let { activity ->
+                        viewModel.signInWithMicrosoft(activity)
+                    }
+                }
+                is ChooseUniversitySideEffect.Error -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_LONG).show()
                 }
             }
         }

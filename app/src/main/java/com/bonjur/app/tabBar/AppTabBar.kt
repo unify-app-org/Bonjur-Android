@@ -44,14 +44,18 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.discover.navigation.DiscoverScreens
 import com.bonjur.discover.navigation.discoverNavGraph
+import com.bonjur.events.navigation.EventsScreens
 import com.bonjur.events.navigation.eventsNavGraph
 import com.bonjur.groups.navigation.GroupsScreens
 import com.bonjur.groups.navigation.groupsNavGraph
+import com.bonjur.hangouts.navigation.HangoutsScreens
 import com.bonjur.hangouts.navigation.hangoutsNavGraph
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
 import com.bonjur.profile.navigation.ProfileScreens
 import com.bonjur.profile.navigation.profileNavGraph
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppTabBar(
@@ -64,6 +68,7 @@ fun AppTabBar(
         TabItem.Profile
     )
 
+    val scope = rememberCoroutineScope()
     var selectedTab: TabItem by remember { mutableStateOf(TabItem.Discover) }
     var isMenuOpen by remember { mutableStateOf(false) }
     var plusButtonPosition by remember { mutableStateOf(Offset.Zero) }
@@ -218,6 +223,14 @@ fun AppTabBar(
             visible = isMenuOpen,
             onCreateTypeSelected = { type ->
                 isMenuOpen = false
+                // Discover tab's NavHost registers the clubs/events/hangouts create graphs.
+                selectedTab = TabItem.Discover
+                val route = when (type) {
+                    CreateType.CLUB -> ClubsScreens.Create.route
+                    CreateType.EVENT -> EventsScreens.Create.route
+                    CreateType.HANGOUT -> HangoutsScreens.Create.route
+                }
+                scope.launch { discoverNavigator.navigateTo(route) }
             }
         )
     }

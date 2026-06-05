@@ -30,7 +30,7 @@ data class HangoutsCardModel(
     
     val buttonTitle: String
         get() = when (requestType) {
-            AppUIEntities.RequestType.JOINED -> ""
+            AppUIEntities.RequestType.JOINED -> "Participating"
             AppUIEntities.RequestType.REJECTED -> "Rejected"
             AppUIEntities.RequestType.PENDING -> "Request sent"
             AppUIEntities.RequestType.NONE -> when (accessType) {
@@ -38,6 +38,10 @@ data class HangoutsCardModel(
                 AppUIEntities.AccessType.PRIVATE -> "Request"
             }
         }
+
+    val buttonDisabled: Boolean
+        get() = requestType == AppUIEntities.RequestType.JOINED ||
+            requestType == AppUIEntities.RequestType.PENDING
 }
 
 // Mock data

@@ -53,6 +53,7 @@ data class DiscoverViewState(
 // MARK: - Actions
 sealed class DiscoverAction : FeatureAction {
     object FetchData : DiscoverAction()
+    data class FilterChanged(val categoryIds: List<Int>) : DiscoverAction()
     data class ViewAllTapped(val type: AppUIEntities.ActivityType) : DiscoverAction()
     data class CommunityItemTapped(val communityId: Int) : DiscoverAction()
     data class CLubItemTapped(val clubId: Int) : DiscoverAction()

@@ -14,10 +14,11 @@ interface DiscoverUseCase {
 
     suspend fun fetchCommunitiesData(): List<CommunityCardModel>
 
-    suspend fun fetchClubsData(): List<ClubCardModel>
+    suspend fun fetchClubsData(categoryIds: List<Int> = emptyList()): List<ClubCardModel>
 
     suspend fun fetchEvents(): List<EventsCardModel>
 
-    suspend fun fetchHangoutsData(): List<HangoutsCardModel>
+    suspend fun fetchHangoutsData(categoryIds: List<Int> = emptyList()): List<HangoutsCardModel>
 
+    suspend fun joinHangout(hangoutId: String)
 }

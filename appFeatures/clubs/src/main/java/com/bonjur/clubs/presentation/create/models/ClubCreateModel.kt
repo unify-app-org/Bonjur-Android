@@ -3,6 +3,10 @@ package com.bonjur.clubs.presentation.create.models
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
+import com.bonjur.designSystem.components.fieldSchema.FieldValues
+import com.bonjur.designSystem.components.fieldSchema.isValid
+import com.bonjur.designSystem.components.fieldSchema.text
 
 // MARK: - ClubCreate input
 data class ClubCreateInputData(
@@ -17,18 +21,19 @@ sealed class ClubCreateSideEffect : SideEffect {
 
 // MARK: - View State
 data class ClubCreateViewState(
-    val name: String = "",
-    val about: String = "",
-    val location: String = "",
-    val ownerContact: String = "",
-    val capacity: String = "",
-    val rules: String = "",
-    val isPublic: Boolean = true,
+    val values: FieldValues = emptyMap(),
+    val logoUri: String? = null,
+    val coverUri: String? = null,
+    val existingLogoUrl: String? = null,
+    val existingCoverUrl: String? = null,
     val isLoading: Boolean = false,
     val isEdit: Boolean = false
 ) : FeatureState {
+
+    val schema: List<AppFieldSchema.Field> get() = ClubCreateSchema.fields
+
     val isValid: Boolean
-        get() = name.isNotBlank()
+        get() = values.isValid(schema) && values.text(AppFieldSchema.FieldId.CLUB_NAME).isNotBlank()
 
     val topTitle: String
         get() = if (isEdit) "Edit club" else "Create new club"
@@ -39,11 +44,10 @@ sealed class ClubCreateAction : FeatureAction {
     object FetchData : ClubCreateAction()
     object BackTapped : ClubCreateAction()
     object ContinueTapped : ClubCreateAction()
-    data class NameChanged(val value: String) : ClubCreateAction()
-    data class AboutChanged(val value: String) : ClubCreateAction()
-    data class LocationChanged(val value: String) : ClubCreateAction()
-    data class OwnerContactChanged(val value: String) : ClubCreateAction()
-    data class CapacityChanged(val value: String) : ClubCreateAction()
-    data class RulesChanged(val value: String) : ClubCreateAction()
-    data class VisibilityChanged(val isPublic: Boolean) : ClubCreateAction()
+    data class FieldChanged(
+        val id: AppFieldSchema.FieldId,
+        val value: AppFieldSchema.FieldValue
+    ) : ClubCreateAction()
+    data class LogoSelected(val uri: String?) : ClubCreateAction()
+    data class CoverSelected(val uri: String?) : ClubCreateAction()
 }

@@ -123,7 +123,7 @@ private fun TopView(model: HangoutsCardModel) {
                 text = model.description,
                 style = AppTypography.TextL.regular,
                 color = Palette.blackHigh,
-                maxLines = 2,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
@@ -161,18 +161,16 @@ private fun BottomView(
             }
         }
         
-        // Action button
-        if (model.requestType != AppUIEntities.RequestType.JOINED) {
-            AppButton(
-                title = model.buttonTitle,
-                model = AppButtonModel(
-                    contentSize = ContentSize.Fill,
-                    size = AppButtonSize.Small
-                ),
-                enabled = model.requestType != AppUIEntities.RequestType.PENDING,
-                onClick = onButtonTap
-            )
-        }
+        // Action button — always shown (mirrors iOS); disabled when joined/pending
+        AppButton(
+            title = model.buttonTitle,
+            model = AppButtonModel(
+                contentSize = ContentSize.Fill,
+                size = AppButtonSize.Small
+            ),
+            enabled = !model.buttonDisabled,
+            onClick = onButtonTap
+        )
     }
 }
 

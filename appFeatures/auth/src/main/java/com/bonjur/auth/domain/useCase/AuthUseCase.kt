@@ -5,7 +5,7 @@ import com.bonjur.auth.domain.models.OnboardingUIModel
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 
 interface AuthUseCase {
-    suspend fun login(communityId: Int, email: String, password: String): Boolean
+    suspend fun login(communityId: Int, email: String, password: String?): Boolean
     fun onboarding(): List<OnboardingUIModel>
     fun welcome(name: String): OnboardingUIModel
     suspend fun chooseUniversity(): List<SelectableListItemModel>

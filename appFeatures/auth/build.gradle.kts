@@ -46,6 +46,15 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/*.kotlin_module",
+                "META-INF/DEPENDENCIES",
+                "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+            )
+        }
+    }
 }
 
 dependencies {
@@ -56,6 +65,9 @@ dependencies {
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:appFoundation"))
     implementation(project(":appCore:network"))
+
+    // MSAL — Microsoft Authentication Library (UFAZ Office365 SSO)
+    implementation("com.microsoft.identity.client:msal:5.+")
 
     // Async images
     implementation("io.coil-kt:coil-compose:2.6.0")

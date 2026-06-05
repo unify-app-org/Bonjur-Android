@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoginRequest(
     val mail: String,
-    val password: String,
+    val password: String?,
     val communityId: Int,
     val deviceId: String,
     val devicePlatform: String = "ANDROID",

@@ -38,6 +38,7 @@ class DiscoverViewModel @Inject constructor(
 ) {
     private lateinit var inputData: DiscoverInputData
     private lateinit var navigator: Navigator
+    private var selectedCategoryIds: List<Int> = emptyList()
 
     fun init(inputData: DiscoverInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
@@ -48,6 +49,7 @@ class DiscoverViewModel @Inject constructor(
     override fun handle(action: DiscoverAction) {
         when (action) {
             DiscoverAction.FetchData -> fetchData()
+            is DiscoverAction.FilterChanged -> filterChanged(action.categoryIds)
             is DiscoverAction.ViewAllTapped -> viewAllTapped(action.type)
             is DiscoverAction.CommunityItemTapped -> communityItemTapped(action.communityId)
             is DiscoverAction.CLubItemTapped -> clubItemTapped(action.clubId)
@@ -64,6 +66,16 @@ class DiscoverViewModel @Inject constructor(
             fetchClubsData()
             fetchEventsData()
             fetchHangoutsData()
+        }
+    }
+
+    private fun filterChanged(categoryIds: List<Int>) {
+        selectedCategoryIds = categoryIds
+        viewModelScope.launch {
+            postEffect(DiscoverSideEffect.Loading(true))
+            fetchClubsData()
+            fetchHangoutsData()
+            postEffect(DiscoverSideEffect.Loading(false))
         }
     }
 
@@ -155,7 +167,7 @@ class DiscoverViewModel @Inject constructor(
 
     private suspend fun fetchClubsData() {
         try {
-            val data = useCase.fetchClubsData()
+            val data = useCase.fetchClubsData(selectedCategoryIds)
             updateState (
                 state.copy(uiModel = state.uiModel.copy(clubs = data))
             )
@@ -177,7 +189,7 @@ class DiscoverViewModel @Inject constructor(
 
     private suspend fun fetchHangoutsData() {
         try {
-            val data = useCase.fetchHangoutsData()
+            val data = useCase.fetchHangoutsData(selectedCategoryIds)
             updateState (
                 state.copy(uiModel = state.uiModel.copy(hangouts = data))
             )

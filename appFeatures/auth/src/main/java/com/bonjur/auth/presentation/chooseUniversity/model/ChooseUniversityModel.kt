@@ -21,4 +21,6 @@ sealed class ChooseUniversityAction : FeatureAction {
 
 sealed class ChooseUniversitySideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : ChooseUniversitySideEffect()
+    data class Error(val message: String) : ChooseUniversitySideEffect()
+    object LaunchMicrosoftSignIn : ChooseUniversitySideEffect()
 }

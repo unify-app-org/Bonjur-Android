@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <application>
-        android:localeConfig="@xml/locales_config"
+    <application android:localeConfig="@xml/locales_config">
+
+        <!-- MSAL redirect handler. Path = URL-decoded Base64 signature hash. -->
+        <activity
+            android:name="com.microsoft.identity.client.BrowserTabActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="msauth"
+                    android:host="com.bonjur.app"
+                    android:path="/q3sAHJVEUE77oX+VNDcjSwXly50=" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

@@ -7,6 +7,10 @@ import com.bonjur.clubs.presentation.create.models.ClubCreateAction
 import com.bonjur.clubs.presentation.create.models.ClubCreateInputData
 import com.bonjur.clubs.presentation.create.models.ClubCreateSideEffect
 import com.bonjur.clubs.presentation.create.models.ClubCreateViewState
+import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
+import com.bonjur.designSystem.components.fieldSchema.radio
+import com.bonjur.designSystem.components.fieldSchema.text
 import com.bonjur.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +20,14 @@ import javax.inject.Inject
 class ClubCreateViewModel @Inject constructor(
     private val dependencies: Dependencies
 ) : FeatureViewModel<ClubCreateViewState, ClubCreateAction, ClubCreateSideEffect>(
-    ClubCreateViewState()
+    ClubCreateViewState(
+        values = mapOf(
+            AppFieldSchema.FieldId.COVER to
+                AppFieldSchema.FieldValue.Cover(AppUIEntities.BackgroundType.Primary),
+            AppFieldSchema.FieldId.VISIBILITY to
+                AppFieldSchema.FieldValue.Radio(AppUIEntities.AccessType.PUBLIC)
+        )
+    )
 ) {
 
     data class Dependencies @Inject constructor(
@@ -41,13 +52,10 @@ class ClubCreateViewModel @Inject constructor(
             ClubCreateAction.FetchData -> fetchData()
             ClubCreateAction.BackTapped -> navigateBack()
             ClubCreateAction.ContinueTapped -> continueTapped()
-            is ClubCreateAction.NameChanged -> updateState(state.copy(name = action.value))
-            is ClubCreateAction.AboutChanged -> updateState(state.copy(about = action.value))
-            is ClubCreateAction.LocationChanged -> updateState(state.copy(location = action.value))
-            is ClubCreateAction.OwnerContactChanged -> updateState(state.copy(ownerContact = action.value))
-            is ClubCreateAction.CapacityChanged -> updateState(state.copy(capacity = action.value))
-            is ClubCreateAction.RulesChanged -> updateState(state.copy(rules = action.value))
-            is ClubCreateAction.VisibilityChanged -> updateState(state.copy(isPublic = action.isPublic))
+            is ClubCreateAction.FieldChanged ->
+                updateState(state.copy(values = state.values + (action.id to action.value)))
+            is ClubCreateAction.LogoSelected -> updateState(state.copy(logoUri = action.uri))
+            is ClubCreateAction.CoverSelected -> updateState(state.copy(coverUri = action.uri))
         }
     }
 
@@ -76,13 +84,13 @@ class ClubCreateViewModel @Inject constructor(
         postEffect(ClubCreateSideEffect.Loading(true))
         try {
             dependencies.useCase.createClub(
-                name = state.name,
-                about = state.about,
-                location = state.location,
-                ownerContact = state.ownerContact,
-                capacity = state.capacity.toIntOrNull(),
-                rules = state.rules,
-                isPublic = state.isPublic
+                name = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
+                about = state.values.text(AppFieldSchema.FieldId.ABOUT),
+                location = state.values.text(AppFieldSchema.FieldId.LOCATION),
+                ownerContact = state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT),
+                capacity = state.values.text(AppFieldSchema.FieldId.CAPACITY).toIntOrNull(),
+                rules = state.values.text(AppFieldSchema.FieldId.RULES),
+                isPublic = state.values.radio(AppFieldSchema.FieldId.VISIBILITY) == AppUIEntities.AccessType.PUBLIC
             )
             navigator.navigateUp()
         } catch (e: Exception) {
@@ -97,13 +105,13 @@ class ClubCreateViewModel @Inject constructor(
         try {
             dependencies.useCase.editClub(
                 clubId = clubId,
-                name = state.name,
-                about = state.about,
-                location = state.location,
-                ownerContact = state.ownerContact,
-                capacity = state.capacity.toIntOrNull(),
-                rules = state.rules,
-                isPublic = state.isPublic
+                name = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
+                about = state.values.text(AppFieldSchema.FieldId.ABOUT),
+                location = state.values.text(AppFieldSchema.FieldId.LOCATION),
+                ownerContact = state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT),
+                capacity = state.values.text(AppFieldSchema.FieldId.CAPACITY).toIntOrNull(),
+                rules = state.values.text(AppFieldSchema.FieldId.RULES),
+                isPublic = state.values.radio(AppFieldSchema.FieldId.VISIBILITY) == AppUIEntities.AccessType.PUBLIC
             )
             navigator.navigateUp()
         } catch (e: Exception) {

@@ -1,0 +1,16 @@
+{
+  "client_id": "2e87ef5d-44d1-417f-832f-335e3b02a635",
+  "authorization_user_agent": "DEFAULT",
+  "redirect_uri": "msauth://com.bonjur.app/q3sAHJVEUE77oX%2BVNDcjSwXly50%3D",
+  "account_mode": "SINGLE",
+  "broker_redirect_uri_registered": false,
+  "authorities": [
+    {
+      "type": "AAD",
+      "audience": {
+        "type": "AzureADMultipleOrgs",
+        "tenant_id": "organizations"
+      }
+    }
+  ]
+}

@@ -64,6 +64,8 @@ class ApiClient @Inject constructor(
                         header(key, value)
                     }
 
+                    header("Accept-Language", acceptLanguage())
+
                     if (endpoint.requiresAuth) {
                         tokenManager.getAccessToken()?.let { token ->
                             header("Authorization", "Bearer $token")
@@ -116,6 +118,8 @@ class ApiClient @Inject constructor(
                     endpoint.headers?.forEach { (key, value) ->
                         header(key, value)
                     }
+
+                    header("Accept-Language", acceptLanguage())
 
                     if (endpoint.requiresAuth) {
                         tokenManager.getAccessToken()?.let { token ->
@@ -275,6 +279,12 @@ class ApiClient @Inject constructor(
             tokenManager.clearTokens()
             throw ApiException.Unauthorized
         }
+    }
+
+    /** Restrict device locale to supported languages; default to English. */
+    private fun acceptLanguage(): String {
+        val lang = java.util.Locale.getDefault().language.lowercase()
+        return if (lang in setOf("az", "en", "ru")) lang else "en"
     }
 
     internal fun NetworkMethod.toKtor(): HttpMethod =

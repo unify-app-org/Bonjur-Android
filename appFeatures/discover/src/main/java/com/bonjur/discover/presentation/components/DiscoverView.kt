@@ -157,7 +157,7 @@ fun DiscoverView(
             FilterView(
                 model = state.uiModel.filters,
                 selectedItems = { items ->
-
+                    store.send(DiscoverAction.FilterChanged(items.map { it.id }))
                 },
                 onChipsHeightChanged = { height ->
                     filterViewHeight = height

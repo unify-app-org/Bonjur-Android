@@ -39,7 +39,7 @@ fun SignInView(
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             AppTextField(
                 text = state.email,
-                onTextChange = { /* update via action if needed */ },
+                onTextChange = { store.send(SignInAction.EmailChanged(it)) },
                 placeHolder = "Enter your email",
                 model = AppTextFieldModel(
                     title = "Email"
@@ -48,7 +48,7 @@ fun SignInView(
 
             AppTextField(
                 text = state.password,
-                onTextChange = { /* update via action if needed */ },
+                onTextChange = { store.send(SignInAction.PasswordChanged(it)) },
                 placeHolder = "Enter your password",
                 model = AppTextFieldModel(
                     title = "Password",
