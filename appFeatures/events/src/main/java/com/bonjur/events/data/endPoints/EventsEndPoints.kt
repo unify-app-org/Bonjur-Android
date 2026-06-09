@@ -1,6 +1,7 @@
 package com.bonjur.events.data.endPoints
 
 import com.bonjur.network.APIClient.AppEndpoint
+import com.bonjur.network.APIClient.MultipartPayload
 import com.bonjur.network.APIClient.NetworkMethod
 
 sealed class EventsEndPoints : AppEndpoint {
@@ -11,25 +12,44 @@ sealed class EventsEndPoints : AppEndpoint {
         override val queryParameters = query
     }
 
+    data class ClubsForEvents(val unused: Unit = Unit) : EventsEndPoints() {
+        override val path = "api/cs/v1/clubs/forEvents"
+        override val method = NetworkMethod.GET
+    }
+
+    data class GetCategories(val unused: Unit = Unit) : EventsEndPoints() {
+        override val path = "api/sd/v1/categories"
+        override val method = NetworkMethod.GET
+    }
+
     data class GetEventById(val eventId: String) : EventsEndPoints() {
         override val path = "api/es/v1/events/$eventId"
         override val method = NetworkMethod.GET
     }
 
-    data class CreateEvent(
-        val request: com.bonjur.events.data.DTOs.EventCreateRequest
+    data class GetEventMembers(
+        val eventId: String,
+        val query: Map<String, String>
     ) : EventsEndPoints() {
+        override val path = "api/es/v1/events/$eventId/members"
+        override val method = NetworkMethod.GET
+        override val queryParameters = query
+    }
+
+    data class CreateEvent(val payload: MultipartPayload) : EventsEndPoints() {
         override val path = "api/es/v1/events"
         override val method = NetworkMethod.POST
-        override val body = request
+        override val headers: Map<String, String>? = null
+        override val multipart = payload
     }
 
     data class EditEvent(
         val eventId: String,
-        val request: com.bonjur.events.data.DTOs.EventCreateRequest
+        val payload: MultipartPayload
     ) : EventsEndPoints() {
         override val path = "api/es/v1/events/$eventId"
         override val method = NetworkMethod.PUT
-        override val body = request
+        override val headers: Map<String, String>? = null
+        override val multipart = payload
     }
 }

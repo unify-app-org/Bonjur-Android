@@ -12,7 +12,7 @@ import com.bonjur.discover.data.DTOs.DiscoverMember
 import com.bonjur.discover.data.DTOs.JoinHangoutRequest
 import com.bonjur.discover.data.dataSources.DiscoverDataSource
 import com.bonjur.discover.domain.models.UserModel
-import com.bonjur.events.presentation.list.models.EventsCardMocks
+import com.bonjur.events.domain.useCase.EventsUseCase
 import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import com.bonjur.network.manager.TokenManager
@@ -23,7 +23,8 @@ import javax.inject.Inject
 class DiscoverUseCaseImpl @Inject constructor(
     val dataSource: DiscoverDataSource,
     val tokenManager: TokenManager,
-    val defaultStorage: DefaultStorage
+    val defaultStorage: DefaultStorage,
+    val eventsUseCase: EventsUseCase
 ) : DiscoverUseCase {
 
     private val defaultQuery: Map<String, String>
@@ -69,7 +70,7 @@ class DiscoverUseCaseImpl @Inject constructor(
         return dataSource.getClubs(query).map { it.toCardModel() }
     }
 
-    override suspend fun fetchEvents(): List<EventsCardModel> = EventsCardMocks.previewMock
+    override suspend fun fetchEvents(): List<EventsCardModel> = eventsUseCase.fetchEventsData()
 
     override suspend fun fetchHangoutsData(categoryIds: List<Int>): List<HangoutsCardModel> {
         val query = defaultQuery.toMutableMap()

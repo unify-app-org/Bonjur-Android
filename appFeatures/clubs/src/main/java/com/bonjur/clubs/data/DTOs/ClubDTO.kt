@@ -14,7 +14,28 @@ data class ClubCreateRequest(
     @SerialName("backgroundColour") val backgroundColour: String = "PRIMARY",
     val capacity: Int? = null,
     val categoryIds: List<Int> = emptyList(),
+    val links: List<ClubLinkRequest> = emptyList(),
     val rule: String? = null
+)
+
+@Serializable
+data class ClubLinkRequest(
+    val type: String,
+    val name: String,
+    val url: String
+)
+
+@Serializable
+data class CategorySectionResponse(
+    val type: String? = null,
+    val title: String? = null,
+    val subCategories: List<CategoryItemResponse> = emptyList()
+)
+
+@Serializable
+data class CategoryItemResponse(
+    val id: Int? = null,
+    val title: String? = null
 )
 
 @Serializable

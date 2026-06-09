@@ -11,8 +11,6 @@ import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import javax.inject.Singleton
@@ -43,10 +41,6 @@ object NetworkModule {
                 requestTimeoutMillis = 30_000
                 connectTimeoutMillis = 30_000
                 socketTimeoutMillis = 30_000
-            }
-
-            defaultRequest {
-                header("Content-Type", "application/json")
             }
         }
     }

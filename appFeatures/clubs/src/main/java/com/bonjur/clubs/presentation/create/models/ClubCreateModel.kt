@@ -3,6 +3,7 @@ package com.bonjur.clubs.presentation.create.models
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.fieldSchema.FieldValues
 import com.bonjur.designSystem.components.fieldSchema.isValid
@@ -26,6 +27,8 @@ data class ClubCreateViewState(
     val coverUri: String? = null,
     val existingLogoUrl: String? = null,
     val existingCoverUrl: String? = null,
+    val categorySections: List<CategorySection> = emptyList(),
+    val showCategoryPicker: Boolean = false,
     val isLoading: Boolean = false,
     val isEdit: Boolean = false
 ) : FeatureState {
@@ -50,4 +53,9 @@ sealed class ClubCreateAction : FeatureAction {
     ) : ClubCreateAction()
     data class LogoSelected(val uri: String?) : ClubCreateAction()
     data class CoverSelected(val uri: String?) : ClubCreateAction()
+    object AddCategoryTapped : ClubCreateAction()
+    object DismissCategoryPicker : ClubCreateAction()
+    object CategoryPickerDone : ClubCreateAction()
+    data class CategoryToggled(val id: Int) : ClubCreateAction()
+    data class RemoveCategory(val id: Int) : ClubCreateAction()
 }

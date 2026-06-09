@@ -1,28 +1,68 @@
 package com.bonjur.clubs.data.dataSource
 
+import com.bonjur.clubs.data.DTOs.CategorySectionResponse
+import com.bonjur.clubs.data.DTOs.ClubCreateRequest
+import com.bonjur.clubs.data.DTOs.ClubDetailResponse
+import com.bonjur.clubs.data.DTOs.ClubListResponse
+import com.bonjur.clubs.data.DTOs.ClubMemberResponse
+import com.bonjur.clubs.data.endPoints.ClubsEndpoints
 import com.bonjur.network.APIClient.ApiClientProtocol
+import com.bonjur.network.APIClient.MultipartFile
+import com.bonjur.network.APIClient.MultipartPayload
 import com.bonjur.network.APIClient.NetworkService
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class ClubsDataSourceImpl @Inject constructor(
-    apiClient: ApiClientProtocol
+    apiClient: ApiClientProtocol,
+    private val json: Json
 ) : NetworkService(apiClient), ClubsDataSource {
 
-    override suspend fun getClubs(query: Map<String, String>): List<com.bonjur.clubs.data.DTOs.ClubListResponse> =
-        fetch(com.bonjur.clubs.data.endPoints.ClubsEndpoints.GetClubs(query))
+    override suspend fun getClubs(query: Map<String, String>): List<ClubListResponse> =
+        fetch(ClubsEndpoints.GetClubs(query))
 
-    override suspend fun getClubById(clubId: Int): com.bonjur.clubs.data.DTOs.ClubDetailResponse =
-        fetch(com.bonjur.clubs.data.endPoints.ClubsEndpoints.GetClubById(clubId))
+    override suspend fun getCategories(): List<CategorySectionResponse> =
+        fetch(ClubsEndpoints.GetCategories())
 
-    override suspend fun getClubMembers(clubId: Int): com.bonjur.clubs.data.DTOs.ClubMemberResponse =
-        fetch(com.bonjur.clubs.data.endPoints.ClubsEndpoints.GetClubMembers(clubId))
+    override suspend fun getClubById(clubId: Int): ClubDetailResponse =
+        fetch(ClubsEndpoints.GetClubById(clubId))
 
-    override suspend fun createClub(request: com.bonjur.clubs.data.DTOs.ClubCreateRequest): com.bonjur.clubs.data.DTOs.ClubDetailResponse =
-        fetch(com.bonjur.clubs.data.endPoints.ClubsEndpoints.CreateClub(request))
+    override suspend fun getClubMembers(clubId: Int): ClubMemberResponse =
+        fetch(ClubsEndpoints.GetClubMembers(clubId))
 
-    override suspend fun editClub(clubId: Int, request: com.bonjur.clubs.data.DTOs.ClubCreateRequest): com.bonjur.clubs.data.DTOs.ClubDetailResponse =
-        fetch(com.bonjur.clubs.data.endPoints.ClubsEndpoints.EditClub(clubId, request))
+    override suspend fun createClub(
+        request: ClubCreateRequest,
+        logo: ByteArray?,
+        cover: ByteArray?
+    ): ClubDetailResponse =
+        fetch(ClubsEndpoints.CreateClub(buildPayload(request, logo, cover)))
+
+    override suspend fun editClub(
+        clubId: Int,
+        request: ClubCreateRequest,
+        logo: ByteArray?,
+        cover: ByteArray?
+    ): ClubDetailResponse =
+        fetch(ClubsEndpoints.EditClub(clubId, buildPayload(request, logo, cover)))
 
     override suspend fun joinClub(clubId: Int): ByteArray =
-        fetchRawData(com.bonjur.clubs.data.endPoints.ClubsEndpoints.JoinClub(clubId))
+        fetchRawData(ClubsEndpoints.JoinClub(clubId))
+
+    /** Builds the multipart body mirroring iOS: a JSON "request" part plus optional image files. */
+    private fun buildPayload(
+        request: ClubCreateRequest,
+        logo: ByteArray?,
+        cover: ByteArray?
+    ): MultipartPayload = MultipartPayload(
+        jsonParts = mapOf("request" to json.encodeToString(request)),
+        files = buildList {
+            logo?.let {
+                add(MultipartFile("clubProfile", "clubProfile.jpg", "image/jpeg", it))
+            }
+            cover?.let {
+                add(MultipartFile("backgroundPhoto", "backgroundPhoto.jpg", "image/jpeg", it))
+            }
+        }
+    )
 }

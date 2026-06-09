@@ -1,22 +1,72 @@
 package com.bonjur.events.data.dataSource
 
+import com.bonjur.events.data.DTOs.ClubForEventResponse
+import com.bonjur.events.data.DTOs.EventCategorySectionResponse
+import com.bonjur.events.data.DTOs.EventCreateRequest
+import com.bonjur.events.data.DTOs.EventDetailResponse
+import com.bonjur.events.data.DTOs.EventListResponse
+import com.bonjur.events.data.DTOs.EventMembersResponse
+import com.bonjur.events.data.endPoints.EventsEndPoints
 import com.bonjur.network.APIClient.ApiClientProtocol
+import com.bonjur.network.APIClient.MultipartFile
+import com.bonjur.network.APIClient.MultipartPayload
 import com.bonjur.network.APIClient.NetworkService
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class EventsDataSourceImpl @Inject constructor(
-    apiClient: ApiClientProtocol
+    apiClient: ApiClientProtocol,
+    private val json: Json
 ) : NetworkService(apiClient), EventsDataSource {
 
-    override suspend fun getEvents(query: Map<String, String>): List<com.bonjur.events.data.DTOs.EventListResponse> =
-        fetch(com.bonjur.events.data.endPoints.EventsEndPoints.GetEvents(query))
+    override suspend fun getEvents(query: Map<String, String>): List<EventListResponse> =
+        fetch(EventsEndPoints.GetEvents(query))
 
-    override suspend fun getEventById(eventId: String): com.bonjur.events.data.DTOs.EventDetailResponse =
-        fetch(com.bonjur.events.data.endPoints.EventsEndPoints.GetEventById(eventId))
+    override suspend fun getClubsForEvents(): List<ClubForEventResponse> =
+        fetch(EventsEndPoints.ClubsForEvents())
 
-    override suspend fun createEvent(request: com.bonjur.events.data.DTOs.EventCreateRequest): com.bonjur.events.data.DTOs.EventDetailResponse =
-        fetch(com.bonjur.events.data.endPoints.EventsEndPoints.CreateEvent(request))
+    override suspend fun getCategories(): List<EventCategorySectionResponse> =
+        fetch(EventsEndPoints.GetCategories())
 
-    override suspend fun editEvent(eventId: String, request: com.bonjur.events.data.DTOs.EventCreateRequest): com.bonjur.events.data.DTOs.EventDetailResponse =
-        fetch(com.bonjur.events.data.endPoints.EventsEndPoints.EditEvent(eventId, request))
+    override suspend fun getEventById(eventId: String): EventDetailResponse =
+        fetch(EventsEndPoints.GetEventById(eventId))
+
+    override suspend fun getEventMembers(
+        eventId: String,
+        query: Map<String, String>
+    ): EventMembersResponse =
+        fetch(EventsEndPoints.GetEventMembers(eventId, query))
+
+    override suspend fun createEvent(
+        request: EventCreateRequest,
+        background: ByteArray?,
+        attachments: List<EventAttachmentFile>
+    ): EventDetailResponse =
+        fetch(EventsEndPoints.CreateEvent(buildPayload(request, background, attachments)))
+
+    override suspend fun editEvent(
+        eventId: String,
+        request: EventCreateRequest,
+        background: ByteArray?,
+        attachments: List<EventAttachmentFile>
+    ): EventDetailResponse =
+        fetch(EventsEndPoints.EditEvent(eventId, buildPayload(request, background, attachments)))
+
+    /** Builds the multipart body mirroring iOS: JSON "request" part + required background + optional attachments. */
+    private fun buildPayload(
+        request: EventCreateRequest,
+        background: ByteArray?,
+        attachments: List<EventAttachmentFile>
+    ): MultipartPayload = MultipartPayload(
+        jsonParts = mapOf("request" to json.encodeToString(request)),
+        files = buildList {
+            background?.let {
+                add(MultipartFile("background", "background.jpg", "image/jpeg", it))
+            }
+            attachments.forEach { file ->
+                add(MultipartFile("attachments", file.name, file.mimeType, file.bytes))
+            }
+        }
+    )
 }

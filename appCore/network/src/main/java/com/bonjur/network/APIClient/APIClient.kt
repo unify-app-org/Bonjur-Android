@@ -8,11 +8,15 @@ import com.bonjur.network.model.NetworkError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.header
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import kotlinx.serialization.KSerializer
@@ -115,7 +119,13 @@ class ApiClient @Inject constructor(
                 response = client.request(url) {
                     method = endpoint.method.toKtor()
 
+                    val multipart = endpoint.multipart
+
                     endpoint.headers?.forEach { (key, value) ->
+                        // Let MultiPartFormDataContent own the Content-Type (boundary).
+                        if (multipart != null && key.equals("Content-Type", ignoreCase = true)) {
+                            return@forEach
+                        }
                         header(key, value)
                     }
 
@@ -127,15 +137,20 @@ class ApiClient @Inject constructor(
                         }
                     }
 
-                    endpoint.body?.let {
-                        contentType(ContentType.Application.Json)
-                        setBody(it)
+                    if (multipart != null) {
+                        setBody(multipart.toFormDataContent())
+                    } else {
+                        endpoint.body?.let {
+                            contentType(ContentType.Application.Json)
+                            setBody(it)
+                        }
                     }
 
                     // Log request
                     logger.logRequest(
                         this,
-                        endpoint.body?.toString()
+                        multipart?.let { "[multipart: ${it.files.size} file(s)]" }
+                            ?: endpoint.body?.toString()
                     )
                 }
             }
@@ -286,6 +301,34 @@ class ApiClient @Inject constructor(
         val lang = java.util.Locale.getDefault().language.lowercase()
         return if (lang in setOf("az", "en", "ru")) lang else "en"
     }
+
+    private fun MultipartPayload.toFormDataContent(): MultiPartFormDataContent =
+        MultiPartFormDataContent(
+            formData {
+                jsonParts.forEach { (name, jsonString) ->
+                    append(
+                        name,
+                        jsonString,
+                        Headers.build {
+                            append(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                        }
+                    )
+                }
+                files.forEach { file ->
+                    append(
+                        file.name,
+                        file.bytes,
+                        Headers.build {
+                            append(HttpHeaders.ContentType, file.mimeType)
+                            append(
+                                HttpHeaders.ContentDisposition,
+                                "filename=\"${file.fileName}\""
+                            )
+                        }
+                    )
+                }
+            }
+        )
 
     internal fun NetworkMethod.toKtor(): HttpMethod =
         when (this) {

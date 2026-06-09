@@ -1,12 +1,16 @@
 package com.bonjur.clubs.domain.useCase
 
+import com.bonjur.clubs.data.DTOs.CategorySectionResponse
 import com.bonjur.clubs.data.DTOs.ClubCreateRequest
 import com.bonjur.clubs.data.DTOs.ClubDetailResponse
+import com.bonjur.clubs.data.DTOs.ClubLinkRequest
 import com.bonjur.clubs.data.DTOs.ClubListResponse
 import com.bonjur.clubs.data.dataSource.ClubsDataSource
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
+import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
 import javax.inject.Inject
@@ -25,37 +29,61 @@ class ClubsUseCaseImpl @Inject constructor(
         return dataSource.getClubById(clubId).toUIModel()
     }
 
-    override suspend fun createClub(
-        name: String, about: String, location: String,
-        ownerContact: String, capacity: Int?, rules: String, isPublic: Boolean
-    ) {
+    override suspend fun getCategories(): List<CategorySection> =
+        dataSource.getCategories().map { it.toSection() }
+
+    override suspend fun createClub(form: ClubFormData) {
         dataSource.createClub(
-            ClubCreateRequest(
-                name = name, about = about, location = location,
-                ownerContact = ownerContact, capacity = capacity,
-                rule = rules.ifBlank { null },
-                visibility = if (isPublic) "PUBLIC" else "PRIVATE"
-            )
+            request = form.toRequest(),
+            logo = form.logo,
+            cover = form.cover
         )
     }
 
-    override suspend fun editClub(
-        clubId: Int, name: String, about: String, location: String,
-        ownerContact: String, capacity: Int?, rules: String, isPublic: Boolean
-    ) {
+    override suspend fun editClub(clubId: Int, form: ClubFormData) {
         dataSource.editClub(
             clubId = clubId,
-            request = ClubCreateRequest(
-                name = name, about = about, location = location,
-                ownerContact = ownerContact, capacity = capacity,
-                rule = rules.ifBlank { null },
-                visibility = if (isPublic) "PUBLIC" else "PRIVATE"
-            )
+            request = form.toRequest(),
+            logo = form.logo,
+            cover = form.cover
         )
     }
 
     override suspend fun joinClub(clubId: Int) {
         dataSource.joinClub(clubId)
+    }
+
+    private fun ClubFormData.toRequest() = ClubCreateRequest(
+        name = name,
+        about = about,
+        location = location,
+        ownerContact = ownerContact,
+        capacity = capacity,
+        rule = rules.ifBlank { null },
+        visibility = if (isPublic) "PUBLIC" else "PRIVATE",
+        backgroundColour = background.toRequestString(),
+        categoryIds = categoryIds,
+        links = links.map { ClubLinkRequest(type = it.type, name = it.name, url = it.url) }
+    )
+
+    private fun CategorySectionResponse.toSection() = CategorySection(
+        type = type ?: "",
+        title = title ?: "",
+        categories = subCategories.map {
+            CategoriesChipModel(id = it.id ?: 0, title = it.title ?: "", selected = false)
+        }
+    )
+
+    private fun AppUIEntities.BackgroundType.toRequestString(): String = when (this) {
+        is AppUIEntities.BackgroundType.Primary -> "PRIMARY"
+        is AppUIEntities.BackgroundType.Secondary -> "SECONDARY"
+        is AppUIEntities.BackgroundType.Tertiary -> "TERTIARY"
+        is AppUIEntities.BackgroundType.CustomColor -> when (colorType) {
+            is AppUIEntities.ColorType.Orange -> "ORANGE"
+            is AppUIEntities.ColorType.Red -> "RED"
+            is AppUIEntities.ColorType.Pink -> "PURPLE"
+            is AppUIEntities.ColorType.Custom -> "PRIMARY"
+        }
     }
 
     private fun ClubListResponse.toCardModel() = ClubCardModel(

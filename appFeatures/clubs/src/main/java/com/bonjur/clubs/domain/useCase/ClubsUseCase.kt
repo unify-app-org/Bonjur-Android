@@ -2,7 +2,26 @@ package com.bonjur.clubs.domain.useCase
 
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
+import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.categorieChips.CategorySection
+import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.filter.FilterView
+
+/** All values gathered by the club create/edit form. Mirrors iOS `buildRequest()` inputs. */
+data class ClubFormData(
+    val name: String,
+    val about: String,
+    val location: String,
+    val ownerContact: String,
+    val capacity: Int?,
+    val rules: String,
+    val isPublic: Boolean,
+    val background: AppUIEntities.BackgroundType,
+    val categoryIds: List<Int>,
+    val links: List<AppFieldSchema.LinkItem>,
+    val logo: ByteArray?,
+    val cover: ByteArray?
+)
 
 interface ClubsUseCase {
     suspend fun fetchClubsData(): List<ClubCardModel>
@@ -11,26 +30,11 @@ interface ClubsUseCase {
 
     suspend fun fetchFilterData(): List<FilterView.Model>
 
-    suspend fun createClub(
-        name: String,
-        about: String,
-        location: String,
-        ownerContact: String,
-        capacity: Int?,
-        rules: String,
-        isPublic: Boolean
-    )
+    suspend fun getCategories(): List<CategorySection>
 
-    suspend fun editClub(
-        clubId: Int,
-        name: String,
-        about: String,
-        location: String,
-        ownerContact: String,
-        capacity: Int?,
-        rules: String,
-        isPublic: Boolean
-    )
+    suspend fun createClub(form: ClubFormData)
+
+    suspend fun editClub(clubId: Int, form: ClubFormData)
 
     suspend fun joinClub(clubId: Int)
 }

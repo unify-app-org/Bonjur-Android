@@ -24,9 +24,11 @@ import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.presentation.create.models.ClubCreateAction
 import com.bonjur.clubs.presentation.create.models.ClubCreateSideEffect
 import com.bonjur.clubs.presentation.create.models.ClubCreateViewState
+import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.components.button.AppButtonModel
 import com.bonjur.designSystem.components.button.ContentSize
+import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
 import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
@@ -87,6 +89,8 @@ fun ClubCreateView(
                         onChange = { id, value ->
                             store.send(ClubCreateAction.FieldChanged(id, value))
                         },
+                        onAddCategory = { store.send(ClubCreateAction.AddCategoryTapped) },
+                        onRemoveCategory = { id -> store.send(ClubCreateAction.RemoveCategory(id)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -102,6 +106,21 @@ fun ClubCreateView(
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             enabled = state.isValid
         )
+    }
+
+    if (state.showCategoryPicker) {
+        AppBottomSheet(
+            onDismiss = { store.send(ClubCreateAction.DismissCategoryPicker) },
+            showDragHandle = false,
+            modifier = Modifier.fillMaxHeight(0.9f)
+        ) {
+            SelectCategoryView(
+                sections = state.categorySections,
+                onToggle = { id -> store.send(ClubCreateAction.CategoryToggled(id)) },
+                onDone = { store.send(ClubCreateAction.CategoryPickerDone) },
+                onClose = { store.send(ClubCreateAction.DismissCategoryPicker) }
+            )
+        }
     }
 }
 

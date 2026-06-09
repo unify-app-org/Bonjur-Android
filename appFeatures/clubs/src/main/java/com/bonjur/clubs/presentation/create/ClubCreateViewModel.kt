@@ -1,19 +1,29 @@
 package com.bonjur.clubs.presentation.create
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
+import com.bonjur.clubs.domain.useCase.ClubFormData
 import com.bonjur.clubs.domain.useCase.ClubsUseCase
 import com.bonjur.clubs.presentation.create.models.ClubCreateAction
 import com.bonjur.clubs.presentation.create.models.ClubCreateInputData
 import com.bonjur.clubs.presentation.create.models.ClubCreateSideEffect
 import com.bonjur.clubs.presentation.create.models.ClubCreateViewState
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
+import com.bonjur.designSystem.components.fieldSchema.cover
+import com.bonjur.designSystem.components.fieldSchema.links
 import com.bonjur.designSystem.components.fieldSchema.radio
+import com.bonjur.designSystem.components.fieldSchema.tags
 import com.bonjur.designSystem.components.fieldSchema.text
 import com.bonjur.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +41,8 @@ class ClubCreateViewModel @Inject constructor(
 ) {
 
     data class Dependencies @Inject constructor(
-        val useCase: ClubsUseCase
+        val useCase: ClubsUseCase,
+        @ApplicationContext val context: Context
     )
 
     private lateinit var inputData: ClubCreateInputData
@@ -56,11 +67,19 @@ class ClubCreateViewModel @Inject constructor(
                 updateState(state.copy(values = state.values + (action.id to action.value)))
             is ClubCreateAction.LogoSelected -> updateState(state.copy(logoUri = action.uri))
             is ClubCreateAction.CoverSelected -> updateState(state.copy(coverUri = action.uri))
+            ClubCreateAction.AddCategoryTapped -> updateState(state.copy(showCategoryPicker = true))
+            ClubCreateAction.DismissCategoryPicker -> dismissCategoryPicker()
+            ClubCreateAction.CategoryPickerDone -> dismissCategoryPicker()
+            is ClubCreateAction.CategoryToggled -> toggleCategory(action.id)
+            is ClubCreateAction.RemoveCategory -> removeCategory(action.id)
         }
     }
 
     private fun fetchData() {
-        // Prefill data if editing
+        viewModelScope.launch {
+            runCatching { dependencies.useCase.getCategories() }
+                .onSuccess { updateState(state.copy(categorySections = it)) }
+        }
     }
 
     private fun navigateBack() {
@@ -69,29 +88,69 @@ class ClubCreateViewModel @Inject constructor(
         }
     }
 
+    // MARK: - Categories
+
+    private fun toggleCategory(id: Int) {
+        updateState(state.copy(categorySections = state.categorySections.toggle(id)))
+    }
+
+    private fun removeCategory(id: Int) {
+        val sections = state.categorySections.setSelected(id, false)
+        updateState(state.copy(categorySections = sections, values = state.values.syncCategories(sections)))
+    }
+
+    private fun dismissCategoryPicker() {
+        updateState(
+            state.copy(
+                showCategoryPicker = false,
+                values = state.values.syncCategories(state.categorySections)
+            )
+        )
+    }
+
+    private fun List<CategorySection>.toggle(id: Int): List<CategorySection> = map { section ->
+        section.copy(categories = section.categories.map {
+            if (it.id == id) it.copy(selected = !it.selected) else it
+        })
+    }
+
+    private fun List<CategorySection>.setSelected(id: Int, selected: Boolean): List<CategorySection> =
+        map { section ->
+            section.copy(categories = section.categories.map {
+                if (it.id == id) it.copy(selected = selected) else it
+            })
+        }
+
+    private fun Map<AppFieldSchema.FieldId, AppFieldSchema.FieldValue>.syncCategories(
+        sections: List<CategorySection>
+    ): Map<AppFieldSchema.FieldId, AppFieldSchema.FieldValue> {
+        val tags = sections.flatMap { it.categories }
+            .filter { it.selected }
+            .map { AppFieldSchema.TagItem(id = it.id, label = it.title) }
+        return this + (AppFieldSchema.FieldId.CATEGORY to AppFieldSchema.FieldValue.Tags(tags))
+    }
+
+    // MARK: - Submit
+
     private fun continueTapped() {
         viewModelScope.launch {
             val clubId = inputData.clubId
-            if (clubId != null) {
-                editClub(clubId)
-            } else {
-                createClub()
-            }
+            if (clubId != null) editClub(clubId) else createClub()
         }
     }
 
-    private suspend fun createClub() {
+    private suspend fun createClub() = submit { form ->
+        dependencies.useCase.createClub(form)
+    }
+
+    private suspend fun editClub(clubId: Int) = submit { form ->
+        dependencies.useCase.editClub(clubId, form)
+    }
+
+    private suspend inline fun submit(crossinline call: suspend (ClubFormData) -> Unit) {
         postEffect(ClubCreateSideEffect.Loading(true))
         try {
-            dependencies.useCase.createClub(
-                name = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
-                about = state.values.text(AppFieldSchema.FieldId.ABOUT),
-                location = state.values.text(AppFieldSchema.FieldId.LOCATION),
-                ownerContact = state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT),
-                capacity = state.values.text(AppFieldSchema.FieldId.CAPACITY).toIntOrNull(),
-                rules = state.values.text(AppFieldSchema.FieldId.RULES),
-                isPublic = state.values.radio(AppFieldSchema.FieldId.VISIBILITY) == AppUIEntities.AccessType.PUBLIC
-            )
+            call(buildForm())
             navigator.navigateUp()
         } catch (e: Exception) {
             postEffect(ClubCreateSideEffect.Error(e.message ?: "Unknown error"))
@@ -100,24 +159,30 @@ class ClubCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun editClub(clubId: Int) {
-        postEffect(ClubCreateSideEffect.Loading(true))
-        try {
-            dependencies.useCase.editClub(
-                clubId = clubId,
-                name = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
-                about = state.values.text(AppFieldSchema.FieldId.ABOUT),
-                location = state.values.text(AppFieldSchema.FieldId.LOCATION),
-                ownerContact = state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT),
-                capacity = state.values.text(AppFieldSchema.FieldId.CAPACITY).toIntOrNull(),
-                rules = state.values.text(AppFieldSchema.FieldId.RULES),
-                isPublic = state.values.radio(AppFieldSchema.FieldId.VISIBILITY) == AppUIEntities.AccessType.PUBLIC
-            )
-            navigator.navigateUp()
-        } catch (e: Exception) {
-            postEffect(ClubCreateSideEffect.Error(e.message ?: "Unknown error"))
-        } finally {
-            postEffect(ClubCreateSideEffect.Loading(false))
+    private suspend fun buildForm(): ClubFormData {
+        val values = state.values
+        return ClubFormData(
+            name = values.text(AppFieldSchema.FieldId.CLUB_NAME),
+            about = values.text(AppFieldSchema.FieldId.ABOUT),
+            location = values.text(AppFieldSchema.FieldId.LOCATION),
+            ownerContact = values.text(AppFieldSchema.FieldId.OWNER_CONTACT),
+            capacity = values.text(AppFieldSchema.FieldId.CAPACITY).toIntOrNull(),
+            rules = values.text(AppFieldSchema.FieldId.RULES),
+            isPublic = values.radio(AppFieldSchema.FieldId.VISIBILITY) == AppUIEntities.AccessType.PUBLIC,
+            background = values.cover(AppFieldSchema.FieldId.COVER),
+            categoryIds = values.tags(AppFieldSchema.FieldId.CATEGORY).map { it.id },
+            links = values.links(AppFieldSchema.FieldId.LINKS),
+            logo = readBytes(state.logoUri),
+            cover = readBytes(state.coverUri)
+        )
+    }
+
+    private suspend fun readBytes(uriString: String?): ByteArray? {
+        val uri = uriString?.let { Uri.parse(it) } ?: return null
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                dependencies.context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+            }.getOrNull()
         }
     }
 }
