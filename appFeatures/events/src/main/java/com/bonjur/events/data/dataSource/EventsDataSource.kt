@@ -6,6 +6,7 @@ import com.bonjur.events.data.DTOs.EventCreateRequest
 import com.bonjur.events.data.DTOs.EventDetailResponse
 import com.bonjur.events.data.DTOs.EventListResponse
 import com.bonjur.events.data.DTOs.EventMembersResponse
+import com.bonjur.network.model.PageNationResponse
 
 /** A picked attachment ready for multipart upload. */
 data class EventAttachmentFile(
@@ -16,7 +17,7 @@ data class EventAttachmentFile(
 
 interface EventsDataSource {
     suspend fun getEvents(query: Map<String, String>): List<EventListResponse>
-    suspend fun getClubsForEvents(): List<ClubForEventResponse>
+    suspend fun getClubsForEvents(): PageNationResponse<List<ClubForEventResponse>>
     suspend fun getCategories(): List<EventCategorySectionResponse>
     suspend fun getEventById(eventId: String): EventDetailResponse
     suspend fun getEventMembers(eventId: String, query: Map<String, String>): EventMembersResponse
@@ -31,4 +32,5 @@ interface EventsDataSource {
         background: ByteArray?,
         attachments: List<EventAttachmentFile>
     ): EventDetailResponse
+    suspend fun joinEvent(eventId: String): ByteArray
 }

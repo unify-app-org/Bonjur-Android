@@ -25,4 +25,10 @@ class ProfileDataSourceImpl @Inject constructor(
 
     override suspend fun getLanguages(): List<com.bonjur.profile.data.DTOs.LanguageResponse> =
         fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.GetLanguages)
+
+    override suspend fun getMyEvents(): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyEventResponse>> =
+        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyEvents)
+
+    override suspend fun getMyHangouts(userId: String): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyHangoutResponse>> =
+        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyHangouts(userId))
 }

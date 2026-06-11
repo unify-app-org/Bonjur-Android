@@ -12,6 +12,7 @@ import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.events.domain.useCase.EventsUseCase
 import com.bonjur.events.navigation.EventsScreens
+import com.bonjur.events.presentation.details.model.EventDetailsInputData
 import com.bonjur.events.presentation.list.models.EventsListAction
 import com.bonjur.events.presentation.list.models.EventsListInputData
 import com.bonjur.events.presentation.list.models.EventsListSideEffect
@@ -44,6 +45,7 @@ class EventsListViewModel @Inject constructor(
             is EventsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is EventsListAction.FilterSelected -> handleFilterSelected(action.items)
             is EventsListAction.EventItemTapped -> handleItemTap(action.id)
+            is EventsListAction.JoinEvent -> joinEvent(action.id)
             EventsListAction.Dismiss -> dismiss()
         }
     }
@@ -63,7 +65,24 @@ class EventsListViewModel @Inject constructor(
 
     private fun handleItemTap(id: String) {
         viewModelScope.launch {
-            navigator.navigateTo(EventsScreens.Details.route)
+            navigator.navigateTo(
+                EventsScreens.Details.route,
+                EventDetailsInputData(eventId = id)
+            )
+        }
+    }
+
+    private fun joinEvent(id: String) {
+        viewModelScope.launch {
+            postEffect(EventsListSideEffect.Loading(true))
+            try {
+                useCase.joinEvent(id)
+                getEventsData()
+            } catch (e: ApiException) {
+                postEffect(EventsListSideEffect.Error(e))
+            } finally {
+                postEffect(EventsListSideEffect.Loading(false))
+            }
         }
     }
 

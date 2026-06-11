@@ -15,7 +15,7 @@ data class EventCreateRequest(
     val rule: String? = null,
     val visibility: String = "PUBLIC",
     val eventDate: String = "",
-    val reminderTime: String = "NONE",
+    val reminderTimes: List<String> = listOf("NONE"),
     val categoryIds: List<Int> = emptyList(),
     val links: List<EventLinkDTO> = emptyList(),
     val userIds: List<String> = emptyList()
@@ -28,13 +28,20 @@ data class EventLinkDTO(
     val url: String = ""
 )
 
-// MARK: - Club selector (GET api/cs/v1/clubs/forEvents)
+// MARK: - Club selector (GET api/cs/v1/clubs/forEvents, paginated)
 
 @Serializable
 data class ClubForEventResponse(
-    val clubId: Int = 0,
-    val clubName: String? = null,
-    val profileUrl: String? = null
+    val id: Int = 0,
+    val name: String? = null,
+    val communityName: String? = null,
+    val clubProfile: String? = null,
+    val backgroundUrl: String? = null,
+    val background: String? = null,
+    val visibility: String? = null,
+    val requestStatus: String? = null,
+    val role: String? = null,
+    val count: Int? = null
 )
 
 // MARK: - Categories (GET api/sd/v1/categories)

@@ -43,4 +43,16 @@ sealed class ProfileEndpoints : AppEndpoint {
         override val path = "api/sd/v1/languages"
         override val method = NetworkMethod.GET
     }
+
+    // GET /api/es/v1/events/my  — logged-in user's events (paginated)
+    data object MyEvents : ProfileEndpoints() {
+        override val path = "api/es/v1/events/my"
+        override val method = NetworkMethod.GET
+    }
+
+    // GET /api/hs/v1/hangouts/{userId}/myhangouts  — user's activities (paginated)
+    data class MyHangouts(val userId: String) : ProfileEndpoints() {
+        override val path = "api/hs/v1/hangouts/$userId/myhangouts"
+        override val method = NetworkMethod.GET
+    }
 }

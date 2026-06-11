@@ -11,6 +11,7 @@ import com.bonjur.network.APIClient.ApiClientProtocol
 import com.bonjur.network.APIClient.MultipartFile
 import com.bonjur.network.APIClient.MultipartPayload
 import com.bonjur.network.APIClient.NetworkService
+import com.bonjur.network.model.PageNationResponse
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -23,7 +24,7 @@ class EventsDataSourceImpl @Inject constructor(
     override suspend fun getEvents(query: Map<String, String>): List<EventListResponse> =
         fetch(EventsEndPoints.GetEvents(query))
 
-    override suspend fun getClubsForEvents(): List<ClubForEventResponse> =
+    override suspend fun getClubsForEvents(): PageNationResponse<List<ClubForEventResponse>> =
         fetch(EventsEndPoints.ClubsForEvents())
 
     override suspend fun getCategories(): List<EventCategorySectionResponse> =
@@ -52,6 +53,9 @@ class EventsDataSourceImpl @Inject constructor(
         attachments: List<EventAttachmentFile>
     ): EventDetailResponse =
         fetch(EventsEndPoints.EditEvent(eventId, buildPayload(request, background, attachments)))
+
+    override suspend fun joinEvent(eventId: String): ByteArray =
+        fetchRawData(EventsEndPoints.JoinEvent(eventId))
 
     /** Builds the multipart body mirroring iOS: JSON "request" part + required background + optional attachments. */
     private fun buildPayload(

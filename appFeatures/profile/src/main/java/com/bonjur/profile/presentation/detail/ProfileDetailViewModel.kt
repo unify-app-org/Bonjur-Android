@@ -15,6 +15,8 @@ import com.bonjur.profile.presentation.detail.models.ProfileDetailSideEffect
 import com.bonjur.profile.presentation.detail.models.ProfileDetailViewState
 import com.bonjur.profile.presentation.studentCard.models.StudentCardInputData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -87,6 +89,7 @@ class ProfileDetailViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch {
             fetchUserData()
+            fetchMyActivities()
         }
     }
 
@@ -96,6 +99,24 @@ class ProfileDetailViewModel @Inject constructor(
             updateState(state.copy(uiModel = uiModel))
         } catch (e: Exception) {
             // Handle error
+        }
+    }
+
+    /** My events + my activities, fetched in parallel (mirrors iOS ProfileDetailViewModel). */
+    private suspend fun fetchMyActivities() = coroutineScope {
+        val events = async { runCatching { dependencies.useCase.getMyEvents() }.getOrDefault(emptyList()) }
+        val hangouts = async { runCatching { dependencies.useCase.getMyHangouts() }.getOrDefault(emptyList()) }
+        val fetchedEvents = events.await()
+        val fetchedHangouts = hangouts.await()
+        state.uiModel?.let { uiModel ->
+            updateState(
+                state.copy(
+                    uiModel = uiModel.copy(
+                        events = fetchedEvents,
+                        hangouts = fetchedHangouts
+                    )
+                )
+            )
         }
     }
 

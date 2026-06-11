@@ -40,11 +40,14 @@ class EventsUseCaseImpl @Inject constructor(
     }
 
     override suspend fun fetchClubsForEvents(): List<EventSelectableClub> =
-        dataSource.getClubsForEvents().map {
+        dataSource.getClubsForEvents().content.map {
             EventSelectableClub(
-                clubId = it.clubId,
-                clubName = it.clubName ?: "",
-                profileUrl = it.profileUrl
+                clubId = it.id,
+                clubName = it.name ?: "",
+                profileUrl = it.clubProfile,
+                backgroundUrl = it.backgroundUrl,
+                role = it.role.toActivityRole(),
+                background = it.background.toBackgroundType()
             )
         }
 
@@ -68,6 +71,10 @@ class EventsUseCaseImpl @Inject constructor(
         )
     }
 
+    override suspend fun joinEvent(eventId: String) {
+        dataSource.joinEvent(eventId)
+    }
+
     // MARK: - Mappers
 
     private fun EventFormData.toRequest() = EventCreateRequest(
@@ -80,7 +87,7 @@ class EventsUseCaseImpl @Inject constructor(
         rule = rule.ifBlank { null },
         visibility = if (isPublic) "PUBLIC" else "PRIVATE",
         eventDate = eventDate.toIsoDate(),
-        reminderTime = reminderTime,
+        reminderTimes = listOf(reminderTime),
         categoryIds = categoryIds,
         links = links.map { EventLinkDTO(type = it.type, name = it.name, url = it.url) },
         userIds = emptyList()
@@ -194,5 +201,15 @@ class EventsUseCaseImpl @Inject constructor(
         "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
         "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
         else -> AppUIEntities.UserActivityRole.NOT_JOINED
+    }
+
+    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = when (this?.uppercase()) {
+        "GREEN", "PRIMARY" -> AppUIEntities.BackgroundType.Primary
+        "BLUE", "SECONDARY" -> AppUIEntities.BackgroundType.Secondary
+        "PURPLE", "TERTIARY" -> AppUIEntities.BackgroundType.Tertiary
+        "RED" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Red)
+        "ORANGE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Orange)
+        "PINK" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Pink)
+        else -> AppUIEntities.BackgroundType.Primary
     }
 }

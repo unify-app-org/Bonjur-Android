@@ -42,4 +42,5 @@ sealed class EventsListAction : FeatureAction {
     data class SearchTextChanged(val text: String) : EventsListAction()
     data class FilterSelected(val items: List<FilterView.Items>) : EventsListAction()
     data class EventItemTapped(val id: String): EventsListAction()
+    data class JoinEvent(val id: String): EventsListAction()
 }

@@ -1,5 +1,6 @@
 package com.bonjur.events.navigation
 
+import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -10,6 +11,7 @@ import com.bonjur.events.presentation.details.model.EventDetailsInputData
 import com.bonjur.events.presentation.details.EventDetailsScreen
 import com.bonjur.events.presentation.list.EventsListScreen
 import com.bonjur.navigation.MainScreen
+import com.bonjur.navigation.NavArgs
 import com.bonjur.navigation.Navigator
 
 fun NavGraphBuilder.eventsNavGraph(navigator: Navigator) {
@@ -23,8 +25,10 @@ fun NavGraphBuilder.eventsNavGraph(navigator: Navigator) {
         }
 
         composable<EventsScreens.Details> {
+            val inputData = remember { NavArgs.get<EventDetailsInputData>() }
+                ?: EventDetailsInputData(eventId = "")
             EventDetailsScreen(
-                inputData = EventDetailsInputData(eventId = ""),
+                inputData = inputData,
                 navigator = navigator
             )
         }

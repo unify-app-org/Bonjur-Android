@@ -40,4 +40,6 @@ interface EventsUseCase {
     suspend fun createEvent(form: EventFormData)
 
     suspend fun editEvent(eventId: String, form: EventFormData)
+
+    suspend fun joinEvent(eventId: String)
 }

@@ -72,7 +72,7 @@ fun EventsListView(
                         EventsCardView(
                             model = event,
                             onButtonTap = {
-                                // Handle button tap
+                                store.send(EventsListAction.JoinEvent(event.id))
                             },
                             onTap = {
                                 store.send(EventsListAction.EventItemTapped(event.id))

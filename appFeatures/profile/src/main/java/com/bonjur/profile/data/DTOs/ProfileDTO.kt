@@ -67,3 +67,36 @@ data class LanguageResponse(
     val name: String? = null,
     val code: String? = null
 )
+
+// ── My events (GET api/es/v1/events/my, paginated) ───────────────────────────
+
+@Serializable
+data class MyEventResponse(
+    val id: String? = null,
+    val name: String? = null,
+    val visibility: String? = null,
+    val about: String? = null,
+    val capacity: Int? = null,
+    val membersCount: Int? = null,
+    val background: String? = null,
+    val requestStatus: String? = null,
+    val eventActivityStatus: String? = null,
+    val role: String? = null,
+    val categoryResponses: List<ProfileCategoryResponse> = emptyList()
+)
+
+// ── My activities (GET api/hs/v1/hangouts/{userId}/myhangouts, paginated) ────
+
+@Serializable
+data class MyHangoutResponse(
+    val id: String? = null,
+    val name: String? = null,
+    val visibility: String? = null,
+    val status: String? = null,
+    val role: String? = null,
+    val hangoutActivityStatus: String? = null,
+    val about: String? = null,
+    val capacity: Int? = null,
+    val membersCount: Int? = null,
+    val categories: List<ProfileCategoryResponse> = emptyList()
+)

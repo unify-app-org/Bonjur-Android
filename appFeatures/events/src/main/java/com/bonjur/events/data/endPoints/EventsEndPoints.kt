@@ -52,4 +52,9 @@ sealed class EventsEndPoints : AppEndpoint {
         override val headers: Map<String, String>? = null
         override val multipart = payload
     }
+
+    data class JoinEvent(val eventId: String) : EventsEndPoints() {
+        override val path = "api/es/v1/events/$eventId/join"
+        override val method = NetworkMethod.POST
+    }
 }

@@ -14,6 +14,7 @@ import com.bonjur.designSystem.components.fieldSchema.radio
 import com.bonjur.designSystem.components.fieldSchema.reminder
 import com.bonjur.designSystem.components.fieldSchema.tags
 import com.bonjur.designSystem.components.fieldSchema.text
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.events.data.dataSource.EventAttachmentFile
 import com.bonjur.events.domain.useCase.EventFormData
 import com.bonjur.events.domain.useCase.EventsUseCase
@@ -85,7 +86,15 @@ class EventCreateViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch {
             runCatching { dependencies.useCase.fetchClubsForEvents() }
-                .onSuccess { updateState(state.copy(clubs = it)) }
+                .onSuccess { clubs ->
+                    updateState(
+                        state.copy(
+                            clubs = clubs,
+                            // Mirror iOS: default to the first club when nothing is selected.
+                            selectedClubId = state.selectedClubId ?: clubs.firstOrNull()?.clubId
+                        )
+                    )
+                }
             runCatching { dependencies.useCase.getCategories() }
                 .onSuccess { updateState(state.copy(categorySections = it)) }
             applyPrefill()
@@ -172,17 +181,30 @@ class EventCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun createEvent(form: EventFormData) = dependencies.useCase.createEvent(form)
+    private suspend fun createEvent(form: EventFormData) {
+        dependencies.useCase.createEvent(form)
+        AppSnackBar.show(
+            title = "Event created successfully",
+            subtitle = "${form.name} · now active",
+            style = AppSnackBar.Style.SUCCESS
+        )
+    }
 
-    private suspend fun editEvent(eventId: String, form: EventFormData) =
+    private suspend fun editEvent(eventId: String, form: EventFormData) {
         dependencies.useCase.editEvent(eventId, form)
+        AppSnackBar.show(
+            title = "Event updated successfully",
+            subtitle = form.name,
+            style = AppSnackBar.Style.SUCCESS
+        )
+    }
 
     private suspend inline fun submit(crossinline call: suspend (EventFormData) -> Unit) {
         val clubId = state.selectedClubId ?: return
         postEffect(EventCreateSideEffect.Loading(true))
         try {
+            // Cover is optional, mirroring iOS: upload it only when the club has one.
             val background = downloadBytes(state.coverUrl)
-                ?: throw IllegalStateException("Couldn't load the club cover photo.")
             call(buildForm(clubId, background))
             navigator.navigateUp()
         } catch (e: Exception) {
@@ -192,7 +214,7 @@ class EventCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun buildForm(clubId: Int, background: ByteArray): EventFormData {
+    private suspend fun buildForm(clubId: Int, background: ByteArray?): EventFormData {
         val v = state.values
         return EventFormData(
             clubId = clubId,

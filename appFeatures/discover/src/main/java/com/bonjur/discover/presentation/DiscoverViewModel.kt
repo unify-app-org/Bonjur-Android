@@ -20,6 +20,7 @@ import com.bonjur.discover.presentation.models.DiscoverInputData
 import com.bonjur.discover.presentation.models.DiscoverSideEffect
 import com.bonjur.discover.presentation.models.DiscoverViewState
 import com.bonjur.events.navigation.EventsScreens
+import com.bonjur.events.presentation.details.model.EventDetailsInputData
 import com.bonjur.hangouts.navigation.HangoutsScreens
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData
 import com.bonjur.navigation.MainScreen
@@ -99,7 +100,10 @@ class DiscoverViewModel @Inject constructor(
 
     private fun eventItemTapped(id: String) {
         viewModelScope.launch {
-            navigator.navigateTo(EventsScreens.Details.route)
+            navigator.navigateTo(
+                EventsScreens.Details.route,
+                EventDetailsInputData(eventId = id)
+            )
         }
     }
 

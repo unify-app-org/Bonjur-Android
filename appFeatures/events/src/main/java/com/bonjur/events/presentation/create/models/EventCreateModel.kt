@@ -3,6 +3,7 @@ package com.bonjur.events.presentation.create.models
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.fieldSchema.FieldValues
@@ -13,7 +14,10 @@ import com.bonjur.designSystem.components.fieldSchema.text
 data class EventSelectableClub(
     val clubId: Int,
     val clubName: String,
-    val profileUrl: String?
+    val profileUrl: String?,
+    val backgroundUrl: String? = null,
+    val role: AppUIEntities.UserActivityRole = AppUIEntities.UserActivityRole.MEMBER,
+    val background: AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.Primary
 )
 
 /** Prefill payload for edit mode. Mirrors iOS `EventsCreate.PrefillData`. */
@@ -51,9 +55,12 @@ data class EventCreateViewState(
     val selectedClub: EventSelectableClub?
         get() = clubs.firstOrNull { it.clubId == selectedClubId }
 
-    /** Read-only cover: the selected club's official photo. */
+    /** Read-only cover: the selected club's official cover photo (mirrors iOS). */
     val coverUrl: String?
-        get() = selectedClub?.profileUrl
+        get() = selectedClub?.backgroundUrl
+
+    val coverBackground: AppUIEntities.BackgroundType
+        get() = selectedClub?.background ?: AppUIEntities.BackgroundType.Primary
 
     val isValid: Boolean
         get() = values.isValid(schema) &&
