@@ -10,19 +10,6 @@ data class FacultyRowModel(
     val memberCount: Int = 0
 )
 
-data class MemberCellModel(
-    val id: String,
-    val name: String,
-    val avatarUrl: String? = null,
-    val subtitle: String = ""
-)
-
-data class MemberListSectionModel(
-    val title: String,
-    val memberCount: Int,
-    val members: List<MemberCellModel>
-)
-
 // MARK: - FacultyBrowse input
 data class FacultyBrowseInputData(
     val title: String = "All members",

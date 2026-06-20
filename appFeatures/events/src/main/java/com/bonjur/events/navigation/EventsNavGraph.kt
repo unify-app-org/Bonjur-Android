@@ -4,7 +4,6 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 import com.bonjur.events.presentation.create.EventCreateScreen
 import com.bonjur.events.presentation.create.models.EventCreateInputData
 import com.bonjur.events.presentation.details.model.EventDetailsInputData
@@ -40,10 +39,12 @@ fun NavGraphBuilder.eventsNavGraph(navigator: Navigator) {
             )
         }
 
-        composable<EventsScreens.Edit> { backStackEntry ->
-            val route = backStackEntry.toRoute<EventsScreens.Edit>()
+        composable<EventsScreens.Edit> {
+            val inputData = remember {
+                NavArgs.get<EventCreateInputData>() ?: EventCreateInputData()
+            }
             EventCreateScreen(
-                inputData = EventCreateInputData(eventId = route.eventId),
+                inputData = inputData,
                 navigator = navigator
             )
         }

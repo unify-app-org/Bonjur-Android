@@ -2,6 +2,7 @@ package com.bonjur.events.domain.models
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.attachments.AttachmentItemModel
+import com.bonjur.events.presentation.create.models.EventCreatePrefillData
 import java.util.UUID
 
 object EventsDetails {
@@ -9,6 +10,7 @@ object EventsDetails {
     data class UIModel(
         val name: String,
         val communityName: String,
+        val clubId: Int,
         val membersCount: Int,
         val coverImage: String?,
         val coverColorType: AppUIEntities.BackgroundType,
@@ -16,7 +18,15 @@ object EventsDetails {
         val accessType: AppUIEntities.AccessType,
         val tags: List<AppUIEntities.Tags>,
         val infoData: List<Info>,
-        val attachments: List<AttachmentItemModel>
+        val attachments: List<AttachmentItemModel>,
+        val joinButton: JoinButton? = null,
+        val editPrefillData: EventCreatePrefillData? = null
+    )
+
+    /** Bottom join/request button state. Mirrors iOS `EventsDetailsModel.JoinButton`. */
+    data class JoinButton(
+        val title: String,
+        val disabled: Boolean
     )
 
     data class Info(
@@ -29,13 +39,16 @@ object EventsDetails {
         val id: String = UUID.randomUUID().toString(),
         val title: String?,
         val description: String,
-        val isLink: Boolean = false
+        val isLink: Boolean = false,
+        /** When set, the row is tappable and copies this phone number. */
+        val phoneNumber: String? = null
     )
 }
 
 val EventsDetailsMockData = EventsDetails.UIModel(
     name = "Basketball Event",
     communityName = "Sports Club",
+    clubId = 0,
     membersCount = 12,
     coverImage = null,
     coverColorType = AppUIEntities.BackgroundType.Secondary,

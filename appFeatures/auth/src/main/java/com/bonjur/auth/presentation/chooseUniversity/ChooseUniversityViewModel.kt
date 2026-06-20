@@ -68,7 +68,6 @@ class ChooseUniversityViewModel @Inject constructor(
         }
     }
 
-    /** Triggered by the screen (it owns the Activity MSAL needs). Mirrors iOS `startMSALFlow`. */
     fun signInWithMicrosoft(activity: Activity) {
         viewModelScope.launch {
             postEffect(ChooseUniversitySideEffect.Loading(true))

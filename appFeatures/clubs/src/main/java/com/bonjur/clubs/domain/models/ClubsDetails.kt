@@ -1,6 +1,7 @@
 package com.bonjur.clubs.domain.models
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.events.presentation.list.models.EventsCardMocks
 import com.bonjur.events.presentation.list.models.EventsCardModel
 import java.util.UUID
@@ -18,7 +19,15 @@ object ClubsDetails {
         val accessType: AppUIEntities.AccessType,
         val tags: List<AppUIEntities.Tags>,
         val infoData: List<Info>,
-        val eventsData: List<EventsCardModel>
+        val eventsData: List<EventsCardModel>,
+        val editPrefillData: ClubEditPrefill
+    )
+
+    /** Form values + existing image URLs to pre-fill the edit screen. Mirrors iOS `ClubsCreate.PrefillData`. */
+    data class ClubEditPrefill(
+        val logoUrl: String?,
+        val coverUrl: String?,
+        val values: Map<AppFieldSchema.FieldId, AppFieldSchema.FieldValue>
     )
 
     data class Info(
@@ -101,5 +110,6 @@ val ClubsDetailsMockData = ClubsDetails.UIModel(
             )
         )
     ),
-    eventsData = EventsCardMocks.previewMock
+    eventsData = EventsCardMocks.previewMock,
+    editPrefillData = ClubsDetails.ClubEditPrefill(logoUrl = null, coverUrl = null, values = emptyMap())
 )

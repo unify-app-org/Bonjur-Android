@@ -33,6 +33,8 @@ data class HangoutListResponse(
     val about: String? = null,
     val capacity: Int? = null,
     val membersCount: Int? = null,
+    val hangoutDate: String? = null,
+    val location: String? = null,
     val categoryResponses: List<HangoutCategoryResponse> = emptyList()
 )
 
@@ -48,6 +50,8 @@ data class HangoutDetailResponse(
     val ownerContact: String? = null,
     val visibility: String? = null,
     val role: String? = null,
+    /** Pending/accepted state for the current user. Optional; nil → Join/Request fallback. */
+    val requestStatus: String? = null,
     val hangoutDate: String? = null,
     val links: List<HangoutLinkDTO> = emptyList(),
     val community: HangoutCommunityResponse? = null,
@@ -64,6 +68,26 @@ data class HangoutCommunityResponse(
 data class HangoutCategoryResponse(
     val id: Int = 0,
     val title: String = ""
+)
+
+/** Category picker sections (`GET api/sd/v1/categories`). Mirrors iOS `CategoriesResponse`. */
+@Serializable
+data class HangoutCategorySectionResponse(
+    val type: String? = null,
+    val title: String? = null,
+    val subCategories: List<HangoutCategoryItemResponse> = emptyList()
+)
+
+@Serializable
+data class HangoutCategoryItemResponse(
+    val id: Int? = null,
+    val title: String? = null
+)
+
+/** Join-hangout body (`POST api/hs/v1/hangouts/join`). Mirrors iOS `JoinRequest`. */
+@Serializable
+data class HangoutJoinRequest(
+    val hangoutId: String
 )
 
 @Serializable

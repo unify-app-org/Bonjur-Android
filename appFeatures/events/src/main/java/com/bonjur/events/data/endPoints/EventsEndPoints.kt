@@ -57,4 +57,9 @@ sealed class EventsEndPoints : AppEndpoint {
         override val path = "api/es/v1/events/$eventId/join"
         override val method = NetworkMethod.POST
     }
+
+    data class ExitEvent(val eventId: String) : EventsEndPoints() {
+        override val path = "api/es/v1/events/$eventId/exit"
+        override val method = NetworkMethod.DELETE
+    }
 }

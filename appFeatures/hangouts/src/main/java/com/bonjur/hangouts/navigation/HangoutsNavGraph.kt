@@ -4,7 +4,6 @@ import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 import com.bonjur.hangouts.presentation.create.HangoutCreateScreen
 import com.bonjur.hangouts.presentation.create.models.HangoutCreateInputData
 import com.bonjur.hangouts.presentation.detail.HangoutDetailsScreen
@@ -41,10 +40,12 @@ fun NavGraphBuilder.hangoutsNavGraph(navigator: Navigator) {
             )
         }
 
-        composable<HangoutsScreens.Edit> { backStackEntry ->
-            val route = backStackEntry.toRoute<HangoutsScreens.Edit>()
+        composable<HangoutsScreens.Edit> {
+            val inputData = remember {
+                NavArgs.get<HangoutCreateInputData>() ?: HangoutCreateInputData()
+            }
             HangoutCreateScreen(
-                inputData = HangoutCreateInputData(hangoutId = route.hangoutId),
+                inputData = inputData,
                 navigator = navigator
             )
         }

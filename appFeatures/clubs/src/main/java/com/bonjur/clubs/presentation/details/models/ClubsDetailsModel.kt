@@ -21,6 +21,27 @@ data class ClubDetailsViewState(
     val selectedSegment: SegmentTypes = SegmentTypes.ABOUT
 ) : FeatureState {
 
+    private val role: AppUIEntities.UserActivityRole?
+        get() = uiModel?.userActivityType
+
+    /** Owner/VP may edit the club. Mirrors iOS `isEditable`. */
+    val isEditable: Boolean
+        get() = role == AppUIEntities.UserActivityRole.VISE_PRESIDENT ||
+                role == AppUIEntities.UserActivityRole.PRESIDENT
+
+    /** Any joined non-member role may create events. Mirrors iOS `canCreateEvent`. */
+    val canCreateEvent: Boolean
+        get() = role != null &&
+                role != AppUIEntities.UserActivityRole.MEMBER &&
+                role != AppUIEntities.UserActivityRole.NOT_JOINED
+
+    /** A not-yet-joined viewer sees the join/request button. */
+    val showJoinButton: Boolean
+        get() = role == null || role == AppUIEntities.UserActivityRole.NOT_JOINED
+
+    val isPrivate: Boolean
+        get() = uiModel?.accessType == AppUIEntities.AccessType.PRIVATE
+
     enum class SegmentTypes(
         override val title: String
     ) : SegmentedPickerOption {
@@ -57,4 +78,12 @@ sealed class ClubDetailsAction : FeatureAction {
     object FetchData : ClubDetailsAction()
     object BackTapped : ClubDetailsAction()
     data class SegmentChanged(val segment: ClubDetailsViewState.SegmentTypes) : ClubDetailsAction()
+    object EditTapped : ClubDetailsAction()
+    object JoinClubTapped : ClubDetailsAction()
+    object ExitTapped : ClubDetailsAction()
+    /** Triggered from the members list (deferred); wired but dormant. */
+    data class AssignRole(
+        val userId: String,
+        val role: AppUIEntities.UserActivityRole
+    ) : ClubDetailsAction()
 }

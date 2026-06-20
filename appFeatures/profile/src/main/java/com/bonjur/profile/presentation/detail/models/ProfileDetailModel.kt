@@ -16,7 +16,8 @@ import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 
 // MARK: - Input Data
 data class ProfileDetailInputData(
-    val dummy: Unit = Unit
+    /** When set, shows another user's profile; null means the logged-in user's own profile. */
+    val userId: String? = null
 )
 
 // MARK: - Side Effects
@@ -27,6 +28,7 @@ sealed class ProfileDetailSideEffect : SideEffect {
 // MARK: - View State
 data class ProfileDetailViewState(
     val uiModel: ProfileDetail.UIModel? = null,
+    val isOwnProfile: Boolean = true,
     val selectedSegment: SegmentTypes = SegmentTypes.CLUBS
 ) : FeatureState {
 
@@ -100,6 +102,7 @@ fun ProfileDetail.UIModel.Companion.mock(): ProfileDetail.UIModel = ProfileDetai
 // MARK: - Actions
 sealed class ProfileDetailAction : FeatureAction {
     object FetchData : ProfileDetailAction()
+    object BackTapped : ProfileDetailAction()
     data class ClubsItemTapped(val id: Int) : ProfileDetailAction()
     data class SegmentTapped(val segment: ProfileDetailViewState.SegmentTypes) : ProfileDetailAction()
     data class EventsItemTapped(val id: String) : ProfileDetailAction()

@@ -5,6 +5,7 @@ import com.bonjur.clubs.data.DTOs.ClubCreateRequest
 import com.bonjur.clubs.data.DTOs.ClubDetailResponse
 import com.bonjur.clubs.data.DTOs.ClubListResponse
 import com.bonjur.clubs.data.DTOs.ClubMemberResponse
+import com.bonjur.clubs.data.DTOs.RoleAssignRequest
 
 interface ClubsDataSource {
     suspend fun getClubs(query: Map<String, String>): List<ClubListResponse>
@@ -23,4 +24,6 @@ interface ClubsDataSource {
         cover: ByteArray?
     ): ClubDetailResponse
     suspend fun joinClub(clubId: Int): ByteArray
+    suspend fun exitClub(clubId: Int): ByteArray
+    suspend fun assignRole(clubId: Int, request: RoleAssignRequest): ByteArray
 }

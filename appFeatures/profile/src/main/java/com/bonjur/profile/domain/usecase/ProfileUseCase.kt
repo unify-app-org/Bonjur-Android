@@ -7,8 +7,11 @@ import com.bonjur.profile.presentation.detail.models.ProfileDetail
 import com.bonjur.profile.presentation.editProfile.models.EditProfileViewState
 
 interface ProfileUseCase {
-    // Existing — used by ProfileDetailScreen
+    // Existing — used by ProfileDetailScreen (logged-in user)
     suspend fun fetchProfileData(): ProfileDetail.UIModel
+
+    // Another user's profile by id. Mirrors iOS profile-by-id fetch.
+    suspend fun fetchProfileData(userId: String): ProfileDetail.UIModel
 
     // My events (`GET api/es/v1/events/my`) — logged-in user's events
     suspend fun getMyEvents(): List<EventsCardModel>

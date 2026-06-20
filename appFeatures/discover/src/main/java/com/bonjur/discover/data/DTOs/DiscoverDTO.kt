@@ -62,7 +62,16 @@ data class DiscoverClub(
     val count: Int? = null,
     val capacity: Int? = null,
     val joined: Boolean? = null,
-    val members: List<DiscoverMember>? = null
+    val members: List<DiscoverMember>? = null,
+    val clubUserRole: String? = null,
+    val eventCount: Int? = null,
+    val categoryResponses: List<DiscoverCategory> = emptyList()
+)
+
+@Serializable
+data class DiscoverCategory(
+    val id: Int = 0,
+    val title: String = ""
 )
 
 // MARK: - Community

@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,6 +36,7 @@ import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.pressTapModifier
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
+import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.events.presentation.list.models.EventsCardMocks
 import com.bonjur.events.presentation.list.models.EventsCardModel
 
@@ -44,7 +46,8 @@ fun EventsCardView(
     onButtonTap: () -> Unit,
     onTap: () -> Unit,
     modifier: Modifier = Modifier,
-    showCover: Boolean = true
+    showCover: Boolean = true,
+    onClubTap: ((Int) -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -59,7 +62,8 @@ fun EventsCardView(
     ) {
         TopView(
             model = model,
-            showCover = showCover
+            showCover = showCover,
+            onClubTap = onClubTap
         )
         BottomView(
             model = model,
@@ -71,7 +75,8 @@ fun EventsCardView(
 @Composable
 private fun TopView(
     model: EventsCardModel,
-    showCover: Boolean
+    showCover: Boolean,
+    onClubTap: ((Int) -> Unit)?
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -80,10 +85,10 @@ private fun TopView(
             model = model,
             showCover = showCover
         )
-        
+
         Column(
             modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = model.name,
@@ -94,17 +99,79 @@ private fun TopView(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
             )
-            
-            Text(
-                text = model.club.name,
-                style = AppTypography.TextMd.regular,
-                color = Palette.blackHigh,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Start
+
+            HostClubChip(
+                model = model,
+                onClubTap = onClubTap
+            )
+
+            MetaRow(
+                time = model.time,
+                location = model.location
             )
         }
+    }
+}
+
+@Composable
+private fun HostClubChip(
+    model: EventsCardModel,
+    onClubTap: ((Int) -> Unit)?
+) {
+    Surface(
+        shape = CircleShape,
+        color = Palette.greenLight,
+        border = BorderStroke(
+            width = 1.dp,
+            color = Palette.secondary
+        ),
+        modifier = Modifier.pressTapModifier {
+            onClubTap?.invoke(model.club.id)
+        }
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+        ) {
+            Icon(
+                painter = Images.Icons.twoUsers(),
+                contentDescription = null,
+                tint = Palette.green900,
+                modifier = Modifier.size(12.dp)
+            )
+            Text(
+                text = model.club.name,
+                style = AppTypography.TextSm.medium,
+                color = Palette.green900,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (onClubTap != null) {
+                Icon(
+                    painter = Images.Icons.chevronRight(),
+                    contentDescription = null,
+                    tint = Palette.green900,
+                    modifier = Modifier.size(10.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun MetaRow(
+    time: String?,
+    location: String?
+) {
+    if (time != null || location != null) {
+        Text(
+            text = listOfNotNull(time, location).joinToString(" · "),
+            style = AppTypography.TextSm.medium,
+            color = Palette.graySecondary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
@@ -178,13 +245,47 @@ private fun CoverView(
 }
 
 @Composable
+internal fun DateBadge(
+    day: String,
+    month: String,
+    backgroundColor: Color = Color.White
+) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = backgroundColor,
+        shadowElevation = 2.dp
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+        ) {
+            Text(
+                text = month,
+                style = AppTypography.CaptionMd.medium,
+                color = Palette.cardBgRed
+            )
+            Text(
+                text = day,
+                style = AppTypography.HeadingXL.bold,
+                color = Palette.blackHigh
+            )
+        }
+    }
+}
+
+@Composable
 private fun TopChipsView(model: EventsCardModel) {
     val isPrivate = model.accessType == AppUIEntities.AccessType.PRIVATE
-    
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
+        DateBadge(
+            day = model.dateDay,
+            month = model.dateMonth
+        )
         Surface(
             shape = CircleShape,
             color = if (isPrivate) Palette.white else Palette.blackHigh,
@@ -255,18 +356,55 @@ private fun BottomView(
             }
         }
         
-        // Action button
-        if (model.requestType != AppUIEntities.RequestType.JOINED) {
-            AppButton(
+        // Action: status label for settled states, button for actionable ones
+        when (model.requestType) {
+            AppUIEntities.RequestType.JOINED -> StatusLabel(
+                text = "✓ Participating",
+                foreground = Palette.green900,
+                background = Palette.greenLight,
+                borderColor = Palette.secondary
+            )
+            AppUIEntities.RequestType.PENDING -> StatusLabel(
+                text = "Request sent",
+                foreground = Palette.graySecondary,
+                background = Palette.grayQuaternary,
+                borderColor = Palette.grayTeritary
+            )
+            else -> AppButton(
                 title = model.buttonTitle,
                 model = AppButtonModel(
                     contentSize = ContentSize.Fill,
                     size = AppButtonSize.Small
                 ),
-                enabled = model.requestType != AppUIEntities.RequestType.PENDING,
                 onClick = onButtonTap
             )
         }
+    }
+}
+
+@Composable
+internal fun StatusLabel(
+    text: String,
+    foreground: Color,
+    background: Color,
+    borderColor: Color
+) {
+    Surface(
+        shape = CircleShape,
+        color = background,
+        border = BorderStroke(
+            width = 1.dp,
+            color = borderColor
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = text,
+            style = AppTypography.TextMd.medium,
+            color = foreground,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 12.dp)
+        )
     }
 }
 

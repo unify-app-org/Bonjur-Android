@@ -274,6 +274,7 @@ fun DiscoverTabContent(
         eventsNavGraph(navigator)
         hangoutsNavGraph(navigator)
         clubsNavGraph(navigator)
+        profileNavGraph(navigator)
     }
 }
 

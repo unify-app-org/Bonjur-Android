@@ -5,10 +5,12 @@ import com.bonjur.clubs.data.DTOs.ClubCreateRequest
 import com.bonjur.clubs.data.DTOs.ClubDetailResponse
 import com.bonjur.clubs.data.DTOs.ClubLinkRequest
 import com.bonjur.clubs.data.DTOs.ClubListResponse
+import com.bonjur.clubs.data.DTOs.RoleAssignRequest
 import com.bonjur.clubs.data.dataSource.ClubsDataSource
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.filter.FilterView
@@ -53,6 +55,34 @@ class ClubsUseCaseImpl @Inject constructor(
         dataSource.joinClub(clubId)
     }
 
+    override suspend fun exitClub(clubId: Int) {
+        dataSource.exitClub(clubId)
+    }
+
+    override suspend fun assignRole(
+        clubId: Int,
+        userId: String,
+        role: AppUIEntities.UserActivityRole
+    ) {
+        dataSource.assignRole(
+            clubId = clubId,
+            request = RoleAssignRequest(userId = userId, role = role.toApiString())
+        )
+    }
+
+    override suspend fun clubHasVicePresident(clubId: Int): Boolean =
+        dataSource.getClubMembers(clubId).content.any {
+            it.role?.uppercase() in setOf("VISE_PRESIDENT", "VICE_PRESIDENT")
+        }
+
+    private fun AppUIEntities.UserActivityRole.toApiString(): String = when (this) {
+        AppUIEntities.UserActivityRole.MEMBER -> "MEMBER"
+        AppUIEntities.UserActivityRole.PRESIDENT -> "PRESIDENT"
+        AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "VISE_PRESIDENT"
+        AppUIEntities.UserActivityRole.EVENT_CREATOR -> "EVENT_CREATOR"
+        AppUIEntities.UserActivityRole.NOT_JOINED -> ""
+    }
+
     private fun ClubFormData.toRequest() = ClubCreateRequest(
         name = name,
         about = about,
@@ -91,13 +121,18 @@ class ClubsUseCaseImpl @Inject constructor(
         name = name ?: "",
         communityName = communityName ?: "",
         logoURL = clubProfile ?: "",
-        memberCount = count ?: 0,
+        memberCount = membersCount ?: 0,
         totalCapacity = capacity ?: 0,
         community = communityName ?: "",
-        members = emptyList(),
+        members = members.map {
+            AppUIEntities.Member(id = it.id?.hashCode() ?: 0, profileImage = it.url)
+        },
         bgType = background.toBackgroundType(),
         accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
-        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE
+        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE,
+        role = clubUserRole?.let { it.toActivityRole() },
+        upcomingEventsCount = eventCount ?: 0,
+        categories = categoryResponses.map { it.title }
     )
 
     private fun ClubDetailResponse.toUIModel() = ClubsDetails.UIModel(
@@ -111,7 +146,36 @@ class ClubsUseCaseImpl @Inject constructor(
         accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
         tags = categories.map { AppUIEntities.Tags(id = it.id, type = "CATEGORY", title = it.title) },
         infoData = buildInfoData(this),
-        eventsData = emptyList()
+        eventsData = emptyList(),
+        editPrefillData = toEditPrefill()
+    )
+
+    /** Builds the edit-screen pre-fill (form values + image URLs). Mirrors iOS `mapPrefilData`. */
+    private fun ClubDetailResponse.toEditPrefill() = ClubsDetails.ClubEditPrefill(
+        logoUrl = logoUrl,
+        coverUrl = backgroundUrl,
+        values = mapOf(
+            AppFieldSchema.FieldId.COVER to
+                AppFieldSchema.FieldValue.Cover(backgroundColour.toBackgroundType()),
+            AppFieldSchema.FieldId.VISIBILITY to AppFieldSchema.FieldValue.Radio(
+                if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC
+                else AppUIEntities.AccessType.PRIVATE
+            ),
+            AppFieldSchema.FieldId.CLUB_NAME to AppFieldSchema.FieldValue.TextValue(name),
+            AppFieldSchema.FieldId.OWNER_CONTACT to
+                AppFieldSchema.FieldValue.TextValue(ownerContact ?: ""),
+            AppFieldSchema.FieldId.CATEGORY to AppFieldSchema.FieldValue.Tags(
+                categories.map { AppFieldSchema.TagItem(id = it.id, label = it.title) }
+            ),
+            AppFieldSchema.FieldId.CAPACITY to
+                AppFieldSchema.FieldValue.TextValue(capacity?.toString() ?: ""),
+            AppFieldSchema.FieldId.LINKS to AppFieldSchema.FieldValue.Links(
+                links.map { AppFieldSchema.LinkItem(type = it.type, name = it.name, url = it.url) }
+            ),
+            AppFieldSchema.FieldId.LOCATION to AppFieldSchema.FieldValue.TextValue(location ?: ""),
+            AppFieldSchema.FieldId.RULES to AppFieldSchema.FieldValue.TextValue(rule ?: ""),
+            AppFieldSchema.FieldId.ABOUT to AppFieldSchema.FieldValue.TextValue(about)
+        )
     )
 
     private fun buildInfoData(detail: ClubDetailResponse): List<ClubsDetails.Info> = buildList {

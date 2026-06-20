@@ -1,5 +1,6 @@
 package com.bonjur.clubs.data.endPoints
 
+import com.bonjur.clubs.data.DTOs.RoleAssignRequest
 import com.bonjur.network.APIClient.AppEndpoint
 import com.bonjur.network.APIClient.MultipartPayload
 import com.bonjur.network.APIClient.NetworkMethod
@@ -44,5 +45,26 @@ sealed class ClubsEndpoints : AppEndpoint {
     data class JoinClub(val clubId: Int) : ClubsEndpoints() {
         override val path = "api/cs/v1/clubs/$clubId/join-club"
         override val method = NetworkMethod.POST
+    }
+
+    data class ExitClub(val clubId: Int) : ClubsEndpoints() {
+        override val path = "api/cs/v1/clubs/$clubId/exit"
+        override val method = NetworkMethod.DELETE
+    }
+
+    /**
+     * Assign a role to a member. Mirrors iOS `assignRole`.
+     * NOTE: relies on `AppEndpoint.body` JSON serialization, which `ApiClient`
+     * does not yet implement for arbitrary bodies (encodeToString over `Any?`).
+     * Endpoint is wired but currently dormant (triggered only from the members
+     * list, deferred). See parity-clubs.md.
+     */
+    data class AssignRole(
+        val clubId: Int,
+        val request: RoleAssignRequest
+    ) : ClubsEndpoints() {
+        override val path = "api/cs/v1/clubs/$clubId/role"
+        override val method = NetworkMethod.POST
+        override val body = request
     }
 }

@@ -29,6 +29,7 @@ import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.components.button.AppButtonModel
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
+import com.bonjur.designSystem.components.topBar.AppTopBar
 import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
@@ -51,20 +52,23 @@ fun ClubCreateView(
 
     val imagesOnly = PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-        ) {
-            CoverHeader(
-                coverUri = state.coverUri ?: state.existingCoverUrl,
-                height = coverHeight,
-                onTap = { coverPicker.launch(imagesOnly) },
-                onBack = { store.send(ClubCreateAction.BackTapped) }
-            )
+    val scrollState = rememberScrollState()
+    val isScrolled = scrollState.value > 30
 
-            LogoRow(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(scrollState)
+            ) {
+                CoverHeader(
+                    coverUri = state.coverUri ?: state.existingCoverUrl,
+                    height = coverHeight,
+                    onTap = { coverPicker.launch(imagesOnly) }
+                )
+
+                LogoRow(
                 logoUri = state.logoUri ?: state.existingLogoUrl,
                 onTap = { logoPicker.launch(imagesOnly) }
             )
@@ -106,6 +110,12 @@ fun ClubCreateView(
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             enabled = state.isValid
         )
+        }
+
+        AppTopBar(
+            isScrolled = isScrolled,
+            onBack = { store.send(ClubCreateAction.BackTapped) }
+        )
     }
 
     if (state.showCategoryPicker) {
@@ -128,9 +138,9 @@ fun ClubCreateView(
 private fun CoverHeader(
     coverUri: String?,
     height: androidx.compose.ui.unit.Dp,
-    onTap: () -> Unit,
-    onBack: () -> Unit
+    onTap: () -> Unit
 ) {
+    // Back button now lives in the overlaid AppTopBar (matches details).
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -144,24 +154,6 @@ private fun CoverHeader(
                 contentDescription = "Cover",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(12.dp)
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Palette.whiteHigh.copy(alpha = 0.9f))
-                .clickable { onBack() },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = Images.Icons.arrowLeft01(),
-                contentDescription = "Back",
-                tint = Palette.blackHigh,
-                modifier = Modifier.size(20.dp)
             )
         }
     }

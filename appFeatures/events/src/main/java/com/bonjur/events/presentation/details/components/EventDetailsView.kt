@@ -1,6 +1,11 @@
 package com.bonjur.events.presentation.details.components
 
 import CardBackgroundView
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,6 +14,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +34,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -48,6 +55,7 @@ import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.emptyView.AppEmptyModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -76,6 +84,7 @@ fun EventDetailsView(
     var isSegmentSticky by remember { mutableStateOf(false) }
     var navBarHeight by remember { mutableStateOf(0.dp) }
     var isUpdatingFromPager by remember { mutableStateOf(false) }
+    var showOptions by remember { mutableStateOf(false) }
 
     // Listen to pager changes (from swipe gesture)
     LaunchedEffect(pagerState) {
@@ -139,6 +148,7 @@ fun EventDetailsView(
                 EventInfoView(
                     uiModel = store.state.uiModel,
                     isFileUploadReachedMaxLimit = store.state.isFileUploadReachedMaxLimit,
+                    onClubTap = { store.send(EventDetailsAction.ClubTapped) },
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -211,8 +221,8 @@ fun EventDetailsView(
             eventName = store.state.uiModel?.name ?: "",
             selectedSegment = store.state.selectedSegment,
             onBackClick = { store.send(EventDetailsAction.BackTapped) },
-            onMoreClick = { /* Handle more */ },
-            onCameraClick = { /* Handle camera */ },
+            onMoreClick = { showOptions = true },
+            onEditClick = { store.send(EventDetailsAction.EditTapped) },
             onSegmentSelected = { segment ->
                 store.send(EventDetailsAction.SegmentChanged(segment))
             },
@@ -222,24 +232,38 @@ fun EventDetailsView(
             modifier = Modifier.zIndex(1f)
         )
 
-        // Join button
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(16.dp)
-                .padding(bottom = 16.dp)
-                .zIndex(2f)
-        ) {
-            AppButton(
-                title = "Join",
-                model = AppButtonModel(
-                    contentSize = ContentSize.Fill
-                ),
-                onClick = { /* Handle join */ }
-            )
+        // Join / Request button — driven by the mapped joinButton (mirrors iOS).
+        // Hidden once joined/accepted; disabled "Request sent" while pending.
+        store.state.uiModel?.joinButton?.let { joinButton ->
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
+                    .zIndex(2f)
+            ) {
+                AppButton(
+                    title = joinButton.title,
+                    model = AppButtonModel(
+                        contentSize = ContentSize.Fill
+                    ),
+                    enabled = !joinButton.disabled,
+                    onClick = { store.send(EventDetailsAction.JoinTapped) }
+                )
+            }
         }
+    }
+
+    // 3-dot options sheet (Report / Leave / Share)
+    if (showOptions) {
+        EventOptionsSheet(
+            viewerRole = store.state.uiModel?.userActivityType
+                ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+            onExit = { store.send(EventDetailsAction.ExitTapped) },
+            onDismiss = { showOptions = false }
+        )
     }
 }
 
@@ -302,6 +326,7 @@ private fun StretchableHeader(
 private fun EventInfoView(
     uiModel: EventsDetails.UIModel?,
     isFileUploadReachedMaxLimit: Boolean,
+    onClubTap: () -> Unit,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
@@ -311,30 +336,16 @@ private fun EventInfoView(
             .padding(top = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Event name with edit button
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = uiModel?.name ?: "",
-                style = AppTypography.TitleL.extraBold,
-                modifier = Modifier
-                    .weight(1f)
-                    .onGloballyPositioned { coordinates ->
-                        onNamePositioned(coordinates.positionInRoot().y)
-                    }
-            )
-
-            IconButton(onClick = { /* Handle edit */ }) {
-                Icon(
-                    painter = Images.Icons.penLine(),
-                    contentDescription = "Edit",
-                    tint = Palette.blackHigh
-                )
-            }
-        }
+        // Event name (edit lives in the top bar, matching iOS)
+        Text(
+            text = uiModel?.name ?: "",
+            style = AppTypography.TitleL.extraBold,
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    onNamePositioned(coordinates.positionInRoot().y)
+                }
+        )
 
         // Access type and community
         Row(
@@ -362,9 +373,7 @@ private fun EventInfoView(
                 text = uiModel?.communityName ?: "",
                 style = AppTypography.TextL.medium,
                 color = Palette.appBlue,
-                modifier = Modifier.pointerInput(Unit) {
-                    detectTapGestures { /* Handle community link */ }
-                }
+                modifier = Modifier.clickable(enabled = (uiModel?.clubId ?: 0) != 0) { onClubTap() }
             )
         }
 
@@ -494,7 +503,7 @@ private fun NavigationOverlay(
     selectedSegment: EventDetailsViewState.SegmentTypes,
     onBackClick: () -> Unit,
     onMoreClick: () -> Unit,
-    onCameraClick: () -> Unit,
+    onEditClick: () -> Unit,
     onSegmentSelected: (EventDetailsViewState.SegmentTypes) -> Unit,
     onNavBarPositioned: (Dp) -> Unit,
     modifier: Modifier = Modifier
@@ -531,13 +540,12 @@ private fun NavigationOverlay(
                             onClick = onMoreClick
                         )
 
-                        AnimatedVisibility(visible = !isScrolled) {
-                            NavBarButton(
-                                icon = Images.Icons.camera(),
-                                isScrolled = isScrolled,
-                                onClick = onCameraClick
-                            )
-                        }
+                        // Edit — always shown (iOS toolbar penLine is unconditional)
+                        NavBarButton(
+                            icon = Images.Icons.penLine(),
+                            isScrolled = isScrolled,
+                            onClick = onEditClick
+                        )
                     }
                 }
 
@@ -665,7 +673,29 @@ private fun InfoTab(infoData: List<EventsDetails.Info>) {
 
 @Composable
 private fun InfoSubItem(subItem: EventsDetails.SubInfo) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    val context = LocalContext.current
+    val isActionable = subItem.isLink || subItem.phoneNumber != null
+
+    val onTap: () -> Unit = {
+        val phone = subItem.phoneNumber
+        when {
+            phone != null -> {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText("contact", phone))
+                AppSnackBar.show(title = "Copied to clipboard", style = AppSnackBar.Style.SUCCESS)
+            }
+            subItem.isLink -> runCatching {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(subItem.description)))
+            }
+        }
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { if (isActionable) it.clickable(onClick = onTap) else it }
+    ) {
         subItem.title?.let { title ->
             Text(
                 text = title,
@@ -678,7 +708,7 @@ private fun InfoSubItem(subItem: EventsDetails.SubInfo) {
         Text(
             text = subItem.description,
             style = AppTypography.BodyTextSm.regular,
-            color = if (subItem.isLink) Palette.appBlue else Palette.blackHigh,
+            color = if (isActionable) Palette.appBlue else Palette.blackHigh,
             modifier = Modifier.fillMaxWidth()
         )
     }

@@ -1,5 +1,10 @@
 package com.bonjur.communities.presentation.detail.components
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import CardBackgroundView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -8,7 +13,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +53,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -58,6 +63,11 @@ import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.presentation.list.components.ClubCardView
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.communities.domain.model.CommunityDetails
+import com.bonjur.member.model.MemberCellModel
+import com.bonjur.member.components.MemberListView
+import com.bonjur.member.components.MemberOptionsInput
+import com.bonjur.member.components.MemberOptionsSheet
+import com.bonjur.member.policy.MemberOptionsPolicy
 import com.bonjur.communities.presentation.detail.model.CommunityDetailAction
 import com.bonjur.communities.presentation.detail.model.CommunityDetailSideEffect
 import com.bonjur.communities.presentation.detail.model.CommunityDetailViewState
@@ -72,6 +82,7 @@ import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.components.emptyView.AppEmptyModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -86,7 +97,7 @@ fun CommunityDetailView(
     val listState = rememberLazyListState()
     val pagerState = rememberPagerState(
         initialPage = store.state.selectedSegment.toIndex(),
-        pageCount = { 2 }
+        pageCount = { 3 }
     )
     val coroutineScope = rememberCoroutineScope()
 
@@ -149,16 +160,13 @@ fun CommunityDetailView(
             }
 
             item(key = "logo") {
-                LogoView(
-                    logoUrl = store.state.uiModel?.logo,
-                    onEditClick = { },
-                    onCameraClick = { }
-                )
+                LogoView(logoUrl = store.state.uiModel?.logo)
             }
 
             item(key = "community_info") {
                 CommunityInfoView(
                     uiModel = store.state.uiModel,
+                    canCreateEvent = store.state.canCreateEvent,
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -213,11 +221,14 @@ fun CommunityDetailView(
 
                             CommunityDetailViewState.SegmentTypes.CLUBS ->
                                 ClubsTab(
-                                    clubs = store.state.uiModel?.clubsData ?: emptyList(),
+                                    clubs = store.state.clubsData,
                                     onClubTapped = { id ->
                                         store.send(CommunityDetailAction.ClubItemTapped(id))
                                     }
                                 )
+
+                            CommunityDetailViewState.SegmentTypes.MEMBERS ->
+                                MembersTab(store = store)
                         }
                     }
                 }
@@ -232,11 +243,11 @@ fun CommunityDetailView(
             isScrolled = isScrolled,
             isNameVisible = isNameVisible,
             isSegmentSticky = isSegmentSticky,
+            isEditable = store.state.isEditable,
             communityName = store.state.uiModel?.name ?: "",
             selectedSegment = store.state.selectedSegment,
             onBackClick = { store.send(CommunityDetailAction.BackTapped) },
-            onMoreClick = { },
-            onCameraClick = { },
+            onEditClick = { store.send(CommunityDetailAction.EditTapped) },
             onSegmentSelected = { segment ->
                 store.send(CommunityDetailAction.SegmentChanged(segment))
             },
@@ -304,80 +315,42 @@ private fun StretchableHeader(
 }
 
 @Composable
-private fun LogoView(
-    logoUrl: String?,
-    onEditClick: () -> Unit,
-    onCameraClick: () -> Unit
-) {
+private fun LogoView(logoUrl: String?) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .offset(y = (-44).dp)
             .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom
     ) {
-        Box {
-            Box(
+        Box(
+            modifier = Modifier
+                .size(88.dp)
+                .background(Palette.grayQuaternary, RoundedCornerShape(20.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            CachedAsyncImage(
+                url = logoUrl,
                 modifier = Modifier
                     .size(88.dp)
-                    .background(Palette.grayQuaternary, RoundedCornerShape(20.dp))
-                    .border(
-                        width = 3.dp,
-                        color = Palette.grayTeritary.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(20.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                CachedAsyncImage(
-                    url = logoUrl,
-                    modifier = Modifier
-                        .size(88.dp)
-                        .clip(RoundedCornerShape(20.dp)),
-                    contentScale = ContentScale.Crop,
-                    placeholder = {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            tint = Palette.blackMedium,
-                            modifier = Modifier.size(44.dp)
-                        )
-                    },
-                    error = {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            tint = Palette.blackMedium,
-                            modifier = Modifier.size(44.dp)
-                        )
-                    }
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .offset(x = 4.dp, y = 4.dp)
-                    .align(Alignment.BottomEnd)
-                    .background(Palette.grayQuaternary, CircleShape)
-                    .border(2.dp, Palette.whiteHigh, CircleShape)
-                    .clickable(onClick = onCameraClick)
-                    .padding(7.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = Images.Icons.camera(),
-                    contentDescription = "Camera",
-                    tint = Palette.blackMedium,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
-
-        IconButton(onClick = onEditClick) {
-            Icon(
-                painter = Images.Icons.penLine(),
-                contentDescription = "Edit",
-                tint = Palette.blackHigh
+                    .clip(RoundedCornerShape(20.dp)),
+                contentScale = ContentScale.Crop,
+                placeholder = {
+                    Icon(
+                        painter = Images.Icons.user(),
+                        contentDescription = null,
+                        tint = Palette.blackMedium,
+                        modifier = Modifier.size(44.dp)
+                    )
+                },
+                error = {
+                    Icon(
+                        painter = Images.Icons.user(),
+                        contentDescription = null,
+                        tint = Palette.blackMedium,
+                        modifier = Modifier.size(44.dp)
+                    )
+                }
             )
         }
     }
@@ -386,6 +359,7 @@ private fun LogoView(
 @Composable
 private fun CommunityInfoView(
     uiModel: CommunityDetails.UIModel?,
+    canCreateEvent: Boolean,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
@@ -432,15 +406,17 @@ private fun CommunityInfoView(
             }
         }
 
-        AppButton(
-            title = "Create new event +",
-            model = AppButtonModel(
-                type = ButtonType.Secondary,
-                contentSize = ContentSize.Fill,
-                size = AppButtonSize.Medium
-            ),
-            onClick = { }
-        )
+        if (canCreateEvent) {
+            AppButton(
+                title = "Create new event +",
+                model = AppButtonModel(
+                    type = ButtonType.Secondary,
+                    contentSize = ContentSize.Fill,
+                    size = AppButtonSize.Medium
+                ),
+                onClick = { }
+            )
+        }
     }
 }
 
@@ -449,11 +425,11 @@ private fun NavigationOverlay(
     isScrolled: Boolean,
     isNameVisible: Boolean,
     isSegmentSticky: Boolean,
+    isEditable: Boolean,
     communityName: String,
     selectedSegment: CommunityDetailViewState.SegmentTypes,
     onBackClick: () -> Unit,
-    onMoreClick: () -> Unit,
-    onCameraClick: () -> Unit,
+    onEditClick: () -> Unit,
     onSegmentSelected: (CommunityDetailViewState.SegmentTypes) -> Unit,
     onNavBarPositioned: (Dp) -> Unit,
     modifier: Modifier = Modifier
@@ -482,20 +458,12 @@ private fun NavigationOverlay(
                         onClick = onBackClick
                     )
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    if (isEditable) {
                         NavBarButton(
-                            icon = Images.Icons.ellipsis02(),
+                            icon = Images.Icons.penLine(),
                             isScrolled = isScrolled,
-                            onClick = onMoreClick
+                            onClick = onEditClick
                         )
-
-                        AnimatedVisibility(visible = !isScrolled) {
-                            NavBarButton(
-                                icon = Images.Icons.camera(),
-                                isScrolled = isScrolled,
-                                onClick = onCameraClick
-                            )
-                        }
                     }
                 }
 
@@ -624,7 +592,29 @@ private fun InfoTab(infoData: List<CommunityDetails.Info>) {
 
 @Composable
 private fun InfoSubItem(subItem: CommunityDetails.SubInfo) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    val context = LocalContext.current
+    val isActionable = subItem.isLink || subItem.phoneNumber != null
+
+    val onTap: () -> Unit = {
+        val phone = subItem.phoneNumber
+        when {
+            phone != null -> {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText("contact", phone))
+                AppSnackBar.show(title = "Copied to clipboard", style = AppSnackBar.Style.SUCCESS)
+            }
+            subItem.isLink -> runCatching {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(subItem.description)))
+            }
+        }
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { if (isActionable) it.clickable(onClick = onTap) else it }
+    ) {
         subItem.title?.let { title ->
             Text(
                 text = title,
@@ -637,8 +627,56 @@ private fun InfoSubItem(subItem: CommunityDetails.SubInfo) {
         Text(
             text = subItem.description,
             style = AppTypography.BodyTextSm.regular,
-            color = if (subItem.isLink) Palette.appBlue else Palette.blackHigh,
+            color = if (isActionable) Palette.appBlue else Palette.blackHigh,
             modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun MembersTab(
+    store: FeatureStore<CommunityDetailViewState, CommunityDetailAction, CommunityDetailSideEffect>
+) {
+    val sections = store.state.membersData?.sections ?: emptyList()
+    val viewerRole = store.state.uiModel?.userActivity
+        ?: AppUIEntities.UserActivityRole.NOT_JOINED
+    val totalCount = store.state.uiModel?.membersCount
+        ?: sections.sumOf { it.memberCount }
+    val currentUserId = store.state.currentUserId
+
+    var optionsMember by remember { mutableStateOf<MemberCellModel?>(null) }
+
+    MemberListView(
+        sections = sections,
+        onRowTap = { member -> store.send(CommunityDetailAction.UserTapped(member.id)) },
+        onOptionsTap = { member -> optionsMember = member },
+        currentUserId = currentUserId,
+        previewLimit = 5,
+        totalCount = totalCount,
+        onSeeAll = { store.send(CommunityDetailAction.SeeAllMembersTapped) }
+    )
+
+    optionsMember?.let { member ->
+        val isSelf = member.id == currentUserId
+        MemberOptionsSheet(
+            input = MemberOptionsInput(
+                memberName = member.name,
+                currentRole = member.role,
+                assignableRoles = MemberOptionsPolicy.assignableRoles(viewerRole),
+                showChangeRole = MemberOptionsPolicy.canChangeRole(
+                    viewer = viewerRole,
+                    activity = AppUIEntities.ActivityType.COMMUNITY,
+                    isSelf = isSelf
+                ),
+                showReport = MemberOptionsPolicy.canReport(isSelf),
+                onAssignRole = { role ->
+                    store.send(CommunityDetailAction.AssignRole(member.id, role))
+                },
+                onReport = {
+                    AppSnackBar.show(title = "Report submitted", style = AppSnackBar.Style.SUCCESS)
+                }
+            ),
+            onDismiss = { optionsMember = null }
         )
     }
 }

@@ -3,6 +3,7 @@ package com.bonjur.hangouts.presentation.detail.model
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.segmentView.SegmentedPickerOption
 import com.bonjur.hangouts.domain.model.HangoutDetails
 
@@ -21,6 +22,9 @@ data class HangoutDetailsViewState(
     val uiModel: HangoutDetails.UIModel? = null,
     val selectedSegment: SegmentTypes = SegmentTypes.ABOUT
 ) : FeatureState {
+
+    val isPrivate: Boolean
+        get() = uiModel?.accessType == AppUIEntities.AccessType.PRIVATE
 
     enum class SegmentTypes(
         override val title: String
@@ -51,4 +55,7 @@ sealed class HangoutDetailsAction : FeatureAction {
     object FetchData : HangoutDetailsAction()
     object BackTapped : HangoutDetailsAction()
     data class SegmentChanged(val segment: HangoutDetailsViewState.SegmentTypes) : HangoutDetailsAction()
+    object EditTapped : HangoutDetailsAction()
+    object JoinTapped : HangoutDetailsAction()
+    object ExitTapped : HangoutDetailsAction()
 }

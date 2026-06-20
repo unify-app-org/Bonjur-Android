@@ -67,9 +67,12 @@ data class EventListResponse(
     val name: String? = null,
     val visibility: String? = null,
     val about: String? = null,
+    val location: String? = null,
+    val eventDate: String? = null,
     val capacity: Int? = null,
     val membersCount: Int? = null,
     val background: String? = null,
+    val club: EventClubResponse? = null,
     val requestStatus: String? = null,
     val eventActivityStatus: String? = null,
     val role: String? = null,
@@ -85,6 +88,7 @@ data class EventDetailResponse(
     val visibility: String? = null,
     val ownerContact: String? = null,
     val location: String? = null,
+    val eventDate: String? = null,
     val about: String? = null,
     val rule: String? = null,
     val capacity: Int? = null,
@@ -92,11 +96,22 @@ data class EventDetailResponse(
     val backgroundUrl: String? = null,
     val membersCount: Int? = null,
     val eventUserRole: String? = null,
-    val attachments: List<String> = emptyList(),
+    /** Pending/accepted state for the current user. Older backends may omit it. */
+    val requestStatus: String? = null,
+    val attachments: List<EventAttachmentResponse> = emptyList(),
     val links: List<EventLinkDTO> = emptyList(),
     val categories: List<EventCategoryResponse> = emptyList(),
+    val reminderTimes: List<String> = emptyList(),
     val isDeleted: Boolean? = null,
     val modifiedAt: String? = null
+)
+
+/** Attachment object on the detail response (`{ url, name, size }`), mirrors iOS. */
+@Serializable
+data class EventAttachmentResponse(
+    val url: String? = null,
+    val name: String? = null,
+    val size: String? = null
 )
 
 @Serializable

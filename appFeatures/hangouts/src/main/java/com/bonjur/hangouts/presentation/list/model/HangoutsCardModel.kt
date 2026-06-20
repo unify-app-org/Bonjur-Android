@@ -19,19 +19,24 @@ data class HangoutsCardModel(
     val totalCapacity: Int?,
     val tags: List<AppUIEntities.Tags>,
     val accessType: AppUIEntities.AccessType,
-    val requestType: AppUIEntities.RequestType
+    val requestType: AppUIEntities.RequestType,
+    // Real values mapped from the hangout list API; null hides the UI.
+    val dateDay: String? = null,
+    val dateMonth: String? = null,
+    val time: String? = null,
+    val location: String? = null
 ) {
     val memberCountText: String
         get() = if (totalCapacity != null) {
-            "$memberCount/$totalCapacity members"
+            "$memberCount of $totalCapacity"
         } else {
             "$memberCount members"
         }
-    
+
     val buttonTitle: String
         get() = when (requestType) {
             AppUIEntities.RequestType.JOINED -> "Participating"
-            AppUIEntities.RequestType.REJECTED -> "Rejected"
+            AppUIEntities.RequestType.REJECTED -> "Request again"
             AppUIEntities.RequestType.PENDING -> "Request sent"
             AppUIEntities.RequestType.NONE -> when (accessType) {
                 AppUIEntities.AccessType.PUBLIC -> "Join"

@@ -13,5 +13,5 @@ sealed interface EventsScreens {
     data object Create : EventsScreens
 
     @Serializable
-    data class Edit(val eventId: String) : EventsScreens
+    data object Edit : EventsScreens
 }

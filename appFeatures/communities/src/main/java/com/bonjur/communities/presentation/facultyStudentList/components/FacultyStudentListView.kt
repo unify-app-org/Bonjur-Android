@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
-import com.bonjur.communities.presentation.facultyBrowse.models.MemberCellModel
+import com.bonjur.member.model.MemberCellModel
 import com.bonjur.communities.presentation.facultyStudentList.models.FacultyStudentListAction
 import com.bonjur.communities.presentation.facultyStudentList.models.FacultyStudentListSideEffect
 import com.bonjur.communities.presentation.facultyStudentList.models.FacultyStudentListViewState

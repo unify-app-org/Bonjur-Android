@@ -37,4 +37,12 @@ interface ClubsUseCase {
     suspend fun editClub(clubId: Int, form: ClubFormData)
 
     suspend fun joinClub(clubId: Int)
+
+    suspend fun exitClub(clubId: Int)
+
+    /** Triggered from the members list (deferred); wired but dormant for now. */
+    suspend fun assignRole(clubId: Int, userId: String, role: AppUIEntities.UserActivityRole)
+
+    /** Exit gate for presidents: an owner can only leave once a VP exists. */
+    suspend fun clubHasVicePresident(clubId: Int): Boolean
 }

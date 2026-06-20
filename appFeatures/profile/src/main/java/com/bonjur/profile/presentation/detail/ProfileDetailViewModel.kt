@@ -38,12 +38,15 @@ class ProfileDetailViewModel @Inject constructor(
         if (::inputData.isInitialized) return
         this.inputData = inputData
         this.navigator = navigator
+        updateState(state.copy(isOwnProfile = inputData.userId.isNullOrEmpty()))
         fetchData()
     }
 
     override fun handle(action: ProfileDetailAction) {
         when (action) {
             ProfileDetailAction.FetchData -> fetchData()
+
+            ProfileDetailAction.BackTapped -> viewModelScope.launch { navigator.navigateUp() }
 
             is ProfileDetailAction.ClubsItemTapped -> viewModelScope.launch {
 //                navigator.navigateTo(ProfileScreens.ClubsDetails(action.id).route)
@@ -89,13 +92,21 @@ class ProfileDetailViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch {
             fetchUserData()
-            fetchMyActivities()
+            // My-activities endpoints are self-only; skip them for another user's profile.
+            if (inputData.userId.isNullOrEmpty()) {
+                fetchMyActivities()
+            }
         }
     }
 
     private suspend fun fetchUserData() {
         try {
-            val uiModel = dependencies.useCase.fetchProfileData()
+            val userId = inputData.userId
+            val uiModel = if (userId.isNullOrEmpty()) {
+                dependencies.useCase.fetchProfileData()
+            } else {
+                dependencies.useCase.fetchProfileData(userId)
+            }
             updateState(state.copy(uiModel = uiModel))
         } catch (e: Exception) {
             // Handle error

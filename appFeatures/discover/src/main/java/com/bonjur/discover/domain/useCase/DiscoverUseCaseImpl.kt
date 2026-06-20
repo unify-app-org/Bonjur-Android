@@ -3,6 +3,7 @@ package com.bonjur.discover.domain.useCase
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.commonModel.toUserActivityRole
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
 import com.bonjur.discover.data.DTOs.DiscoverClub
@@ -108,7 +109,10 @@ class DiscoverUseCaseImpl @Inject constructor(
         members = members.toMembers(),
         bgType = background.toBackgroundType(),
         accessType = visibility.toAccessType(),
-        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE
+        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE,
+        role = clubUserRole?.toUserActivityRole(),
+        upcomingEventsCount = eventCount ?: 0,
+        categories = categoryResponses.map { it.title }
     )
 
     private fun DiscoverCommunity.toCardModel() = CommunityCardModel(

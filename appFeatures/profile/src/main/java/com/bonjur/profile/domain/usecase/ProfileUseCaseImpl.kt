@@ -21,32 +21,43 @@ class ProfileUseCaseImpl @Inject constructor(
 
     override suspend fun fetchProfileData(): ProfileDetail.UIModel {
         return try {
-            val dto = dataSource.getMyProfile()
-            ProfileDetail.UIModel(
-                userCardModel = com.bonjur.profile.presentation.detail.models.UserCardModel(
-                    nameSurname = dto.fullName ?: "-",
-                    speciality = dto.specialization ?: "-",
-                    community = dto.communityName ?: "-",
-                    entryYear = dto.entryYear?.toString() ?: "-",
-                    course = "-",
-                    imageUrl = dto.profileUrl
-                ),
-                about = dto.about,
-                gender = dto.gender,
-                birthday = dto.birthDate,
-                tags = dto.categories.map {
-                    com.bonjur.designSystem.commonModel.AppUIEntities.Tags(
-                        id = it.id,
-                        type = "",
-                        title = it.title
-                    )
-                },
-                cardCover = null
-            )
+            dataSource.getMyProfile().toUIModel()
         } catch (e: Exception) {
             ProfileDetail.UIModel.mock()
         }
     }
+
+    override suspend fun fetchProfileData(userId: String): ProfileDetail.UIModel {
+        return try {
+            dataSource.getUserById(userId).toUIModel()
+        } catch (e: Exception) {
+            ProfileDetail.UIModel.mock()
+        }
+    }
+
+    /** Maps a user profile response to the detail UI model. Shared by own + by-id fetch. */
+    private fun com.bonjur.profile.data.DTOs.UserProfileResponse.toUIModel(): ProfileDetail.UIModel =
+        ProfileDetail.UIModel(
+            userCardModel = com.bonjur.profile.presentation.detail.models.UserCardModel(
+                nameSurname = fullName ?: "-",
+                speciality = specialization ?: "-",
+                community = communityName ?: "-",
+                entryYear = entryYear?.toString() ?: "-",
+                course = "-",
+                imageUrl = profileUrl
+            ),
+            about = about,
+            gender = gender,
+            birthday = birthDate,
+            tags = categories.map {
+                com.bonjur.designSystem.commonModel.AppUIEntities.Tags(
+                    id = it.id,
+                    type = "",
+                    title = it.title
+                )
+            },
+            cardCover = null
+        )
 
     // ── EditProfile ───────────────────────────────────────────────────────────
 

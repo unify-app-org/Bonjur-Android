@@ -1,5 +1,6 @@
 package com.bonjur.designSystem.components.fieldSchema
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,6 +40,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +62,7 @@ fun FieldSchemaRouter(
     values: FieldValues,
     onChange: (AppFieldSchema.FieldId, AppFieldSchema.FieldValue) -> Unit,
     modifier: Modifier = Modifier,
+    disabled: Boolean = false,
     onAddCategory: () -> Unit = {},
     onRemoveCategory: (Int) -> Unit = {}
 ) {
@@ -88,6 +91,7 @@ fun FieldSchemaRouter(
                 text = values.text(field.id),
                 onTextChange = { onChange(field.id, AppFieldSchema.FieldValue.TextValue(it)) },
                 placeHolder = type.placeholder,
+                enabled = !disabled,
                 model = AppTextFieldModel(keyboardType = type.keyboardType)
             )
         }
@@ -131,8 +135,8 @@ fun FieldSchemaRouter(
             field = field,
             placeholder = type.placeholder,
             options = type.options,
-            selected = values.reminder(field.id),
-            onChange = { onChange(field.id, AppFieldSchema.FieldValue.ReminderValue(it)) },
+            selected = values.reminders(field.id),
+            onChange = { onChange(field.id, AppFieldSchema.FieldValue.Reminders(it)) },
             modifier = modifier
         )
 
@@ -508,16 +512,20 @@ private fun ReminderField(
     field: AppFieldSchema.Field,
     placeholder: String,
     options: List<AppFieldSchema.ReminderOption>,
-    selected: AppFieldSchema.ReminderOption,
-    onChange: (AppFieldSchema.ReminderOption) -> Unit,
+    selected: List<AppFieldSchema.ReminderOption>,
+    onChange: (List<AppFieldSchema.ReminderOption>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var showSheet by remember { mutableStateOf(false) }
 
+    // "None" is not a real selection — drop it from the active set / collapsed label.
+    val active = selected.filter { it != AppFieldSchema.ReminderOption.NONE }
+    val collapsed = if (active.isEmpty()) "" else active.joinToString(", ") { it.label }
+
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FieldLabel(field)
         CapsuleField(
-            text = if (selected == AppFieldSchema.ReminderOption.NONE) "" else selected.label,
+            text = collapsed,
             placeholder = placeholder,
             icon = Images.Icons.bell(),
             onTap = { showSheet = true }
@@ -526,52 +534,96 @@ private fun ReminderField(
 
     if (showSheet) {
         AppBottomSheet(onDismiss = { showSheet = false }) {
-            Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-                Text(
-                    text = field.label,
-                    style = AppTypography.HeadingMd.medium,
-                    color = Palette.blackHigh,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
-                )
-                options.forEach { option ->
-                    val isSelected = option == selected
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                onChange(option)
-                                showSheet = false
-                            }
-                            .padding(horizontal = 24.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = option.label,
-                            style = AppTypography.BodyTextMd.regular,
-                            color = Palette.blackHigh
-                        )
-                        Box(
-                            modifier = Modifier
-                                .size(20.dp)
-                                .border(
-                                    2.dp,
-                                    if (isSelected) Palette.green900 else Palette.grayTeritary,
-                                    CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (isSelected) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .background(Palette.green900, CircleShape)
-                                )
-                            }
+            ReminderOptionsSheet(
+                title = field.label,
+                options = options,
+                initial = active,
+                onConfirm = {
+                    onChange(it)
+                    showSheet = false
+                }
+            )
+        }
+    }
+}
+
+/**
+ * Multi-select reminder list. "None" is exclusive (picking it clears the offsets and
+ * vice-versa). Confirm commits; an empty selection collapses to [None]. Mirrors iOS
+ * `ReminderOptionsList`.
+ */
+@Composable
+private fun ReminderOptionsSheet(
+    title: String,
+    options: List<AppFieldSchema.ReminderOption>,
+    initial: List<AppFieldSchema.ReminderOption>,
+    onConfirm: (List<AppFieldSchema.ReminderOption>) -> Unit
+) {
+    val draft = remember {
+        mutableStateListOf<AppFieldSchema.ReminderOption>().apply {
+            addAll(initial.filter { it != AppFieldSchema.ReminderOption.NONE })
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Text(
+            text = title,
+            style = AppTypography.HeadingMd.medium,
+            color = Palette.blackHigh,
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp)
+        )
+
+        options.forEachIndexed { index, option ->
+            val isChecked = if (option == AppFieldSchema.ReminderOption.NONE) {
+                draft.isEmpty()
+            } else {
+                draft.contains(option)
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        when {
+                            option == AppFieldSchema.ReminderOption.NONE -> draft.clear()
+                            draft.contains(option) -> draft.remove(option)
+                            else -> draft.add(option)
                         }
                     }
-                }
+                    .padding(horizontal = 24.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = if (isChecked) Images.Icons.selectedCheckBox()
+                    else Images.Icons.notSelectedCheckBox(),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = option.label,
+                    style = AppTypography.BodyTextMd.regular,
+                    color = Palette.blackHigh,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            if (index < options.size - 1) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .height(0.5.dp)
+                        .background(Palette.grayTeritary.copy(alpha = 0.5f))
+                )
             }
         }
+
+        AppButton(
+            title = "Confirm",
+            model = AppButtonModel(contentSize = ContentSize.Fill),
+            onClick = { onConfirm(draft.toList()) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+        )
     }
 }

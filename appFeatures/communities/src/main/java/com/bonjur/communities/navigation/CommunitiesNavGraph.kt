@@ -15,6 +15,8 @@ import com.bonjur.communities.presentation.facultyStudentList.models.FacultyStud
 import com.bonjur.communities.presentation.facultyStudentSelectList.FacultyStudentSelectListScreen
 import com.bonjur.communities.presentation.facultyStudentSelectList.models.FacultyStudentSelectListInputData
 import com.bonjur.communities.presentation.list.CommunitiesListScreen
+import com.bonjur.communities.presentation.membersList.MembersListScreen
+import com.bonjur.communities.presentation.membersList.models.MembersListInputData
 import com.bonjur.navigation.NavArgs
 import com.bonjur.navigation.Navigator
 
@@ -29,6 +31,17 @@ fun NavGraphBuilder.communitiesNavGraph(
         val inputData = remember { NavArgs.get<CommunityDetailInputData>() ?: CommunityDetailInputData(communityId = 1) }
         CommunityDetailScreen(
             inputData = inputData,
+            navigator = navigator
+        )
+    }
+
+    composable<CommunitiesScreens.MembersList> { backStackEntry ->
+        val route = backStackEntry.toRoute<CommunitiesScreens.MembersList>()
+        MembersListScreen(
+            inputData = MembersListInputData(
+                communityId = route.communityId,
+                title = route.title
+            ),
             navigator = navigator
         )
     }

@@ -11,7 +11,7 @@ import com.bonjur.designSystem.components.fieldSchema.attachments
 import com.bonjur.designSystem.components.fieldSchema.date
 import com.bonjur.designSystem.components.fieldSchema.links
 import com.bonjur.designSystem.components.fieldSchema.radio
-import com.bonjur.designSystem.components.fieldSchema.reminder
+import com.bonjur.designSystem.components.fieldSchema.reminders
 import com.bonjur.designSystem.components.fieldSchema.tags
 import com.bonjur.designSystem.components.fieldSchema.text
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
@@ -20,6 +20,7 @@ import com.bonjur.events.domain.useCase.EventFormData
 import com.bonjur.events.domain.useCase.EventsUseCase
 import com.bonjur.events.presentation.create.models.EventCreateAction
 import com.bonjur.events.presentation.create.models.EventCreateInputData
+import com.bonjur.events.presentation.create.models.EventSelectableClub
 import com.bonjur.events.presentation.create.models.EventCreateSideEffect
 import com.bonjur.events.presentation.create.models.EventCreateViewState
 import com.bonjur.navigation.Navigator
@@ -40,7 +41,7 @@ class EventCreateViewModel @Inject constructor(
             AppFieldSchema.FieldId.VISIBILITY to
                 AppFieldSchema.FieldValue.Radio(AppUIEntities.AccessType.PUBLIC),
             AppFieldSchema.FieldId.REMINDER to
-                AppFieldSchema.FieldValue.ReminderValue(AppFieldSchema.ReminderOption.NONE)
+                AppFieldSchema.FieldValue.Reminders(emptyList())
         )
     )
 ) {
@@ -109,13 +110,32 @@ class EventCreateViewModel @Inject constructor(
             state.values.tags(AppFieldSchema.FieldId.CATEGORY).map { it.id }.toSet()
                 .ifEmpty { prefill.values.tagIds() }
         )
+        // The event's club may not be in `clubsForEvents` (e.g. you can't create new
+        // events there anymore). Synthesize it from the prefill so the selector + cover
+        // still render in edit mode.
+        val clubs = state.clubs.ensureClub(prefill)
         updateState(
             state.copy(
+                clubs = clubs,
                 selectedClubId = prefill.selectedClubId,
                 values = state.values + prefill.values,
                 categorySections = sections
             )
         )
+    }
+
+    private fun List<EventSelectableClub>.ensureClub(
+        prefill: com.bonjur.events.presentation.create.models.EventCreatePrefillData
+    ): List<EventSelectableClub> {
+        if (any { it.clubId == prefill.selectedClubId }) return this
+        val synthetic = EventSelectableClub(
+            clubId = prefill.selectedClubId,
+            clubName = prefill.clubName ?: "",
+            profileUrl = prefill.clubProfileUrl,
+            backgroundUrl = prefill.clubCoverUrl,
+            background = prefill.clubBackground
+        )
+        return listOf(synthetic) + this
     }
 
     private fun navigateBack() {
@@ -226,7 +246,7 @@ class EventCreateViewModel @Inject constructor(
             rule = v.text(AppFieldSchema.FieldId.RULES),
             isPublic = v.radio(AppFieldSchema.FieldId.VISIBILITY) == AppUIEntities.AccessType.PUBLIC,
             eventDate = v.date(AppFieldSchema.FieldId.EVENT_DATE),
-            reminderTime = v.reminder(AppFieldSchema.FieldId.REMINDER).name,
+            reminderTimes = v.reminders(AppFieldSchema.FieldId.REMINDER).map { it.name },
             categoryIds = v.tags(AppFieldSchema.FieldId.CATEGORY).map { it.id },
             links = v.links(AppFieldSchema.FieldId.LINKS),
             background = background,

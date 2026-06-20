@@ -12,16 +12,16 @@ import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.SignInParameters
 import com.microsoft.identity.client.exception.MsalException
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-/**
- * Android equivalent of iOS `MicrosoftAuthManager`.
- * Wraps MSAL single-account flow for UFAZ Office365 SSO.
- */
 data class MsalSignInResult(
     val name: String?,
     val email: String?,
@@ -34,22 +34,32 @@ class MicrosoftAuthManager @Inject constructor(
 ) {
 
     private val scopes = listOf("User.Read")
+    @Volatile
+    private var cachedApp: ISingleAccountPublicClientApplication? = null
+    private val appMutex = Mutex()
 
     private suspend fun application(): ISingleAccountPublicClientApplication =
-        suspendCancellableCoroutine { cont ->
-            PublicClientApplication.createSingleAccountPublicClientApplication(
-                context,
-                R.raw.msal_auth_config,
-                object : IPublicClientApplication.ISingleAccountApplicationCreatedListener {
-                    override fun onCreated(application: ISingleAccountPublicClientApplication) {
-                        cont.resume(application)
-                    }
+        cachedApp ?: appMutex.withLock {
+            cachedApp ?: createApplication().also { cachedApp = it }
+        }
 
-                    override fun onError(exception: MsalException) {
-                        cont.resumeWithException(exception)
+    private suspend fun createApplication(): ISingleAccountPublicClientApplication =
+        withContext(Dispatchers.IO) {
+            suspendCancellableCoroutine { cont ->
+                PublicClientApplication.createSingleAccountPublicClientApplication(
+                    context,
+                    R.raw.msal_auth_config,
+                    object : IPublicClientApplication.ISingleAccountApplicationCreatedListener {
+                        override fun onCreated(application: ISingleAccountPublicClientApplication) {
+                            cont.resume(application)
+                        }
+
+                        override fun onError(exception: MsalException) {
+                            cont.resumeWithException(exception)
+                        }
                     }
-                }
-            )
+                )
+            }
         }
 
     /**
@@ -60,7 +70,7 @@ class MicrosoftAuthManager @Inject constructor(
         return try {
             val app = application()
             signOutIfNeeded(app)
-            val result = acquireToken(app, activity)
+            val result = withContext(Dispatchers.Main) { acquireToken(app, activity) }
             val claims = result.account.claims
             MsalSignInResult(
                 name = claims?.get("name") as? String,
@@ -97,8 +107,10 @@ class MicrosoftAuthManager @Inject constructor(
         app.signIn(params)
     }
 
-    private suspend fun signOutIfNeeded(app: ISingleAccountPublicClientApplication) {
-        val current = currentAccount(app) ?: return
+    private suspend fun signOutIfNeeded(
+        app: ISingleAccountPublicClientApplication
+    ) = withContext(Dispatchers.IO) {
+        val current = currentAccount(app) ?: return@withContext
         suspendCancellableCoroutine<Unit> { cont ->
             app.signOut(object : ISingleAccountPublicClientApplication.SignOutCallback {
                 override fun onSignOut() {
@@ -106,7 +118,6 @@ class MicrosoftAuthManager @Inject constructor(
                 }
 
                 override fun onError(exception: MsalException) {
-                    // Non-fatal: continue to interactive sign-in anyway.
                     cont.resume(Unit)
                 }
             })

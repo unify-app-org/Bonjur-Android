@@ -1,12 +1,14 @@
 package com.bonjur.communities.data.endPoints
 
+import com.bonjur.communities.data.DTOs.RoleAssignRequest
 import com.bonjur.network.APIClient.AppEndpoint
 import com.bonjur.network.APIClient.NetworkMethod
 
 sealed class CommunitiesEndPoints : AppEndpoint {
 
+    // Top-level community list. Same route Discover uses.
     data object FetchCommunities : CommunitiesEndPoints() {
-        override val path = "api/ds/v1/communities"
+        override val path = "api/ds/v1/clubs/communities"
         override val method = NetworkMethod.GET
     }
 
@@ -15,7 +17,7 @@ sealed class CommunitiesEndPoints : AppEndpoint {
         override val method = NetworkMethod.GET
     }
 
-    // Returns all members of a community/club, paged
+    // Returns all members of a community/club, paged.
     data class FetchCommunityMembers(
         val communityId: Int,
         val page: Int = 0,
@@ -27,5 +29,22 @@ sealed class CommunitiesEndPoints : AppEndpoint {
             "page" to page.toString(),
             "size" to size.toString()
         )
+    }
+
+    // Sub-clubs within a community. Mirrors iOS `getClubs` (parentId carried in query).
+    data class GetClubs(val query: Map<String, String>) : CommunitiesEndPoints() {
+        override val path = "api/ds/v1/clubs"
+        override val method = NetworkMethod.GET
+        override val queryParameters = query
+    }
+
+    // Assign a role to a member. Mirrors iOS `assignRole`. Community id is sent as the club id.
+    data class AssignRole(
+        val communityId: Int,
+        val request: RoleAssignRequest
+    ) : CommunitiesEndPoints() {
+        override val path = "api/cs/v1/clubs/$communityId/role"
+        override val method = NetworkMethod.POST
+        override val body = request
     }
 }

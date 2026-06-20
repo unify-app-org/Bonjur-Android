@@ -23,7 +23,15 @@ data class EventSelectableClub(
 /** Prefill payload for edit mode. Mirrors iOS `EventsCreate.PrefillData`. */
 data class EventCreatePrefillData(
     val selectedClubId: Int,
-    val values: FieldValues
+    val values: FieldValues,
+    /**
+     * The event's own club display info, so the selector + cover render in edit even
+     * when the club isn't in `clubsForEvents` (the detail endpoint is the only source).
+     */
+    val clubName: String? = null,
+    val clubProfileUrl: String? = null,
+    val clubCoverUrl: String? = null,
+    val clubBackground: AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.Primary
 )
 
 // MARK: - EventCreate input

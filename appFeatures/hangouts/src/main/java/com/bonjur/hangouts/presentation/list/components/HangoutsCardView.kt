@@ -15,8 +15,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,8 +70,33 @@ private fun TopView(model: HangoutsCardModel) {
     ) {
         // Chips row
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Date badge (gray variant — card background is white)
+            if (model.dateDay != null && model.dateMonth != null) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Palette.grayQuaternary
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = model.dateMonth,
+                            style = AppTypography.CaptionMd.medium,
+                            color = Palette.cardBgRed
+                        )
+                        Text(
+                            text = model.dateDay,
+                            style = AppTypography.HeadingXL.bold,
+                            color = Palette.blackHigh
+                        )
+                    }
+                }
+            }
+
             // Private/Public chip
             Surface(
                 shape = CircleShape,
@@ -128,6 +155,16 @@ private fun TopView(model: HangoutsCardModel) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Start
             )
+
+            if (model.time != null || model.location != null) {
+                Text(
+                    text = listOfNotNull(model.time, model.location).joinToString(" · "),
+                    style = AppTypography.TextSm.medium,
+                    color = Palette.graySecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -161,15 +198,54 @@ private fun BottomView(
             }
         }
         
-        // Action button — always shown (mirrors iOS); disabled when joined/pending
-        AppButton(
-            title = model.buttonTitle,
-            model = AppButtonModel(
-                contentSize = ContentSize.Fill,
-                size = AppButtonSize.Small
-            ),
-            enabled = !model.buttonDisabled,
-            onClick = onButtonTap
+        // Action: status label for settled states, button for actionable ones
+        when (model.requestType) {
+            AppUIEntities.RequestType.JOINED -> HangoutStatusLabel(
+                text = "✓ Going",
+                foreground = Palette.green900,
+                background = Palette.greenLight,
+                borderColor = Palette.secondary
+            )
+            AppUIEntities.RequestType.PENDING -> HangoutStatusLabel(
+                text = "Request sent",
+                foreground = Palette.graySecondary,
+                background = Palette.grayQuaternary,
+                borderColor = Palette.grayTeritary
+            )
+            else -> AppButton(
+                title = model.buttonTitle,
+                model = AppButtonModel(
+                    contentSize = ContentSize.Fill,
+                    size = AppButtonSize.Small
+                ),
+                onClick = onButtonTap
+            )
+        }
+    }
+}
+
+@Composable
+private fun HangoutStatusLabel(
+    text: String,
+    foreground: Color,
+    background: Color,
+    borderColor: Color
+) {
+    Surface(
+        shape = CircleShape,
+        color = background,
+        border = BorderStroke(
+            width = 1.dp,
+            color = borderColor
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = text,
+            style = AppTypography.TextMd.medium,
+            color = foreground,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 12.dp)
         )
     }
 }

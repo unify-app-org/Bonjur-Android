@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
+import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.clubs.domain.useCase.ClubFormData
 import com.bonjur.clubs.domain.useCase.ClubsUseCase
 import com.bonjur.clubs.presentation.create.models.ClubCreateAction
@@ -55,7 +56,19 @@ class ClubCreateViewModel @Inject constructor(
         if (inputData.clubId != null) {
             updateState(state.copy(isEdit = true))
         }
+        inputData.prefill?.let { applyPrefill(it) }
         fetchData()
+    }
+
+    /** Pre-fills the form from existing club data on edit. Mirrors iOS `applyPrefillData`. */
+    private fun applyPrefill(prefill: ClubsDetails.ClubEditPrefill) {
+        updateState(
+            state.copy(
+                values = state.values + prefill.values,
+                existingLogoUrl = prefill.logoUrl,
+                existingCoverUrl = prefill.coverUrl
+            )
+        )
     }
 
     override fun handle(action: ClubCreateAction) {
@@ -78,7 +91,17 @@ class ClubCreateViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch {
             runCatching { dependencies.useCase.getCategories() }
-                .onSuccess { updateState(state.copy(categorySections = it)) }
+                .onSuccess { sections ->
+                    // Mark categories already selected by the pre-fill (edit mode).
+                    val selectedIds = state.values.tags(AppFieldSchema.FieldId.CATEGORY)
+                        .map { it.id }.toSet()
+                    val marked = sections.map { section ->
+                        section.copy(categories = section.categories.map {
+                            it.copy(selected = selectedIds.contains(it.id))
+                        })
+                    }
+                    updateState(state.copy(categorySections = marked))
+                }
         }
     }
 

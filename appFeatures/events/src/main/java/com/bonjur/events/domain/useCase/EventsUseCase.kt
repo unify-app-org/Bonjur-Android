@@ -19,7 +19,7 @@ data class EventFormData(
     val rule: String,
     val isPublic: Boolean,
     val eventDate: String,
-    val reminderTime: String,
+    val reminderTimes: List<String>,
     val categoryIds: List<Int>,
     val links: List<AppFieldSchema.LinkItem>,
     val background: ByteArray?,
@@ -42,4 +42,6 @@ interface EventsUseCase {
     suspend fun editEvent(eventId: String, form: EventFormData)
 
     suspend fun joinEvent(eventId: String)
+
+    suspend fun exitEvent(eventId: String)
 }

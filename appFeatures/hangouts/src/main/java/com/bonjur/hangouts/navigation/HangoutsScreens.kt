@@ -14,5 +14,5 @@ sealed interface HangoutsScreens {
     data object Create : HangoutsScreens
 
     @Serializable
-    data class Edit(val hangoutId: String) : HangoutsScreens
+    data object Edit : HangoutsScreens
 }

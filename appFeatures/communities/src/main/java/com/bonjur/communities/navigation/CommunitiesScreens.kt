@@ -10,6 +10,12 @@ sealed interface CommunitiesScreens {
     data object Details : CommunitiesScreens
 
     @Serializable
+    data class MembersList(
+        val communityId: Int,
+        val title: String = "Members"
+    ) : CommunitiesScreens
+
+    @Serializable
     data class FacultyBrowse(val communityId: String, val title: String = "All members") : CommunitiesScreens
 
     @Serializable

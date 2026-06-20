@@ -3,6 +3,7 @@ package com.bonjur.hangouts.presentation.create
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.hangouts.presentation.create.components.HangoutCreateView
 import com.bonjur.hangouts.presentation.create.models.HangoutCreateInputData
 import com.bonjur.hangouts.presentation.create.models.HangoutCreateSideEffect
@@ -23,7 +24,11 @@ fun HangoutCreateScreen(
         handleEffect = { effect ->
             when (effect) {
                 is HangoutCreateSideEffect.Loading -> { /* Show/hide loading */ }
-                is HangoutCreateSideEffect.Error -> { /* Show error */ }
+                is HangoutCreateSideEffect.Error -> AppSnackBar.show(
+                    title = "Couldn't save hangout",
+                    subtitle = effect.message,
+                    style = AppSnackBar.Style.ERROR
+                )
             }
         }
     ) { store ->

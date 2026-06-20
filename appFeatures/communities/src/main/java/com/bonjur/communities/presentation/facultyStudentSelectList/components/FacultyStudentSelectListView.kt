@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
-import com.bonjur.communities.presentation.facultyBrowse.models.MemberCellModel
+import com.bonjur.member.model.MemberCellModel
 import com.bonjur.communities.presentation.facultyStudentSelectList.models.FacultyStudentSelectListAction
 import com.bonjur.communities.presentation.facultyStudentSelectList.models.FacultyStudentSelectListSideEffect
 import com.bonjur.communities.presentation.facultyStudentSelectList.models.FacultyStudentSelectListViewState

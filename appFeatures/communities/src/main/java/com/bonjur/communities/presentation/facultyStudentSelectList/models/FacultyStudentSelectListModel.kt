@@ -3,8 +3,8 @@ package com.bonjur.communities.presentation.facultyStudentSelectList.models
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
-import com.bonjur.communities.presentation.facultyBrowse.models.MemberCellModel
-import com.bonjur.communities.presentation.facultyBrowse.models.MemberListSectionModel
+import com.bonjur.member.model.MemberCellModel
+import com.bonjur.member.model.MemberListSectionModel
 
 // MARK: - FacultyStudentSelectList input
 data class FacultyStudentSelectListInputData(

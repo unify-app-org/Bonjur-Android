@@ -1,7 +1,6 @@
 package com.bonjur.communities.domain.model
 
-import com.bonjur.clubs.presentation.list.models.ClubCardMocks
-import com.bonjur.clubs.presentation.list.models.ClubCardModel
+import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import java.util.UUID
 
@@ -13,9 +12,10 @@ object CommunityDetails {
         val logo: String? = null,
         val coverImage: String? = null,
         val coverColorType: AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.Primary,
+        val userActivity: AppUIEntities.UserActivityRole = AppUIEntities.UserActivityRole.NOT_JOINED,
         val tags: List<AppUIEntities.Tags> = emptyList(),
         val infoData: List<Info> = emptyList(),
-        val clubsData: List<ClubCardModel> = emptyList()
+        val editPrefillData: ClubsDetails.ClubEditPrefill? = null
     ) {
         companion object {
             val mock by lazy {
@@ -55,8 +55,7 @@ object CommunityDetails {
                                 SubInfo(title = "Telegram", description = "https://t.me/ufaz", isLink = true)
                             )
                         )
-                    ),
-                    clubsData = ClubCardMocks.previewData
+                    )
                 )
             }
         }
@@ -72,6 +71,7 @@ object CommunityDetails {
         val id: String = UUID.randomUUID().toString(),
         val title: String?,
         val description: String,
-        val isLink: Boolean = false
+        val isLink: Boolean = false,
+        val phoneNumber: String? = null
     )
 }

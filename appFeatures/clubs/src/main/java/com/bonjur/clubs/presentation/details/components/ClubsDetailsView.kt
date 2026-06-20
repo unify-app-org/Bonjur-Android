@@ -75,6 +75,7 @@ fun ClubDetailsView(
     var isSegmentSticky by remember { mutableStateOf(false) }
     var navBarHeight by remember { mutableStateOf(0.dp) }
     var isUpdatingFromPager by remember { mutableStateOf(false) }
+    var showOptions by remember { mutableStateOf(false) }
 
     // Listen to pager changes (from swipe gesture)
     LaunchedEffect(pagerState) {
@@ -136,17 +137,14 @@ fun ClubDetailsView(
 
             // Logo view
             item(key = "logo") {
-                LogoView(
-                    logoUrl = store.state.uiModel?.logo,
-                    onEditClick = { /* Handle edit */ },
-                    onCameraClick = { /* Handle camera */ }
-                )
+                LogoView(logoUrl = store.state.uiModel?.logo)
             }
 
             // Club info
             item(key = "club_info") {
                 ClubInfoView(
                     uiModel = store.state.uiModel,
+                    canCreateEvent = store.state.canCreateEvent,
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -225,9 +223,10 @@ fun ClubDetailsView(
             isSegmentSticky = isSegmentSticky,
             clubName = store.state.uiModel?.name ?: "",
             selectedSegment = store.state.selectedSegment,
+            showEdit = store.state.isEditable,
             onBackClick = { store.send(ClubDetailsAction.BackTapped) },
-            onMoreClick = { /* Handle more */ },
-            onCameraClick = { /* Handle camera */ },
+            onMoreClick = { showOptions = true },
+            onEditClick = { store.send(ClubDetailsAction.EditTapped) },
             onSegmentSelected = { segment ->
                 store.send(ClubDetailsAction.SegmentChanged(segment))
             },
@@ -237,24 +236,36 @@ fun ClubDetailsView(
             modifier = Modifier.zIndex(1f)
         )
 
-        // Join button
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(16.dp)
-                .padding(bottom = 16.dp)
-                .zIndex(2f)
-        ) {
-            AppButton(
-                title = "Join",
-                model = AppButtonModel(
-                    contentSize = ContentSize.Fill
-                ),
-                onClick = { /* Handle join */ }
-            )
+        // Join / Request button — only for not-yet-joined viewers
+        if (store.state.showJoinButton) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
+                    .zIndex(2f)
+            ) {
+                AppButton(
+                    title = if (store.state.isPrivate) "Request" else "Join",
+                    model = AppButtonModel(
+                        contentSize = ContentSize.Fill
+                    ),
+                    onClick = { store.send(ClubDetailsAction.JoinClubTapped) }
+                )
+            }
         }
+    }
+
+    // 3-dot options sheet (Report / Exit / Share)
+    if (showOptions) {
+        ClubOptionsSheet(
+            viewerRole = store.state.uiModel?.userActivityType
+                ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+            onExit = { store.send(ClubDetailsAction.ExitTapped) },
+            onDismiss = { showOptions = false }
+        )
     }
 }
 
@@ -316,88 +327,59 @@ private fun StretchableHeader(
 
 @Composable
 private fun LogoView(
-    logoUrl: String?,
-    onEditClick: () -> Unit,
-    onCameraClick: () -> Unit
+    logoUrl: String?
 ) {
+    // iOS: logo only, left-aligned. No camera badge, no edit pencil (edit lives in the top bar).
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .offset(y = (-44).dp)
             .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Bottom
     ) {
-        Box {
-            Box(
+        Box(
+            modifier = Modifier
+                .size(88.dp)
+                .background(Palette.grayQuaternary, RoundedCornerShape(20.dp))
+                .border(
+                    width = 3.dp,
+                    color = Palette.grayTeritary.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(20.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            CachedAsyncImage(
+                url = logoUrl,
                 modifier = Modifier
                     .size(88.dp)
-                    .background(Palette.grayQuaternary, RoundedCornerShape(20.dp))
-                    .border(
-                        width = 3.dp,
-                        color = Palette.grayTeritary.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(20.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                CachedAsyncImage(
-                    url = logoUrl,
-                    modifier = Modifier
-                        .size(88.dp)
-                        .clip(RoundedCornerShape(20.dp)),
-                    contentScale = ContentScale.Crop,
-                    placeholder = {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            tint = Palette.blackMedium,
-                            modifier = Modifier.size(44.dp)
-                        )
-                    },
-                    error = {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            tint = Palette.blackMedium,
-                            modifier = Modifier.size(44.dp)
-                        )
-                    }
-                )
-            }
-
-            // Camera button
-            Box(
-                modifier = Modifier
-                    .offset(x = 4.dp, y = 4.dp)
-                    .align(Alignment.BottomEnd)
-                    .background(Palette.grayQuaternary, CircleShape)
-                    .border(2.dp, Palette.whiteHigh, CircleShape)
-                    .clickable(onClick = onCameraClick)
-                    .padding(7.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = Images.Icons.camera(),
-                    contentDescription = "Camera",
-                    tint = Palette.blackMedium,
-                    modifier = Modifier.size(18.dp)  // Exact 18x18 icon
-                )
-            }
-        }
-
-        IconButton(onClick = onEditClick) {
-            Icon(
-                painter = Images.Icons.penLine(),
-                contentDescription = "Edit",
-                tint = Palette.blackHigh
+                    .clip(RoundedCornerShape(20.dp)),
+                contentScale = ContentScale.Crop,
+                placeholder = {
+                    Icon(
+                        painter = Images.Icons.user(),
+                        contentDescription = null,
+                        tint = Palette.blackMedium,
+                        modifier = Modifier.size(44.dp)
+                    )
+                },
+                error = {
+                    Icon(
+                        painter = Images.Icons.user(),
+                        contentDescription = null,
+                        tint = Palette.blackMedium,
+                        modifier = Modifier.size(44.dp)
+                    )
+                }
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
 @Composable
 private fun ClubInfoView(
     uiModel: ClubsDetails.UIModel?,
+    canCreateEvent: Boolean,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
@@ -479,16 +461,18 @@ private fun ClubInfoView(
             }
         }
 
-        // Create event button
-        AppButton(
-            title = "Create new event +",
-            model = AppButtonModel(
-                type = ButtonType.Secondary,
-                contentSize = ContentSize.Fill,
-                size = AppButtonSize.Medium
-            ),
-            onClick = { /* Handle create event */ }
-        )
+        // Create event button — only for joined non-member roles (matches iOS canCreateEvent)
+        if (canCreateEvent) {
+            AppButton(
+                title = "Create new event +",
+                model = AppButtonModel(
+                    type = ButtonType.Secondary,
+                    contentSize = ContentSize.Fill,
+                    size = AppButtonSize.Medium
+                ),
+                onClick = { /* Handle create event */ }
+            )
+        }
     }
 }
 
@@ -499,9 +483,10 @@ private fun NavigationOverlay(
     isSegmentSticky: Boolean,
     clubName: String,
     selectedSegment: ClubDetailsViewState.SegmentTypes,
+    showEdit: Boolean,
     onBackClick: () -> Unit,
     onMoreClick: () -> Unit,
-    onCameraClick: () -> Unit,
+    onEditClick: () -> Unit,
     onSegmentSelected: (ClubDetailsViewState.SegmentTypes) -> Unit,
     onNavBarPositioned: (Dp) -> Unit,
     modifier: Modifier = Modifier
@@ -538,11 +523,12 @@ private fun NavigationOverlay(
                             onClick = onMoreClick
                         )
 
-                        AnimatedVisibility(visible = !isScrolled) {
+                        // Edit — owner/VP only (iOS toolbar penLine gated by isEditable)
+                        if (showEdit) {
                             NavBarButton(
-                                icon = Images.Icons.camera(),
+                                icon = Images.Icons.penLine(),
                                 isScrolled = isScrolled,
-                                onClick = onCameraClick
+                                onClick = onEditClick
                             )
                         }
                     }

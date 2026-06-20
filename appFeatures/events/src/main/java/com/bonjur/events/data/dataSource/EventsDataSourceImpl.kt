@@ -39,23 +39,28 @@ class EventsDataSourceImpl @Inject constructor(
     ): EventMembersResponse =
         fetch(EventsEndPoints.GetEventMembers(eventId, query))
 
+    // Mirrors iOS (returns Void): don't decode a typed response — create/edit may
+    // return an empty/201 body, and a parse failure would mask success.
     override suspend fun createEvent(
         request: EventCreateRequest,
         background: ByteArray?,
         attachments: List<EventAttachmentFile>
-    ): EventDetailResponse =
-        fetch(EventsEndPoints.CreateEvent(buildPayload(request, background, attachments)))
+    ): ByteArray =
+        fetchRawData(EventsEndPoints.CreateEvent(buildPayload(request, background, attachments)))
 
     override suspend fun editEvent(
         eventId: String,
         request: EventCreateRequest,
         background: ByteArray?,
         attachments: List<EventAttachmentFile>
-    ): EventDetailResponse =
-        fetch(EventsEndPoints.EditEvent(eventId, buildPayload(request, background, attachments)))
+    ): ByteArray =
+        fetchRawData(EventsEndPoints.EditEvent(eventId, buildPayload(request, background, attachments)))
 
     override suspend fun joinEvent(eventId: String): ByteArray =
         fetchRawData(EventsEndPoints.JoinEvent(eventId))
+
+    override suspend fun exitEvent(eventId: String): ByteArray =
+        fetchRawData(EventsEndPoints.ExitEvent(eventId))
 
     /** Builds the multipart body mirroring iOS: JSON "request" part + required background + optional attachments. */
     private fun buildPayload(

@@ -25,6 +25,17 @@ data class ClubLinkRequest(
     val url: String
 )
 
+/**
+ * Body for `POST /v1/clubs/{clubId}/role`. Mirrors iOS `ClubDTOModel.RoleAssignRequest`.
+ * Communities reuse the same route — the community id is passed as the club id.
+ * [role] is the API code string (e.g. "VISE_PRESIDENT"), not the display title.
+ */
+@Serializable
+data class RoleAssignRequest(
+    val userId: String,
+    val role: String
+)
+
 @Serializable
 data class CategorySectionResponse(
     val type: String? = null,
@@ -48,9 +59,20 @@ data class ClubListResponse(
     val clubProfile: String? = null,
     val backgroundUrl: String? = null,
     val about: String? = null,
-    val count: Int? = null,
+    val membersCount: Int? = null,
     val capacity: Int? = null,
-    val joined: Boolean? = null
+    val joined: Boolean? = null,
+    val clubUserRole: String? = null,
+    val members: List<ClubListMember> = emptyList(),
+    val eventCount: Int? = null,
+    val categoryResponses: List<ClubCategoryResponse> = emptyList()
+)
+
+@Serializable
+data class ClubListMember(
+    val id: String? = null,
+    val fullName: String? = null,
+    val url: String? = null
 )
 
 @Serializable

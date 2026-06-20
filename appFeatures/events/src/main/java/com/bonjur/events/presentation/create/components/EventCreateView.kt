@@ -29,6 +29,7 @@ import com.bonjur.designSystem.components.button.AppButtonModel
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
 import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
+import com.bonjur.designSystem.components.topBar.AppTopBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -45,67 +46,76 @@ fun EventCreateView(
 ) {
     val state = store.state
     val coverHeight = (LocalConfiguration.current.screenHeightDp / 4).dp
+    val scrollState = rememberScrollState()
+    val isScrolled by remember { derivedStateOf { scrollState.value > 30 } }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-        ) {
-            CoverHeader(
-                coverUrl = state.coverUrl,
-                background = state.coverBackground,
-                height = coverHeight
-            )
-
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 20.dp, bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .weight(1f)
+                    .verticalScroll(scrollState)
             ) {
-                Text(text = state.topTitle, style = AppTypography.TitleL.extraBold)
-
-                Text(
-                    text = "Fields marked with * are required.",
-                    style = AppTypography.BodyTextMd.regular,
-                    color = Palette.appBlue
+                CoverHeader(
+                    coverUrl = state.coverUrl,
+                    background = state.coverBackground,
+                    height = coverHeight
                 )
 
-                ClubSelector(
-                    selectedClub = state.selectedClub,
-                    isDisabled = state.isEdit,
-                    onTap = { store.send(EventCreateAction.SelectClubTapped) }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 20.dp, bottom = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(text = state.topTitle, style = AppTypography.TitleL.extraBold)
 
-                state.schema.forEach { field ->
-                    // Club + event name are immutable once the event exists (mirrors iOS).
-                    val isLocked = state.isEdit && field.id == AppFieldSchema.FieldId.EVENT_NAME
-                    FieldSchemaRouter(
-                        field = field,
-                        values = state.values,
-                        onChange = { id, value ->
-                            if (!isLocked) store.send(EventCreateAction.FieldChanged(id, value))
-                        },
-                        onAddCategory = { store.send(EventCreateAction.AddCategoryTapped) },
-                        onRemoveCategory = { id -> store.send(EventCreateAction.RemoveCategory(id)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .alpha(if (isLocked) 0.5f else 1f)
+                    Text(
+                        text = "Fields marked with * are required.",
+                        style = AppTypography.BodyTextMd.regular,
+                        color = Palette.appBlue
                     )
+
+                    ClubSelector(
+                        selectedClub = state.selectedClub,
+                        isDisabled = state.isEdit,
+                        onTap = { store.send(EventCreateAction.SelectClubTapped) }
+                    )
+
+                    state.schema.forEach { field ->
+                        // Club + event name are immutable once the event exists (mirrors iOS).
+                        val isLocked = state.isEdit && field.id == AppFieldSchema.FieldId.EVENT_NAME
+                        FieldSchemaRouter(
+                            field = field,
+                            values = state.values,
+                            onChange = { id, value ->
+                                if (!isLocked) store.send(EventCreateAction.FieldChanged(id, value))
+                            },
+                            onAddCategory = { store.send(EventCreateAction.AddCategoryTapped) },
+                            onRemoveCategory = { id -> store.send(EventCreateAction.RemoveCategory(id)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .alpha(if (isLocked) 0.5f else 1f)
+                        )
+                    }
                 }
             }
+
+            AppButton(
+                title = "Continue",
+                model = AppButtonModel(contentSize = ContentSize.Fill),
+                onClick = { store.send(EventCreateAction.ContinueTapped) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                enabled = state.isValid
+            )
         }
 
-        AppButton(
-            title = "Continue",
-            model = AppButtonModel(contentSize = ContentSize.Fill),
-            onClick = { store.send(EventCreateAction.ContinueTapped) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            enabled = state.isValid
+        AppTopBar(
+            isScrolled = isScrolled,
+            onBack = { store.send(EventCreateAction.BackTapped) }
         )
     }
 

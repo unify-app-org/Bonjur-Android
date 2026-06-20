@@ -51,7 +51,7 @@ fun ClubCardView(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(27.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             TopLeftView(model = model)
             BottomView(model = model)
@@ -65,8 +65,25 @@ private fun TopLeftView(model: ClubCardModel) {
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        LogoImage(logoUrl = model.logoURL)
-        
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            LogoImage(logoUrl = model.logoURL)
+            Surface(
+                shape = CircleShape,
+                color = Palette.whiteHigh
+            ) {
+                Text(
+                    text = if (model.accessType == AppUIEntities.AccessType.PRIVATE) "Private" else "Public",
+                    style = AppTypography.TextSm.medium,
+                    color = Palette.blackHigh,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                )
+            }
+        }
+
         Text(
             text = model.name,
             style = AppTypography.TitleMd.bold,
@@ -74,14 +91,73 @@ private fun TopLeftView(model: ClubCardModel) {
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Start
         )
-        
+
+        EventsMetaRow(model = model)
+
+        CategoriesRow(model = model)
+    }
+}
+
+/** community • 📅 N events • role. Mirrors iOS `upCommingEventsCountView`. */
+@Composable
+private fun EventsMetaRow(model: ClubCardModel) {
+    val joinedRole = model.role?.takeIf { it != AppUIEntities.UserActivityRole.NOT_JOINED }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             text = model.communityName,
-            style = AppTypography.TextMd.regular,
-            color = model.bgType.foregroundColor,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start
+            style = AppTypography.TextSm.medium,
+            color = model.bgType.foregroundColor
         )
+        Text(text = "•", style = AppTypography.TextSm.medium, color = model.bgType.foregroundColor)
+        Icon(
+            painter = Images.Icons.calendar(),
+            contentDescription = null,
+            tint = model.bgType.foregroundColor,
+            modifier = Modifier.size(12.dp)
+        )
+        Text(
+            text = if (model.upcomingEventsCount == 1) "1 event"
+                   else "${model.upcomingEventsCount} events",
+            style = AppTypography.TextSm.medium,
+            color = model.bgType.foregroundColor
+        )
+        if (joinedRole != null) {
+            Text(text = "•", style = AppTypography.TextSm.medium, color = model.bgType.foregroundColor)
+            Text(
+                text = roleBadgeText(joinedRole),
+                style = AppTypography.TextSm.medium,
+                color = model.bgType.foregroundColor
+            )
+        }
+    }
+}
+
+private fun roleBadgeText(role: AppUIEntities.UserActivityRole): String =
+    if (role == AppUIEntities.UserActivityRole.PRESIDENT) "👑 Owner" else role.title
+
+@Composable
+private fun CategoriesRow(model: ClubCardModel) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        model.categories.forEach { category ->
+            Surface(
+                shape = CircleShape,
+                color = Palette.whiteMedium
+            ) {
+                Text(
+                    text = category,
+                    style = AppTypography.TextSm.medium,
+                    color = Palette.blackHigh,
+                    maxLines = 1,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
+                )
+            }
+        }
     }
 }
 
@@ -144,6 +220,7 @@ private fun BottomView(model: ClubCardModel) {
         MembersView(
             members = model.members,
             memberCount = model.memberCount,
+            totalCapacity = model.totalCapacity,
             foregroundColor = model.bgType.foregroundColor
         )
         
@@ -176,6 +253,7 @@ private fun BottomView(model: ClubCardModel) {
 private fun MembersView(
     members: List<AppUIEntities.Member>,
     memberCount: Int,
+    totalCapacity: Int,
     foregroundColor: Color
 ) {
     Row(
@@ -196,7 +274,8 @@ private fun MembersView(
         Spacer(modifier = Modifier.width((members.size.coerceAtMost(3) * 6).dp))
 
         Text(
-            text = "$memberCount members",
+            text = if (totalCapacity > 0) "$memberCount of $totalCapacity members"
+                   else "$memberCount members",
             style = AppTypography.TextMd.regular,
             color = foregroundColor,
             textAlign = TextAlign.Start

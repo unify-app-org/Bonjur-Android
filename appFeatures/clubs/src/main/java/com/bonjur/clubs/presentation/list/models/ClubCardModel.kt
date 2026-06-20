@@ -23,7 +23,10 @@ data class ClubCardModel(
     val members: List<AppUIEntities.Member>,
     val bgType: AppUIEntities.BackgroundType,
     val accessType: AppUIEntities.AccessType,
-    val requestType: AppUIEntities.RequestType
+    val requestType: AppUIEntities.RequestType,
+    val role: AppUIEntities.UserActivityRole? = null,
+    val upcomingEventsCount: Int,
+    val categories: List<String>
 )
 
 // Preview/Mock Data
@@ -55,7 +58,9 @@ object ClubCardMocks {
                 AppUIEntities.ColorType.Orange
             ),
             accessType = AppUIEntities.AccessType.PRIVATE,
-            requestType = AppUIEntities.RequestType.NONE
+            requestType = AppUIEntities.RequestType.NONE,
+            upcomingEventsCount = 2,
+            categories = listOf("Sport", "Tournament")
         ),
         ClubCardModel(
             id = 2,
@@ -78,7 +83,9 @@ object ClubCardMocks {
             ),
             bgType = AppUIEntities.BackgroundType.Primary,
             accessType = AppUIEntities.AccessType.PUBLIC,
-            requestType = AppUIEntities.RequestType.PENDING
+            requestType = AppUIEntities.RequestType.PENDING,
+            upcomingEventsCount = 2,
+            categories = listOf("Sport", "Tournament")
         ),
         ClubCardModel(
             id = 3,
@@ -101,7 +108,9 @@ object ClubCardMocks {
             ),
             bgType = AppUIEntities.BackgroundType.Secondary,
             accessType = AppUIEntities.AccessType.PRIVATE,
-            requestType = AppUIEntities.RequestType.NONE
+            requestType = AppUIEntities.RequestType.NONE,
+            upcomingEventsCount = 2,
+            categories = listOf("Sport", "Tournament")
         ),
         ClubCardModel(
             id = 4,
@@ -126,7 +135,9 @@ object ClubCardMocks {
                 AppUIEntities.ColorType.Red
             ),
             accessType = AppUIEntities.AccessType.PRIVATE,
-            requestType = AppUIEntities.RequestType.NONE
+            requestType = AppUIEntities.RequestType.NONE,
+            upcomingEventsCount = 2,
+            categories = listOf("Sport", "Tournament")
         )
     )
 }

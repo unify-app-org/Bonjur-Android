@@ -17,7 +17,9 @@ import com.bonjur.events.presentation.list.models.EventsListAction
 import com.bonjur.events.presentation.list.models.EventsListInputData
 import com.bonjur.events.presentation.list.models.EventsListSideEffect
 import com.bonjur.events.presentation.list.models.EventsListViewState
+import com.bonjur.navigation.ClubDetailsNavArgs
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.SharedRoutes
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,7 +48,15 @@ class EventsListViewModel @Inject constructor(
             is EventsListAction.FilterSelected -> handleFilterSelected(action.items)
             is EventsListAction.EventItemTapped -> handleItemTap(action.id)
             is EventsListAction.JoinEvent -> joinEvent(action.id)
+            is EventsListAction.ClubTapped -> handleClubTap(action.clubId)
             EventsListAction.Dismiss -> dismiss()
+        }
+    }
+
+    private fun handleClubTap(clubId: Int) {
+        if (clubId == 0) return
+        viewModelScope.launch {
+            navigator.navigateTo(SharedRoutes.CLUB_DETAILS, ClubDetailsNavArgs(clubId))
         }
     }
 

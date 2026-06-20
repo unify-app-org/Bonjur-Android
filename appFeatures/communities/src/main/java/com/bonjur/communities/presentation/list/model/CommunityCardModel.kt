@@ -19,7 +19,8 @@ data class CommunityCardModel(
     val memberCount: Int,
     val type: AppUIEntities.ActivityType = AppUIEntities.ActivityType.COMMUNITY,
     val members: List<AppUIEntities.Member>,
-    val bgType: AppUIEntities.BackgroundType
+    val bgType: AppUIEntities.BackgroundType,
+    val clubsCount: Int = 0
 )
 
 // Mock data

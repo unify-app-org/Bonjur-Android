@@ -5,8 +5,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -22,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -34,6 +41,7 @@ import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.components.button.AppButtonModel
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -62,6 +70,7 @@ fun HangoutDetailsView(
     var isSegmentSticky by remember { mutableStateOf(false) }
     var navBarHeight by remember { mutableStateOf(0.dp) }
     var isUpdatingFromPager by remember { mutableStateOf(false) }
+    var showOptions by remember { mutableStateOf(false) }
 
     // Pager → store (swipe)
     LaunchedEffect(pagerState) {
@@ -178,19 +187,23 @@ fun HangoutDetailsView(
                 }
             }
 
-            // Join button pinned at bottom (mirrors Swift's VStack bottom AppButton)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .navigationBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                AppButton(
-                    title = "Join",
-                    model = AppButtonModel(contentSize = ContentSize.Fill),
-                    onClick = { /* Handle join */ }
-                )
+            // Join / Request button — driven by the mapped joinButton (mirrors iOS).
+            // Hidden once joined/accepted; disabled "Request sent" while pending.
+            store.state.uiModel?.joinButton?.let { joinButton ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White)
+                        .navigationBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    AppButton(
+                        title = joinButton.title,
+                        model = AppButtonModel(contentSize = ContentSize.Fill),
+                        enabled = !joinButton.disabled,
+                        onClick = { store.send(HangoutDetailsAction.JoinTapped) }
+                    )
+                }
             }
         }
 
@@ -202,13 +215,23 @@ fun HangoutDetailsView(
             hangoutName = store.state.uiModel?.name ?: "",
             selectedSegment = store.state.selectedSegment,
             onBackClick = { store.send(HangoutDetailsAction.BackTapped) },
-            onMoreClick = { /* Handle more */ },
-            onEditClick = { /* Handle edit */ },
+            onMoreClick = { showOptions = true },
+            onEditClick = { store.send(HangoutDetailsAction.EditTapped) },
             onSegmentSelected = { segment ->
                 store.send(HangoutDetailsAction.SegmentChanged(segment))
             },
             onNavBarPositioned = { height -> navBarHeight = height },
             modifier = Modifier.zIndex(1f)
+        )
+    }
+
+    // 3-dot options sheet (Report / Leave / Share)
+    if (showOptions) {
+        HangoutOptionsSheet(
+            viewerRole = store.state.uiModel?.userActivityType
+                ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+            onExit = { store.send(HangoutDetailsAction.ExitTapped) },
+            onDismiss = { showOptions = false }
         )
     }
 }
@@ -494,7 +517,29 @@ private fun InfoTab(infoData: List<HangoutDetails.Info>) {
 
 @Composable
 private fun InfoSubItem(subItem: HangoutDetails.SubInfo) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    val context = LocalContext.current
+    val isActionable = subItem.isLink || subItem.phoneNumber != null
+
+    val onTap: () -> Unit = {
+        val phone = subItem.phoneNumber
+        when {
+            phone != null -> {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText("contact", phone))
+                AppSnackBar.show(title = "Copied to clipboard", style = AppSnackBar.Style.SUCCESS)
+            }
+            subItem.isLink -> runCatching {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(subItem.description)))
+            }
+        }
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { if (isActionable) it.clickable(onClick = onTap) else it }
+    ) {
         subItem.title?.let { title ->
             Text(
                 text = title,
@@ -506,7 +551,7 @@ private fun InfoSubItem(subItem: HangoutDetails.SubInfo) {
         Text(
             text = subItem.description,
             style = AppTypography.BodyTextSm.regular,
-            color = if (subItem.isLink) Palette.appBlue else Palette.blackHigh,
+            color = if (isActionable) Palette.appBlue else Palette.blackHigh,
             modifier = Modifier.fillMaxWidth()
         )
     }

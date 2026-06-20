@@ -4,6 +4,7 @@ import com.bonjur.clubs.data.DTOs.ClubListResponse
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.commonModel.toUserActivityRole
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
 import com.bonjur.events.presentation.list.models.EventsCardModel
@@ -35,16 +36,21 @@ class GroupsUseCaseImpl @Inject constructor(
         name = name ?: "",
         communityName = communityName ?: "",
         logoURL = clubProfile ?: "",
-        memberCount = count ?: 0,
+        memberCount = membersCount ?: 0,
         totalCapacity = capacity ?: 0,
         community = communityName ?: "",
-        members = emptyList(),
+        members = members.map {
+            AppUIEntities.Member(id = it.id?.hashCode() ?: 0, profileImage = it.url)
+        },
         bgType = when (background?.uppercase()) {
             "SECONDARY" -> AppUIEntities.BackgroundType.Secondary
             else -> AppUIEntities.BackgroundType.Primary
         },
         accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
-        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE
+        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE,
+        role = clubUserRole?.toUserActivityRole(),
+        upcomingEventsCount = eventCount ?: 0,
+        categories = categoryResponses.map { it.title }
     )
 
     private fun HangoutListResponse.toCardModel() = HangoutsCardModel(

@@ -1,5 +1,12 @@
 package com.bonjur.hangouts.data.dataSource
 
+import com.bonjur.hangouts.data.DTOs.HangoutCategorySectionResponse
+import com.bonjur.hangouts.data.DTOs.HangoutCreateRequest
+import com.bonjur.hangouts.data.DTOs.HangoutDetailResponse
+import com.bonjur.hangouts.data.DTOs.HangoutJoinRequest
+import com.bonjur.hangouts.data.DTOs.HangoutListResponse
+import com.bonjur.hangouts.data.DTOs.HangoutMemberResponse
+import com.bonjur.hangouts.data.endPoints.HangoutsEndPoints
 import com.bonjur.network.APIClient.ApiClientProtocol
 import com.bonjur.network.APIClient.NetworkService
 import javax.inject.Inject
@@ -8,18 +15,30 @@ class HangoutsDataSourceImpl @Inject constructor(
     apiClient: ApiClientProtocol
 ) : NetworkService(apiClient), HangoutsDataSource {
 
-    override suspend fun getHangouts(query: Map<String, String>): List<com.bonjur.hangouts.data.DTOs.HangoutListResponse> =
-        fetch(com.bonjur.hangouts.data.endPoints.HangoutsEndPoints.GetHangouts(query))
+    override suspend fun getHangouts(query: Map<String, String>): List<HangoutListResponse> =
+        fetch(HangoutsEndPoints.GetHangouts(query))
 
-    override suspend fun getHangoutById(hangoutId: String): com.bonjur.hangouts.data.DTOs.HangoutDetailResponse =
-        fetch(com.bonjur.hangouts.data.endPoints.HangoutsEndPoints.GetHangoutById(hangoutId))
+    override suspend fun getHangoutById(hangoutId: String): HangoutDetailResponse =
+        fetch(HangoutsEndPoints.GetHangoutById(hangoutId))
 
-    override suspend fun getHangoutMembers(hangoutId: String): List<com.bonjur.hangouts.data.DTOs.HangoutMemberResponse> =
-        fetch(com.bonjur.hangouts.data.endPoints.HangoutsEndPoints.GetHangoutMembers(hangoutId))
+    override suspend fun getHangoutMembers(hangoutId: String): List<HangoutMemberResponse> =
+        fetch(HangoutsEndPoints.GetHangoutMembers(hangoutId))
 
-    override suspend fun createHangout(request: com.bonjur.hangouts.data.DTOs.HangoutCreateRequest): com.bonjur.hangouts.data.DTOs.HangoutDetailResponse =
-        fetch(com.bonjur.hangouts.data.endPoints.HangoutsEndPoints.CreateHangout(request))
+    override suspend fun getCategories(): List<HangoutCategorySectionResponse> =
+        fetch(HangoutsEndPoints.GetCategories())
 
-    override suspend fun editHangout(hangoutId: String, request: com.bonjur.hangouts.data.DTOs.HangoutCreateRequest): com.bonjur.hangouts.data.DTOs.HangoutDetailResponse =
-        fetch(com.bonjur.hangouts.data.endPoints.HangoutsEndPoints.EditHangout(hangoutId, request))
+    // Mirrors iOS (returns Void): don't decode a typed response — create/edit/join/exit
+    // may return an empty/201 body, and a parse failure would mask success. fetchRawData
+    // also correctly JSON-serializes the request body (the typed `fetch` path does not).
+    override suspend fun createHangout(request: HangoutCreateRequest): ByteArray =
+        fetchRawData(HangoutsEndPoints.CreateHangout(request))
+
+    override suspend fun editHangout(hangoutId: String, request: HangoutCreateRequest): ByteArray =
+        fetchRawData(HangoutsEndPoints.EditHangout(hangoutId, request))
+
+    override suspend fun joinHangout(request: HangoutJoinRequest): ByteArray =
+        fetchRawData(HangoutsEndPoints.JoinHangout(request))
+
+    override suspend fun exitHangout(hangoutId: String): ByteArray =
+        fetchRawData(HangoutsEndPoints.ExitHangout(hangoutId))
 }

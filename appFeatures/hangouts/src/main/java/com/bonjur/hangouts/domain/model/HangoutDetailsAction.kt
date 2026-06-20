@@ -1,6 +1,7 @@
 package com.bonjur.hangouts.domain.model
 
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.hangouts.presentation.create.models.HangoutCreatePrefillData
 
 object HangoutDetails {
 
@@ -12,7 +13,9 @@ object HangoutDetails {
         val accessType: AppUIEntities.AccessType = AppUIEntities.AccessType.PUBLIC,
         val tags: List<AppUIEntities.Tags> = emptyList(),
         val infoData: List<Info> = emptyList(),
-        val membersData: List<Any>? = null
+        val membersData: List<Any>? = null,
+        val joinButton: JoinButton? = null,
+        val editPrefillData: HangoutCreatePrefillData? = null
     ) {
         companion object {
             val mock by lazy {
@@ -62,6 +65,12 @@ object HangoutDetails {
         }
     }
 
+    /** Bottom join/request button state. Mirrors iOS `HangoutDetails.JoinButton`. */
+    data class JoinButton(
+        val title: String,
+        val disabled: Boolean
+    )
+
     data class Info(
         val id: String = java.util.UUID.randomUUID().toString(),
         val title: String,
@@ -72,6 +81,8 @@ object HangoutDetails {
         val id: String = java.util.UUID.randomUUID().toString(),
         val title: String?,
         val description: String,
-        val isLink: Boolean = false
+        val isLink: Boolean = false,
+        /** When set, the row is tappable and copies this phone number. */
+        val phoneNumber: String? = null
     )
 }

@@ -98,6 +98,8 @@ object AppFieldSchema {
         data class Radio(val value: AppUIEntities.AccessType) : FieldValue()
         data class DateValue(val value: String) : FieldValue()
         data class ReminderValue(val value: ReminderOption) : FieldValue()
+        /** Multi-select reminders (mirrors iOS `.reminders([ReminderOption])`). */
+        data class Reminders(val value: List<ReminderOption>) : FieldValue()
         data class Tags(val value: List<TagItem>) : FieldValue()
         data class Links(val value: List<LinkItem>) : FieldValue()
         data class Attachments(val value: List<AttachmentItem>) : FieldValue()
@@ -132,6 +134,9 @@ fun FieldValues.date(id: AppFieldSchema.FieldId): String =
 
 fun FieldValues.reminder(id: AppFieldSchema.FieldId): AppFieldSchema.ReminderOption =
     (this[id] as? AppFieldSchema.FieldValue.ReminderValue)?.value ?: AppFieldSchema.ReminderOption.NONE
+
+fun FieldValues.reminders(id: AppFieldSchema.FieldId): List<AppFieldSchema.ReminderOption> =
+    (this[id] as? AppFieldSchema.FieldValue.Reminders)?.value ?: emptyList()
 
 fun FieldValues.tags(id: AppFieldSchema.FieldId): List<AppFieldSchema.TagItem> =
     (this[id] as? AppFieldSchema.FieldValue.Tags)?.value ?: emptyList()

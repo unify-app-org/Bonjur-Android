@@ -16,8 +16,9 @@ import com.bonjur.profile.presentation.studentCard.models.StudentCardInputData
 
 fun NavGraphBuilder.profileNavGraph(navigator: Navigator) {
     composable<ProfileScreens.ProfileDetail> {
+        val inputData = remember { NavArgs.get<ProfileDetailInputData>() ?: ProfileDetailInputData() }
         ProfileDetailScreen(
-            inputData = ProfileDetailInputData(),
+            inputData = inputData,
             navigator = navigator
         )
     }

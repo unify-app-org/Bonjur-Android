@@ -132,6 +132,7 @@ fun ProfileDetailView(
             item(key = "user_info") {
                 UserInfoView(
                     uiModel = store.state.uiModel,
+                    isOwnProfile = store.state.isOwnProfile,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -216,7 +217,14 @@ fun ProfileDetailView(
         ProfileNavigationOverlay(
             isSegmentSticky = isSegmentSticky,
             selectedSegment = store.state.selectedSegment,
+            isOwnProfile = store.state.isOwnProfile,
+            title = if (store.state.isOwnProfile) {
+                "Profile"
+            } else {
+                store.state.uiModel?.userCardModel?.nameSurname ?: ""
+            },
             onSettingsTapped = { store.send(ProfileDetailAction.SettingsTapped) },
+            onBackTapped = { store.send(ProfileDetailAction.BackTapped) },
             onSegmentSelected = { segment ->
                 store.send(ProfileDetailAction.FetchData) // replace with SegmentChanged
             },
@@ -230,7 +238,10 @@ fun ProfileDetailView(
 private fun ProfileNavigationOverlay(
     isSegmentSticky: Boolean,
     selectedSegment: ProfileDetailViewState.SegmentTypes,
+    isOwnProfile: Boolean,
+    title: String,
     onSettingsTapped: () -> Unit,
+    onBackTapped: () -> Unit,
     onSegmentSelected: (ProfileDetailViewState.SegmentTypes) -> Unit,
     onNavBarPositioned: (Dp) -> Unit,
     modifier: Modifier = Modifier
@@ -252,21 +263,34 @@ private fun ProfileNavigationOverlay(
                     .statusBarsPadding()
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (!isOwnProfile) {
+                    IconButton(onClick = onBackTapped) {
+                        Icon(
+                            painter = Images.Icons.arrowLeft01(),
+                            contentDescription = "Back",
+                            tint = Palette.blackHigh
+                        )
+                    }
+                }
+
                 Text(
-                    text = "Profile",
+                    text = title,
                     style = AppTypography.TitleL.extraBold,
-                    color = Palette.black
+                    color = Palette.black,
+                    modifier = Modifier.weight(1f)
                 )
 
-                IconButton(onClick = onSettingsTapped) {
-                    Icon(
-                        painter = Images.Icons.user(),
-                        contentDescription = "Settings",
-                        tint = Palette.blackHigh
-                    )
+                if (isOwnProfile) {
+                    IconButton(onClick = onSettingsTapped) {
+                        Icon(
+                            painter = Images.Icons.user(),
+                            contentDescription = "Settings",
+                            tint = Palette.blackHigh
+                        )
+                    }
                 }
             }
         }
@@ -297,6 +321,7 @@ private fun ProfileNavigationOverlay(
 @Composable
 private fun UserInfoView(
     uiModel: ProfileDetail.UIModel?,
+    isOwnProfile: Boolean,
     modifier: Modifier = Modifier
 ) {
     AppInfoContainer(
@@ -315,12 +340,14 @@ private fun UserInfoView(
                 style = AppTypography.HeadingMd.medium,
                 color = Palette.black
             )
-            IconButton(onClick = { /* Edit */ }) {
-                Icon(
-                    painter = Images.Icons.penLine(),
-                    contentDescription = "Edit",
-                    tint = Palette.blackHigh
-                )
+            if (isOwnProfile) {
+                IconButton(onClick = { /* Edit */ }) {
+                    Icon(
+                        painter = Images.Icons.penLine(),
+                        contentDescription = "Edit",
+                        tint = Palette.blackHigh
+                    )
+                }
             }
         }
 

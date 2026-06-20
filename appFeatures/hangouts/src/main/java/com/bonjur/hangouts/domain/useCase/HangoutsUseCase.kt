@@ -1,8 +1,24 @@
 package com.bonjur.hangouts.domain.useCase
 
+import com.bonjur.designSystem.components.categorieChips.CategorySection
+import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.hangouts.domain.model.HangoutDetails
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
+
+/** Create/edit payload. Mirrors iOS `HangoutsDTOModel.Request` inputs. */
+data class HangoutFormData(
+    val name: String,
+    val about: String,
+    val location: String,
+    val ownerContact: String,
+    val capacity: Int?,
+    val rules: String,
+    val isPublic: Boolean,
+    val hangoutDate: String,
+    val categoryIds: List<Int>,
+    val links: List<AppFieldSchema.LinkItem>
+)
 
 interface HangoutsUseCase {
     suspend fun fetchHangoutsData(): List<HangoutsCardModel>
@@ -11,26 +27,13 @@ interface HangoutsUseCase {
 
     suspend fun fetchDetailData(id: String): HangoutDetails.UIModel
 
-    suspend fun createHangout(
-        name: String,
-        about: String,
-        location: String,
-        ownerContact: String,
-        capacity: Int?,
-        rules: String,
-        isPublic: Boolean,
-        hangoutDate: String
-    )
+    suspend fun getCategories(): List<CategorySection>
 
-    suspend fun editHangout(
-        hangoutId: String,
-        name: String,
-        about: String,
-        location: String,
-        ownerContact: String,
-        capacity: Int?,
-        rules: String,
-        isPublic: Boolean,
-        hangoutDate: String
-    )
+    suspend fun createHangout(form: HangoutFormData)
+
+    suspend fun editHangout(hangoutId: String, form: HangoutFormData)
+
+    suspend fun joinHangout(hangoutId: String)
+
+    suspend fun exitHangout(hangoutId: String)
 }

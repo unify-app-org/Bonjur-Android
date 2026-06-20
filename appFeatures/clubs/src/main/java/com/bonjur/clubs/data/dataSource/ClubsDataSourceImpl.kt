@@ -5,6 +5,7 @@ import com.bonjur.clubs.data.DTOs.ClubCreateRequest
 import com.bonjur.clubs.data.DTOs.ClubDetailResponse
 import com.bonjur.clubs.data.DTOs.ClubListResponse
 import com.bonjur.clubs.data.DTOs.ClubMemberResponse
+import com.bonjur.clubs.data.DTOs.RoleAssignRequest
 import com.bonjur.clubs.data.endPoints.ClubsEndpoints
 import com.bonjur.network.APIClient.ApiClientProtocol
 import com.bonjur.network.APIClient.MultipartFile
@@ -48,6 +49,12 @@ class ClubsDataSourceImpl @Inject constructor(
 
     override suspend fun joinClub(clubId: Int): ByteArray =
         fetchRawData(ClubsEndpoints.JoinClub(clubId))
+
+    override suspend fun exitClub(clubId: Int): ByteArray =
+        fetchRawData(ClubsEndpoints.ExitClub(clubId))
+
+    override suspend fun assignRole(clubId: Int, request: RoleAssignRequest): ByteArray =
+        fetchRawData(ClubsEndpoints.AssignRole(clubId, request))
 
     /** Builds the multipart body mirroring iOS: a JSON "request" part plus optional image files. */
     private fun buildPayload(

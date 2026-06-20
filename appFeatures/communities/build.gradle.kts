@@ -56,7 +56,9 @@ dependencies {
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:appFoundation"))
     implementation(project(":appCore:network"))
+    implementation(project(":appFeatures:member"))
     implementation(project(":appFeatures:clubs"))
+    implementation(project(":appFeatures:profile"))
 
     // Async images
     implementation("io.coil-kt:coil-compose:2.6.0")

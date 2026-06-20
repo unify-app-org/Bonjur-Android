@@ -55,8 +55,10 @@ fun CommunityCardView(
             TopView(model = model)
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Start
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                ClubsCountView(model = model)
+                Spacer(modifier = Modifier.weight(1f))
                 MembersView(model = model)
             }
         }
@@ -172,8 +174,29 @@ private fun LogoView(logoUrl: String) {
 }
 
 @Composable
+private fun ClubsCountView(model: CommunityCardModel) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = Images.Icons.twoUsers(),
+            contentDescription = null,
+            tint = model.bgType.foregroundColor,
+            modifier = Modifier.size(16.dp)
+        )
+        Text(
+            text = if (model.clubsCount == 1) "1 club" else "${model.clubsCount} clubs",
+            style = AppTypography.TextMd.semiBold,
+            color = model.bgType.foregroundColor
+        )
+    }
+}
+
+@Composable
 private fun MembersView(model: CommunityCardModel) {
     Row(
+        modifier = Modifier.padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

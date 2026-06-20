@@ -76,6 +76,9 @@ fun EventsListView(
                             },
                             onTap = {
                                 store.send(EventsListAction.EventItemTapped(event.id))
+                            },
+                            onClubTap = { clubId ->
+                                store.send(EventsListAction.ClubTapped(clubId))
                             }
                         )
                     }

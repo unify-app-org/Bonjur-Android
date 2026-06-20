@@ -126,3 +126,12 @@ object AppUIEntities {
     }
 
 }
+
+/** Maps a backend role code (e.g. "VISE_PRESIDENT") to [AppUIEntities.UserActivityRole]. */
+fun String.toUserActivityRole(): AppUIEntities.UserActivityRole = when (uppercase()) {
+    "MEMBER" -> AppUIEntities.UserActivityRole.MEMBER
+    "PRESIDENT" -> AppUIEntities.UserActivityRole.PRESIDENT
+    "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
+    "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
+    else -> AppUIEntities.UserActivityRole.NOT_JOINED
+}

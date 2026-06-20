@@ -3,6 +3,7 @@ package com.bonjur.clubs.presentation.create.models
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.fieldSchema.FieldValues
@@ -11,7 +12,8 @@ import com.bonjur.designSystem.components.fieldSchema.text
 
 // MARK: - ClubCreate input
 data class ClubCreateInputData(
-    val clubId: Int? = null
+    val clubId: Int? = null,
+    val prefill: ClubsDetails.ClubEditPrefill? = null
 )
 
 // MARK: - Side effects

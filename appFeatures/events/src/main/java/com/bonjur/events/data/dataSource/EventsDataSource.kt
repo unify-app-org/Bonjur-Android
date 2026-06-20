@@ -25,12 +25,13 @@ interface EventsDataSource {
         request: EventCreateRequest,
         background: ByteArray?,
         attachments: List<EventAttachmentFile>
-    ): EventDetailResponse
+    ): ByteArray
     suspend fun editEvent(
         eventId: String,
         request: EventCreateRequest,
         background: ByteArray?,
         attachments: List<EventAttachmentFile>
-    ): EventDetailResponse
+    ): ByteArray
     suspend fun joinEvent(eventId: String): ByteArray
+    suspend fun exitEvent(eventId: String): ByteArray
 }

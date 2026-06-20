@@ -43,4 +43,5 @@ sealed class EventsListAction : FeatureAction {
     data class FilterSelected(val items: List<FilterView.Items>) : EventsListAction()
     data class EventItemTapped(val id: String): EventsListAction()
     data class JoinEvent(val id: String): EventsListAction()
+    data class ClubTapped(val clubId: Int): EventsListAction()
 }

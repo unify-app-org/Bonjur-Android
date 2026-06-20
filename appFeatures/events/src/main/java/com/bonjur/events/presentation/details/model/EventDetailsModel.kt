@@ -3,6 +3,7 @@ package com.bonjur.events.presentation.details.model
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.segmentView.SegmentedPickerOption
 
 import com.bonjur.events.domain.models.EventsDetails
@@ -23,6 +24,9 @@ data class EventDetailsViewState(
     val selectedSegment: SegmentTypes = SegmentTypes.ABOUT,
     val isFileUploadReachedMaxLimit: Boolean = false
 ) : FeatureState {
+
+    val isPrivate: Boolean
+        get() = uiModel?.accessType == AppUIEntities.AccessType.PRIVATE
 
     enum class SegmentTypes(
         override val title: String
@@ -45,4 +49,8 @@ sealed class EventDetailsAction : FeatureAction {
     object FetchData : EventDetailsAction()
     object BackTapped : EventDetailsAction()
     data class SegmentChanged(val segment: EventDetailsViewState.SegmentTypes) : EventDetailsAction()
+    object EditTapped : EventDetailsAction()
+    object JoinTapped : EventDetailsAction()
+    object ExitTapped : EventDetailsAction()
+    object ClubTapped : EventDetailsAction()
 }

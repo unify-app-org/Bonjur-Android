@@ -21,22 +21,27 @@ data class EventsCardModel(
     val tags: List<AppUIEntities.Tags>,
     val bgType: AppUIEntities.BackgroundType,
     val requestType: AppUIEntities.RequestType,
-    val accessType: AppUIEntities.AccessType
+    val accessType: AppUIEntities.AccessType,
+    // Static placeholders until backend exposes these fields
+    val time: String = "18:00",
+    val location: String = "Campus, Room 204",
+    val dateDay: String = "14",
+    val dateMonth: String = "JUN"
 ) {
     val buttonTitle: String
         get() = when (requestType) {
             AppUIEntities.RequestType.JOINED -> ""
-            AppUIEntities.RequestType.REJECTED -> "Rejected"
+            AppUIEntities.RequestType.REJECTED -> "Request again"
             AppUIEntities.RequestType.PENDING -> "Request sent"
             AppUIEntities.RequestType.NONE -> when (accessType) {
                 AppUIEntities.AccessType.PUBLIC -> "Join"
                 AppUIEntities.AccessType.PRIVATE -> "Request"
             }
         }
-    
+
     val memberCountText: String
         get() = if (totalCapacity != null) {
-            "$memberCount/$totalCapacity members"
+            "$memberCount of $totalCapacity"
         } else {
             "$memberCount members"
         }

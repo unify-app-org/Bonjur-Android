@@ -9,6 +9,8 @@ sealed interface ClubsScreens {
     data object Details : ClubsScreens
     @Serializable
     data object Create : ClubsScreens
+    // Payload (clubId) is passed via NavArgs, matching Details — the string-based
+    // Navigator routes by qualified name, so parameterized routes aren't reachable.
     @Serializable
-    data class Edit(val clubId: Int) : ClubsScreens
+    data object Edit : ClubsScreens
 }
