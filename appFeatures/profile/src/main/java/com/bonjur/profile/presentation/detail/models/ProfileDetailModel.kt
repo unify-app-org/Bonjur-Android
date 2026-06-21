@@ -9,6 +9,7 @@ import com.bonjur.clubs.presentation.list.models.ClubCardModel
 // MARK: - Input Data
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.segmentView.SegmentedPickerOption
+import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.events.presentation.list.models.EventsCardMocks
 import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardMocks
@@ -23,12 +24,14 @@ data class ProfileDetailInputData(
 // MARK: - Side Effects
 sealed class ProfileDetailSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : ProfileDetailSideEffect()
+    data class Error(val title: String, val message: String?) : ProfileDetailSideEffect()
 }
 
 // MARK: - View State
 data class ProfileDetailViewState(
     val uiModel: ProfileDetail.UIModel? = null,
     val isOwnProfile: Boolean = true,
+    val navigationTitle: String = "Profile",
     val selectedSegment: SegmentTypes = SegmentTypes.CLUBS
 ) : FeatureState {
 
@@ -68,9 +71,8 @@ object ProfileDetail {
         val about: String? = null,
         val gender: String? = null,
         val birthday: String? = null,
-        val languages: List<String>? = null,
+        val languages: List<SelectableListItemModel>? = null,
         val tags: List<AppUIEntities.Tags> = emptyList(),
-        val cardCover: AppUIEntities.BackgroundType? = null,
         val clubs: List<ClubCardModel> = emptyList(),
         val events: List<EventsCardModel> = emptyList(),
         val hangouts: List<HangoutsCardModel> = emptyList()
@@ -93,7 +95,6 @@ fun ProfileDetail.UIModel.Companion.mock(): ProfileDetail.UIModel = ProfileDetai
         AppUIEntities.Tags(id = 1, type = "SPORT", title = "Ronaldinho"),
         AppUIEntities.Tags(id = 1, type = "SPORT", title = "Basketball")
     ),
-    cardCover = AppUIEntities.BackgroundType.Tertiary,
     clubs = ClubCardMocks.previewData,
     events = EventsCardMocks.previewMock,
     hangouts = HangoutsCardMocks.previewMock
@@ -108,6 +109,7 @@ sealed class ProfileDetailAction : FeatureAction {
     data class EventsItemTapped(val id: String) : ProfileDetailAction()
     data class HangoutsItemTapped(val id: String) : ProfileDetailAction()
     object SettingsTapped : ProfileDetailAction()
+    object EditProfileTapped : ProfileDetailAction()
     object UserCardTapped : ProfileDetailAction()
     data class UserCardCoverSaved(val backgroundType: AppUIEntities.BackgroundType?) : ProfileDetailAction()
 }

@@ -2,17 +2,26 @@ package com.bonjur.profile.presentation.detail
 
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
+import com.bonjur.clubs.navigation.ClubsScreens
+import com.bonjur.clubs.presentation.model.ClubDetailsInputData
 import com.bonjur.designSystem.commonModel.AppUIEntities
-import com.bonjur.designSystem.components.alert.AppAlert
-import com.bonjur.designSystem.components.alert.AppAlertPresenter
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
+import com.bonjur.events.navigation.EventsScreens
+import com.bonjur.events.presentation.details.model.EventDetailsInputData
+import com.bonjur.hangouts.navigation.HangoutsScreens
+import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
+import com.bonjur.network.manager.TokenManager
+import com.bonjur.profile.data.DTOs.ProfileUpdateRequest
 import com.bonjur.profile.domain.usecase.ProfileUseCase
 import com.bonjur.profile.navigation.ProfileScreens
 import com.bonjur.profile.presentation.detail.models.ProfileDetailAction
 import com.bonjur.profile.presentation.detail.models.ProfileDetailInputData
 import com.bonjur.profile.presentation.detail.models.ProfileDetailSideEffect
 import com.bonjur.profile.presentation.detail.models.ProfileDetailViewState
+import com.bonjur.profile.presentation.editProfile.models.EditProfileInputData
+import com.bonjur.profile.presentation.editProfile.models.Gender
 import com.bonjur.profile.presentation.studentCard.models.StudentCardInputData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -28,7 +37,8 @@ class ProfileDetailViewModel @Inject constructor(
 ) {
 
     data class Dependencies @Inject constructor(
-        val useCase: ProfileUseCase
+        val useCase: ProfileUseCase,
+        val tokenManager: TokenManager
     )
 
     private lateinit var inputData: ProfileDetailInputData
@@ -49,23 +59,42 @@ class ProfileDetailViewModel @Inject constructor(
             ProfileDetailAction.BackTapped -> viewModelScope.launch { navigator.navigateUp() }
 
             is ProfileDetailAction.ClubsItemTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileScreens.ClubsDetails(action.id).route)
+                navigator.navigateTo(
+                    ClubsScreens.Details.route,
+                    ClubDetailsInputData(clubId = action.id)
+                )
             }
 
             is ProfileDetailAction.SegmentTapped -> viewModelScope.launch {
-                handleSegmentChanged(action.segment)
+                updateState(state.copy(selectedSegment = action.segment))
             }
 
             is ProfileDetailAction.EventsItemTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileScreens.EventsDetails(action.id).route)
+                navigator.navigateTo(
+                    EventsScreens.Details.route,
+                    EventDetailsInputData(eventId = action.id)
+                )
             }
 
             is ProfileDetailAction.HangoutsItemTapped -> viewModelScope.launch {
-//                navigator.navigateTo(ProfileScreens.HangoutsDetails(action.id).route)
+                navigator.navigateTo(
+                    HangoutsScreens.Details.route,
+                    HangoutDetailsInputData(hangoutId = action.id)
+                )
             }
 
             ProfileDetailAction.SettingsTapped -> viewModelScope.launch {
                 navigator.navigateTo(ProfileScreens.Settings.route)
+            }
+
+            ProfileDetailAction.EditProfileTapped -> viewModelScope.launch {
+                navigator.navigateTo(
+                    ProfileScreens.EditProfile.route,
+                    EditProfileInputData(
+                        profileData = state.uiModel,
+                        onSaved = { fetchData() }
+                    )
+                )
             }
 
             ProfileDetailAction.UserCardTapped -> viewModelScope.launch {
@@ -85,64 +114,102 @@ class ProfileDetailViewModel @Inject constructor(
         }
     }
 
-    private fun handleSegmentChanged(segment: ProfileDetailViewState.SegmentTypes) {
-        updateState(state.copy(selectedSegment = segment))
-    }
-
+    /** Fetches profile + clubs + events + activities in parallel (mirrors iOS ProfileDetailViewModel). */
     private fun fetchData() {
         viewModelScope.launch {
-            fetchUserData()
-            // My-activities endpoints are self-only; skip them for another user's profile.
-            if (inputData.userId.isNullOrEmpty()) {
-                fetchMyActivities()
-            }
-        }
-    }
-
-    private suspend fun fetchUserData() {
-        try {
+            postEffect(ProfileDetailSideEffect.Loading(true))
             val userId = inputData.userId
-            val uiModel = if (userId.isNullOrEmpty()) {
-                dependencies.useCase.fetchProfileData()
-            } else {
-                dependencies.useCase.fetchProfileData(userId)
+
+            val results = coroutineScope {
+                val user = async { runCatching { dependencies.useCase.fetchProfileData(userId) } }
+                val clubs = async { runCatching { dependencies.useCase.getMyClubs(userId) } }
+                // events/my is self-only — fetch only for own profile, hide for another user.
+                val events = async {
+                    if (userId.isNullOrEmpty()) runCatching { dependencies.useCase.getMyEvents() }
+                    else Result.success(emptyList())
+                }
+                val hangouts = async { runCatching { dependencies.useCase.getMyHangouts(userId) } }
+                FetchResults(user.await(), clubs.await(), events.await(), hangouts.await())
             }
-            updateState(state.copy(uiModel = uiModel))
-        } catch (e: Exception) {
-            // Handle error
+
+            val firstError = applyResults(results)
+            postEffect(ProfileDetailSideEffect.Loading(false))
+            firstError?.let {
+                postEffect(ProfileDetailSideEffect.Error(it.message ?: "Something went wrong", null))
+            }
         }
     }
 
-    /** My events + my activities, fetched in parallel (mirrors iOS ProfileDetailViewModel). */
-    private suspend fun fetchMyActivities() = coroutineScope {
-        val events = async { runCatching { dependencies.useCase.getMyEvents() }.getOrDefault(emptyList()) }
-        val hangouts = async { runCatching { dependencies.useCase.getMyHangouts() }.getOrDefault(emptyList()) }
-        val fetchedEvents = events.await()
-        val fetchedHangouts = hangouts.await()
-        state.uiModel?.let { uiModel ->
+    private data class FetchResults(
+        val user: Result<com.bonjur.profile.presentation.detail.models.ProfileDetail.UIModel>,
+        val clubs: Result<List<com.bonjur.clubs.presentation.list.models.ClubCardModel>>,
+        val events: Result<List<com.bonjur.events.presentation.list.models.EventsCardModel>>,
+        val hangouts: Result<List<com.bonjur.hangouts.presentation.list.model.HangoutsCardModel>>
+    )
+
+    private suspend fun applyResults(results: FetchResults): Throwable? {
+        val base = results.user.getOrNull()
+        if (base != null) {
+            val myId = dependencies.tokenManager.getUserId()
+            val isOther = !inputData.userId.isNullOrEmpty() && inputData.userId != myId
             updateState(
                 state.copy(
-                    uiModel = uiModel.copy(
-                        events = fetchedEvents,
-                        hangouts = fetchedHangouts
-                    )
+                    uiModel = base.copy(
+                        clubs = results.clubs.getOrDefault(emptyList()),
+                        events = results.events.getOrDefault(emptyList()),
+                        hangouts = results.hangouts.getOrDefault(emptyList())
+                    ),
+                    isOwnProfile = !isOther,
+                    navigationTitle = if (isOther) "About user" else "Profile"
                 )
             )
         }
+        return listOf(results.user, results.clubs, results.events, results.hangouts)
+            .firstNotNullOfOrNull { it.exceptionOrNull() }
     }
 
+    /** Optimistically updates the cover, then persists it (PUT /users) and confirms via snackbar. */
     private fun applyUserCardCover(backgroundType: AppUIEntities.BackgroundType?) {
-        val currentUIModel = state.uiModel ?: return
-
-        val updatedUserCardModel = currentUIModel.userCardModel.copy(
-            backgroundCover = backgroundType
+        val ui = state.uiModel ?: return
+        updateState(
+            state.copy(
+                uiModel = ui.copy(
+                    userCardModel = ui.userCardModel.copy(backgroundCover = backgroundType)
+                )
+            )
         )
 
-        val updatedUIModel = currentUIModel.copy(
-            userCardModel = updatedUserCardModel,
-            cardCover = backgroundType
-        )
+        viewModelScope.launch {
+            // Resend the full profile (mirrors iOS) so other fields aren't wiped by the PUT.
+            val request = ProfileUpdateRequest(
+                birthDate = ui.birthday,
+                gender = ui.gender?.let { Gender.from(it)?.name },
+                about = ui.about,
+                categoriesId = ui.tags.map { it.id },
+                languagesId = ui.languages?.map { it.id } ?: emptyList(),
+                backgroundColour = backgroundType?.toRequestString()
+            )
+            runCatching { dependencies.useCase.editProfile(request, null) }
+                .onSuccess {
+                    AppSnackBar.show(
+                        title = "Cover updated successfully",
+                        subtitle = "Your changes are saved",
+                        style = AppSnackBar.Style.SUCCESS
+                    )
+                }
+        }
+    }
 
-        updateState(state.copy(uiModel = updatedUIModel))
+    // Backend enum = colour names (iOS BackgroundType raw values), not Primary/Secondary.
+    private fun AppUIEntities.BackgroundType.toRequestString(): String = when (this) {
+        is AppUIEntities.BackgroundType.Primary -> "GREEN"
+        is AppUIEntities.BackgroundType.Secondary -> "BLUE"
+        is AppUIEntities.BackgroundType.Tertiary -> "PURPLE"
+        is AppUIEntities.BackgroundType.CustomColor -> when (colorType) {
+            is AppUIEntities.ColorType.Orange -> "ORANGE"
+            is AppUIEntities.ColorType.Red -> "RED"
+            is AppUIEntities.ColorType.Pink -> "PINK"
+            is AppUIEntities.ColorType.Custom -> "GREEN"
+        }
     }
 }

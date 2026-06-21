@@ -257,6 +257,8 @@ private fun ChipsView(
     modifier: Modifier = Modifier
 ) {
     if (modelState.isNotEmpty()) {
+        val isAllActive = modelState.none { section -> section.items.any { it.selected } }
+
         LazyRow(
             modifier = modifier
                 .fillMaxWidth()
@@ -267,6 +269,13 @@ private fun ChipsView(
                 FilterChip(
                     viewModel = viewModel,
                     onFilterClick = onFilterClick
+                )
+            }
+
+            item {
+                AllChip(
+                    isActive = isAllActive,
+                    onClick = { viewModel.selectAll() }
                 )
             }
 
@@ -349,64 +358,50 @@ private fun FilterChip(
 }
 
 @Composable
+private fun AllChip(
+    isActive: Boolean,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = if (isActive) Palette.primary.copy(alpha = 0.4f) else Palette.grayQuaternary,
+        border = if (isActive) BorderStroke(1.dp, Palette.border) else null
+    ) {
+        Text(
+            text = "All",
+            style = AppTypography.TextL.regular,
+            color = Palette.black,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+        )
+    }
+}
+
+@Composable
 private fun ChipItem(
     item: FilterView.Model,
     viewModel: FilterViewModel,
     isLast: Boolean
 ) {
-    val selectedItem by viewModel.selectedItem.collectAsState()
-    val isSelected = viewModel.isSelected(item)
     val hasSelectedSubItems = viewModel.hasSelectedSubItems(item)
-
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (selectedItem?.id == item.id) 180f else 0f,
-        animationSpec = tween(250),
-        label = "chevron rotation"
-    )
 
     Surface(
         onClick = {
-            viewModel.selectItem(item)
+            viewModel.toggleCategory(item)
         },
         shape = CircleShape,
-        color = when {
-            isSelected -> Color.Transparent
-            hasSelectedSubItems -> Palette.primary.copy(alpha = 0.4f)
-            else -> Palette.grayQuaternary
-        },
-        border = if (isSelected || hasSelectedSubItems) {
-            BorderStroke(
-                width = 1.dp,
-                color = when {
-                    hasSelectedSubItems && isSelected -> Palette.black
-                    hasSelectedSubItems -> Palette.border
-                    else -> Palette.black
-                }
-            )
-        } else {
-            null
-        },
+        color = if (hasSelectedSubItems) Palette.primary.copy(alpha = 0.4f) else Palette.grayQuaternary,
+        border = if (hasSelectedSubItems) BorderStroke(1.dp, Palette.border) else null,
         modifier = Modifier.padding(
             end = if (isLast) 16.dp else 0.dp
         )
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = item.title,
-                style = AppTypography.TextL.regular,
-                color = Palette.black
-            )
-            Icon(
-                painter = Images.Icons.chevronDown02(),
-                contentDescription = null,
-                tint = Palette.black,
-                modifier = Modifier.rotate(rotationAngle)
-            )
-        }
+        Text(
+            text = item.title,
+            style = AppTypography.TextL.regular,
+            color = Palette.black,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+        )
     }
 }
 

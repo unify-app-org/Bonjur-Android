@@ -61,13 +61,15 @@ class ProfileSettingsViewModel @Inject constructor(
         updateState(state.copy(sections = sections))
     }
 
+    // Mirrors iOS ProfileDataSource.fetchSections: two untitled sections.
+    // Log out is the destructive (red) row, Delete account is normal — matches iOS.
     private fun buildSections(): List<SettingsSectionModel> = listOf(
         SettingsSectionModel(
             title = null,
             items = listOf(
                 SettingsItemModel(
                     id = "notifications",
-                    title = "Notifications",
+                    title = "Notification",
                     isSwitch = true,
                     action = null
                 ),
@@ -75,21 +77,22 @@ class ProfileSettingsViewModel @Inject constructor(
                     id = "language",
                     title = "Language",
                     action = ProfileSettingsAction.LanguageTapped
-                )
-            )
-        ),
-        SettingsSectionModel(
-            title = "Support",
-            items = listOf(
+                ),
                 SettingsItemModel(
                     id = "help",
-                    title = "Help Center",
+                    title = "Help center",
                     action = ProfileSettingsAction.HelpCenterTapped
                 ),
                 SettingsItemModel(
                     id = "terms",
-                    title = "Terms & Conditions",
+                    title = "Terms and conditions",
                     action = ProfileSettingsAction.TermsTapped
+                ),
+                SettingsItemModel(
+                    id = "version",
+                    title = "App version",
+                    versionText = APP_VERSION,
+                    action = null
                 )
             )
         ),
@@ -97,16 +100,16 @@ class ProfileSettingsViewModel @Inject constructor(
             title = null,
             items = listOf(
                 SettingsItemModel(
-                    id = "logout",
-                    title = "Log out",
-                    isDestructive = false,
-                    action = ProfileSettingsAction.LogOutTapped
-                ),
-                SettingsItemModel(
                     id = "delete",
                     title = "Delete account",
-                    isDestructive = true,
+                    isDestructive = false,
                     action = ProfileSettingsAction.DeleteAccountTapped
+                ),
+                SettingsItemModel(
+                    id = "logout",
+                    title = "Log out",
+                    isDestructive = true,
+                    action = ProfileSettingsAction.LogOutTapped
                 )
             )
         )
@@ -136,5 +139,9 @@ class ProfileSettingsViewModel @Inject constructor(
             dependencies.defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, false)
             navigator.navigateAndClearStack(AppScreens.Auth.route)
         }
+    }
+
+    private companion object {
+        const val APP_VERSION = "1.24.0"
     }
 }

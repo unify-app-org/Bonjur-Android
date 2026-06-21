@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
+import com.bonjur.designSystem.components.topBar.AppTopBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -25,10 +26,27 @@ import com.bonjur.profile.presentation.settings.models.SettingsItemModel
 fun ProfileSettingsView(
     store: FeatureStore<ProfileSettingsViewState, ProfileSettingsAction, ProfileSettingsSideEffect>
 ) {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Palette.grayQuaternary.copy(alpha = 0.3f)),
+            .background(Palette.grayQuaternary.copy(alpha = 0.3f))
+    ) {
+        AppTopBar(
+            isScrolled = false,
+            showTitle = true,
+            title = "Settings",
+            onBack = { store.send(ProfileSettingsAction.BackTapped) }
+        )
+        SettingsList(store)
+    }
+}
+
+@Composable
+private fun SettingsList(
+    store: FeatureStore<ProfileSettingsViewState, ProfileSettingsAction, ProfileSettingsSideEffect>
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -108,6 +126,7 @@ private fun SettingsRow(
                     "language" -> Images.Icons.globe()
                     "help" -> Images.Icons.helpCircle()
                     "terms" -> Images.Icons.fileText()
+                    "version" -> Images.Icons.phone()
                     "logout" -> Images.Icons.logOut()
                     "delete" -> Images.Icons.delete()
                     else -> Images.Icons.settings()
@@ -131,7 +150,12 @@ private fun SettingsRow(
             item.isSwitch -> {
                 Switch(
                     checked = isNotificationsOn,
-                    onCheckedChange = onToggle
+                    onCheckedChange = onToggle,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Palette.secondary,
+                        checkedBorderColor = Palette.secondary
+                    )
                 )
             }
             item.versionText != null -> {
@@ -141,7 +165,7 @@ private fun SettingsRow(
                     color = Palette.blackMedium
                 )
             }
-            !item.isDestructive -> {
+            else -> {
                 Icon(
                     painter = Images.Icons.chevronRight(),
                     contentDescription = null,

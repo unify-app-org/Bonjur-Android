@@ -24,6 +24,12 @@ sealed class DiscoverEndPoints : AppEndpoint {
         override val queryParameters = query
     }
 
+    data class GetEvents(val query: Map<String, String>) : DiscoverEndPoints() {
+        override val path = "api/ds/v1/events"
+        override val method = NetworkMethod.GET
+        override val queryParameters = query
+    }
+
     data object GetCategories : DiscoverEndPoints() {
         override val path = "api/sd/v1/categories"
         override val method = NetworkMethod.GET

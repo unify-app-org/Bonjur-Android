@@ -68,6 +68,44 @@ class FilterViewModel(
         }
     }
 
+    // MARK: - Category / All selection (iOS-parity chip behavior)
+
+    /// Chip tap: toggles the whole category — selects/deselects ALL its sub-items,
+    /// so the backend receives every sub-item id of the category.
+    fun toggleCategory(item: FilterView.Model) {
+        val shouldSelect = !isCategorySelected(item)
+        _model.update { model ->
+            model.map { section ->
+                if (section.id == item.id) {
+                    section.copy(items = section.items.map { it.copy(selected = shouldSelect) })
+                } else {
+                    section
+                }
+            }
+        }
+        sortFilters()
+        notifySelectedItems()
+    }
+
+    fun isCategorySelected(item: FilterView.Model): Boolean {
+        return item.items.isNotEmpty() && item.items.all { it.selected }
+    }
+
+    /// "All" chip is active when no filter is applied anywhere.
+    val isAllActive: Boolean
+        get() = _model.value.none { section -> section.items.any { it.selected } }
+
+    /// "All" chip tap: clears every selection (no filter = everything).
+    fun selectAll() {
+        _model.update { model ->
+            model.map { section ->
+                section.copy(items = section.items.map { it.copy(selected = false) })
+            }
+        }
+        sortFilters()
+        notifySelectedItems()
+    }
+
     // MARK: - Sub-item Selection
 
     fun toggleSubItem(item: FilterView.Items) {

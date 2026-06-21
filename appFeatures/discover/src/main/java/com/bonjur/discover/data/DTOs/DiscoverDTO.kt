@@ -87,13 +87,39 @@ data class DiscoverCommunity(
     @SerialName("backgroundColour") val background: String? = null
 )
 
+// MARK: - Event
+
+@Serializable
+data class DiscoverEvent(
+    val id: String? = null,
+    val name: String? = null,
+    val visibility: String? = null,
+    val about: String? = null,
+    val capacity: Int? = null,
+    val membersCount: Int? = null,
+    val background: String? = null,
+    val location: String? = null,
+    val club: DiscoverEventClub? = null,
+    val eventDate: String? = null,
+    val requestStatus: String? = null,
+    val categoryResponses: List<DiscoverCategoryResponse> = emptyList()
+)
+
+@Serializable
+data class DiscoverEventClub(
+    val id: Int? = null,
+    val name: String? = null
+)
+
 // MARK: - User profile
 
 @Serializable
 data class DiscoverUserResponse(
     val userId: String? = null,
     val fullName: String? = null,
-    val profileUrl: String? = null
+    val profileUrl: String? = null,
+    val fileUrl: String? = null,
+    val greeting: String? = null
 )
 
 // MARK: - Requests

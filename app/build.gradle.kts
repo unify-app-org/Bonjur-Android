@@ -72,6 +72,10 @@ dependencies {
     implementation(project(":appCore:storage"))
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:designSystem"))
+    implementation(project(":appCore:network"))
+
+    // Image loading (Coil) — backs CachedAsyncImage + minio host-rewrite interceptor
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // DI
     implementation("com.google.dagger:hilt-android:2.57.2")

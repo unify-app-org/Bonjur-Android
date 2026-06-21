@@ -91,27 +91,33 @@ object Images {
         fun fileAttachment() = painterResource(R.drawable.ic_file_attachment)
 
         @Composable
-        fun chevronRight() = painterResource(R.drawable.ic_chevron_02_down)
+        fun chevronRight() = painterResource(R.drawable.ic_chevron_right)
 
         @Composable
         fun notification() = painterResource(R.drawable.ic_bell)
 
         @Composable
-        fun globe() = painterResource(R.drawable.ic_search)
+        fun globe() = painterResource(R.drawable.ic_globe)
 
         @Composable
-        fun helpCircle() = painterResource(R.drawable.ic_ellipsis_02)
+        fun helpCircle() = painterResource(R.drawable.ic_help_circle)
 
         @Composable
-        fun fileText() = painterResource(R.drawable.ic_file_attachment)
+        fun fileText() = painterResource(R.drawable.ic_clipboard_list)
 
         @Composable
-        fun logOut() = painterResource(R.drawable.arrow_left_01)
+        fun phone() = painterResource(R.drawable.ic_phone)
+
+        @Composable
+        fun logOut() = painterResource(R.drawable.ic_logout)
 
         @Composable
         fun delete() = painterResource(R.drawable.ic_trash)
 
         @Composable
-        fun settings() = painterResource(R.drawable.ic_ellipsis_02)
+        fun settings() = painterResource(R.drawable.ic_settings)
+
+        @Composable
+        fun gear() = painterResource(R.drawable.ic_settings)
     }
 }

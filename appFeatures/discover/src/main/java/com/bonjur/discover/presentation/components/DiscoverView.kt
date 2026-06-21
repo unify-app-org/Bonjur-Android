@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -144,7 +145,10 @@ fun DiscoverView(
                     profileViewHeight = with(density) { coordinates.size.height.toDp() }
                 }
         ) {
-            ProfileView(user = state.uiModel.user)
+            ProfileView(
+                user = state.uiModel.user,
+                onProfileTap = { store.send(DiscoverAction.ProfileTapped) }
+            )
         }
 
         Box(
@@ -168,7 +172,10 @@ fun DiscoverView(
 }
 
 @Composable
-private fun ProfileView(user: UserModel) {
+private fun ProfileView(
+    user: UserModel,
+    onProfileTap: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,70 +184,43 @@ private fun ProfileView(user: UserModel) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Profile image
-        IconButton(onClick = { /* Handle profile click */ }) {
+        IconButton(onClick = onProfileTap) {
             CachedAsyncImage(
                 url = user.profileImage,
                 contentDescription = "Profile",
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(14.dp)),
+                    .size(36.dp)
+                    .clip(CircleShape),
                 contentScale = ContentScale.Crop,
-                placeholder = {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Palette.grayQuaternary, RoundedCornerShape(14.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = Palette.black
-                        )
-                    }
-                },
-                error = {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Palette.grayQuaternary, RoundedCornerShape(14.dp)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = Images.Icons.user(),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = Palette.black
-                        )
-                    }
-                }
+                placeholder = { ProfilePlaceholder() },
+                error = { ProfilePlaceholder() }
             ) { imageBitmap ->
                 Image(
                      bitmap = imageBitmap,
                      contentDescription = "Profile",
                      modifier = Modifier
-                         .size(40.dp)
-                         .clip(RoundedCornerShape(14.dp)),
+                         .size(36.dp)
+                         .clip(CircleShape),
                      contentScale = ContentScale.Crop
                  )
             }
         }
 
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = user.greeting,
                 style = AppTypography.TextMd.regular,
                 color = Palette.grayPrimary,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Center
             )
             Text(
                 text = user.name,
-                style = AppTypography.BodyTextSm.medium,
+                style = AppTypography.BodyTextMd.bold,
                 color = Palette.black,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Center
             )
         }
 
@@ -263,6 +243,23 @@ private fun ProfileView(user: UserModel) {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ProfilePlaceholder() {
+    Box(
+        modifier = Modifier
+            .size(36.dp)
+            .background(Palette.grayQuaternary, CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = Images.Icons.user(),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = Palette.black
+        )
     }
 }
 

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.navigation.Navigator
 import com.bonjur.profile.presentation.detail.components.ProfileDetailView
 import com.bonjur.profile.presentation.detail.models.ProfileDetailInputData
@@ -25,6 +26,13 @@ fun ProfileDetailScreen(
             when (effect) {
                 is ProfileDetailSideEffect.Loading -> {
                     // Show/hide loading
+                }
+                is ProfileDetailSideEffect.Error -> {
+                    AppSnackBar.show(
+                        title = effect.title,
+                        subtitle = effect.message ?: "",
+                        style = AppSnackBar.Style.ERROR
+                    )
                 }
             }
         }

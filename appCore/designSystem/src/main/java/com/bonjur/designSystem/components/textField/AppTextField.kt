@@ -74,9 +74,13 @@ fun AppTextField(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Palette.grayQuaternary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
+                disabledIndicatorColor = Color.Transparent,
+                disabledTextColor = Palette.blackHigh,
+                disabledPlaceholderColor = Palette.blackMedium,
+                disabledTrailingIconColor = Palette.blackMedium
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,7 +92,6 @@ fun AppTextField(
                     color = Palette.graySecondary,
                     shape = CircleShape
                 )
-                .padding(horizontal = 12.dp)
         )
     }
 }

@@ -21,10 +21,14 @@ class StudentCardViewModel @Inject constructor() : FeatureViewModel<StudentCardV
     private lateinit var inputData: StudentCardInputData
     private lateinit var navigator: Navigator
 
+    // Last cover persisted to backend; onSave fires only when the cover actually changes from this.
+    private var persistedCover: AppUIEntities.BackgroundType? = null
+
     fun init(inputData: StudentCardInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
         this.navigator = navigator
+        this.persistedCover = inputData.userCardModel.backgroundCover
 
         updateState(
             state.copy(
@@ -49,9 +53,8 @@ class StudentCardViewModel @Inject constructor() : FeatureViewModel<StudentCardV
     }
 
     private fun handleCloseTapped() {
-        val committedCover = state.savedCover
+        // Persistence happens on cover commit; closing just navigates back (no snackbar on plain back).
         viewModelScope.launch {
-            inputData.onSave(committedCover)
             navigator.navigateUp()
         }
     }
@@ -113,6 +116,8 @@ class StudentCardViewModel @Inject constructor() : FeatureViewModel<StudentCardV
         }
 
         val committedCover = state.savedCover
+        if (committedCover == persistedCover) return
+        persistedCover = committedCover
         viewModelScope.launch {
             inputData.onSave(committedCover)
         }

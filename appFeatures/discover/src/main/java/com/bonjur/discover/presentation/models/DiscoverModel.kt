@@ -53,7 +53,11 @@ data class DiscoverViewState(
 // MARK: - Actions
 sealed class DiscoverAction : FeatureAction {
     object FetchData : DiscoverAction()
+    object RefreshActivities : DiscoverAction()
+    object ProfileTapped : DiscoverAction()
     data class FilterChanged(val categoryIds: List<Int>) : DiscoverAction()
+    data class LoadMore(val type: AppUIEntities.ActivityType) : DiscoverAction()
+    data class JoinHangout(val hangoutId: String) : DiscoverAction()
     data class ViewAllTapped(val type: AppUIEntities.ActivityType) : DiscoverAction()
     data class CommunityItemTapped(val communityId: Int) : DiscoverAction()
     data class CLubItemTapped(val clubId: Int) : DiscoverAction()

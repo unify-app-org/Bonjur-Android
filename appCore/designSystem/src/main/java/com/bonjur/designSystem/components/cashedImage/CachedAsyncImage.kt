@@ -7,20 +7,31 @@
 
 package com.bonjur.designSystem.components.cashedImage
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import java.net.URL
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.graphics.drawable.toBitmap
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 
+/// Async image with memory + disk caching.
+///
+/// Coil is the only place it is imported — call sites keep the same
+/// `placeholder` / `error` / `content` API and never reference Coil directly.
+/// The minio→baseURL host rewrite is applied once, app-side, via a Coil
+/// `Interceptor` registered on the singleton `ImageLoader`.
+///
+/// NOTE: the request uses `Size.ORIGINAL`. Because the success branch renders
+/// the decoded bitmap itself (not the painter), the painter is never drawn, so
+/// Coil's default draw-time size resolver would otherwise stall forever. An
+/// explicit size makes the request resolve immediately.
 @Composable
 fun CachedAsyncImage(
     url: String?,
@@ -29,7 +40,7 @@ fun CachedAsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     placeholder: @Composable () -> Unit = {},
     error: @Composable () -> Unit = {},
-    content: @Composable (Image: androidx.compose.ui.graphics.ImageBitmap) -> Unit = { image ->
+    content: @Composable (Image: ImageBitmap) -> Unit = { image ->
         Image(
             bitmap = image,
             contentDescription = contentDescription,
@@ -38,102 +49,26 @@ fun CachedAsyncImage(
         )
     }
 ) {
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    var hasError by remember { mutableStateOf(false) }
-    
-    val opacity by animateFloatAsState(
-        targetValue = if (bitmap != null) 1f else 0f,
-        animationSpec = tween(durationMillis = 300),
-        label = "image opacity"
+    val context = LocalContext.current
+    val request = remember(url) {
+        ImageRequest.Builder(context)
+            .data(url)
+            .size(Size.ORIGINAL)
+            .build()
+    }
+    val painter = rememberAsyncImagePainter(
+        model = request,
+        contentScale = contentScale
     )
-    
-    // Check cache on initial load
-    LaunchedEffect(url) {
-        if (url.isNullOrBlank()) {
-            isLoading = false
-            hasError = true
-            return@LaunchedEffect
-        }
-        
-        // Check cache first
-        val cached = ImageCache.get(url)
-        if (cached != null) {
-            bitmap = cached
-            isLoading = false
-            return@LaunchedEffect
-        }
-        
-        // Load from network
-        loadImage(
-            url = url,
-            onSuccess = { loadedBitmap ->
-                bitmap = loadedBitmap
-                isLoading = false
-                hasError = false
-            },
-            onError = {
-                isLoading = false
-                hasError = true
-            }
-        )
-    }
-    
-    when {
-        bitmap != null -> {
-            androidx.compose.foundation.layout.Box(
-                modifier = androidx.compose.ui.Modifier.then(
-                    androidx.compose.ui.Modifier.alpha(opacity)
-                )
-            ) {
-                content(bitmap!!.asImageBitmap())
-            }
-        }
-        hasError -> error()
-        isLoading -> placeholder()
-    }
-}
 
-private suspend fun loadImage(
-    url: String,
-    onSuccess: (Bitmap) -> Unit,
-    onError: () -> Unit
-) {
-    withContext(Dispatchers.IO) {
-        try {
-            // Check cache again in case it was loaded while switching context
-            val cached = ImageCache.get(url)
-            if (cached != null) {
-                withContext(Dispatchers.Main) {
-                    onSuccess(cached)
-                }
-                return@withContext
+    when (val state = painter.state) {
+        is AsyncImagePainter.State.Success -> {
+            val imageBitmap = remember(state.result) {
+                state.result.drawable.toBitmap().asImageBitmap()
             }
-            
-            // Download image
-            val connection = URL(url).openConnection()
-            connection.connect()
-            val inputStream = connection.getInputStream()
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            inputStream.close()
-            
-            if (bitmap != null) {
-                // Cache the bitmap
-                ImageCache.put(url, bitmap)
-                
-                withContext(Dispatchers.Main) {
-                    onSuccess(bitmap)
-                }
-            } else {
-                withContext(Dispatchers.Main) {
-                    onError()
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            withContext(Dispatchers.Main) {
-                onError()
-            }
+            content(imageBitmap)
         }
+        is AsyncImagePainter.State.Error -> error()
+        else -> placeholder()
     }
 }

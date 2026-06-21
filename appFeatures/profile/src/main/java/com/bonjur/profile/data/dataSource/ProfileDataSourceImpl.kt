@@ -14,8 +14,13 @@ class ProfileDataSourceImpl @Inject constructor(
     override suspend fun getUserById(userId: String): com.bonjur.profile.data.DTOs.UserProfileResponse =
         fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.GetUserById(userId))
 
-    override suspend fun updateProfile(request: com.bonjur.profile.data.DTOs.ProfileUpdateRequest): com.bonjur.profile.data.DTOs.UserProfileResponse =
-        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.UpdateProfile(request))
+    override suspend fun updateProfile(
+        fields: Map<String, String>,
+        imageFile: com.bonjur.network.APIClient.MultipartFile?
+    ): ByteArray =
+        fetchRawData(
+            com.bonjur.profile.data.endPoint.ProfileEndpoints.UpdateProfile(fields, imageFile)
+        )
 
     override suspend fun deleteAccount(): ByteArray =
         fetchRawData(com.bonjur.profile.data.endPoint.ProfileEndpoints.DeleteAccount)
@@ -25,6 +30,9 @@ class ProfileDataSourceImpl @Inject constructor(
 
     override suspend fun getLanguages(): List<com.bonjur.profile.data.DTOs.LanguageResponse> =
         fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.GetLanguages)
+
+    override suspend fun getMyClubs(userId: String): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyClubResponse>> =
+        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyClubs(userId))
 
     override suspend fun getMyEvents(): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyEventResponse>> =
         fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyEvents)

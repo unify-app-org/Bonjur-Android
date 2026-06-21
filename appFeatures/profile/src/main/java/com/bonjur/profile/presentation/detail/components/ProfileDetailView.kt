@@ -5,7 +5,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -116,15 +119,15 @@ fun ProfileDetailView(
                 Spacer(modifier = Modifier.height(navBarHeight))
             }
 
-            // User card
-            item(key = "user_card") {
+            // Compact header (avatar + name + subtitle + User Card ID chip)
+            item(key = "compact_header") {
                 store.state.uiModel?.userCardModel?.let { cardModel ->
-                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        UserCardView(
-                            model = cardModel,
-                            onTap = { store.send(ProfileDetailAction.UserCardTapped) }
-                        )
-                    }
+                    CompactHeaderView(
+                        card = cardModel,
+                        isOwnProfile = store.state.isOwnProfile,
+                        onCardTap = { store.send(ProfileDetailAction.UserCardTapped) },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
                 }
             }
 
@@ -133,6 +136,7 @@ fun ProfileDetailView(
                 UserInfoView(
                     uiModel = store.state.uiModel,
                     isOwnProfile = store.state.isOwnProfile,
+                    onEditTap = { store.send(ProfileDetailAction.EditProfileTapped) },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -218,15 +222,11 @@ fun ProfileDetailView(
             isSegmentSticky = isSegmentSticky,
             selectedSegment = store.state.selectedSegment,
             isOwnProfile = store.state.isOwnProfile,
-            title = if (store.state.isOwnProfile) {
-                "Profile"
-            } else {
-                store.state.uiModel?.userCardModel?.nameSurname ?: ""
-            },
+            title = store.state.navigationTitle,
             onSettingsTapped = { store.send(ProfileDetailAction.SettingsTapped) },
             onBackTapped = { store.send(ProfileDetailAction.BackTapped) },
             onSegmentSelected = { segment ->
-                store.send(ProfileDetailAction.FetchData) // replace with SegmentChanged
+                store.send(ProfileDetailAction.SegmentTapped(segment))
             },
             onNavBarPositioned = { height -> navBarHeight = height },
             modifier = Modifier.zIndex(1f)
@@ -286,7 +286,7 @@ private fun ProfileNavigationOverlay(
                 if (isOwnProfile) {
                     IconButton(onClick = onSettingsTapped) {
                         Icon(
-                            painter = Images.Icons.user(),
+                            painter = Images.Icons.gear(),
                             contentDescription = "Settings",
                             tint = Palette.blackHigh
                         )
@@ -319,9 +319,103 @@ private fun ProfileNavigationOverlay(
 }
 
 @Composable
+private fun CompactHeaderView(
+    card: com.bonjur.profile.presentation.detail.models.UserCardModel,
+    isOwnProfile: Boolean,
+    onCardTap: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        com.bonjur.designSystem.components.cashedImage.CachedAsyncImage(
+            url = card.imageUrl,
+            modifier = Modifier
+                .size(88.dp)
+                .clip(CircleShape)
+                .border(3.dp, Palette.grayTeritary.copy(alpha = 0.3f), CircleShape)
+                .background(Palette.grayQuaternary),
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+            placeholder = {
+                Icon(
+                    painter = Images.Icons.user(),
+                    contentDescription = null,
+                    tint = Palette.blackMedium,
+                    modifier = Modifier
+                        .size(88.dp)
+                        .background(Palette.grayQuaternary, CircleShape)
+                        .padding(22.dp)
+                )
+            },
+            error = {
+                Icon(
+                    painter = Images.Icons.user(),
+                    contentDescription = null,
+                    tint = Palette.blackMedium,
+                    modifier = Modifier
+                        .size(88.dp)
+                        .background(Palette.grayQuaternary, CircleShape)
+                        .padding(22.dp)
+                )
+            }
+        )
+
+        Text(
+            text = card.nameSurname,
+            style = AppTypography.TitleMd.bold,
+            color = Palette.black,
+            modifier = Modifier.padding(top = 14.dp)
+        )
+
+        val subtitle = listOf(card.speciality, card.community)
+            .filter { it.isNotEmpty() }
+            .joinToString(" · ")
+        if (subtitle.isNotEmpty()) {
+            Text(
+                text = subtitle,
+                style = AppTypography.BodyTextSm.bold,
+                color = Palette.blackMedium,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.padding(top = 3.dp)
+            )
+        }
+
+        if (isOwnProfile) {
+            Surface(
+                onClick = onCardTap,
+                shape = CircleShape,
+                color = Palette.greenLight,
+                border = BorderStroke(1.dp, Palette.secondary),
+                modifier = Modifier.padding(top = 14.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = "🪪  User Card ID",
+                        style = AppTypography.TextMd.bold,
+                        color = Palette.green900
+                    )
+                    Icon(
+                        painter = Images.Icons.chevronRight(),
+                        contentDescription = null,
+                        tint = Palette.green900,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun UserInfoView(
     uiModel: ProfileDetail.UIModel?,
     isOwnProfile: Boolean,
+    onEditTap: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AppInfoContainer(
@@ -341,7 +435,7 @@ private fun UserInfoView(
                 color = Palette.black
             )
             if (isOwnProfile) {
-                IconButton(onClick = { /* Edit */ }) {
+                IconButton(onClick = onEditTap) {
                     Icon(
                         painter = Images.Icons.penLine(),
                         contentDescription = "Edit",
@@ -397,7 +491,7 @@ private fun UserInfoView(
             UserInfoCell(
                 icon = Images.Icons.user(),
                 title = "Languages",
-                subtitle = uiModel?.languages?.joinToString(", ") ?: "-"
+                subtitle = uiModel?.languages?.joinToString(", ") { it.title } ?: "-"
             )
         }
     }
@@ -462,9 +556,7 @@ private fun ClubsTab(
             clubs.forEach { club ->
                 ClubCardView(
                     model = club,
-                    onTap = {
-                        // Handle event tap
-                    }
+                    onTap = { onItemTapped(club.id) }
                 )
             }
         }
@@ -489,12 +581,8 @@ private fun EventsTab(
             events.forEach { event ->
                 EventsCardView(
                     model = event,
-                    onButtonTap = {
-                        // Handle button tap
-                    },
-                    onTap = {
-                        // Handle event tap
-                    }
+                    onButtonTap = { /* no-op in profile (matches iOS) */ },
+                    onTap = { onItemTapped(event.id) }
                 )
             }
         }
@@ -521,12 +609,8 @@ private fun HangoutsTab(
             hangouts.forEach { hangout ->
                 HangoutsCardView(
                     model = hangout,
-                    onButtonTap = {
-                        // Handle button tap
-                    },
-                    onTap = {
-                        // Handle hangout tap
-                    }
+                    onButtonTap = { /* no-op in profile (matches iOS) */ },
+                    onTap = { onItemTapped(hangout.id) }
                 )
             }
         }

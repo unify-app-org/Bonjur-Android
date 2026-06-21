@@ -53,7 +53,10 @@ class ApiClient @Inject constructor(
         }
     }
 
-    override suspend fun requestRawData(endpoint: AppEndpoint): ByteArray {
+    override suspend fun requestRawData(endpoint: AppEndpoint): ByteArray =
+        requestRawData(endpoint, isRetry = false)
+
+    private suspend fun requestRawData(endpoint: AppEndpoint, isRetry: Boolean): ByteArray {
         val url = buildUrl(endpoint)
         var durationMs = 0L
 
@@ -64,7 +67,13 @@ class ApiClient @Inject constructor(
                 response = client.request(url) {
                     method = endpoint.method.toKtor()
 
+                    val multipart = endpoint.multipart
+
                     endpoint.headers?.forEach { (key, value) ->
+                        // Let MultiPartFormDataContent own the Content-Type (boundary).
+                        if (multipart != null && key.equals("Content-Type", ignoreCase = true)) {
+                            return@forEach
+                        }
                         header(key, value)
                     }
 
@@ -76,34 +85,63 @@ class ApiClient @Inject constructor(
                         }
                     }
 
-                    endpoint.body?.let {
-                        contentType(ContentType.Application.Json)
-                        setBody(json.encodeToString(it))
+                    if (multipart != null) {
+                        setBody(multipart.toFormDataContent())
+                    } else {
+                        endpoint.body?.let {
+                            contentType(ContentType.Application.Json)
+                            setBody(json.encodeToString(it))
+                        }
                     }
 
                     // Log request
                     logger.logRequest(
                         this,
-                        endpoint.body?.let { json.encodeToString(it) }
+                        multipart?.let { "[multipart: ${it.files.size} file(s)]" }
+                            ?: endpoint.body?.let { json.encodeToString(it) }
                     )
                 }
             }
 
             val bytes = response.body<ByteArray>()
 
+            val isOk = response.status.value in 200..299
             logger.logResponse(
                 response = response,
-                bodyText = "[Binary data: ${bytes.size} bytes]",
+                // Decode error bodies so the failure reason is visible; keep success raw.
+                bodyText = if (isOk) "[Binary data: ${bytes.size} bytes]"
+                else runCatching { bytes.decodeToString() }.getOrElse { "[${bytes.size} bytes]" },
                 durationMs = durationMs
             )
 
-            return bytes
+            when (response.status.value) {
+                in 200..299 -> return bytes
 
+                401 -> {
+                    if (!isRetry && endpoint.requiresAuth) {
+                        refreshTokenIfNeeded()
+                        return requestRawData(endpoint, isRetry = true)
+                    }
+                    throw decodeError(bytes) ?: ApiException.Unauthorized
+                }
+
+                else -> throw decodeError(bytes) ?: ApiException.Unknown
+            }
+
+        } catch (e: ApiException) {
+            throw e
         } catch (e: Exception) {
             logger.logError(e, url)
             throw ApiException.NetworkException(e)
         }
     }
+
+    private fun decodeError(bytes: ByteArray): ApiException? =
+        try {
+            ApiException.ServerError(json.decodeFromString<NetworkError>(bytes.decodeToString()))
+        } catch (e: Exception) {
+            null
+        }
 
     private suspend fun performRequest(
         endpoint: AppEndpoint,
@@ -315,6 +353,9 @@ class ApiClient @Inject constructor(
                     )
                 }
                 files.forEach { file ->
+                    // Ktor's formData() auto-adds `Content-Disposition: form-data; name=<key>`;
+                    // only append filename here (adding a full disposition duplicates it and
+                    // the server fails to parse the multipart body).
                     append(
                         file.name,
                         file.bytes,

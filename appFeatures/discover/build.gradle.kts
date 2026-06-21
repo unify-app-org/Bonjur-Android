@@ -60,6 +60,7 @@ dependencies {
     implementation(project(":appFeatures:hangouts"))
     implementation(project(":appFeatures:communities"))
     implementation(project(":appFeatures:clubs"))
+    implementation(project(":appFeatures:profile"))
 
     // Async images
     implementation("io.coil-kt:coil-compose:2.6.0")

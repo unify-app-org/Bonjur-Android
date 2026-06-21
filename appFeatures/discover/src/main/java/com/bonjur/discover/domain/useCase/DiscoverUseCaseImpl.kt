@@ -8,12 +8,12 @@ import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
 import com.bonjur.discover.data.DTOs.DiscoverClub
 import com.bonjur.discover.data.DTOs.DiscoverCommunity
+import com.bonjur.discover.data.DTOs.DiscoverEvent
 import com.bonjur.discover.data.DTOs.DiscoverHangout
 import com.bonjur.discover.data.DTOs.DiscoverMember
 import com.bonjur.discover.data.DTOs.JoinHangoutRequest
 import com.bonjur.discover.data.dataSources.DiscoverDataSource
 import com.bonjur.discover.domain.models.UserModel
-import com.bonjur.events.domain.useCase.EventsUseCase
 import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import com.bonjur.network.manager.TokenManager
@@ -24,12 +24,23 @@ import javax.inject.Inject
 class DiscoverUseCaseImpl @Inject constructor(
     val dataSource: DiscoverDataSource,
     val tokenManager: TokenManager,
-    val defaultStorage: DefaultStorage,
-    val eventsUseCase: EventsUseCase
+    val defaultStorage: DefaultStorage
 ) : DiscoverUseCase {
 
-    private val defaultQuery: Map<String, String>
-        get() = mapOf("page" to "0", "size" to "10")
+    private fun paginationQuery(
+        page: Int,
+        size: Int,
+        categoryIds: List<Int>
+    ): MutableMap<String, String> {
+        val query = mutableMapOf(
+            "page" to page.toString(),
+            "size" to size.toString()
+        )
+        if (categoryIds.isNotEmpty()) {
+            query["categoryIds"] = categoryIds.joinToString(",")
+        }
+        return query
+    }
 
     override suspend fun fetchUserData(): UserModel {
         val userId = tokenManager.getUserId() ?: return UserModel(
@@ -39,8 +50,8 @@ class DiscoverUseCaseImpl @Inject constructor(
         return UserModel(
             id = 0,
             name = data.fullName ?: "-",
-            profileImage = data.profileUrl,
-            greeting = ""
+            profileImage = data.fileUrl ?: data.profileUrl,
+            greeting = data.greeting ?: ""
         )
     }
 
@@ -60,23 +71,41 @@ class DiscoverUseCaseImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchCommunitiesData(): List<CommunityCardModel> {
-        return dataSource.getCommunities(defaultQuery).map { it.toCardModel() }
+    override suspend fun fetchCommunitiesData(
+        page: Int,
+        size: Int,
+        categoryIds: List<Int>
+    ): List<CommunityCardModel> {
+        return dataSource.getCommunities(paginationQuery(page, size, categoryIds))
+            .map { it.toCardModel() }
     }
 
-    override suspend fun fetchClubsData(categoryIds: List<Int>): List<ClubCardModel> {
-        val query = defaultQuery.toMutableMap()
+    override suspend fun fetchClubsData(
+        page: Int,
+        size: Int,
+        categoryIds: List<Int>
+    ): List<ClubCardModel> {
+        val query = paginationQuery(page, size, categoryIds)
         query["parentId"] = defaultStorage.getInt(DefaultStorageKey.COMMUNITY_ID, 0).toString()
-        if (categoryIds.isNotEmpty()) query["categoryIds"] = categoryIds.joinToString(",")
         return dataSource.getClubs(query).map { it.toCardModel() }
     }
 
-    override suspend fun fetchEvents(): List<EventsCardModel> = eventsUseCase.fetchEventsData()
+    override suspend fun fetchEvents(
+        page: Int,
+        size: Int,
+        categoryIds: List<Int>
+    ): List<EventsCardModel> {
+        return dataSource.getEvents(paginationQuery(page, size, categoryIds))
+            .map { it.toCardModel() }
+    }
 
-    override suspend fun fetchHangoutsData(categoryIds: List<Int>): List<HangoutsCardModel> {
-        val query = defaultQuery.toMutableMap()
-        if (categoryIds.isNotEmpty()) query["categoryIds"] = categoryIds.joinToString(",")
-        return dataSource.getHangouts(query).map { it.toCardModel() }
+    override suspend fun fetchHangoutsData(
+        page: Int,
+        size: Int,
+        categoryIds: List<Int>
+    ): List<HangoutsCardModel> {
+        return dataSource.getHangouts(paginationQuery(page, size, categoryIds))
+            .map { it.toCardModel() }
     }
 
     override suspend fun joinHangout(hangoutId: String) {
@@ -96,6 +125,24 @@ class DiscoverUseCaseImpl @Inject constructor(
         },
         accessType = visibility.toAccessType(),
         requestType = requestStatus.toRequestType()
+    )
+
+    private fun DiscoverEvent.toCardModel() = EventsCardModel(
+        id = id ?: "",
+        name = name ?: "-",
+        coverImageURL = background,
+        memberCount = membersCount ?: 0,
+        totalCapacity = capacity,
+        club = EventsCardModel.Club(
+            name = club?.name ?: "-",
+            id = club?.id ?: 0
+        ),
+        tags = categoryResponses.map {
+            AppUIEntities.Tags(id = it.id ?: 0, type = "", title = it.title ?: "-")
+        },
+        bgType = AppUIEntities.BackgroundType.Primary,
+        requestType = requestStatus.toRequestType(),
+        accessType = visibility.toAccessType()
     )
 
     private fun DiscoverClub.toCardModel() = ClubCardModel(

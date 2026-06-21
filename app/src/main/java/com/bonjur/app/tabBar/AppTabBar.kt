@@ -311,6 +311,10 @@ fun ProfileTabContent(
         startDestination = ProfileScreens.ProfileDetail
     ) {
         profileNavGraph(navigator)
+        // Profile cards open club/event/hangout details in this tab's stack.
+        clubsNavGraph(navigator)
+        eventsNavGraph(navigator)
+        hangoutsNavGraph(navigator)
     }
 }
 

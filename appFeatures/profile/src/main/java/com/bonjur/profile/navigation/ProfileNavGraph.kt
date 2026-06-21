@@ -29,8 +29,9 @@ fun NavGraphBuilder.profileNavGraph(navigator: Navigator) {
     }
 
     composable<ProfileScreens.EditProfile> {
+        val inputData = remember { NavArgs.get<EditProfileInputData>() ?: EditProfileInputData() }
         EditProfileScreen(
-            inputData = EditProfileInputData(),
+            inputData = inputData,
             navigator = navigator
         )
     }

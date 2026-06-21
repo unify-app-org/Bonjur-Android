@@ -12,13 +12,29 @@ interface DiscoverUseCase {
 
     suspend fun fetchFilterData(): List<FilterView.Model>
 
-    suspend fun fetchCommunitiesData(): List<CommunityCardModel>
+    suspend fun fetchCommunitiesData(
+        page: Int = 0,
+        size: Int = 10,
+        categoryIds: List<Int> = emptyList()
+    ): List<CommunityCardModel>
 
-    suspend fun fetchClubsData(categoryIds: List<Int> = emptyList()): List<ClubCardModel>
+    suspend fun fetchClubsData(
+        page: Int = 0,
+        size: Int = 10,
+        categoryIds: List<Int> = emptyList()
+    ): List<ClubCardModel>
 
-    suspend fun fetchEvents(): List<EventsCardModel>
+    suspend fun fetchEvents(
+        page: Int = 0,
+        size: Int = 10,
+        categoryIds: List<Int> = emptyList()
+    ): List<EventsCardModel>
 
-    suspend fun fetchHangoutsData(categoryIds: List<Int> = emptyList()): List<HangoutsCardModel>
+    suspend fun fetchHangoutsData(
+        page: Int = 0,
+        size: Int = 10,
+        categoryIds: List<Int> = emptyList()
+    ): List<HangoutsCardModel>
 
     suspend fun joinHangout(hangoutId: String)
 }

@@ -3,6 +3,7 @@ package com.bonjur.discover.data.dataSources
 import com.bonjur.discover.data.DTOs.DiscoverCategorySection
 import com.bonjur.discover.data.DTOs.DiscoverClub
 import com.bonjur.discover.data.DTOs.DiscoverCommunity
+import com.bonjur.discover.data.DTOs.DiscoverEvent
 import com.bonjur.discover.data.DTOs.DiscoverHangout
 import com.bonjur.discover.data.DTOs.DiscoverUserResponse
 import com.bonjur.discover.data.DTOs.JoinHangoutRequest
@@ -20,6 +21,9 @@ class DiscoverDataSourceImpl @Inject constructor(
 
     override suspend fun getClubs(query: Map<String, String>): List<DiscoverClub> =
         fetch(DiscoverEndPoints.GetClubs(query))
+
+    override suspend fun getEvents(query: Map<String, String>): List<DiscoverEvent> =
+        fetch(DiscoverEndPoints.GetEvents(query))
 
     override suspend fun getCommunities(query: Map<String, String>): List<DiscoverCommunity> =
         fetch(DiscoverEndPoints.GetCommunities(query))
