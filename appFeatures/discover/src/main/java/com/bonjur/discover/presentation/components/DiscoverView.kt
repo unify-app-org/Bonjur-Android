@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -303,7 +304,10 @@ private fun CommunitiesView(
     onCommunityTap: (CommunityCardModel) -> Unit,
     onLoadMore: () -> Unit
 ) {
-    var currentPage by remember { mutableStateOf(0) }
+    // rememberSaveable so the page survives Discover leaving composition on nav.
+    // Plain remember reset this to 0, and AppTabView's LaunchedEffect(currentPage)
+    // then force-scrolled the (restored) pager back to the first item on return.
+    var currentPage by rememberSaveable { mutableStateOf(0) }
 
     if (communities.isNotEmpty()) {
         Column {
