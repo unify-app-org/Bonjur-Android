@@ -1,21 +1,15 @@
 package com.bonjur.groups.domain.useCase
 
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
-import com.bonjur.communities.presentation.list.model.CommunityCardModel
-import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.events.presentation.list.models.EventsCardModel
+import com.bonjur.groups.data.models.GroupsPaginationQuery
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 
 interface GroupsUseCase {
 
-    suspend fun fetchFilterData(): List<FilterView.Model>
-
-    suspend fun fetchCommunitiesData(): List<CommunityCardModel>
-
-    suspend fun fetchClubsData(): List<ClubCardModel>
+    suspend fun fetchClubs(query: GroupsPaginationQuery): List<ClubCardModel>
 
     suspend fun fetchEvents(): List<EventsCardModel>
 
-    suspend fun fetchHangoutsData(): List<HangoutsCardModel>
-
+    suspend fun fetchHangouts(query: GroupsPaginationQuery): List<HangoutsCardModel>
 }

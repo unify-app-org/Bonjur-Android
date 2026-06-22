@@ -11,12 +11,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
@@ -58,6 +62,7 @@ import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
 import kotlin.collections.isNotEmpty
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverView(
     store: FeatureStore<DiscoverViewState, DiscoverAction, DiscoverSideEffect>
@@ -86,6 +91,25 @@ fun DiscoverView(
         store.send(DiscoverAction.FetchData)
     }
 
+    // First ON_RESUME coincides with the initial fetch above, so skip it; every
+    // later resume (returning from a detail screen) refetches the 4 activity
+    // sections so join/request/exit/edit changes are reflected. Mirrors iOS's
+    // onFirstAppear + onAppear(hasAppearedOnce) pair.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var hasResumedOnce by remember { mutableStateOf(false) }
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                if (hasResumedOnce) {
+                    store.send(DiscoverAction.RefreshActivities)
+                }
+                hasResumedOnce = true
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     LaunchedEffect(profileViewHeight, filterViewHeight) {
         topViewHeight = profileViewHeight + filterViewHeight
     }
@@ -98,40 +122,50 @@ fun DiscoverView(
         Column(modifier = Modifier.fillMaxSize()) {
             Spacer(modifier = Modifier.height(topViewHeight))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(nestedScrollConnection)
-                    .verticalScroll(rememberScrollState())
+            PullToRefreshBox(
+                isRefreshing = state.isRefreshing,
+                onRefresh = { store.send(DiscoverAction.PullToRefresh) },
+                modifier = Modifier.fillMaxSize()
             ) {
-                CommunitiesView(
-                    communities = state.uiModel.communities,
-                    onCommunityTap = { item -> store.send(DiscoverAction.CommunityItemTapped(item.id)) }
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .nestedScroll(nestedScrollConnection)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    CommunitiesView(
+                        communities = state.uiModel.communities,
+                        onCommunityTap = { item -> store.send(DiscoverAction.CommunityItemTapped(item.id)) },
+                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.COMMUNITY)) }
+                    )
 
-                ClubsView(
-                    screenWidth = screenWidth,
-                    clubs = state.uiModel.clubs,
-                    onClubTap = { item -> store.send(DiscoverAction.CLubItemTapped(item.id)) },
-                    onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.CLUBS)) }
-                )
+                    ClubsView(
+                        screenWidth = screenWidth,
+                        clubs = state.uiModel.clubs,
+                        onClubTap = { item -> store.send(DiscoverAction.CLubItemTapped(item.id)) },
+                        onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.CLUBS)) },
+                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.CLUBS)) }
+                    )
 
-                EventsView(
-                    screenWidth = screenWidth,
-                    events = state.uiModel.events,
-                    clubs = state.uiModel.clubs,
-                    onEventTap = { item -> store.send(DiscoverAction.EventItemTapped(item.id)) },
-                    onButtonTap = { /* Handle button */ },
-                    onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.EVENTS)) }
-                )
+                    EventsView(
+                        screenWidth = screenWidth,
+                        events = state.uiModel.events,
+                        clubs = state.uiModel.clubs,
+                        onEventTap = { item -> store.send(DiscoverAction.EventItemTapped(item.id)) },
+                        onButtonTap = { /* iOS events card button is a no-op here */ },
+                        onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.EVENTS)) },
+                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.EVENTS)) }
+                    )
 
-                HangoutsView(
-                    screenWidth = screenWidth,
-                    hangouts = state.uiModel.hangouts,
-                    onHangoutTap = { item -> store.send(DiscoverAction.HangoutItemTapped(item.id)) },
-                    onButtonTap = { /* Handle button */ },
-                    onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.HANG_OUTS)) }
-                )
+                    HangoutsView(
+                        screenWidth = screenWidth,
+                        hangouts = state.uiModel.hangouts,
+                        onHangoutTap = { item -> store.send(DiscoverAction.HangoutItemTapped(item.id)) },
+                        onButtonTap = { item -> store.send(DiscoverAction.JoinHangout(item.id)) },
+                        onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.HANG_OUTS)) },
+                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.HANG_OUTS)) }
+                    )
+                }
             }
         }
 
@@ -266,7 +300,8 @@ private fun ProfilePlaceholder() {
 @Composable
 private fun CommunitiesView(
     communities: List<CommunityCardModel>,
-    onCommunityTap: (CommunityCardModel) -> Unit
+    onCommunityTap: (CommunityCardModel) -> Unit,
+    onLoadMore: () -> Unit
 ) {
     var currentPage by remember { mutableStateOf(0) }
 
@@ -283,6 +318,7 @@ private fun CommunitiesView(
                 pageCount = communities.size,
                 onPageChange = { newPage ->
                     currentPage = newPage
+                    if (newPage >= communities.lastIndex) onLoadMore()
                 },
                 modifier = Modifier
                     .height(200.dp)
@@ -307,7 +343,8 @@ private fun ClubsView(
     screenWidth: Dp,
     clubs: List<ClubCardModel>,
     onClubTap: (ClubCardModel) -> Unit,
-    onViewAll: () -> Unit
+    onViewAll: () -> Unit,
+    onLoadMore: () -> Unit
 ) {
     Column {
         SectionHeader(
@@ -322,13 +359,14 @@ private fun ClubsView(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(clubs) { club ->
+                itemsIndexed(clubs) { index, club ->
                     Box(modifier = Modifier.width(screenWidth - 60.dp)) {
                         ClubCardView(
                             model = club,
                             onTap = { onClubTap(club) }
                         )
                     }
+                    LoadMoreTrigger(index = index, lastIndex = clubs.lastIndex, onLoadMore = onLoadMore)
                 }
             }
         } else {
@@ -352,22 +390,25 @@ private fun EventsView(
     clubs: List<ClubCardModel>,
     onEventTap: (EventsCardModel) -> Unit,
     onButtonTap: (EventsCardModel) -> Unit,
-    onViewAll: () -> Unit
+    onViewAll: () -> Unit,
+    onLoadMore: () -> Unit
 ) {
-    if (events.isNotEmpty() && clubs.isNotEmpty()) {
-        Column {
-            SectionHeader(
-                title = "Events",
-                showViewAll = true,
-                onViewAll = onViewAll
-            )
+    val isEmpty = events.isEmpty() || clubs.isEmpty()
 
+    Column {
+        SectionHeader(
+            title = "Events",
+            showViewAll = events.isNotEmpty(),
+            onViewAll = onViewAll
+        )
+
+        if (!isEmpty) {
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(events) { event ->
+                itemsIndexed(events) { index, event ->
                     Box(modifier = Modifier.width(screenWidth - 90.dp)) {
                         EventsCardView(
                             model = event,
@@ -375,8 +416,19 @@ private fun EventsView(
                             onTap = { onEventTap(event) }
                         )
                     }
+                    LoadMoreTrigger(index = index, lastIndex = events.lastIndex, onLoadMore = onLoadMore)
                 }
             }
+        } else {
+            AppEmptyView(
+                model = AppEmptyModel(
+                    icon = Images.Icons.twoUsers(),
+                    text = "There are no event for the clubs yet. Be the pioneer and start the very first one now!",
+                    buttonTitle = "Create events +"
+                ),
+                onButtonClick = { /* Handle create */ },
+                modifier = Modifier.padding(16.dp)
+            )
         }
     }
 }
@@ -387,7 +439,8 @@ private fun HangoutsView(
     hangouts: List<HangoutsCardModel>,
     onHangoutTap: (HangoutsCardModel) -> Unit,
     onButtonTap: (HangoutsCardModel) -> Unit,
-    onViewAll: () -> Unit
+    onViewAll: () -> Unit,
+    onLoadMore: () -> Unit
 ) {
     Column {
         SectionHeader(
@@ -402,7 +455,7 @@ private fun HangoutsView(
                 contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(hangouts) { hangout ->
+                itemsIndexed(hangouts) { index, hangout ->
                     Box(modifier = Modifier.width(screenWidth - 90.dp)) {
                         HangoutsCardView(
                             model = hangout,
@@ -410,6 +463,7 @@ private fun HangoutsView(
                             onTap = { onHangoutTap(hangout) }
                         )
                     }
+                    LoadMoreTrigger(index = index, lastIndex = hangouts.lastIndex, onLoadMore = onLoadMore)
                 }
             }
         } else {
@@ -422,6 +476,23 @@ private fun HangoutsView(
                 onButtonClick = { /* Handle create */ },
                 modifier = Modifier.padding(16.dp)
             )
+        }
+    }
+}
+
+/// Compose equivalent of iOS `loadMoreIfNeeded(index == count - 1)`: when the
+/// last item enters composition (i.e. scrolled into view), trigger a page load.
+/// Keyed on lastIndex so it re-fires after the list grows and a new last item
+/// appears, and not on every recomposition.
+@Composable
+private fun LoadMoreTrigger(
+    index: Int,
+    lastIndex: Int,
+    onLoadMore: () -> Unit
+) {
+    if (index == lastIndex && lastIndex >= 0) {
+        LaunchedEffect(lastIndex) {
+            onLoadMore()
         }
     }
 }

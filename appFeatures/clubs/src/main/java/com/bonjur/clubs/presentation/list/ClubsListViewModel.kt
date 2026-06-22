@@ -7,11 +7,11 @@
 
 package com.bonjur.clubs.presentation.list
 
-import android.R.attr.text
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.clubs.domain.useCase.ClubsUseCase
 import com.bonjur.clubs.navigation.ClubsScreens
+import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.clubs.presentation.list.models.ClubsListAction
 import com.bonjur.clubs.presentation.list.models.ClubsListInputData
 import com.bonjur.clubs.presentation.list.models.ClubsListSideEffect
@@ -33,6 +33,14 @@ class ClubsListViewModel @Inject constructor(
     private lateinit var inputData: ClubsListInputData
     private lateinit var navigator: Navigator
 
+    // Pagination — mirrors iOS ClubsViewModel (grow size, refetch page 0, replace).
+    private val paginationStep = 10
+    private var clubsSize = paginationStep
+    private var isLoadingMoreClubs = false
+    private var hasMoreClubs = true
+    private var sourceClubs: List<ClubCardModel> = emptyList()
+    private var selectedCategoryIds: List<Int> = emptyList()
+
     fun init(inputData: ClubsListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
@@ -42,6 +50,7 @@ class ClubsListViewModel @Inject constructor(
     override fun handle(action: ClubsListAction) {
         when (action) {
             ClubsListAction.FetchData -> fetchData()
+            ClubsListAction.LoadMore -> loadMoreClubs()
             is ClubsListAction.clubItemTapped -> handleSelectedItem(action.id)
             is ClubsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is ClubsListAction.FilterSelected -> handleFilterSelected(action.items)
@@ -58,14 +67,44 @@ class ClubsListViewModel @Inject constructor(
     private suspend fun getClubs() {
         postEffect(ClubsListSideEffect.Loading(true))
         try {
-            val data = useCase.fetchClubsData()
-            updateState(
-                state.copy(uiModel = state.uiModel.copy(clubs = data))
+            val data = useCase.fetchClubsData(
+                size = clubsSize,
+                name = state.uiModel.searchText,
+                categoryIds = selectedCategoryIds
             )
+            hasMoreClubs = data.size >= clubsSize
+            sourceClubs = data
+            applySearch()
         } catch (e: ApiException) {
             postEffect(ClubsListSideEffect.Error(e))
         } finally {
             postEffect(ClubsListSideEffect.Loading(false))
+        }
+    }
+
+    private fun loadMoreClubs() {
+        if (isLoadingMoreClubs || !hasMoreClubs) return
+        isLoadingMoreClubs = true
+        val previousSize = clubsSize
+        val previousCount = sourceClubs.size
+        clubsSize += paginationStep
+
+        viewModelScope.launch {
+            try {
+                val data = useCase.fetchClubsData(
+                    size = clubsSize,
+                    name = state.uiModel.searchText,
+                    categoryIds = selectedCategoryIds
+                )
+                hasMoreClubs = data.size > previousCount
+                sourceClubs = data
+                applySearch()
+            } catch (e: ApiException) {
+                clubsSize = previousSize
+                postEffect(ClubsListSideEffect.Error(e))
+            } finally {
+                isLoadingMoreClubs = false
+            }
         }
     }
 
@@ -84,6 +123,32 @@ class ClubsListViewModel @Inject constructor(
         updateState(
             state.copy(uiModel = state.uiModel.copy(searchText = text))
         )
+        applySearch()
+    }
+
+    /** Client-side filter over the already-fetched source list. Mirrors iOS `applySearch`. */
+    private fun applySearch() {
+        val query = state.uiModel.searchText.trim().lowercase()
+        val filtered = if (query.isEmpty()) {
+            sourceClubs
+        } else {
+            sourceClubs.filter { club ->
+                club.name.lowercase().contains(query) ||
+                    club.communityName.lowercase().contains(query) ||
+                    club.community.lowercase().contains(query)
+            }
+        }
+        updateState(state.copy(uiModel = state.uiModel.copy(clubs = filtered)))
+    }
+
+    /** Filter selection -> categoryIds -> reset paging -> refetch. Mirrors Discover. */
+    private fun handleFilterSelected(items: List<FilterView.Items>) {
+        selectedCategoryIds = items.map { it.id }
+        clubsSize = paginationStep
+        hasMoreClubs = true
+        viewModelScope.launch {
+            getClubs()
+        }
     }
 
     private fun handleSelectedItem(id: Int) {
@@ -92,16 +157,6 @@ class ClubsListViewModel @Inject constructor(
                 ClubsScreens.Details.route,
                 com.bonjur.clubs.presentation.model.ClubDetailsInputData(clubId = id)
             )
-        }
-    }
-
-    private fun handleFilterSelected(items: List<FilterView.Items>) {
-        // Handle filter logic
-    }
-
-    private fun navigate(to: String) {
-        viewModelScope.launch {
-            navigator.navigateTo(to)
         }
     }
 }

@@ -187,6 +187,9 @@ fun AppTabBar(
                             navigator = discoverNavigator,
                             seeAllClubs = {
                                 selectedTab = TabItem.Clubs
+                            },
+                            onProfileTab = {
+                                selectedTab = TabItem.Profile
                             }
                         )
                     }
@@ -258,7 +261,8 @@ fun ClubsTabContent(
 fun DiscoverTabContent(
     navController: NavHostController,
     navigator: Navigator,
-    seeAllClubs: (() -> Unit)?
+    seeAllClubs: (() -> Unit)?,
+    onProfileTab: (() -> Unit)? = null
 ) {
     NavigationEffect(
         navController = navController,
@@ -269,7 +273,7 @@ fun DiscoverTabContent(
         navController = navController,
         startDestination = DiscoverScreens.Discover
     ) {
-        discoverNavGraph(navigator, seeAllClubs)
+        discoverNavGraph(navigator, seeAllClubs, onProfileTab)
         communitiesNavGraph(navigator)
         eventsNavGraph(navigator)
         hangoutsNavGraph(navigator)

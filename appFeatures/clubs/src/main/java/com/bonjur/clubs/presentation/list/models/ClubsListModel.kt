@@ -40,6 +40,7 @@ sealed class ClubsListAction : FeatureAction {
     data class clubItemTapped(val id: Int) : ClubsListAction()
 
     object FetchData : ClubsListAction()
+    object LoadMore : ClubsListAction()
     data class SearchTextChanged(val text: String) : ClubsListAction()
     data class FilterSelected(val items: List<FilterView.Items>) : ClubsListAction()
 }

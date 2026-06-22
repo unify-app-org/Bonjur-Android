@@ -1,15 +1,14 @@
 package com.bonjur.groups.domain.useCase
 
-import com.bonjur.clubs.data.DTOs.ClubListResponse
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
-import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.commonModel.toUserActivityRole
-import com.bonjur.designSystem.components.filter.FilterView
-import com.bonjur.designSystem.components.filter.FilterViewMocks
+import com.bonjur.events.data.DTOs.EventListResponse
 import com.bonjur.events.presentation.list.models.EventsCardModel
+import com.bonjur.groups.data.DTOs.GroupsClubResponse
+import com.bonjur.groups.data.DTOs.GroupsHangoutResponse
 import com.bonjur.groups.data.dataSource.GroupsDataSource
-import com.bonjur.hangouts.data.DTOs.HangoutListResponse
+import com.bonjur.groups.data.models.GroupsPaginationQuery
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import javax.inject.Inject
 
@@ -17,56 +16,81 @@ class GroupsUseCaseImpl @Inject constructor(
     val dataSource: GroupsDataSource
 ) : GroupsUseCase {
 
-    override suspend fun fetchFilterData(): List<FilterView.Model> = FilterViewMocks.mockData
-
-    override suspend fun fetchCommunitiesData(): List<CommunityCardModel> = emptyList()
-
-    override suspend fun fetchClubsData(): List<ClubCardModel> {
-        return dataSource.fetchJoinedClubs().map { it.toCardModel() }
+    override suspend fun fetchClubs(query: GroupsPaginationQuery): List<ClubCardModel> {
+        return dataSource.fetchJoinedClubs(query.toMap()).map { it.toCardModel() }
     }
 
-    override suspend fun fetchEvents(): List<EventsCardModel> = emptyList()
-
-    override suspend fun fetchHangoutsData(): List<HangoutsCardModel> {
-        return dataSource.fetchJoinedHangouts().map { it.toCardModel() }
+    // Mirrors iOS: joined events are fetched once at a fixed page/size (no pagination).
+    override suspend fun fetchEvents(): List<EventsCardModel> {
+        val query = GroupsPaginationQuery(page = 0, size = 50, name = null)
+        return dataSource.fetchJoinedEvents(query.toMap()).map { it.toCardModel() }
     }
 
-    private fun ClubListResponse.toCardModel() = ClubCardModel(
+    override suspend fun fetchHangouts(query: GroupsPaginationQuery): List<HangoutsCardModel> {
+        return dataSource.fetchJoinedHangouts(query.toMap()).map { it.toCardModel() }
+    }
+
+    private fun GroupsClubResponse.toCardModel() = ClubCardModel(
         id = id ?: 0,
         name = name ?: "",
         communityName = communityName ?: "",
         logoURL = clubProfile ?: "",
-        memberCount = membersCount ?: 0,
+        memberCount = memberCount ?: 0,
         totalCapacity = capacity ?: 0,
         community = communityName ?: "",
         members = members.map {
             AppUIEntities.Member(id = it.id?.hashCode() ?: 0, profileImage = it.url)
         },
-        bgType = when (background?.uppercase()) {
-            "SECONDARY" -> AppUIEntities.BackgroundType.Secondary
-            else -> AppUIEntities.BackgroundType.Primary
-        },
-        accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
-        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE,
-        role = clubUserRole?.toUserActivityRole(),
+        bgType = background.toBackgroundType(),
+        accessType = visibility.toAccessType(),
+        requestType = requestStatus.toRequestType(),
+        role = role?.toUserActivityRole(),
         upcomingEventsCount = eventCount ?: 0,
         categories = categoryResponses.map { it.title }
     )
 
-    private fun HangoutListResponse.toCardModel() = HangoutsCardModel(
+    private fun EventListResponse.toCardModel() = EventsCardModel(
+        id = id ?: "",
+        name = name ?: "",
+        coverImageURL = background,
+        memberCount = membersCount ?: 0,
+        totalCapacity = capacity,
+        club = EventsCardModel.Club(
+            name = club?.name ?: "",
+            id = club?.id ?: 0
+        ),
+        tags = categoryResponses.map { AppUIEntities.Tags(id = it.id, type = "CATEGORY", title = it.title) },
+        bgType = AppUIEntities.BackgroundType.Primary,
+        requestType = requestStatus.toRequestType(),
+        accessType = visibility.toAccessType()
+    )
+
+    private fun GroupsHangoutResponse.toCardModel() = HangoutsCardModel(
         id = id ?: "",
         name = name ?: "",
         description = about ?: "",
         memberCount = membersCount ?: 0,
         totalCapacity = capacity,
-        tags = categoryResponses.map { AppUIEntities.Tags(id = it.id, type = "CATEGORY", title = it.title) },
-        accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
-        requestType = when (requestStatus?.uppercase()) {
+        tags = categories.map { AppUIEntities.Tags(id = it.id, type = "CATEGORY", title = it.title) },
+        accessType = visibility.toAccessType(),
+        requestType = status.toRequestType()
+    )
+
+    private fun String?.toAccessType(): AppUIEntities.AccessType =
+        if (this == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE
+
+    private fun String?.toRequestType(): AppUIEntities.RequestType =
+        when (this?.uppercase()) {
             "ACCEPTED", "JOINED" -> AppUIEntities.RequestType.JOINED
             "PENDING" -> AppUIEntities.RequestType.PENDING
             "REJECTED" -> AppUIEntities.RequestType.REJECTED
-            "JOINED" -> AppUIEntities.RequestType.JOINED
             else -> AppUIEntities.RequestType.NONE
         }
-    )
+
+    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType =
+        when (this?.uppercase()) {
+            "BLUE" -> AppUIEntities.BackgroundType.Secondary
+            "PURPLE" -> AppUIEntities.BackgroundType.Tertiary
+            else -> AppUIEntities.BackgroundType.Primary
+        }
 }

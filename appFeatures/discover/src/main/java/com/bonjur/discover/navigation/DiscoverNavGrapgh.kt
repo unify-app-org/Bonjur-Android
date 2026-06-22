@@ -9,11 +9,15 @@ import com.bonjur.navigation.Navigator
 
 fun NavGraphBuilder.discoverNavGraph(
     navigator: Navigator,
-    seeAllClubs: (() -> Unit)?
+    seeAllClubs: (() -> Unit)?,
+    onProfileTab: (() -> Unit)? = null
 ) {
     composable<DiscoverScreens.Discover> {
         DiscoverScreen(
-            inputData = DiscoverInputData(onTabChange = seeAllClubs),
+            inputData = DiscoverInputData(
+                onTabChange = seeAllClubs,
+                onProfileTab = onProfileTab
+            ),
             navigator = navigator
         )
     }

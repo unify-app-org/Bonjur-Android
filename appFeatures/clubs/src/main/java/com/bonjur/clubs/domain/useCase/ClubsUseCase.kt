@@ -24,7 +24,11 @@ data class ClubFormData(
 )
 
 interface ClubsUseCase {
-    suspend fun fetchClubsData(): List<ClubCardModel>
+    suspend fun fetchClubsData(
+        size: Int,
+        name: String?,
+        categoryIds: List<Int>
+    ): List<ClubCardModel>
 
     suspend fun fetchClubsDetails(clubId: Int): ClubsDetails.UIModel
 

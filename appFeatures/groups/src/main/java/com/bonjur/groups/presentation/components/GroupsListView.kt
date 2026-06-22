@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.*
@@ -18,8 +19,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.presentation.list.components.ClubCardView
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
@@ -36,6 +40,7 @@ import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.groups.presentation.models.GroupsListAction
 import com.bonjur.groups.presentation.models.GroupsListSideEffect
 import com.bonjur.groups.presentation.models.GroupsListViewState
+import com.bonjur.groups.presentation.models.GroupsListViewState.SegmentType
 import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import kotlinx.coroutines.launch
@@ -53,8 +58,28 @@ fun GroupsListView(
     val coroutineScope = rememberCoroutineScope()
     var isUpdatingFromPager by remember { mutableStateOf(false) }
 
+    // First load fires on composition (guaranteed; the bottom-tab host doesn't reliably
+    // reach RESUMED, so ON_RESUME alone can miss the first load). Mirrors iOS
+    // `.onAppear { fetchData }`: the ON_RESUME observer below then refetches on every
+    // *return* (e.g. back from a detail screen) so join/exit changes show. A skip-first
+    // guard avoids a double fetch when composition and the initial resume coincide.
     LaunchedEffect(Unit) {
         store.send(GroupsListAction.FetchData)
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var hasResumedOnce by remember { mutableStateOf(false) }
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                if (hasResumedOnce) {
+                    store.send(GroupsListAction.FetchData)
+                }
+                hasResumedOnce = true
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     // Listen to pager changes (from swipe gesture)
@@ -62,7 +87,7 @@ fun GroupsListView(
         snapshotFlow { pagerState.currentPage }
             .collect { currentPage ->
                 if (!isUpdatingFromPager) {
-                    val segment = GroupsListViewState.SegmentType.fromIndex(currentPage)
+                    val segment = SegmentType.fromIndex(currentPage)
                     if (store.state.selectedSegment != segment) {
                         store.send(GroupsListAction.SegmentChanged(segment))
                     }
@@ -88,6 +113,7 @@ fun GroupsListView(
             .background(Color.White)
     ) {
         TopView(
+            searchText = store.state.searchText,
             selectedSegment = store.state.selectedSegment,
             onSegmentChanged = { segment ->
                 store.send(GroupsListAction.SegmentChanged(segment))
@@ -101,9 +127,20 @@ fun GroupsListView(
             modifier = Modifier.weight(1f)
         ) { page ->
             when (page) {
-                0 -> ClubsScrollView(clubs = store.state.uiModel.clubs)
-                1 -> EventsScrollView(events = store.state.uiModel.events)
-                2 -> HangoutsScrollView(hangouts = store.state.uiModel.hangouts)
+                0 -> ClubsScrollView(
+                    clubs = store.state.uiModel.clubs,
+                    onItemTap = { id -> store.send(GroupsListAction.ClubItemTapped(id)) },
+                    onLoadMore = { store.send(GroupsListAction.LoadMoreClubs) }
+                )
+                1 -> EventsScrollView(
+                    events = store.state.uiModel.events,
+                    onItemTap = { id -> store.send(GroupsListAction.EventItemTapped(id)) }
+                )
+                2 -> HangoutsScrollView(
+                    hangouts = store.state.uiModel.hangouts,
+                    onItemTap = { id -> store.send(GroupsListAction.HangoutItemTapped(id)) },
+                    onLoadMore = { store.send(GroupsListAction.LoadMoreHangouts) }
+                )
             }
         }
     }
@@ -111,8 +148,9 @@ fun GroupsListView(
 
 @Composable
 private fun TopView(
-    selectedSegment: GroupsListViewState.SegmentType,
-    onSegmentChanged: (GroupsListViewState.SegmentType) -> Unit,
+    searchText: String,
+    selectedSegment: SegmentType,
+    onSegmentChanged: (SegmentType) -> Unit,
     onSearchTextChanged: (String) -> Unit
 ) {
     Column(
@@ -123,7 +161,7 @@ private fun TopView(
     ) {
         // Title
         Text(
-            text = "Groups",
+            text = "My activities",
             style = AppTypography.TitleL.extraBold,
             color = Palette.black,
             modifier = Modifier
@@ -138,7 +176,7 @@ private fun TopView(
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             SearchView(
-                text = "",
+                text = searchText,
                 onTextChange = onSearchTextChanged,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -147,7 +185,7 @@ private fun TopView(
 
             // Segmented Picker
             val options = remember {
-                GroupsListViewState.SegmentType.entries.map { type ->
+                SegmentType.entries.map { type ->
                     object : SegmentedPickerOption {
                         override val title = type.title
                         override val id = type.name
@@ -163,7 +201,7 @@ private fun TopView(
                 options = options,
                 selectedOption = selectedOption,
                 onOptionSelected = { option ->
-                    val segment = GroupsListViewState.SegmentType.valueOf(option.id)
+                    val segment = SegmentType.valueOf(option.id)
                     onSegmentChanged(segment)
                 },
                 modifier = Modifier
@@ -177,79 +215,117 @@ private fun TopView(
 }
 
 @Composable
-private fun ClubsScrollView(clubs: List<ClubCardModel>) {
+private fun ClubsScrollView(
+    clubs: List<ClubCardModel>,
+    onItemTap: (Int) -> Unit,
+    onLoadMore: () -> Unit
+) {
     if (clubs.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(clubs, key = { it.uuid }) { club ->
+            item { TabCaption(SegmentType.CLUBS) }
+            itemsIndexed(clubs, key = { _, it -> it.uuid }) { index, club ->
                 ClubCardView(
                     model = club,
-                    onTap = {
-                        // Handle club tap
-                    }
+                    onTap = { onItemTap(club.id) }
                 )
+                LoadMoreTrigger(index = index, lastIndex = clubs.lastIndex, onLoadMore = onLoadMore)
             }
         }
     } else {
-        EmptyStateView(type = GroupsListViewState.SegmentType.CLUBS)
+        EmptyStateView(type = SegmentType.CLUBS)
     }
 }
 
 @Composable
-private fun EventsScrollView(events: List<EventsCardModel>) {
+private fun EventsScrollView(
+    events: List<EventsCardModel>,
+    onItemTap: (String) -> Unit
+) {
     if (events.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
+            item { TabCaption(SegmentType.EVENTS) }
             items(events, key = { it.uuid }) { event ->
                 EventsCardView(
                     model = event,
-                    onButtonTap = {
-                        // Handle button tap
-                    },
-                    onTap = {
-                        // Handle event tap
-                    }
+                    onButtonTap = { /* iOS card button is a no-op in Groups */ },
+                    onTap = { onItemTap(event.id) }
                 )
             }
         }
     } else {
-        EmptyStateView(type = GroupsListViewState.SegmentType.EVENTS)
+        EmptyStateView(type = SegmentType.EVENTS)
     }
 }
 
 @Composable
-private fun HangoutsScrollView(hangouts: List<HangoutsCardModel>) {
+private fun HangoutsScrollView(
+    hangouts: List<HangoutsCardModel>,
+    onItemTap: (String) -> Unit,
+    onLoadMore: () -> Unit
+) {
     if (hangouts.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(hangouts, key = { it.uuid }) { hangout ->
+            item { TabCaption(SegmentType.HANGOUTS) }
+            itemsIndexed(hangouts, key = { _, it -> it.uuid }) { index, hangout ->
                 HangoutsCardView(
                     model = hangout,
-                    onButtonTap = {
-                        // Handle button tap
-                    },
-                    onTap = {
-                        // Handle hangout tap
-                    }
+                    onButtonTap = { /* iOS card button is a no-op in Groups */ },
+                    onTap = { onItemTap(hangout.id) }
                 )
+                LoadMoreTrigger(index = index, lastIndex = hangouts.lastIndex, onLoadMore = onLoadMore)
             }
         }
     } else {
-        EmptyStateView(type = GroupsListViewState.SegmentType.HANGOUTS)
+        EmptyStateView(type = SegmentType.HANGOUTS)
+    }
+}
+
+/// Short description of what the active tab lists, shown above its cards (iOS `tabCaption`).
+@Composable
+private fun TabCaption(segment: SegmentType) {
+    Text(
+        text = segment.caption,
+        style = AppTypography.TextSm.medium,
+        color = Palette.blackMedium,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Start
+    )
+}
+
+/// Compose equivalent of iOS `loadMoreXIfNeeded(index == count - 1)`: fires once
+/// when the last item enters composition, re-fires after the list grows.
+@Composable
+private fun LoadMoreTrigger(
+    index: Int,
+    lastIndex: Int,
+    onLoadMore: () -> Unit
+) {
+    if (index == lastIndex && lastIndex >= 0) {
+        LaunchedEffect(lastIndex) {
+            onLoadMore()
+        }
     }
 }
 
 @Composable
-private fun EmptyStateView(type: GroupsListViewState.SegmentType) {
+private fun EmptyStateView(type: SegmentType) {
+    val icon = when (type) {
+        SegmentType.CLUBS -> Images.Icons.twoUsers()
+        SegmentType.EVENTS -> Images.Icons.calendar()
+        SegmentType.HANGOUTS -> Images.Icons.twoUsers()
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -258,13 +334,11 @@ private fun EmptyStateView(type: GroupsListViewState.SegmentType) {
     ) {
         AppEmptyView(
             model = AppEmptyModel(
-                icon = Images.Icons.twoUsers(),
-                text = "There are no ${type.title.lowercase()} for this community yet. Be the pioneer and start the very first one now!",
-                buttonTitle = "Create a ${type.title.lowercase().removeSuffix("s")} +"
+                icon = icon,
+                text = type.emptyText,
+                buttonTitle = type.emptyButtonTitle
             ),
-            onButtonClick = {
-                // Handle create
-            }
+            onButtonClick = { /* iOS empty-state button is a no-op in Groups */ }
         )
     }
 }

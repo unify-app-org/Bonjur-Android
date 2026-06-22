@@ -29,7 +29,8 @@ sealed class GroupsListSideEffect : SideEffect {
 // MARK: - View State
 data class GroupsListViewState(
     val uiModel: UIModel = UIModel(),
-    val selectedSegment: SegmentType = SegmentType.CLUBS
+    val selectedSegment: SegmentType = SegmentType.CLUBS,
+    val searchText: String = ""
 ) : FeatureState {
     data class UIModel(
         val events: List<EventsCardModel> = emptyList(),
@@ -41,6 +42,29 @@ data class GroupsListViewState(
         CLUBS("Clubs"),
         EVENTS("Events"),
         HANGOUTS("Hangouts");
+
+        /** One-line explanation of what this tab lists, shown above its cards. */
+        val caption: String
+            get() = when (this) {
+                CLUBS -> "Clubs you belong to or run. Members organise events and meet up."
+                EVENTS -> "Events you've joined or requested. Each one is hosted by a club."
+                HANGOUTS -> "Casual, one-off meetups — no club needed. Anyone can start one."
+            }
+
+        /** Copy shown when this tab has no items. */
+        val emptyText: String
+            get() = when (this) {
+                CLUBS -> "You haven't joined or created any clubs yet. Explore communities or start your own."
+                EVENTS -> "No events yet. Join a club to discover its events, or request to attend one."
+                HANGOUTS -> "No hangouts yet. They're casual meetups — start one and invite friends."
+            }
+
+        val emptyButtonTitle: String
+            get() = when (this) {
+                CLUBS -> "Explore clubs"
+                EVENTS -> "Explore events"
+                HANGOUTS -> "Start a hangout +"
+            }
 
         companion object {
             fun fromIndex(index: Int): SegmentType {
@@ -66,7 +90,11 @@ data class GroupsListViewState(
 // MARK: - Actions
 sealed class GroupsListAction : FeatureAction {
     object FetchData : GroupsListAction()
-    object Dismiss : GroupsListAction()
+    object LoadMoreClubs : GroupsListAction()
+    object LoadMoreHangouts : GroupsListAction()
     data class SegmentChanged(val segment: GroupsListViewState.SegmentType) : GroupsListAction()
     data class SearchTextChanged(val text: String) : GroupsListAction()
+    data class ClubItemTapped(val clubId: Int) : GroupsListAction()
+    data class EventItemTapped(val eventId: String) : GroupsListAction()
+    data class HangoutItemTapped(val hangoutId: String) : GroupsListAction()
 }

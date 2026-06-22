@@ -15,17 +15,63 @@ import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
+import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import javax.inject.Inject
 
 class ClubsUseCaseImpl @Inject constructor(
-    val dataSource: ClubsDataSource
+    val dataSource: ClubsDataSource,
+    private val defaultStorage: DefaultStorage
 ) : ClubsUseCase {
 
-    override suspend fun fetchClubsData(): List<ClubCardModel> {
-        return dataSource.getClubs(emptyMap()).map { it.toCardModel() }
+    override suspend fun fetchClubsData(
+        size: Int,
+        name: String?,
+        categoryIds: List<Int>
+    ): List<ClubCardModel> {
+        return dataSource.getClubs(buildClubsQuery(size, name, categoryIds))
+            .map { it.toCardModel() }
     }
 
-    override suspend fun fetchFilterData(): List<FilterView.Model> = FilterViewMocks.mockData
+    /**
+     * Mirrors iOS `ClubsViewModel.makeQuery` + `ClubRepo.fetchClubs`:
+     * page is always 0, size grows for "load more", optional name search,
+     * parentId scopes to the active community, optional categoryIds for filters.
+     * Built with mutableMapOf (not buildMap) to avoid `size` shadowing the map.
+     */
+    private fun buildClubsQuery(
+        size: Int,
+        name: String?,
+        categoryIds: List<Int>
+    ): Map<String, String> {
+        val query = mutableMapOf(
+            "page" to "0",
+            "size" to size.toString(),
+            "parentId" to defaultStorage.getInt(DefaultStorageKey.COMMUNITY_ID, 0).toString()
+        )
+        name?.trim()?.takeIf { it.isNotEmpty() }?.let { query["name"] = it }
+        if (categoryIds.isNotEmpty()) {
+            query["categoryIds"] = categoryIds.joinToString(",")
+        }
+        return query
+    }
+
+    /** Real category fetch -> filter sections, mock fallback. Mirrors Discover `fetchFilterData`. */
+    override suspend fun fetchFilterData(): List<FilterView.Model> {
+        return try {
+            dataSource.getCategories().map { section ->
+                FilterView.Model(
+                    title = section.title ?: "",
+                    type = section.type ?: "",
+                    items = section.subCategories.map { sub ->
+                        FilterView.Items(title = sub.title ?: "", id = sub.id ?: 0)
+                    }
+                )
+            }
+        } catch (e: Exception) {
+            FilterViewMocks.mockData
+        }
+    }
 
     override suspend fun fetchClubsDetails(clubId: Int): ClubsDetails.UIModel {
         return dataSource.getClubById(clubId).toUIModel()

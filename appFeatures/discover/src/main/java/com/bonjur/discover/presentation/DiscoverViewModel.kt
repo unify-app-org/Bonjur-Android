@@ -26,7 +26,6 @@ import com.bonjur.hangouts.navigation.HangoutsScreens
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData
 import com.bonjur.navigation.MainScreen
 import com.bonjur.navigation.Navigator
-import com.bonjur.profile.navigation.ProfileScreens
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -66,6 +65,7 @@ class DiscoverViewModel @Inject constructor(
     override fun handle(action: DiscoverAction) {
         when (action) {
             DiscoverAction.FetchData -> fetchData()
+            DiscoverAction.PullToRefresh -> pullToRefresh()
             DiscoverAction.RefreshActivities -> refreshActivities()
             DiscoverAction.ProfileTapped -> profileTapped()
             is DiscoverAction.FilterChanged -> filterChanged(action.categoryIds)
@@ -103,6 +103,22 @@ class DiscoverViewModel @Inject constructor(
             fetchEventsData()
             fetchHangoutsData()
             postEffect(DiscoverSideEffect.Loading(false))
+        }
+    }
+
+    /// Pull-to-refresh: same full refetch as fetchData (current page depths and
+    /// active filter preserved), but drives the pull spinner via isRefreshing
+    /// instead of the full-screen Loading effect. Mirrors iOS `.refreshable`.
+    private fun pullToRefresh() {
+        viewModelScope.launch {
+            updateState(state.copy(isRefreshing = true))
+            fetchUserData()
+            fetchFilterData()
+            fetchCommunitiesData()
+            fetchClubsData()
+            fetchEventsData()
+            fetchHangoutsData()
+            updateState(state.copy(isRefreshing = false))
         }
     }
 
@@ -245,9 +261,7 @@ class DiscoverViewModel @Inject constructor(
     }
 
     private fun profileTapped() {
-        viewModelScope.launch {
-            navigator.navigateTo(ProfileScreens.ProfileDetail.route)
-        }
+        inputData.onProfileTab?.invoke()
     }
 
     private fun communityItemTapped(id: Int) {

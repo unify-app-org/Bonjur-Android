@@ -22,7 +22,8 @@ import com.bonjur.network.model.ApiException
 // MARK: - Input Data
 data class DiscoverInputData(
     val initialValue: String = "",
-    val onTabChange: (() -> Unit)? = null
+    val onTabChange: (() -> Unit)? = null,
+    val onProfileTab: (() -> Unit)? = null
 )
 
 // MARK: - Side Effects
@@ -33,7 +34,8 @@ sealed class DiscoverSideEffect : SideEffect {
 
 // MARK: - View State
 data class DiscoverViewState(
-    val uiModel: UIModel = UIModel()
+    val uiModel: UIModel = UIModel(),
+    val isRefreshing: Boolean = false
 ) : FeatureState {
     data class UIModel(
         val user: UserModel = UserModel(
@@ -53,6 +55,7 @@ data class DiscoverViewState(
 // MARK: - Actions
 sealed class DiscoverAction : FeatureAction {
     object FetchData : DiscoverAction()
+    object PullToRefresh : DiscoverAction()
     object RefreshActivities : DiscoverAction()
     object ProfileTapped : DiscoverAction()
     data class FilterChanged(val categoryIds: List<Int>) : DiscoverAction()
