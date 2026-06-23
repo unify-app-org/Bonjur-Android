@@ -130,15 +130,15 @@ class MicrosoftAuthManager @Inject constructor(
         app.getCurrentAccountAsync(object :
             ISingleAccountPublicClientApplication.CurrentAccountCallback {
             override fun onAccountLoaded(activeAccount: IAccount?) {
-                cont.resume(activeAccount)
+                if (cont.isActive) cont.resume(activeAccount)
             }
 
             override fun onAccountChanged(priorAccount: IAccount?, currentAccount: IAccount?) {
-                cont.resume(currentAccount)
+                if (cont.isActive) cont.resume(currentAccount)
             }
 
             override fun onError(exception: MsalException) {
-                cont.resume(null)
+                if (cont.isActive) cont.resume(null)
             }
         })
     }
