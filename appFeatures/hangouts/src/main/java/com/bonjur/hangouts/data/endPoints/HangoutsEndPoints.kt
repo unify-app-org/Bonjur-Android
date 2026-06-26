@@ -16,9 +16,17 @@ sealed class HangoutsEndPoints : AppEndpoint {
         override val method = NetworkMethod.GET
     }
 
-    data class GetHangoutMembers(val hangoutId: String) : HangoutsEndPoints() {
+    data class GetHangoutMembers(
+        val hangoutId: String,
+        val page: Int = 0,
+        val size: Int = 100
+    ) : HangoutsEndPoints() {
         override val path = "api/hs/v1/hangouts/$hangoutId/members"
         override val method = NetworkMethod.GET
+        override val queryParameters = mapOf(
+            "page" to page.toString(),
+            "size" to size.toString()
+        )
     }
 
     data class CreateHangout(

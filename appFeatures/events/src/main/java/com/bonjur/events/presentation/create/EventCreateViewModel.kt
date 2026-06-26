@@ -19,11 +19,13 @@ import com.bonjur.events.data.dataSource.EventAttachmentFile
 import com.bonjur.events.domain.useCase.EventFormData
 import com.bonjur.events.domain.useCase.EventsUseCase
 import com.bonjur.events.presentation.create.models.EventCreateAction
+import com.bonjur.events.presentation.create.models.EventCreateClubsPhase
 import com.bonjur.events.presentation.create.models.EventCreateInputData
 import com.bonjur.events.presentation.create.models.EventSelectableClub
 import com.bonjur.events.presentation.create.models.EventCreateSideEffect
 import com.bonjur.events.presentation.create.models.EventCreateViewState
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.SharedRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -60,7 +62,8 @@ class EventCreateViewModel @Inject constructor(
         this.inputData = inputData
         this.navigator = navigator
         if (inputData.eventId != null) {
-            updateState(state.copy(isEdit = true))
+            // Edit is never gated — the club is fixed, so the form renders immediately.
+            updateState(state.copy(isEdit = true, clubsPhase = EventCreateClubsPhase.Loaded))
         }
         fetchData()
     }
@@ -68,6 +71,9 @@ class EventCreateViewModel @Inject constructor(
     override fun handle(action: EventCreateAction) {
         when (action) {
             EventCreateAction.FetchData -> fetchData()
+            EventCreateAction.RetryClubsTapped -> retryClubs()
+            EventCreateAction.CreateClubTapped -> navigateTo(SharedRoutes.CLUB_CREATE)
+            EventCreateAction.BrowseClubsTapped -> navigateTo(SharedRoutes.CLUB_LIST)
             EventCreateAction.BackTapped -> navigateBack()
             EventCreateAction.ContinueTapped -> continueTapped()
             is EventCreateAction.FieldChanged ->
@@ -92,14 +98,39 @@ class EventCreateViewModel @Inject constructor(
                         state.copy(
                             clubs = clubs,
                             // Mirror iOS: default to the first club when nothing is selected.
-                            selectedClubId = state.selectedClubId ?: clubs.firstOrNull()?.clubId
+                            selectedClubId = state.selectedClubId ?: clubs.firstOrNull()?.clubId,
+                            // Empty list ≠ error: in create mode an empty result means
+                            // "no eligible clubs" and gets its own funnel state. Edit mode
+                            // was already forced to Loaded in init() and is left untouched.
+                            clubsPhase = clubsPhaseFor(clubs.isEmpty(), failed = false)
                         )
                     )
+                }
+                .onFailure {
+                    updateState(state.copy(clubsPhase = clubsPhaseFor(empty = false, failed = true)))
                 }
             runCatching { dependencies.useCase.getCategories() }
                 .onSuccess { updateState(state.copy(categorySections = it)) }
             applyPrefill()
         }
+    }
+
+    /** Edit mode is never gated; otherwise map the fetch outcome to a phase. */
+    private fun clubsPhaseFor(empty: Boolean, failed: Boolean): EventCreateClubsPhase = when {
+        state.isEdit -> EventCreateClubsPhase.Loaded
+        failed -> EventCreateClubsPhase.Failed
+        empty -> EventCreateClubsPhase.Empty
+        else -> EventCreateClubsPhase.Loaded
+    }
+
+    private fun retryClubs() {
+        if (state.isEdit) return
+        updateState(state.copy(clubsPhase = EventCreateClubsPhase.Loading))
+        fetchData()
+    }
+
+    private fun navigateTo(route: String) {
+        viewModelScope.launch { navigator.navigateTo(route) }
     }
 
     private fun applyPrefill() {

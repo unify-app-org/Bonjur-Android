@@ -19,6 +19,7 @@ import com.bonjur.designSystem.components.fieldSchema.links
 import com.bonjur.designSystem.components.fieldSchema.radio
 import com.bonjur.designSystem.components.fieldSchema.tags
 import com.bonjur.designSystem.components.fieldSchema.text
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -76,6 +77,8 @@ class ClubCreateViewModel @Inject constructor(
             ClubCreateAction.FetchData -> fetchData()
             ClubCreateAction.BackTapped -> navigateBack()
             ClubCreateAction.ContinueTapped -> continueTapped()
+            ClubCreateAction.RequestVerificationTapped -> requestVerification()
+            ClubCreateAction.DismissVerifyPrompt -> dismissVerifyPrompt()
             is ClubCreateAction.FieldChanged ->
                 updateState(state.copy(values = state.values + (action.id to action.value)))
             is ClubCreateAction.LogoSelected -> updateState(state.copy(logoUri = action.uri))
@@ -162,8 +165,18 @@ class ClubCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun createClub() = submit { form ->
-        dependencies.useCase.createClub(form)
+    private suspend fun createClub() {
+        postEffect(ClubCreateSideEffect.Loading(true))
+        try {
+            dependencies.useCase.createClub(buildForm())
+            // New clubs start unverified; surface the verify gate before leaving
+            // (no navigateUp here — the prompt's buttons pop). Mirrors iOS.
+            updateState(state.copy(showVerifyPrompt = true))
+        } catch (e: Exception) {
+            postEffect(ClubCreateSideEffect.Error(e.message ?: "Unknown error"))
+        } finally {
+            postEffect(ClubCreateSideEffect.Loading(false))
+        }
     }
 
     private suspend fun editClub(clubId: Int) = submit { form ->
@@ -180,6 +193,28 @@ class ClubCreateViewModel @Inject constructor(
         } finally {
             postEffect(ClubCreateSideEffect.Loading(false))
         }
+    }
+
+    // MARK: - Verification prompt
+
+    /**
+     * Backend has no verify-request endpoint yet, so this is an optimistic stub:
+     * dismiss, confirm, leave. Wire the real POST once it lands (see verify-gate
+     * backend TODOs: POST verify-request + clubStatus in payloads).
+     */
+    private fun requestVerification() {
+        updateState(state.copy(showVerifyPrompt = false))
+        AppSnackBar.show(
+            title = "Verification requested",
+            subtitle = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
+            style = AppSnackBar.Style.SUCCESS
+        )
+        navigateBack()
+    }
+
+    private fun dismissVerifyPrompt() {
+        updateState(state.copy(showVerifyPrompt = false))
+        navigateBack()
     }
 
     private suspend fun buildForm(): ClubFormData {

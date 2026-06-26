@@ -63,12 +63,14 @@ class FacultyBrowseViewModel @Inject constructor(
 
     private fun navigateToStudentList(facultyId: String) {
         viewModelScope.launch {
-            val destination = com.bonjur.communities.navigation.CommunitiesScreens.FacultyStudentList(
-                communityId = inputData.communityId,
-                facultyId = facultyId,
-                title = state.title
+            navigator.navigateTo(
+                com.bonjur.communities.navigation.CommunitiesScreens.FacultyStudentList.route,
+                com.bonjur.communities.presentation.facultyStudentList.models.FacultyStudentListInputData(
+                    communityId = inputData.communityId,
+                    facultyId = facultyId,
+                    title = state.title
+                )
             )
-            navigator.navigateTo(destination.route, destination)
         }
     }
 }

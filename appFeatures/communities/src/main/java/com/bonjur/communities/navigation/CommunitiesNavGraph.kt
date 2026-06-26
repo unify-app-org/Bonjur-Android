@@ -3,7 +3,6 @@ package com.bonjur.communities.navigation
 import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.bonjur.communities.presentation.detail.CommunityDetailScreen
 import com.bonjur.communities.presentation.detail.model.CommunityDetailInputData
 import com.bonjur.communities.presentation.facultyBrowse.FacultyBrowseScreen
@@ -15,8 +14,6 @@ import com.bonjur.communities.presentation.facultyStudentList.models.FacultyStud
 import com.bonjur.communities.presentation.facultyStudentSelectList.FacultyStudentSelectListScreen
 import com.bonjur.communities.presentation.facultyStudentSelectList.models.FacultyStudentSelectListInputData
 import com.bonjur.communities.presentation.list.CommunitiesListScreen
-import com.bonjur.communities.presentation.membersList.MembersListScreen
-import com.bonjur.communities.presentation.membersList.models.MembersListInputData
 import com.bonjur.navigation.NavArgs
 import com.bonjur.navigation.Navigator
 
@@ -35,60 +32,23 @@ fun NavGraphBuilder.communitiesNavGraph(
         )
     }
 
-    composable<CommunitiesScreens.MembersList> { backStackEntry ->
-        val route = backStackEntry.toRoute<CommunitiesScreens.MembersList>()
-        MembersListScreen(
-            inputData = MembersListInputData(
-                communityId = route.communityId,
-                title = route.title
-            ),
-            navigator = navigator
-        )
+    composable<CommunitiesScreens.FacultyBrowse> {
+        val inputData = remember { NavArgs.get<FacultyBrowseInputData>() ?: FacultyBrowseInputData() }
+        FacultyBrowseScreen(inputData = inputData, navigator = navigator)
     }
 
-    composable<CommunitiesScreens.FacultyBrowse> { backStackEntry ->
-        val route = backStackEntry.toRoute<CommunitiesScreens.FacultyBrowse>()
-        FacultyBrowseScreen(
-            inputData = FacultyBrowseInputData(
-                communityId = route.communityId,
-                title = route.title
-            ),
-            navigator = navigator
-        )
+    composable<CommunitiesScreens.FacultySelection> {
+        val inputData = remember { NavArgs.get<FacultySelectionInputData>() ?: FacultySelectionInputData() }
+        FacultySelectionScreen(inputData = inputData, navigator = navigator)
     }
 
-    composable<CommunitiesScreens.FacultySelection> { backStackEntry ->
-        val route = backStackEntry.toRoute<CommunitiesScreens.FacultySelection>()
-        FacultySelectionScreen(
-            inputData = FacultySelectionInputData(
-                communityId = route.communityId,
-                title = route.title
-            ),
-            navigator = navigator
-        )
+    composable<CommunitiesScreens.FacultyStudentList> {
+        val inputData = remember { NavArgs.get<FacultyStudentListInputData>() ?: FacultyStudentListInputData() }
+        FacultyStudentListScreen(inputData = inputData, navigator = navigator)
     }
 
-    composable<CommunitiesScreens.FacultyStudentList> { backStackEntry ->
-        val route = backStackEntry.toRoute<CommunitiesScreens.FacultyStudentList>()
-        FacultyStudentListScreen(
-            inputData = FacultyStudentListInputData(
-                communityId = route.communityId,
-                facultyId = route.facultyId,
-                title = route.title
-            ),
-            navigator = navigator
-        )
-    }
-
-    composable<CommunitiesScreens.FacultyStudentSelectList> { backStackEntry ->
-        val route = backStackEntry.toRoute<CommunitiesScreens.FacultyStudentSelectList>()
-        FacultyStudentSelectListScreen(
-            inputData = FacultyStudentSelectListInputData(
-                communityId = route.communityId,
-                facultyId = route.facultyId,
-                title = route.title
-            ),
-            navigator = navigator
-        )
+    composable<CommunitiesScreens.FacultyStudentSelectList> {
+        val inputData = remember { NavArgs.get<FacultyStudentSelectListInputData>() ?: FacultyStudentSelectListInputData() }
+        FacultyStudentSelectListScreen(inputData = inputData, navigator = navigator)
     }
 }

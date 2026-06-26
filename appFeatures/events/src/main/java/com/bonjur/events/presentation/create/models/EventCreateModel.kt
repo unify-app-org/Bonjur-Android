@@ -40,6 +40,14 @@ data class EventCreateInputData(
     val prefill: EventCreatePrefillData? = null
 )
 
+/**
+ * Loading lifecycle of the create-eligible clubs fetch. `forEvents` returns ONLY
+ * clubs where the user can post (organizer role + verified club, enforced server-side),
+ * so an empty list and a network error look identical on the wire and must be split
+ * here. Mirrors iOS `EventCreateClubsPhase`. Edit mode is never gated → forced [Loaded].
+ */
+enum class EventCreateClubsPhase { Loading, Loaded, Empty, Failed }
+
 // MARK: - Side effects
 sealed class EventCreateSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : EventCreateSideEffect()
@@ -55,7 +63,8 @@ data class EventCreateViewState(
     val categorySections: List<CategorySection> = emptyList(),
     val showCategoryPicker: Boolean = false,
     val isLoading: Boolean = false,
-    val isEdit: Boolean = false
+    val isEdit: Boolean = false,
+    val clubsPhase: EventCreateClubsPhase = EventCreateClubsPhase.Loading
 ) : FeatureState {
 
     val schema: List<AppFieldSchema.Field> get() = EventCreateSchema.fields
@@ -82,6 +91,9 @@ data class EventCreateViewState(
 // MARK: - Feature Action
 sealed class EventCreateAction : FeatureAction {
     object FetchData : EventCreateAction()
+    object RetryClubsTapped : EventCreateAction()
+    object CreateClubTapped : EventCreateAction()
+    object BrowseClubsTapped : EventCreateAction()
     object BackTapped : EventCreateAction()
     object ContinueTapped : EventCreateAction()
     data class FieldChanged(

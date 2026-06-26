@@ -20,7 +20,9 @@ object ClubsDetails {
         val tags: List<AppUIEntities.Tags>,
         val infoData: List<Info>,
         val eventsData: List<EventsCardModel>,
-        val editPrefillData: ClubEditPrefill
+        val editPrefillData: ClubEditPrefill,
+        /** nil/unverified → request-verify button (admins); verified → badge. Mirrors iOS. */
+        val clubStatus: AppUIEntities.ClubStatus? = null
     )
 
     /** Form values + existing image URLs to pre-fill the edit screen. Mirrors iOS `ClubsCreate.PrefillData`. */

@@ -6,6 +6,8 @@ import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.filter.FilterView
+import com.bonjur.member.model.GroupedMembersData
+import com.bonjur.member.model.MembersPage
 
 /** All values gathered by the club create/edit form. Mirrors iOS `buildRequest()` inputs. */
 data class ClubFormData(
@@ -26,7 +28,7 @@ data class ClubFormData(
 interface ClubsUseCase {
     suspend fun fetchClubsData(
         size: Int,
-        name: String?,
+        keyword: String?,
         categoryIds: List<Int>
     ): List<ClubCardModel>
 
@@ -44,8 +46,13 @@ interface ClubsUseCase {
 
     suspend fun exitClub(clubId: Int)
 
-    /** Triggered from the members list (deferred); wired but dormant for now. */
     suspend fun assignRole(clubId: Int, userId: String, role: AppUIEntities.UserActivityRole)
+
+    /** Members preview (page 0) for the detail Members tab. */
+    suspend fun fetchClubMembers(clubId: Int): GroupedMembersData
+
+    /** One page of members for the shared see-all screen. */
+    suspend fun fetchClubMembersPage(clubId: Int, page: Int, size: Int): MembersPage
 
     /** Exit gate for presidents: an owner can only leave once a VP exists. */
     suspend fun clubHasVicePresident(clubId: Int): Boolean

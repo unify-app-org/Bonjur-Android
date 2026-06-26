@@ -5,6 +5,8 @@ import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.hangouts.domain.model.HangoutDetails
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
+import com.bonjur.member.model.GroupedMembersData
+import com.bonjur.member.model.MembersPage
 
 /** Create/edit payload. Mirrors iOS `HangoutsDTOModel.Request` inputs. */
 data class HangoutFormData(
@@ -21,7 +23,12 @@ data class HangoutFormData(
 )
 
 interface HangoutsUseCase {
-    suspend fun fetchHangoutsData(): List<HangoutsCardModel>
+    suspend fun fetchHangoutsData(
+        categoryIds: List<Int>,
+        keyword: String?,
+        page: Int,
+        size: Int
+    ): List<HangoutsCardModel>
 
     suspend fun fetchFilterData(): List<FilterView.Model>
 
@@ -36,4 +43,8 @@ interface HangoutsUseCase {
     suspend fun joinHangout(hangoutId: String)
 
     suspend fun exitHangout(hangoutId: String)
+
+    suspend fun fetchHangoutMembers(hangoutId: String): GroupedMembersData
+
+    suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int): MembersPage
 }

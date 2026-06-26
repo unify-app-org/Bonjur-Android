@@ -35,6 +35,8 @@ data class HangoutListResponse(
     val membersCount: Int? = null,
     val hangoutDate: String? = null,
     val location: String? = null,
+    // Viewer's role; iOS Hangout + backend HangoutGeneralResponse have it, Android was missing.
+    val role: String? = null,
     val categoryResponses: List<HangoutCategoryResponse> = emptyList()
 )
 
@@ -88,6 +90,12 @@ data class HangoutCategoryItemResponse(
 @Serializable
 data class HangoutJoinRequest(
     val hangoutId: String
+)
+
+/** Paged members envelope: `GET hs/v1/hangouts/{id}/members` returns `{ content: [...] }`, NOT a bare array. */
+@Serializable
+data class HangoutMembersResponse(
+    val content: List<HangoutMemberResponse> = emptyList()
 )
 
 @Serializable

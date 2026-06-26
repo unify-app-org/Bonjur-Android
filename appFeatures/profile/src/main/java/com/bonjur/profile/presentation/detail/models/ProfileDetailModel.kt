@@ -18,7 +18,10 @@ import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 // MARK: - Input Data
 data class ProfileDetailInputData(
     /** When set, shows another user's profile; null means the logged-in user's own profile. */
-    val userId: String? = null
+    val userId: String? = null,
+    /** True when this screen was pushed (e.g. from a members list) rather than shown as the root
+     * Profile tab. Drives the back button and tab-bar hiding, independent of [userId]. */
+    val isPushed: Boolean = false
 )
 
 // MARK: - Side Effects
@@ -31,6 +34,7 @@ sealed class ProfileDetailSideEffect : SideEffect {
 data class ProfileDetailViewState(
     val uiModel: ProfileDetail.UIModel? = null,
     val isOwnProfile: Boolean = true,
+    val isPushed: Boolean = false,
     val navigationTitle: String = "Profile",
     val selectedSegment: SegmentTypes = SegmentTypes.CLUBS
 ) : FeatureState {

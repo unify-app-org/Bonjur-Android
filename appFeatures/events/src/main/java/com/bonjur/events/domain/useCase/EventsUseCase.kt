@@ -7,6 +7,8 @@ import com.bonjur.events.data.dataSource.EventAttachmentFile
 import com.bonjur.events.domain.models.EventsDetails
 import com.bonjur.events.presentation.create.models.EventSelectableClub
 import com.bonjur.events.presentation.list.models.EventsCardModel
+import com.bonjur.member.model.GroupedMembersData
+import com.bonjur.member.model.MembersPage
 
 /** Fully-assembled create payload built by the view model. */
 data class EventFormData(
@@ -27,7 +29,12 @@ data class EventFormData(
 )
 
 interface EventsUseCase {
-    suspend fun fetchEventsData(): List<EventsCardModel>
+    suspend fun fetchEventsData(
+        categoryIds: List<Int>,
+        keyword: String?,
+        page: Int,
+        size: Int
+    ): List<EventsCardModel>
 
     suspend fun fetchFilterData(): List<FilterView.Model>
 
@@ -44,4 +51,8 @@ interface EventsUseCase {
     suspend fun joinEvent(eventId: String)
 
     suspend fun exitEvent(eventId: String)
+
+    suspend fun fetchEventMembers(eventId: String): GroupedMembersData
+
+    suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int): MembersPage
 }

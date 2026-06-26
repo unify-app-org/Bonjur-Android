@@ -6,13 +6,16 @@ import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.filter.FilterView
-import com.bonjur.designSystem.components.filter.FilterViewMocks
 import com.bonjur.events.data.DTOs.EventCategorySectionResponse
 import com.bonjur.events.data.DTOs.EventCreateRequest
 import com.bonjur.events.data.DTOs.EventDetailResponse
 import com.bonjur.events.data.DTOs.EventLinkDTO
 import com.bonjur.events.data.DTOs.EventListResponse
+import com.bonjur.events.data.DTOs.EventMembersResponse
 import com.bonjur.events.data.dataSource.EventsDataSource
+import com.bonjur.member.model.GroupedMembersData
+import com.bonjur.member.model.MemberCellModel
+import com.bonjur.member.model.MembersPage
 import com.bonjur.events.domain.models.EventsDetails
 import com.bonjur.events.presentation.create.models.EventCreatePrefillData
 import com.bonjur.events.presentation.create.models.EventSelectableClub
@@ -26,12 +29,47 @@ class EventsUseCaseImpl @Inject constructor(
     val dataSource: EventsDataSource
 ) : EventsUseCase {
 
-    private val defaultQuery: Map<String, String> = mapOf("page" to "0", "size" to "10")
+    override suspend fun fetchEventsData(
+        categoryIds: List<Int>,
+        keyword: String?,
+        page: Int,
+        size: Int
+    ): List<EventsCardModel> =
+        dataSource.getEvents(buildEventsQuery(categoryIds, keyword, page, size))
+            .map { it.toCardModel() }
 
-    override suspend fun fetchEventsData(): List<EventsCardModel> =
-        dataSource.getEvents(defaultQuery).map { it.toCardModel() }
+    /**
+     * Discover events query (GET api/ds/v1/events). Mirrors iOS `EventsRepo.fetchEvents`:
+     * page/size always sent, categoryIds comma-joined when present, keyword when non-blank.
+     */
+    private fun buildEventsQuery(
+        categoryIds: List<Int>,
+        keyword: String?,
+        page: Int,
+        size: Int
+    ): Map<String, String> {
+        val query = mutableMapOf(
+            "page" to page.toString(),
+            "size" to size.toString()
+        )
+        if (categoryIds.isNotEmpty()) {
+            query["categoryIds"] = categoryIds.joinToString(",")
+        }
+        keyword?.trim()?.takeIf { it.isNotEmpty() }?.let { query["keyword"] = it }
+        return query
+    }
 
-    override suspend fun fetchFilterData(): List<FilterView.Model> = FilterViewMocks.mockData
+    /** Real category fetch -> filter sections. Mirrors iOS `getFilterCategories`. */
+    override suspend fun fetchFilterData(): List<FilterView.Model> =
+        dataSource.getCategories().map { section ->
+            FilterView.Model(
+                title = section.title ?: "",
+                type = section.type ?: "",
+                items = section.subCategories.map { sub ->
+                    FilterView.Items(title = sub.title ?: "", id = sub.id ?: 0)
+                }
+            )
+        }
 
     override suspend fun fetchDetailsData(id: String): EventsDetails.UIModel {
         val detail = dataSource.getEventById(id)
@@ -80,6 +118,28 @@ class EventsUseCaseImpl @Inject constructor(
     override suspend fun exitEvent(eventId: String) {
         dataSource.exitEvent(eventId)
     }
+
+    override suspend fun fetchEventMembers(eventId: String): GroupedMembersData {
+        val users = dataSource.getEventMembers(eventId, mapOf("page" to "0", "size" to "10"))
+            .content.map { it.toCellModel() }
+        return GroupedMembersData.from(users)
+    }
+
+    override suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int): MembersPage {
+        val users = dataSource.getEventMembers(
+            eventId,
+            mapOf("page" to page.toString(), "size" to size.toString())
+        ).content.map { it.toCellModel() }
+        return MembersPage(members = users, hasMore = users.size >= size)
+    }
+
+    private fun EventMembersResponse.EventMember.toCellModel() = MemberCellModel(
+        id = userId ?: "-",
+        name = fullName ?: "-",
+        avatarUrl = profileUrl,
+        subtitle = listOfNotNull(degree, specialization, entryYear?.toString()).joinToString(", "),
+        role = role?.toActivityRole() ?: AppUIEntities.UserActivityRole.MEMBER
+    )
 
     // MARK: - Mappers
 

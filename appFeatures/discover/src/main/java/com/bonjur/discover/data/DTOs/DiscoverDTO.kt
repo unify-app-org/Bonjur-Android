@@ -44,6 +44,11 @@ data class DiscoverHangout(
     val capacity: Int? = null,
     val membersCount: Int? = null,
     val requestStatus: String? = null,
+    // Parity w/ iOS DiscoverDTOModel.Hangout + backend HangoutResponse (were all missing).
+    val hangoutActivityStatus: String? = null,
+    val location: String? = null,
+    val hangoutDate: String? = null,
+    val role: String? = null,
     val categoryResponses: List<DiscoverCategoryResponse> = emptyList()
 )
 
@@ -59,11 +64,15 @@ data class DiscoverClub(
     val clubProfile: String? = null,
     val backgroundUrl: String? = null,
     val about: String? = null,
-    val count: Int? = null,
+    // Backend (discover-service ClubResponse) sends memberCount/requestStatus/role —
+    // NOT count/joined/clubUserRole, which never bound → member counts showed 0, join
+    // state always NONE, role always null. Fixed to match backend + iOS DiscoverDTOModel.Club.
+    val memberCount: Int? = null,
     val capacity: Int? = null,
-    val joined: Boolean? = null,
+    val requestStatus: String? = null,
     val members: List<DiscoverMember>? = null,
-    val clubUserRole: String? = null,
+    val role: String? = null,
+    val clubStatus: String? = null,
     val eventCount: Int? = null,
     val categoryResponses: List<DiscoverCategory> = emptyList()
 )
@@ -84,7 +93,10 @@ data class DiscoverCommunity(
     val profile: String? = null,
     val backgroundUrl: String? = null,
     val members: List<DiscoverMember>? = null,
-    @SerialName("backgroundColour") val background: String? = null
+    @SerialName("backgroundColour") val background: String? = null,
+    // Parity w/ iOS DiscoverDTOModel.Community + backend CommunityResponse (were missing).
+    val clubCount: Int? = null,
+    val role: String? = null
 )
 
 // MARK: - Event
@@ -102,6 +114,9 @@ data class DiscoverEvent(
     val club: DiscoverEventClub? = null,
     val eventDate: String? = null,
     val requestStatus: String? = null,
+    // Parity w/ iOS DiscoverDTOModel.Event + backend EventResponse (were missing).
+    val eventActivityStatus: String? = null,
+    val role: String? = null,
     val categoryResponses: List<DiscoverCategoryResponse> = emptyList()
 )
 

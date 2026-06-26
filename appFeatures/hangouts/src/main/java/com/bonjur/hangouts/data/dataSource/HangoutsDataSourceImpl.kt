@@ -5,7 +5,7 @@ import com.bonjur.hangouts.data.DTOs.HangoutCreateRequest
 import com.bonjur.hangouts.data.DTOs.HangoutDetailResponse
 import com.bonjur.hangouts.data.DTOs.HangoutJoinRequest
 import com.bonjur.hangouts.data.DTOs.HangoutListResponse
-import com.bonjur.hangouts.data.DTOs.HangoutMemberResponse
+import com.bonjur.hangouts.data.DTOs.HangoutMembersResponse
 import com.bonjur.hangouts.data.endPoints.HangoutsEndPoints
 import com.bonjur.network.APIClient.ApiClientProtocol
 import com.bonjur.network.APIClient.NetworkService
@@ -21,8 +21,12 @@ class HangoutsDataSourceImpl @Inject constructor(
     override suspend fun getHangoutById(hangoutId: String): HangoutDetailResponse =
         fetch(HangoutsEndPoints.GetHangoutById(hangoutId))
 
-    override suspend fun getHangoutMembers(hangoutId: String): List<HangoutMemberResponse> =
-        fetch(HangoutsEndPoints.GetHangoutMembers(hangoutId))
+    override suspend fun getHangoutMembers(
+        hangoutId: String,
+        page: Int,
+        size: Int
+    ): HangoutMembersResponse =
+        fetch(HangoutsEndPoints.GetHangoutMembers(hangoutId, page, size))
 
     override suspend fun getCategories(): List<HangoutCategorySectionResponse> =
         fetch(HangoutsEndPoints.GetCategories())

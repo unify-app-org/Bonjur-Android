@@ -6,6 +6,8 @@ import com.bonjur.appfoundation.SideEffect
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.segmentView.SegmentedPickerOption
 import com.bonjur.hangouts.domain.model.HangoutDetails
+import com.bonjur.member.model.GroupedMembersData
+import com.bonjur.member.model.MemberCellModel
 
 // MARK: - Input Data
 data class HangoutDetailsInputData(
@@ -20,7 +22,9 @@ sealed class HangoutDetailsSideEffect : SideEffect {
 // MARK: - View State
 data class HangoutDetailsViewState(
     val uiModel: HangoutDetails.UIModel? = null,
-    val selectedSegment: SegmentTypes = SegmentTypes.ABOUT
+    val selectedSegment: SegmentTypes = SegmentTypes.ABOUT,
+    val membersData: GroupedMembersData? = null,
+    val currentUserId: String? = null
 ) : FeatureState {
 
     val isPrivate: Boolean
@@ -58,4 +62,6 @@ sealed class HangoutDetailsAction : FeatureAction {
     object EditTapped : HangoutDetailsAction()
     object JoinTapped : HangoutDetailsAction()
     object ExitTapped : HangoutDetailsAction()
+    object SeeAllMembersTapped : HangoutDetailsAction()
+    data class MemberTapped(val member: MemberCellModel) : HangoutDetailsAction()
 }

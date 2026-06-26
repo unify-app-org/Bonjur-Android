@@ -23,6 +23,8 @@ import com.bonjur.navigation.SharedRoutes
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,6 +37,14 @@ class EventsListViewModel @Inject constructor(
     private lateinit var inputData: EventsListInputData
     private lateinit var navigator: Navigator
 
+    private val paginationStep = 10
+    private val searchDebounceMs = 300L
+    private var eventsSize = paginationStep
+    private var isLoadingMore = false
+    private var hasMore = true
+    private var selectedCategoryIds: List<Int> = emptyList()
+    private var searchJob: Job? = null
+
     fun init(inputData: EventsListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
@@ -44,6 +54,7 @@ class EventsListViewModel @Inject constructor(
     override fun handle(action: EventsListAction) {
         when (action) {
             EventsListAction.FetchData -> fetchData()
+            EventsListAction.LoadMore -> loadMore()
             is EventsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is EventsListAction.FilterSelected -> handleFilterSelected(action.items)
             is EventsListAction.EventItemTapped -> handleItemTap(action.id)
@@ -96,19 +107,54 @@ class EventsListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getEventsData() {
-        postEffect(EventsListSideEffect.Loading(true))
+    private suspend fun getEventsData(showLoading: Boolean = true) {
+        if (showLoading) postEffect(EventsListSideEffect.Loading(true))
         try {
-            val data = useCase.fetchEventsData()
+            val data = useCase.fetchEventsData(
+                categoryIds = selectedCategoryIds,
+                keyword = currentKeyword(),
+                page = 0,
+                size = eventsSize
+            )
+            hasMore = data.size >= eventsSize
             updateState(
                 state.copy(uiModel = state.uiModel.copy(events = data))
             )
         } catch (e: ApiException) {
             postEffect(EventsListSideEffect.Error(e))
         } finally {
-            postEffect(EventsListSideEffect.Loading(false))
+            if (showLoading) postEffect(EventsListSideEffect.Loading(false))
         }
     }
+
+    private fun loadMore() {
+        if (isLoadingMore || !hasMore) return
+        isLoadingMore = true
+        val previousSize = eventsSize
+        eventsSize += paginationStep
+
+        viewModelScope.launch {
+            try {
+                val previousCount = state.uiModel.events.size
+                val data = useCase.fetchEventsData(
+                    categoryIds = selectedCategoryIds,
+                    keyword = currentKeyword(),
+                    page = 0,
+                    size = eventsSize
+                )
+                hasMore = data.size > previousCount
+                updateState(state.copy(uiModel = state.uiModel.copy(events = data)))
+            } catch (e: ApiException) {
+                eventsSize = previousSize
+                postEffect(EventsListSideEffect.Error(e))
+            } finally {
+                isLoadingMore = false
+            }
+        }
+    }
+
+    private fun currentKeyword(): String? =
+        state.uiModel.searchText.trim().ifEmpty { null }
 
     private suspend fun getFilters() {
         try {
@@ -125,9 +171,23 @@ class EventsListViewModel @Inject constructor(
         updateState(
             state.copy(uiModel = state.uiModel.copy(searchText = text))
         )
+        eventsSize = paginationStep
+        hasMore = true
+
+        // Debounced server-side search, mirroring iOS. No local filtering.
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(searchDebounceMs)
+            getEventsData(showLoading = false)
+        }
     }
 
     private fun handleFilterSelected(items: List<FilterView.Items>) {
-        // Handle filter logic
+        selectedCategoryIds = items.map { it.id }
+        eventsSize = paginationStep
+        hasMore = true
+        viewModelScope.launch {
+            getEventsData()
+        }
     }
 }

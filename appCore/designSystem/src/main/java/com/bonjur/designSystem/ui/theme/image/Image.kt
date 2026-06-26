@@ -119,5 +119,8 @@ object Images {
 
         @Composable
         fun gear() = painterResource(R.drawable.ic_settings)
+
+        @Composable
+        fun verifiedSeal() = painterResource(R.drawable.ic_verified_seal)
     }
 }

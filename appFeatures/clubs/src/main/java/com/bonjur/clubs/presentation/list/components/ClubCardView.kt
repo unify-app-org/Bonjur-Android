@@ -84,13 +84,27 @@ private fun TopLeftView(model: ClubCardModel) {
             }
         }
 
-        Text(
-            text = model.name,
-            style = AppTypography.TitleMd.bold,
-            color = model.bgType.foregroundColor,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Start
-        )
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = model.name,
+                style = AppTypography.TitleMd.bold,
+                color = model.bgType.foregroundColor,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+            if (model.isVerified) {
+                Icon(
+                    painter = Images.Icons.verifiedSeal(),
+                    contentDescription = "Verified club",
+                    tint = model.bgType.foregroundColor,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
+        }
 
         EventsMetaRow(model = model)
 

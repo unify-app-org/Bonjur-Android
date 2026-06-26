@@ -63,11 +63,7 @@ import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.presentation.list.components.ClubCardView
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.communities.domain.model.CommunityDetails
-import com.bonjur.member.model.MemberCellModel
-import com.bonjur.member.components.MemberListView
-import com.bonjur.member.components.MemberOptionsInput
-import com.bonjur.member.components.MemberOptionsSheet
-import com.bonjur.member.policy.MemberOptionsPolicy
+import com.bonjur.member.list.MembersPreview
 import com.bonjur.communities.presentation.detail.model.CommunityDetailAction
 import com.bonjur.communities.presentation.detail.model.CommunityDetailSideEffect
 import com.bonjur.communities.presentation.detail.model.CommunityDetailViewState
@@ -638,47 +634,17 @@ private fun MembersTab(
     store: FeatureStore<CommunityDetailViewState, CommunityDetailAction, CommunityDetailSideEffect>
 ) {
     val sections = store.state.membersData?.sections ?: emptyList()
-    val viewerRole = store.state.uiModel?.userActivity
-        ?: AppUIEntities.UserActivityRole.NOT_JOINED
-    val totalCount = store.state.uiModel?.membersCount
-        ?: sections.sumOf { it.memberCount }
-    val currentUserId = store.state.currentUserId
-
-    var optionsMember by remember { mutableStateOf<MemberCellModel?>(null) }
-
-    MemberListView(
+    MembersPreview(
         sections = sections,
-        onRowTap = { member -> store.send(CommunityDetailAction.UserTapped(member.id)) },
-        onOptionsTap = { member -> optionsMember = member },
-        currentUserId = currentUserId,
-        previewLimit = 5,
-        totalCount = totalCount,
-        onSeeAll = { store.send(CommunityDetailAction.SeeAllMembersTapped) }
+        totalCount = store.state.uiModel?.membersCount ?: sections.sumOf { it.memberCount },
+        viewerRole = store.state.uiModel?.userActivity
+            ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+        currentUserId = store.state.currentUserId,
+        activityType = AppUIEntities.ActivityType.COMMUNITY,
+        onMemberTap = { member -> store.send(CommunityDetailAction.UserTapped(member.id)) },
+        onSeeAll = { store.send(CommunityDetailAction.SeeAllMembersTapped) },
+        onAssignRole = { userId, role -> store.send(CommunityDetailAction.AssignRole(userId, role)) }
     )
-
-    optionsMember?.let { member ->
-        val isSelf = member.id == currentUserId
-        MemberOptionsSheet(
-            input = MemberOptionsInput(
-                memberName = member.name,
-                currentRole = member.role,
-                assignableRoles = MemberOptionsPolicy.assignableRoles(viewerRole),
-                showChangeRole = MemberOptionsPolicy.canChangeRole(
-                    viewer = viewerRole,
-                    activity = AppUIEntities.ActivityType.COMMUNITY,
-                    isSelf = isSelf
-                ),
-                showReport = MemberOptionsPolicy.canReport(isSelf),
-                onAssignRole = { role ->
-                    store.send(CommunityDetailAction.AssignRole(member.id, role))
-                },
-                onReport = {
-                    AppSnackBar.show(title = "Report submitted", style = AppSnackBar.Style.SUCCESS)
-                }
-            ),
-            onDismiss = { optionsMember = null }
-        )
-    }
 }
 
 @Composable

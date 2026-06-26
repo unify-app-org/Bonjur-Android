@@ -55,6 +55,7 @@ dependencies {
     implementation(project(":appCore:navigation"))
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:appFoundation"))
+    implementation(project(":appFeatures:member"))
     implementation(project(":appCore:network"))
 
     // Async images

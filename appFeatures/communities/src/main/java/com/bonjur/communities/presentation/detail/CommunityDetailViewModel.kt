@@ -6,13 +6,14 @@ import com.bonjur.clubs.navigation.ClubsScreens
 import com.bonjur.clubs.presentation.create.models.ClubCreateInputData
 import com.bonjur.clubs.presentation.model.ClubDetailsInputData
 import com.bonjur.communities.domain.useCase.CommunitiesUseCase
-import com.bonjur.communities.navigation.CommunitiesScreens
 import com.bonjur.communities.presentation.detail.model.CommunityDetailAction
 import com.bonjur.communities.presentation.detail.model.CommunityDetailInputData
 import com.bonjur.communities.presentation.detail.model.CommunityDetailSideEffect
 import com.bonjur.communities.presentation.detail.model.CommunityDetailViewState
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
+import com.bonjur.member.list.MemberListInputData
+import com.bonjur.member.list.MemberListScreens
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import com.bonjur.network.manager.TokenManager
@@ -62,11 +63,23 @@ class CommunityDetailViewModel @Inject constructor(
 
     private fun navigateToMembersList() {
         viewModelScope.launch {
-            val destination = CommunitiesScreens.MembersList(
-                communityId = inputData.communityId,
-                title = "Members"
+            navigator.navigateTo(
+                MemberListScreens.MembersList.route,
+                MemberListInputData(
+                    title = "Members",
+                    viewerRole = state.uiModel?.userActivity
+                        ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+                    currentUserId = state.currentUserId,
+                    activityType = AppUIEntities.ActivityType.COMMUNITY,
+                    loadPage = { page, size ->
+                        dependencies.useCase.fetchCommunityMembersPage(inputData.communityId, page, size)
+                    },
+                    assignRole = { userId, role ->
+                        dependencies.useCase.assignRole(inputData.communityId, userId, role)
+                    },
+                    onMemberTapped = { userId -> navigateToUser(userId) }
+                )
             )
-            navigator.navigateTo(destination.route, destination)
         }
     }
 
@@ -164,6 +177,7 @@ class CommunityDetailViewModel @Inject constructor(
             updateState(state.copy(membersData = members))
         } catch (e: Exception) {
             // Members are best-effort; keep detail visible without them.
+            android.util.Log.e("CommunityDetail", "fetchCommunityMembers failed", e)
         }
     }
 }

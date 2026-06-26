@@ -52,9 +52,15 @@ data class CommunityClubResponse(
     val clubProfile: String? = null,
     val backgroundUrl: String? = null,
     val about: String? = null,
-    val count: Int? = null,
+    // Same ds/v1/clubs endpoint as Discover → backend sends memberCount/requestStatus,
+    // NOT count/joined (which never bound → 0 members, NONE join state). iOS
+    // CommunityDTO.ClubResponse still uses count/joined — same latent bug there. See
+    // club-dto-stale-fields.
+    val memberCount: Int? = null,
     val capacity: Int? = null,
-    val joined: Boolean? = null,
+    val requestStatus: String? = null,
+    // Same ds/v1/clubs endpoint as Discover, which binds clubStatus → verified badge.
+    val clubStatus: String? = null,
     val members: List<CommunityClubMember> = emptyList(),
     val eventCount: Int? = null,
     val categoryResponses: List<CommunityCategory> = emptyList()
@@ -112,7 +118,9 @@ data class CommunityListResponse(
     val profile: String? = null,
     val backgroundUrl: String? = null,
     val members: List<CommunityListMember> = emptyList(),
-    @SerialName("backgroundColour") val background: String? = null
+    @SerialName("backgroundColour") val background: String? = null,
+    // iOS DiscoverCommunity + backend CommunityResponse expose viewer role; was missing.
+    val role: String? = null
 )
 
 @Serializable

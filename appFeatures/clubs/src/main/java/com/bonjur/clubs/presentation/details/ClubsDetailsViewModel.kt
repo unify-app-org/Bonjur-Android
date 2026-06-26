@@ -10,8 +10,13 @@ import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.alert.AppAlert
 import com.bonjur.designSystem.components.alert.AppAlertPresenter
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
+import com.bonjur.member.list.MemberListInputData
+import com.bonjur.member.list.MemberListScreens
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.ProfileDetailNavArgs
+import com.bonjur.navigation.SharedRoutes
 import com.bonjur.navigation.route
+import com.bonjur.network.manager.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,7 +29,8 @@ class ClubDetailsViewModel @Inject constructor(
 ) {
 
     data class Dependencies @Inject constructor(
-        val useCase: ClubsUseCase
+        val useCase: ClubsUseCase,
+        val tokenManager: TokenManager
     )
 
     private lateinit var inputData: ClubDetailsInputData
@@ -33,6 +39,7 @@ class ClubDetailsViewModel @Inject constructor(
         if (::inputData.isInitialized) return
         this.inputData = inputData
         this.navigator = navigator
+        updateState(state.copy(currentUserId = dependencies.tokenManager.getUserId()))
         fetchData()
     }
 
@@ -48,7 +55,54 @@ class ClubDetailsViewModel @Inject constructor(
             ClubDetailsAction.EditTapped -> navigateToEdit()
             ClubDetailsAction.JoinClubTapped -> joinClub()
             ClubDetailsAction.ExitTapped -> presentExitConfirm()
+            ClubDetailsAction.SeeAllMembersTapped -> navigateToMembersList()
+            is ClubDetailsAction.MemberTapped -> navigateToProfile(action.member.id)
             is ClubDetailsAction.AssignRole -> assignRole(action.userId, action.role)
+            ClubDetailsAction.RequestVerificationTapped -> requestVerification()
+        }
+    }
+
+    // MARK: - Verification
+
+    /**
+     * Backend has no verify-request endpoint yet, so this is an optimistic stub:
+     * show a success snackbar, no network call, no local state flip. Wire the real
+     * POST once it lands (see verify-gate backend TODOs). Mirrors iOS
+     * ClubDetailsViewModel.requestVerification().
+     */
+    private fun requestVerification() {
+        AppSnackBar.show(
+            title = "Verification requested",
+            subtitle = "Admins will review your club.",
+            style = AppSnackBar.Style.SUCCESS
+        )
+    }
+
+    private fun navigateToMembersList() {
+        viewModelScope.launch {
+            navigator.navigateTo(
+                MemberListScreens.MembersList.route,
+                MemberListInputData(
+                    title = "Members",
+                    viewerRole = state.uiModel?.userActivityType
+                        ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+                    currentUserId = state.currentUserId,
+                    activityType = AppUIEntities.ActivityType.CLUBS,
+                    loadPage = { page, size ->
+                        dependencies.useCase.fetchClubMembersPage(inputData.clubId, page, size)
+                    },
+                    assignRole = { userId, role ->
+                        dependencies.useCase.assignRole(inputData.clubId, userId, role)
+                    },
+                    onMemberTapped = { userId -> navigateToProfile(userId) }
+                )
+            )
+        }
+    }
+
+    private fun navigateToProfile(userId: String) {
+        viewModelScope.launch {
+            navigator.navigateTo(SharedRoutes.PROFILE_DETAIL, ProfileDetailNavArgs(userId))
         }
     }
 
@@ -226,6 +280,16 @@ class ClubDetailsViewModel @Inject constructor(
             updateState(state.copy(uiModel = uiModel))
         } catch (e: Exception) {
             // Handle error
+        }
+        fetchMembers()
+    }
+
+    private suspend fun fetchMembers() {
+        try {
+            val members = dependencies.useCase.fetchClubMembers(inputData.clubId)
+            updateState(state.copy(membersData = members))
+        } catch (e: Exception) {
+            // Members are best-effort; keep detail visible without them.
         }
     }
 }

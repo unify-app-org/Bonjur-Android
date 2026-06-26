@@ -28,6 +28,8 @@ import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,17 +43,14 @@ class GroupsListViewModel @Inject constructor(
     private lateinit var inputData: GroupsListInputData
 
     private val paginationStep = 10
+    private val searchDebounceMs = 300L
     private var clubsSize = 10
     private var hangoutsSize = 10
     private var isLoadingMoreClubs = false
     private var isLoadingMoreHangouts = false
     private var hasMoreClubs = true
     private var hasMoreHangouts = true
-
-    // Unfiltered server results; the search filter is applied on top of these.
-    private var sourceClubs: List<ClubCardModel> = emptyList()
-    private var sourceEvents: List<EventsCardModel> = emptyList()
-    private var sourceHangouts: List<HangoutsCardModel> = emptyList()
+    private var searchJob: Job? = null
 
     fun init(inputData: GroupsListInputData) {
         if (::inputData.isInitialized) return
@@ -85,8 +84,7 @@ class GroupsListViewModel @Inject constructor(
         try {
             val clubs = useCase.fetchClubs(makeQuery(clubsSize))
             hasMoreClubs = clubs.size >= clubsSize
-            sourceClubs = clubs
-            applyClubsSearch()
+            updateState(state.copy(uiModel = state.uiModel.copy(clubs = clubs)))
         } catch (e: ApiException) {
             postEffect(GroupsListSideEffect.Error(e))
         }
@@ -94,8 +92,8 @@ class GroupsListViewModel @Inject constructor(
 
     private suspend fun getEvents() {
         try {
-            sourceEvents = useCase.fetchEvents()
-            applyEventsSearch()
+            val events = useCase.fetchEvents(currentKeyword())
+            updateState(state.copy(uiModel = state.uiModel.copy(events = events)))
         } catch (e: ApiException) {
             postEffect(GroupsListSideEffect.Error(e))
         }
@@ -105,8 +103,7 @@ class GroupsListViewModel @Inject constructor(
         try {
             val hangouts = useCase.fetchHangouts(makeQuery(hangoutsSize))
             hasMoreHangouts = hangouts.size >= hangoutsSize
-            sourceHangouts = hangouts
-            applyHangoutsSearch()
+            updateState(state.copy(uiModel = state.uiModel.copy(hangouts = hangouts)))
         } catch (e: ApiException) {
             postEffect(GroupsListSideEffect.Error(e))
         }
@@ -119,11 +116,10 @@ class GroupsListViewModel @Inject constructor(
         clubsSize += paginationStep
         viewModelScope.launch {
             try {
-                val previousCount = sourceClubs.size
+                val previousCount = state.uiModel.clubs.size
                 val clubs = useCase.fetchClubs(makeQuery(clubsSize))
                 hasMoreClubs = clubs.size > previousCount
-                sourceClubs = clubs
-                applyClubsSearch()
+                updateState(state.copy(uiModel = state.uiModel.copy(clubs = clubs)))
             } catch (e: ApiException) {
                 clubsSize = previousSize
                 postEffect(GroupsListSideEffect.Error(e))
@@ -140,11 +136,10 @@ class GroupsListViewModel @Inject constructor(
         hangoutsSize += paginationStep
         viewModelScope.launch {
             try {
-                val previousCount = sourceHangouts.size
+                val previousCount = state.uiModel.hangouts.size
                 val hangouts = useCase.fetchHangouts(makeQuery(hangoutsSize))
                 hasMoreHangouts = hangouts.size > previousCount
-                sourceHangouts = hangouts
-                applyHangoutsSearch()
+                updateState(state.copy(uiModel = state.uiModel.copy(hangouts = hangouts)))
             } catch (e: ApiException) {
                 hangoutsSize = previousSize
                 postEffect(GroupsListSideEffect.Error(e))
@@ -161,70 +156,26 @@ class GroupsListViewModel @Inject constructor(
         hasMoreClubs = true
         hasMoreHangouts = true
 
-        // Instant local feedback, then refetch clubs + hangouts with the name query.
-        // Events are search-filtered locally only (never refetched), mirroring iOS.
-        applyClubsSearch()
-        applyEventsSearch()
-        applyHangoutsSearch()
-
-        viewModelScope.launch {
+        // Pure server-side search, mirroring iOS: debounce, then refetch all three
+        // activity lists with the keyword. No local filtering.
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(searchDebounceMs)
             getClubs()
+            getEvents()
             getHangouts()
         }
     }
 
-    private fun applyClubsSearch() {
-        val query = searchQuery()
-        val filtered = if (query.isEmpty()) {
-            sourceClubs
-        } else {
-            sourceClubs.filter { club ->
-                club.name.lowercase().contains(query)
-                    || club.communityName.lowercase().contains(query)
-                    || club.community.lowercase().contains(query)
-            }
-        }
-        updateState(state.copy(uiModel = state.uiModel.copy(clubs = filtered)))
-    }
-
-    private fun applyEventsSearch() {
-        val query = searchQuery()
-        val filtered = if (query.isEmpty()) {
-            sourceEvents
-        } else {
-            sourceEvents.filter { event ->
-                event.name.lowercase().contains(query)
-                    || event.club.name.lowercase().contains(query)
-                    || event.tags.any { it.title.lowercase().contains(query) }
-            }
-        }
-        updateState(state.copy(uiModel = state.uiModel.copy(events = filtered)))
-    }
-
-    private fun applyHangoutsSearch() {
-        val query = searchQuery()
-        val filtered = if (query.isEmpty()) {
-            sourceHangouts
-        } else {
-            sourceHangouts.filter { hangout ->
-                hangout.name.lowercase().contains(query)
-                    || hangout.description.lowercase().contains(query)
-                    || hangout.tags.any { it.title.lowercase().contains(query) }
-            }
-        }
-        updateState(state.copy(uiModel = state.uiModel.copy(hangouts = filtered)))
-    }
-
     private fun makeQuery(size: Int): GroupsPaginationQuery {
-        val name = state.searchText.trim()
         return GroupsPaginationQuery(
             page = 0,
             size = size,
-            name = name.ifEmpty { null }
+            keyword = currentKeyword()
         )
     }
 
-    private fun searchQuery(): String = state.searchText.trim().lowercase()
+    private fun currentKeyword(): String? = state.searchText.trim().ifEmpty { null }
 
     private fun handleSegmentChanged(segment: GroupsListViewState.SegmentType) {
         updateState(state.copy(selectedSegment = segment))

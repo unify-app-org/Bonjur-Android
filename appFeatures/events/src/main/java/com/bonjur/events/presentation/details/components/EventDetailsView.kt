@@ -56,6 +56,7 @@ import com.bonjur.designSystem.components.emptyView.AppEmptyModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
+import com.bonjur.member.list.MembersPreview
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -201,7 +202,7 @@ fun EventDetailsView(
                                 InfoTab(store.state.uiModel?.infoData ?: emptyList())
 
                             EventDetailsViewState.SegmentTypes.MEMBERS ->
-                                MembersTab()
+                                MembersTab(store)
                         }
                     }
                 }
@@ -715,17 +716,18 @@ private fun InfoSubItem(subItem: EventsDetails.SubInfo) {
 }
 
 @Composable
-private fun MembersTab() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(400.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            "Members Tab - Coming Soon",
-            style = AppTypography.TextL.medium,
-            color = Palette.blackMedium
-        )
-    }
+private fun MembersTab(
+    store: FeatureStore<EventDetailsViewState, EventDetailsAction, EventDetailsSideEffect>
+) {
+    val sections = store.state.membersData?.sections ?: emptyList()
+    MembersPreview(
+        sections = sections,
+        totalCount = store.state.uiModel?.membersCount ?: sections.sumOf { it.memberCount },
+        viewerRole = store.state.uiModel?.userActivityType
+            ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+        currentUserId = store.state.currentUserId,
+        activityType = AppUIEntities.ActivityType.EVENTS,
+        onMemberTap = { member -> store.send(EventDetailsAction.MemberTapped(member)) },
+        onSeeAll = { store.send(EventDetailsAction.SeeAllMembersTapped) }
+    )
 }

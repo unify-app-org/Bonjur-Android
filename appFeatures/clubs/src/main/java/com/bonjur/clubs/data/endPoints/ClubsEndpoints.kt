@@ -23,9 +23,17 @@ sealed class ClubsEndpoints : AppEndpoint {
         override val method = NetworkMethod.GET
     }
 
-    data class GetClubMembers(val clubId: Int) : ClubsEndpoints() {
+    data class GetClubMembers(
+        val clubId: Int,
+        val page: Int = 0,
+        val size: Int = 100
+    ) : ClubsEndpoints() {
         override val path = "api/cs/v1/clubs/$clubId/members"
         override val method = NetworkMethod.GET
+        override val queryParameters = mapOf(
+            "page" to page.toString(),
+            "size" to size.toString()
+        )
     }
 
     data class CreateClub(val payload: MultipartPayload) : ClubsEndpoints() {

@@ -20,9 +20,10 @@ class GroupsUseCaseImpl @Inject constructor(
         return dataSource.fetchJoinedClubs(query.toMap()).map { it.toCardModel() }
     }
 
-    // Mirrors iOS: joined events are fetched once at a fixed page/size (no pagination).
-    override suspend fun fetchEvents(): List<EventsCardModel> {
-        val query = GroupsPaginationQuery(page = 0, size = 50, name = null)
+    // Mirrors iOS: joined events are fetched once at a fixed page/size (no pagination),
+    // with the optional search keyword forwarded to the server.
+    override suspend fun fetchEvents(keyword: String?): List<EventsCardModel> {
+        val query = GroupsPaginationQuery(page = 0, size = 50, keyword = keyword)
         return dataSource.fetchJoinedEvents(query.toMap()).map { it.toCardModel() }
     }
 
@@ -46,7 +47,8 @@ class GroupsUseCaseImpl @Inject constructor(
         requestType = requestStatus.toRequestType(),
         role = role?.toUserActivityRole(),
         upcomingEventsCount = eventCount ?: 0,
-        categories = categoryResponses.map { it.title }
+        categories = categoryResponses.map { it.title },
+        isVerified = AppUIEntities.ClubStatus.from(clubStatus)?.isVerified == true
     )
 
     private fun EventListResponse.toCardModel() = EventsCardModel(

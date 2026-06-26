@@ -9,7 +9,7 @@ interface GroupsUseCase {
 
     suspend fun fetchClubs(query: GroupsPaginationQuery): List<ClubCardModel>
 
-    suspend fun fetchEvents(): List<EventsCardModel>
+    suspend fun fetchEvents(keyword: String?): List<EventsCardModel>
 
     suspend fun fetchHangouts(query: GroupsPaginationQuery): List<HangoutsCardModel>
 }

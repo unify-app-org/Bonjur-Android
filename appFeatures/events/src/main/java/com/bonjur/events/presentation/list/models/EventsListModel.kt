@@ -38,6 +38,7 @@ data class EventsListViewState(
 // MARK: - Actions
 sealed class EventsListAction : FeatureAction {
     object FetchData : EventsListAction()
+    object LoadMore : EventsListAction()
     object Dismiss: EventsListAction()
     data class SearchTextChanged(val text: String) : EventsListAction()
     data class FilterSelected(val items: List<FilterView.Items>) : EventsListAction()

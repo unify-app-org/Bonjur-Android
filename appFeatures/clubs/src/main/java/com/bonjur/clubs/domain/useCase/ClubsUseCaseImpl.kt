@@ -5,6 +5,7 @@ import com.bonjur.clubs.data.DTOs.ClubCreateRequest
 import com.bonjur.clubs.data.DTOs.ClubDetailResponse
 import com.bonjur.clubs.data.DTOs.ClubLinkRequest
 import com.bonjur.clubs.data.DTOs.ClubListResponse
+import com.bonjur.clubs.data.DTOs.ClubMemberResponse
 import com.bonjur.clubs.data.DTOs.RoleAssignRequest
 import com.bonjur.clubs.data.dataSource.ClubsDataSource
 import com.bonjur.clubs.domain.models.ClubsDetails
@@ -14,7 +15,9 @@ import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.filter.FilterView
-import com.bonjur.designSystem.components.filter.FilterViewMocks
+import com.bonjur.member.model.GroupedMembersData
+import com.bonjur.member.model.MemberCellModel
+import com.bonjur.member.model.MembersPage
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import javax.inject.Inject
@@ -26,22 +29,22 @@ class ClubsUseCaseImpl @Inject constructor(
 
     override suspend fun fetchClubsData(
         size: Int,
-        name: String?,
+        keyword: String?,
         categoryIds: List<Int>
     ): List<ClubCardModel> {
-        return dataSource.getClubs(buildClubsQuery(size, name, categoryIds))
+        return dataSource.getClubs(buildClubsQuery(size, keyword, categoryIds))
             .map { it.toCardModel() }
     }
 
     /**
      * Mirrors iOS `ClubsViewModel.makeQuery` + `ClubRepo.fetchClubs`:
-     * page is always 0, size grows for "load more", optional name search,
+     * page is always 0, size grows for "load more", optional keyword search,
      * parentId scopes to the active community, optional categoryIds for filters.
      * Built with mutableMapOf (not buildMap) to avoid `size` shadowing the map.
      */
     private fun buildClubsQuery(
         size: Int,
-        name: String?,
+        keyword: String?,
         categoryIds: List<Int>
     ): Map<String, String> {
         val query = mutableMapOf(
@@ -49,29 +52,24 @@ class ClubsUseCaseImpl @Inject constructor(
             "size" to size.toString(),
             "parentId" to defaultStorage.getInt(DefaultStorageKey.COMMUNITY_ID, 0).toString()
         )
-        name?.trim()?.takeIf { it.isNotEmpty() }?.let { query["name"] = it }
+        keyword?.trim()?.takeIf { it.isNotEmpty() }?.let { query["keyword"] = it }
         if (categoryIds.isNotEmpty()) {
             query["categoryIds"] = categoryIds.joinToString(",")
         }
         return query
     }
 
-    /** Real category fetch -> filter sections, mock fallback. Mirrors Discover `fetchFilterData`. */
-    override suspend fun fetchFilterData(): List<FilterView.Model> {
-        return try {
-            dataSource.getCategories().map { section ->
-                FilterView.Model(
-                    title = section.title ?: "",
-                    type = section.type ?: "",
-                    items = section.subCategories.map { sub ->
-                        FilterView.Items(title = sub.title ?: "", id = sub.id ?: 0)
-                    }
-                )
-            }
-        } catch (e: Exception) {
-            FilterViewMocks.mockData
+    /** Real category fetch -> filter sections. Mirrors iOS `getFilterCategories`. */
+    override suspend fun fetchFilterData(): List<FilterView.Model> =
+        dataSource.getCategories().map { section ->
+            FilterView.Model(
+                title = section.title ?: "",
+                type = section.type ?: "",
+                items = section.subCategories.map { sub ->
+                    FilterView.Items(title = sub.title ?: "", id = sub.id ?: 0)
+                }
+            )
         }
-    }
 
     override suspend fun fetchClubsDetails(clubId: Int): ClubsDetails.UIModel {
         return dataSource.getClubById(clubId).toUIModel()
@@ -118,18 +116,39 @@ class ClubsUseCaseImpl @Inject constructor(
 
     override suspend fun clubHasVicePresident(clubId: Int): Boolean =
         dataSource.getClubMembers(clubId).content.any {
-            it.role?.uppercase() in setOf("VISE_PRESIDENT", "VICE_PRESIDENT")
+            it.role?.uppercase() in setOf("VICE_PRESIDENT", "VICE_PRESIDENT")
         }
+
+    override suspend fun fetchClubMembers(clubId: Int): GroupedMembersData {
+        val users = dataSource.getClubMembers(clubId, page = 0, size = 10)
+            .content.map { it.toCellModel() }
+        return GroupedMembersData.from(users)
+    }
+
+    override suspend fun fetchClubMembersPage(clubId: Int, page: Int, size: Int): MembersPage {
+        val users = dataSource.getClubMembers(clubId, page, size)
+            .content.map { it.toCellModel() }
+        return MembersPage(members = users, hasMore = users.size >= size)
+    }
+
+    private fun ClubMemberResponse.ClubMember.toCellModel() = MemberCellModel(
+        id = userId ?: "-",
+        name = fullName ?: "-",
+        avatarUrl = profileUrl,
+        subtitle = listOfNotNull(degree, specialization, entryYear?.toString()).joinToString(", "),
+        role = role?.toActivityRole() ?: AppUIEntities.UserActivityRole.MEMBER
+    )
 
     private fun AppUIEntities.UserActivityRole.toApiString(): String = when (this) {
         AppUIEntities.UserActivityRole.MEMBER -> "MEMBER"
         AppUIEntities.UserActivityRole.PRESIDENT -> "PRESIDENT"
-        AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "VISE_PRESIDENT"
+        AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "VICE_PRESIDENT"
         AppUIEntities.UserActivityRole.EVENT_CREATOR -> "EVENT_CREATOR"
         AppUIEntities.UserActivityRole.NOT_JOINED -> ""
     }
 
     private fun ClubFormData.toRequest() = ClubCreateRequest(
+        communityId = defaultStorage.getInt(DefaultStorageKey.COMMUNITY_ID, 0),
         name = name,
         about = about,
         location = location,
@@ -167,7 +186,7 @@ class ClubsUseCaseImpl @Inject constructor(
         name = name ?: "",
         communityName = communityName ?: "",
         logoURL = clubProfile ?: "",
-        memberCount = membersCount ?: 0,
+        memberCount = memberCount ?: 0,
         totalCapacity = capacity ?: 0,
         community = communityName ?: "",
         members = members.map {
@@ -175,10 +194,11 @@ class ClubsUseCaseImpl @Inject constructor(
         },
         bgType = background.toBackgroundType(),
         accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
-        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE,
-        role = clubUserRole?.let { it.toActivityRole() },
+        requestType = requestStatus.toRequestType(),
+        role = role?.let { it.toActivityRole() },
         upcomingEventsCount = eventCount ?: 0,
-        categories = categoryResponses.map { it.title }
+        categories = categoryResponses.map { it.title },
+        isVerified = AppUIEntities.ClubStatus.from(clubStatus)?.isVerified == true
     )
 
     private fun ClubDetailResponse.toUIModel() = ClubsDetails.UIModel(
@@ -193,7 +213,8 @@ class ClubsUseCaseImpl @Inject constructor(
         tags = categories.map { AppUIEntities.Tags(id = it.id, type = "CATEGORY", title = it.title) },
         infoData = buildInfoData(this),
         eventsData = emptyList(),
-        editPrefillData = toEditPrefill()
+        editPrefillData = toEditPrefill(),
+        clubStatus = AppUIEntities.ClubStatus.from(clubStatus)
     )
 
     /** Builds the edit-screen pre-fill (form values + image URLs). Mirrors iOS `mapPrefilData`. */
@@ -265,5 +286,12 @@ class ClubsUseCaseImpl @Inject constructor(
         "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
         "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
         else -> AppUIEntities.UserActivityRole.NOT_JOINED
+    }
+
+    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
+        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
+        "PENDING" -> AppUIEntities.RequestType.PENDING
+        "REJECTED" -> AppUIEntities.RequestType.REJECTED
+        else -> AppUIEntities.RequestType.NONE
     }
 }

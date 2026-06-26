@@ -5,14 +5,17 @@ import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.filter.FilterView
-import com.bonjur.designSystem.components.filter.FilterViewMocks
 import com.bonjur.hangouts.data.DTOs.HangoutCategorySectionResponse
 import com.bonjur.hangouts.data.DTOs.HangoutCreateRequest
 import com.bonjur.hangouts.data.DTOs.HangoutDetailResponse
 import com.bonjur.hangouts.data.DTOs.HangoutJoinRequest
 import com.bonjur.hangouts.data.DTOs.HangoutLinkDTO
 import com.bonjur.hangouts.data.DTOs.HangoutListResponse
+import com.bonjur.hangouts.data.DTOs.HangoutMemberResponse
 import com.bonjur.hangouts.data.dataSource.HangoutsDataSource
+import com.bonjur.member.model.GroupedMembersData
+import com.bonjur.member.model.MemberCellModel
+import com.bonjur.member.model.MembersPage
 import com.bonjur.hangouts.domain.model.HangoutDetails
 import com.bonjur.hangouts.presentation.create.models.HangoutCreatePrefillData
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
@@ -25,10 +28,47 @@ class HangoutsUseCaseImpl @Inject constructor(
     val dataSource: HangoutsDataSource
 ) : HangoutsUseCase {
 
-    override suspend fun fetchFilterData(): List<FilterView.Model> = FilterViewMocks.mockData
+    /** Real category fetch -> filter sections. Mirrors iOS `getFilterCategories`. */
+    override suspend fun fetchFilterData(): List<FilterView.Model> =
+        dataSource.getCategories().map { section ->
+            FilterView.Model(
+                title = section.title ?: "",
+                type = section.type ?: "",
+                items = section.subCategories.map { sub ->
+                    FilterView.Items(title = sub.title ?: "", id = sub.id ?: 0)
+                }
+            )
+        }
 
-    override suspend fun fetchHangoutsData(): List<HangoutsCardModel> =
-        dataSource.getHangouts(emptyMap()).map { it.toCardModel() }
+    override suspend fun fetchHangoutsData(
+        categoryIds: List<Int>,
+        keyword: String?,
+        page: Int,
+        size: Int
+    ): List<HangoutsCardModel> =
+        dataSource.getHangouts(buildHangoutsQuery(categoryIds, keyword, page, size))
+            .map { it.toCardModel() }
+
+    /**
+     * Discover hangouts query (GET api/ds/v1/hangouts). Mirrors iOS:
+     * page/size always sent, categoryIds comma-joined when present, keyword when non-blank.
+     */
+    private fun buildHangoutsQuery(
+        categoryIds: List<Int>,
+        keyword: String?,
+        page: Int,
+        size: Int
+    ): Map<String, String> {
+        val query = mutableMapOf(
+            "page" to page.toString(),
+            "size" to size.toString()
+        )
+        if (categoryIds.isNotEmpty()) {
+            query["categoryIds"] = categoryIds.joinToString(",")
+        }
+        keyword?.trim()?.takeIf { it.isNotEmpty() }?.let { query["keyword"] = it }
+        return query
+    }
 
     override suspend fun fetchDetailData(id: String): HangoutDetails.UIModel =
         dataSource.getHangoutById(id).toUIModel()
@@ -51,6 +91,25 @@ class HangoutsUseCaseImpl @Inject constructor(
     override suspend fun exitHangout(hangoutId: String) {
         dataSource.exitHangout(hangoutId)
     }
+
+    override suspend fun fetchHangoutMembers(hangoutId: String): GroupedMembersData {
+        val users = dataSource.getHangoutMembers(hangoutId, page = 0, size = 10)
+            .content.map { it.toCellModel() }
+        return GroupedMembersData.from(users)
+    }
+
+    override suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int): MembersPage {
+        val users = dataSource.getHangoutMembers(hangoutId, page, size).content.map { it.toCellModel() }
+        return MembersPage(members = users, hasMore = users.size >= size)
+    }
+
+    private fun HangoutMemberResponse.toCellModel() = MemberCellModel(
+        id = userId ?: "-",
+        name = fullName ?: "-",
+        avatarUrl = profileUrl,
+        subtitle = listOfNotNull(degree, specialization, entryYear?.toString()).joinToString(", "),
+        role = role?.toActivityRole() ?: AppUIEntities.UserActivityRole.MEMBER
+    )
 
     // MARK: - Mappers
 

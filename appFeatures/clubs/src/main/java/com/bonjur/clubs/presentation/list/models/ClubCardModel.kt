@@ -26,7 +26,8 @@ data class ClubCardModel(
     val requestType: AppUIEntities.RequestType,
     val role: AppUIEntities.UserActivityRole? = null,
     val upcomingEventsCount: Int,
-    val categories: List<String>
+    val categories: List<String>,
+    val isVerified: Boolean = false
 )
 
 // Preview/Mock Data
@@ -60,7 +61,8 @@ object ClubCardMocks {
             accessType = AppUIEntities.AccessType.PRIVATE,
             requestType = AppUIEntities.RequestType.NONE,
             upcomingEventsCount = 2,
-            categories = listOf("Sport", "Tournament")
+            categories = listOf("Sport", "Tournament"),
+            isVerified = true
         ),
         ClubCardModel(
             id = 2,

@@ -25,6 +25,7 @@ data class GroupsClubResponse(
     val clubStatus: String? = null,
     val requestStatus: String? = null,
     val role: String? = null,
+    val about: String? = null,
     val members: List<GroupsMember> = emptyList(),
     val categoryResponses: List<GroupsCategory> = emptyList(),
     val memberCount: Int? = null,

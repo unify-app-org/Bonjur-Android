@@ -9,29 +9,19 @@ sealed interface CommunitiesScreens {
     @Serializable
     data object Details : CommunitiesScreens
 
+    // Payloads pass via NavArgs (matching Details) — the string-based Navigator routes
+    // by qualified name, so parameterized `data class` routes are UNREACHABLE and crash
+    // with "destination ... cannot be found". Keep these as `data object`. See ClubsScreens.
+    // (See-all members now uses the shared member.list.MemberListScreens.)
     @Serializable
-    data class MembersList(
-        val communityId: Int,
-        val title: String = "Members"
-    ) : CommunitiesScreens
+    data object FacultyBrowse : CommunitiesScreens
 
     @Serializable
-    data class FacultyBrowse(val communityId: String, val title: String = "All members") : CommunitiesScreens
+    data object FacultySelection : CommunitiesScreens
 
     @Serializable
-    data class FacultySelection(val communityId: String, val title: String = "Select Faculty") : CommunitiesScreens
+    data object FacultyStudentList : CommunitiesScreens
 
     @Serializable
-    data class FacultyStudentList(
-        val communityId: String,
-        val facultyId: String,   // degree string used to filter members
-        val title: String = "Members"
-    ) : CommunitiesScreens
-
-    @Serializable
-    data class FacultyStudentSelectList(
-        val communityId: String,
-        val facultyId: String,
-        val title: String = "Select Member"
-    ) : CommunitiesScreens
+    data object FacultyStudentSelectList : CommunitiesScreens
 }

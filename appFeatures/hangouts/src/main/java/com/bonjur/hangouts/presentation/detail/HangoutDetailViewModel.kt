@@ -12,8 +12,14 @@ import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsAction
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsSideEffect
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsViewState
+import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.member.list.MemberListInputData
+import com.bonjur.member.list.MemberListScreens
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.ProfileDetailNavArgs
+import com.bonjur.navigation.SharedRoutes
 import com.bonjur.navigation.route
+import com.bonjur.network.manager.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,7 +32,8 @@ class HangoutDetailsViewModel @Inject constructor(
 ) {
 
     data class Dependencies @Inject constructor(
-        val useCase: HangoutsUseCase
+        val useCase: HangoutsUseCase,
+        val tokenManager: TokenManager
     )
 
     private lateinit var inputData: HangoutDetailsInputData
@@ -36,6 +43,7 @@ class HangoutDetailsViewModel @Inject constructor(
         if (::inputData.isInitialized) return
         this.inputData = inputData
         this.navigator = navigator
+        updateState(state.copy(currentUserId = dependencies.tokenManager.getUserId()))
         fetchData()
     }
 
@@ -48,6 +56,33 @@ class HangoutDetailsViewModel @Inject constructor(
             HangoutDetailsAction.EditTapped -> navigateToEdit()
             HangoutDetailsAction.JoinTapped -> joinHangout()
             HangoutDetailsAction.ExitTapped -> presentExitConfirm()
+            HangoutDetailsAction.SeeAllMembersTapped -> navigateToMembersList()
+            is HangoutDetailsAction.MemberTapped -> navigateToProfile(action.member.id)
+        }
+    }
+
+    private fun navigateToMembersList() {
+        viewModelScope.launch {
+            navigator.navigateTo(
+                MemberListScreens.MembersList.route,
+                MemberListInputData(
+                    title = "Members",
+                    viewerRole = state.uiModel?.userActivityType
+                        ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+                    currentUserId = state.currentUserId,
+                    activityType = AppUIEntities.ActivityType.HANG_OUTS,
+                    loadPage = { page, size ->
+                        dependencies.useCase.fetchHangoutMembersPage(inputData.hangoutId, page, size)
+                    },
+                    onMemberTapped = { userId -> navigateToProfile(userId) }
+                )
+            )
+        }
+    }
+
+    private fun navigateToProfile(userId: String) {
+        viewModelScope.launch {
+            navigator.navigateTo(SharedRoutes.PROFILE_DETAIL, ProfileDetailNavArgs(userId))
         }
     }
 
@@ -150,6 +185,12 @@ class HangoutDetailsViewModel @Inject constructor(
             updateState(state.copy(uiModel = data))
         } catch (e: Exception) {
             // Handle error
+        }
+        try {
+            val members = dependencies.useCase.fetchHangoutMembers(inputData.hangoutId)
+            updateState(state.copy(membersData = members))
+        } catch (e: Exception) {
+            // Members are best-effort.
         }
     }
 }

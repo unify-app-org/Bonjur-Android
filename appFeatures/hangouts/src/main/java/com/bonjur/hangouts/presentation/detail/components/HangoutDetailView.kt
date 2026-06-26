@@ -42,6 +42,7 @@ import com.bonjur.designSystem.components.button.AppButtonModel
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
+import com.bonjur.member.list.MembersPreview
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -176,7 +177,7 @@ fun HangoutDetailsView(
                                     InfoTab(infoData = store.state.uiModel?.infoData ?: emptyList())
 
                                 HangoutDetailsViewState.SegmentTypes.MEMBERS ->
-                                    MembersTab(membersData = store.state.uiModel?.membersData)
+                                    MembersTab(store)
                             }
                         }
                     }
@@ -558,15 +559,18 @@ private fun InfoSubItem(subItem: HangoutDetails.SubInfo) {
 }
 
 @Composable
-private fun MembersTab(membersData: Any?) {
-    Box(
-        modifier = Modifier.fillMaxWidth().height(400.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Members Tab - Coming Soon",
-            style = AppTypography.TextL.medium,
-            color = Palette.blackMedium
-        )
-    }
+private fun MembersTab(
+    store: FeatureStore<HangoutDetailsViewState, HangoutDetailsAction, HangoutDetailsSideEffect>
+) {
+    val sections = store.state.membersData?.sections ?: emptyList()
+    MembersPreview(
+        sections = sections,
+        totalCount = store.state.uiModel?.membersCount ?: sections.sumOf { it.memberCount },
+        viewerRole = store.state.uiModel?.userActivityType
+            ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+        currentUserId = store.state.currentUserId,
+        activityType = AppUIEntities.ActivityType.HANG_OUTS,
+        onMemberTap = { member -> store.send(HangoutDetailsAction.MemberTapped(member)) },
+        onSeeAll = { store.send(HangoutDetailsAction.SeeAllMembersTapped) }
+    )
 }

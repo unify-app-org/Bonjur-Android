@@ -66,6 +66,7 @@ dependencies {
     implementation(project(":appFeatures:groups"))
     implementation(project(":appFeatures:hangouts"))
     implementation(project(":appFeatures:communities"))
+    implementation(project(":appFeatures:member"))
     implementation(project(":appFeatures:discover"))
     implementation(project(":appFeatures:profile"))
     implementation(project(":appCore:navigation"))

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bonjur.appfoundation.FeatureStore
@@ -27,6 +28,7 @@ import com.bonjur.clubs.presentation.create.models.ClubCreateViewState
 import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.components.button.AppButtonModel
+import com.bonjur.designSystem.components.button.ButtonType
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
 import com.bonjur.designSystem.components.topBar.AppTopBar
@@ -129,6 +131,75 @@ fun ClubCreateView(
                 onToggle = { id -> store.send(ClubCreateAction.CategoryToggled(id)) },
                 onDone = { store.send(ClubCreateAction.CategoryPickerDone) },
                 onClose = { store.send(ClubCreateAction.DismissCategoryPicker) }
+            )
+        }
+    }
+
+    if (state.showVerifyPrompt) {
+        AppBottomSheet(
+            onDismiss = { store.send(ClubCreateAction.DismissVerifyPrompt) }
+        ) {
+            ClubVerifyPromptView(
+                onRequestVerification = { store.send(ClubCreateAction.RequestVerificationTapped) },
+                onLater = { store.send(ClubCreateAction.DismissVerifyPrompt) }
+            )
+        }
+    }
+}
+
+/**
+ * Post-create sheet: a new club is unverified, and verification is the hard gate
+ * to creating events in it. Optimistic request flow until the backend verify-request
+ * endpoint lands. Mirrors iOS `ClubVerifyPromptView`.
+ */
+@Composable
+private fun ClubVerifyPromptView(
+    onRequestVerification: () -> Unit,
+    onLater: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Palette.white)
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Icon(
+            painter = Images.Icons.selectedCheckBox(),
+            contentDescription = null,
+            tint = Palette.appBlue,
+            modifier = Modifier.size(40.dp)
+        )
+        Text(
+            text = "Club created 🎉",
+            style = AppTypography.TitleMd.extraBold,
+            color = Palette.blackHigh,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = "Your club isn't verified yet. Request verification to earn the verified " +
+                "badge and unlock event creation — you can't create events in an unverified club.",
+            style = AppTypography.BodyTextSm.regular,
+            color = Palette.blackMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AppButton(
+                title = "Request verification",
+                model = AppButtonModel(contentSize = ContentSize.Fill),
+                onClick = onRequestVerification,
+                modifier = Modifier.fillMaxWidth()
+            )
+            AppButton(
+                title = "Later",
+                model = AppButtonModel(type = ButtonType.Tertiary, contentSize = ContentSize.Fill),
+                onClick = onLater,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

@@ -117,7 +117,9 @@ data class MyClubResponse(
     val clubProfile: String? = null,
     val backgroundUrl: String? = null,
     val about: String? = null,
-    val count: Int? = null,
+    // iOS MyClubListResponse + live API use memberCount/clubStatus; `count` never bound.
+    val memberCount: Int? = null,
+    val clubStatus: String? = null,
     val capacity: Int? = null,
     val members: List<MyClubMemberResponse> = emptyList(),
     val eventCount: Int? = null,

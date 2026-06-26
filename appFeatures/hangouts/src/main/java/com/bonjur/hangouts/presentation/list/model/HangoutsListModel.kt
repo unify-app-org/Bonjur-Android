@@ -38,6 +38,7 @@ data class HangoutsListViewState(
 // MARK: - Actions
 sealed class HangoutsListAction : FeatureAction {
     object FetchData : HangoutsListAction()
+    object LoadMore : HangoutsListAction()
     object Dismiss : HangoutsListAction()
     data class SearchTextChanged(val text: String) : HangoutsListAction()
     data class ItemSelected(val id: String) : HangoutsListAction()

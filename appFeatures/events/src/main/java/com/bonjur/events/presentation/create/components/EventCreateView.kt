@@ -9,7 +9,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +28,10 @@ import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.components.button.AppButtonModel
+import com.bonjur.designSystem.components.button.ButtonType
 import com.bonjur.designSystem.components.button.ContentSize
+import com.bonjur.designSystem.components.emptyView.AppEmptyModel
+import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
 import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
 import com.bonjur.designSystem.components.topBar.AppTopBar
@@ -36,6 +41,7 @@ import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.events.presentation.create.models.EventCreateAction
+import com.bonjur.events.presentation.create.models.EventCreateClubsPhase
 import com.bonjur.events.presentation.create.models.EventCreateSideEffect
 import com.bonjur.events.presentation.create.models.EventCreateViewState
 import com.bonjur.events.presentation.create.models.EventSelectableClub
@@ -45,72 +51,38 @@ fun EventCreateView(
     store: FeatureStore<EventCreateViewState, EventCreateAction, EventCreateSideEffect>
 ) {
     val state = store.state
-    val coverHeight = (LocalConfiguration.current.screenHeightDp / 4).dp
     val scrollState = rememberScrollState()
     val isScrolled by remember { derivedStateOf { scrollState.value > 30 } }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(scrollState)
-            ) {
-                CoverHeader(
-                    coverUrl = state.coverUrl,
-                    background = state.coverBackground,
-                    height = coverHeight
-                )
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(top = 20.dp, bottom = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(text = state.topTitle, style = AppTypography.TitleL.extraBold)
-
-                    Text(
-                        text = "Fields marked with * are required.",
-                        style = AppTypography.BodyTextMd.regular,
-                        color = Palette.appBlue
-                    )
-
-                    ClubSelector(
-                        selectedClub = state.selectedClub,
-                        isDisabled = state.isEdit,
-                        onTap = { store.send(EventCreateAction.SelectClubTapped) }
-                    )
-
-                    state.schema.forEach { field ->
-                        // Club + event name are immutable once the event exists (mirrors iOS).
-                        val isLocked = state.isEdit && field.id == AppFieldSchema.FieldId.EVENT_NAME
-                        FieldSchemaRouter(
-                            field = field,
-                            values = state.values,
-                            onChange = { id, value ->
-                                if (!isLocked) store.send(EventCreateAction.FieldChanged(id, value))
-                            },
-                            onAddCategory = { store.send(EventCreateAction.AddCategoryTapped) },
-                            onRemoveCategory = { id -> store.send(EventCreateAction.RemoveCategory(id)) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .alpha(if (isLocked) 0.5f else 1f)
-                        )
-                    }
+        when (state.clubsPhase) {
+            EventCreateClubsPhase.Loading ->
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Palette.green900)
                 }
-            }
 
-            AppButton(
-                title = "Continue",
-                model = AppButtonModel(contentSize = ContentSize.Fill),
-                onClick = { store.send(EventCreateAction.ContinueTapped) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 16.dp),
-                enabled = state.isValid
-            )
+            EventCreateClubsPhase.Failed ->
+                StateCardSlot {
+                    AppEmptyView(
+                        model = AppEmptyModel(
+                            icon = Images.Icons.helpCircle(),
+                            text = "Couldn't load your clubs",
+                            buttonTitle = "Retry"
+                        ),
+                        onButtonClick = { store.send(EventCreateAction.RetryClubsTapped) }
+                    )
+                }
+
+            EventCreateClubsPhase.Empty ->
+                StateCardSlot {
+                    NoEligibleClubsCard(
+                        onCreateClub = { store.send(EventCreateAction.CreateClubTapped) },
+                        onBrowseClubs = { store.send(EventCreateAction.BrowseClubsTapped) }
+                    )
+                }
+
+            EventCreateClubsPhase.Loaded ->
+                FormBody(store = store, state = state, scrollState = scrollState)
         }
 
         AppTopBar(
@@ -119,32 +91,169 @@ fun EventCreateView(
         )
     }
 
-    if (state.showCategoryPicker) {
-        AppBottomSheet(
-            onDismiss = { store.send(EventCreateAction.DismissCategoryPicker) },
-            showDragHandle = false,
-            modifier = Modifier.fillMaxHeight(0.9f)
-        ) {
-            SelectCategoryView(
-                sections = state.categorySections,
-                onToggle = { id -> store.send(EventCreateAction.CategoryToggled(id)) },
-                onDone = { store.send(EventCreateAction.CategoryPickerDone) },
-                onClose = { store.send(EventCreateAction.DismissCategoryPicker) }
-            )
+    // Pickers only make sense once the form (and a club list) is on screen.
+    if (state.clubsPhase == EventCreateClubsPhase.Loaded) {
+        if (state.showCategoryPicker) {
+            AppBottomSheet(
+                onDismiss = { store.send(EventCreateAction.DismissCategoryPicker) },
+                showDragHandle = false,
+                modifier = Modifier.fillMaxHeight(0.9f)
+            ) {
+                SelectCategoryView(
+                    sections = state.categorySections,
+                    onToggle = { id -> store.send(EventCreateAction.CategoryToggled(id)) },
+                    onDone = { store.send(EventCreateAction.CategoryPickerDone) },
+                    onClose = { store.send(EventCreateAction.DismissCategoryPicker) }
+                )
+            }
+        }
+
+        if (state.showClubPicker) {
+            AppBottomSheet(
+                onDismiss = { store.send(EventCreateAction.DismissClubPicker) },
+                modifier = Modifier.fillMaxHeight(0.9f)
+            ) {
+                ClubPicker(
+                    clubs = state.clubs,
+                    selectedClubId = state.selectedClubId,
+                    onSelect = { store.send(EventCreateAction.SelectClub(it)) }
+                )
+            }
         }
     }
+}
 
-    if (state.showClubPicker) {
-        AppBottomSheet(
-            onDismiss = { store.send(EventCreateAction.DismissClubPicker) },
-            modifier = Modifier.fillMaxHeight(0.9f)
+@Composable
+private fun BoxScope.FormBody(
+    store: FeatureStore<EventCreateViewState, EventCreateAction, EventCreateSideEffect>,
+    state: EventCreateViewState,
+    scrollState: androidx.compose.foundation.ScrollState
+) {
+    val coverHeight = (LocalConfiguration.current.screenHeightDp / 4).dp
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(scrollState)
         ) {
-            ClubPicker(
-                clubs = state.clubs,
-                selectedClubId = state.selectedClubId,
-                onSelect = { store.send(EventCreateAction.SelectClub(it)) }
+            CoverHeader(
+                coverUrl = state.coverUrl,
+                background = state.coverBackground,
+                height = coverHeight
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 20.dp, bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(text = state.topTitle, style = AppTypography.TitleL.extraBold)
+
+                Text(
+                    text = "Fields marked with * are required.",
+                    style = AppTypography.BodyTextMd.regular,
+                    color = Palette.appBlue
+                )
+
+                ClubSelector(
+                    selectedClub = state.selectedClub,
+                    isDisabled = state.isEdit,
+                    onTap = { store.send(EventCreateAction.SelectClubTapped) }
+                )
+
+                state.schema.forEach { field ->
+                    // Club + event name are immutable once the event exists (mirrors iOS).
+                    val isLocked = state.isEdit && field.id == AppFieldSchema.FieldId.EVENT_NAME
+                    FieldSchemaRouter(
+                        field = field,
+                        values = state.values,
+                        onChange = { id, value ->
+                            if (!isLocked) store.send(EventCreateAction.FieldChanged(id, value))
+                        },
+                        onAddCategory = { store.send(EventCreateAction.AddCategoryTapped) },
+                        onRemoveCategory = { id -> store.send(EventCreateAction.RemoveCategory(id)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(if (isLocked) 0.5f else 1f)
+                    )
+                }
+            }
+        }
+
+        AppButton(
+            title = "Continue",
+            model = AppButtonModel(contentSize = ContentSize.Fill),
+            onClick = { store.send(EventCreateAction.ContinueTapped) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            enabled = state.isValid
+        )
+    }
+}
+
+/** Centers a state card below the top bar, mirroring the iOS empty/error layout. */
+@Composable
+private fun StateCardSlot(content: @Composable () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+
+/**
+ * `AppEmptyView` only supports one button; the empty state needs two funnel entries
+ * (create / browse), so it's a bespoke card mirroring iOS `EventCreateStateViews`.
+ */
+@Composable
+private fun NoEligibleClubsCard(
+    onCreateClub: () -> Unit,
+    onBrowseClubs: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Palette.white)
+            .border(0.5.dp, Palette.graySecondary, RoundedCornerShape(16.dp))
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Surface(shape = RoundedCornerShape(16.dp), color = Palette.grayQuaternary) {
+            Icon(
+                painter = Images.Icons.twoUsers(),
+                contentDescription = null,
+                tint = Color.Unspecified,
+                modifier = Modifier.padding(12.dp).size(24.dp)
             )
         }
+        Text(
+            text = "No clubs to post to. To create an event you must be a president, " +
+                "vice president, or organizer of a verified club.",
+            style = AppTypography.BodyTextSm.medium,
+            color = Palette.blackMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        AppButton(
+            title = "Create a club",
+            model = AppButtonModel(contentSize = ContentSize.Fill),
+            onClick = onCreateClub,
+            modifier = Modifier.fillMaxWidth()
+        )
+        AppButton(
+            title = "Browse clubs",
+            model = AppButtonModel(type = ButtonType.Secondary, contentSize = ContentSize.Fill),
+            onClick = onBrowseClubs,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 

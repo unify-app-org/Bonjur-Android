@@ -11,7 +11,7 @@ interface ClubsDataSource {
     suspend fun getClubs(query: Map<String, String>): List<ClubListResponse>
     suspend fun getCategories(): List<CategorySectionResponse>
     suspend fun getClubById(clubId: Int): ClubDetailResponse
-    suspend fun getClubMembers(clubId: Int): ClubMemberResponse
+    suspend fun getClubMembers(clubId: Int, page: Int = 0, size: Int = 100): ClubMemberResponse
     suspend fun createClub(
         request: ClubCreateRequest,
         logo: ByteArray?,

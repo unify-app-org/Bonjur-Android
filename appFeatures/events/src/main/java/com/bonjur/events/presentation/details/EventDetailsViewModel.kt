@@ -12,10 +12,15 @@ import com.bonjur.events.presentation.details.model.EventDetailsAction
 import com.bonjur.events.presentation.details.model.EventDetailsInputData
 import com.bonjur.events.presentation.details.model.EventDetailsSideEffect
 import com.bonjur.events.presentation.details.model.EventDetailsViewState
+import com.bonjur.member.list.MemberListInputData
+import com.bonjur.member.list.MemberListScreens
 import com.bonjur.navigation.ClubDetailsNavArgs
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.ProfileDetailNavArgs
 import com.bonjur.navigation.SharedRoutes
 import com.bonjur.navigation.route
+import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.network.manager.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,9 +33,10 @@ class EventDetailsViewModel @Inject constructor(
 ) {
     
     data class Dependencies @Inject constructor(
-        val useCase: EventsUseCase
+        val useCase: EventsUseCase,
+        val tokenManager: TokenManager
     )
-    
+
     private lateinit var inputData: EventDetailsInputData
     private lateinit var navigator: Navigator
 
@@ -38,6 +44,7 @@ class EventDetailsViewModel @Inject constructor(
         if (::inputData.isInitialized) return
         this.inputData = inputData
         this.navigator = navigator
+        updateState(state.copy(currentUserId = dependencies.tokenManager.getUserId()))
         fetchData()
     }
 
@@ -54,6 +61,33 @@ class EventDetailsViewModel @Inject constructor(
             EventDetailsAction.JoinTapped -> joinEvent()
             EventDetailsAction.ExitTapped -> presentExitConfirm()
             EventDetailsAction.ClubTapped -> navigateToClub()
+            EventDetailsAction.SeeAllMembersTapped -> navigateToMembersList()
+            is EventDetailsAction.MemberTapped -> navigateToProfile(action.member.id)
+        }
+    }
+
+    private fun navigateToMembersList() {
+        viewModelScope.launch {
+            navigator.navigateTo(
+                MemberListScreens.MembersList.route,
+                MemberListInputData(
+                    title = "Members",
+                    viewerRole = state.uiModel?.userActivityType
+                        ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+                    currentUserId = state.currentUserId,
+                    activityType = AppUIEntities.ActivityType.EVENTS,
+                    loadPage = { page, size ->
+                        dependencies.useCase.fetchEventMembersPage(inputData.eventId, page, size)
+                    },
+                    onMemberTapped = { userId -> navigateToProfile(userId) }
+                )
+            )
+        }
+    }
+
+    private fun navigateToProfile(userId: String) {
+        viewModelScope.launch {
+            navigator.navigateTo(SharedRoutes.PROFILE_DETAIL, ProfileDetailNavArgs(userId))
         }
     }
 
@@ -172,6 +206,12 @@ class EventDetailsViewModel @Inject constructor(
             )
         } catch (e: Exception) {
             // Handle error
+        }
+        try {
+            val members = dependencies.useCase.fetchEventMembers(inputData.eventId)
+            updateState(state.copy(membersData = members))
+        } catch (e: Exception) {
+            // Members are best-effort.
         }
     }
 }

@@ -59,10 +59,14 @@ data class ClubListResponse(
     val clubProfile: String? = null,
     val backgroundUrl: String? = null,
     val about: String? = null,
-    val membersCount: Int? = null,
+    // Live API + iOS ListResponse use memberCount/requestStatus/role/clubStatus.
+    // (Local club-service ClubGeneralResponse source is stale — still says count/role;
+    //  deploy pulls prebuilt images so live is the truth. See club-dto-stale-fields.)
+    val memberCount: Int? = null,
     val capacity: Int? = null,
-    val joined: Boolean? = null,
-    val clubUserRole: String? = null,
+    val requestStatus: String? = null,
+    val role: String? = null,
+    val clubStatus: String? = null,
     val members: List<ClubListMember> = emptyList(),
     val eventCount: Int? = null,
     val categoryResponses: List<ClubCategoryResponse> = emptyList()
@@ -92,7 +96,12 @@ data class ClubDetailResponse(
     val modifiedAt: String? = null,
     val communityName: String = "",
     val clubUserRole: String? = null,
+    // iOS Response calls this `clubUserStatus` (the viewer's join state on detail).
+    val clubUserStatus: String? = null,
     val capacity: Int? = null,
+    // iOS Response exposes verification as `status` (not `clubStatus`) — bind to the
+    // same JSON key so the verified badge gets live data. Mirrors iOS ClubDTOModel.Response.
+    @SerialName("status") val clubStatus: String? = null,
     val categories: List<ClubCategoryResponse> = emptyList(),
     val links: List<ClubLinkResponse> = emptyList()
 )

@@ -10,7 +10,7 @@ package com.bonjur.hangouts.presentation.list.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -68,7 +68,10 @@ fun HangoutsListView(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    items(state.uiModel.hangouts, key = { it.uuid }) { hangout ->
+                    itemsIndexed(
+                        state.uiModel.hangouts,
+                        key = { _, hangout -> hangout.uuid }
+                    ) { index, hangout ->
                         HangoutsCardView(
                             model = hangout,
                             onButtonTap = {
@@ -77,6 +80,11 @@ fun HangoutsListView(
                             onTap = {
                                 store.send(HangoutsListAction.ItemSelected(hangout.id))
                             }
+                        )
+                        LoadMoreTrigger(
+                            index = index,
+                            lastIndex = state.uiModel.hangouts.lastIndex,
+                            onLoadMore = { store.send(HangoutsListAction.LoadMore) }
                         )
                     }
                 }
@@ -184,5 +192,21 @@ private fun TopView(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         )
+    }
+}
+
+/// Compose equivalent of iOS `loadMoreIfNeeded(index == count - 1)`: when the
+/// last item enters composition, trigger a page load. Keyed on lastIndex so it
+/// re-fires after the list grows and a new last item appears, not on every recompose.
+@Composable
+private fun LoadMoreTrigger(
+    index: Int,
+    lastIndex: Int,
+    onLoadMore: () -> Unit
+) {
+    if (index == lastIndex && lastIndex >= 0) {
+        LaunchedEffect(lastIndex) {
+            onLoadMore()
+        }
     }
 }

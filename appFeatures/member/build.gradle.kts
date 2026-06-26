@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":appCore:designSystem"))
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:appFoundation"))
+    implementation(project(":appCore:navigation"))
 
     // Async images
     implementation("io.coil-kt:coil-compose:2.6.0")

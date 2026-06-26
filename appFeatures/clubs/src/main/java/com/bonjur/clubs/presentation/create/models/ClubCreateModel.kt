@@ -31,6 +31,11 @@ data class ClubCreateViewState(
     val existingCoverUrl: String? = null,
     val categorySections: List<CategorySection> = emptyList(),
     val showCategoryPicker: Boolean = false,
+    /**
+     * Post-create prompt: a brand-new club is unverified, and verification is the
+     * hard gate to creating events in it. Shown only on the create path. Mirrors iOS.
+     */
+    val showVerifyPrompt: Boolean = false,
     val isLoading: Boolean = false,
     val isEdit: Boolean = false
 ) : FeatureState {
@@ -55,6 +60,8 @@ sealed class ClubCreateAction : FeatureAction {
     ) : ClubCreateAction()
     data class LogoSelected(val uri: String?) : ClubCreateAction()
     data class CoverSelected(val uri: String?) : ClubCreateAction()
+    object RequestVerificationTapped : ClubCreateAction()
+    object DismissVerifyPrompt : ClubCreateAction()
     object AddCategoryTapped : ClubCreateAction()
     object DismissCategoryPicker : ClubCreateAction()
     object CategoryPickerDone : ClubCreateAction()

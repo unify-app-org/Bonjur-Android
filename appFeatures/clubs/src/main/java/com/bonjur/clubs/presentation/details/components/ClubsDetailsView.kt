@@ -38,6 +38,8 @@ import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.clubs.presentation.model.*
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.components.snackbar.AppSnackBar
+import com.bonjur.member.list.MembersPreview
 import com.bonjur.designSystem.components.InfoContainer.AppInfoContainer
 import com.bonjur.designSystem.components.button.AppButton
 import com.bonjur.designSystem.components.button.AppButtonModel
@@ -145,6 +147,12 @@ fun ClubDetailsView(
                 ClubInfoView(
                     uiModel = store.state.uiModel,
                     canCreateEvent = store.state.canCreateEvent,
+                    isVerified = store.state.isVerified,
+                    showVerifyButton = store.state.showVerifyButton,
+                    verifyButtonDisabled = store.state.verifyButtonDisabled,
+                    onRequestVerification = {
+                        store.send(ClubDetailsAction.RequestVerificationTapped)
+                    },
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -204,7 +212,7 @@ fun ClubDetailsView(
                                 EventsTab(store.state.uiModel?.eventsData ?: emptyList())
 
                             ClubDetailsViewState.SegmentTypes.MEMBERS ->
-                                MembersTab()
+                                MembersTab(store)
                         }
                     }
                 }
@@ -380,6 +388,10 @@ private fun LogoView(
 private fun ClubInfoView(
     uiModel: ClubsDetails.UIModel?,
     canCreateEvent: Boolean,
+    isVerified: Boolean,
+    showVerifyButton: Boolean,
+    verifyButtonDisabled: Boolean,
+    onRequestVerification: () -> Unit,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
@@ -459,6 +471,37 @@ private fun ClubInfoView(
                     )
                 }
             }
+        }
+
+        // Verification — verified badge, else request button for admins (matches iOS verificationView)
+        if (isVerified) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = Images.Icons.verifiedSeal(),
+                    contentDescription = "Verified club",
+                    tint = Palette.appBlue,
+                    modifier = Modifier.size(14.dp)
+                )
+                Text(
+                    text = "Verified club",
+                    style = AppTypography.TextSm.medium,
+                    color = Palette.appBlue
+                )
+            }
+        } else if (showVerifyButton) {
+            AppButton(
+                title = "Request verification from admins",
+                model = AppButtonModel(
+                    type = ButtonType.Secondary,
+                    contentSize = ContentSize.Fill,
+                    size = AppButtonSize.Medium
+                ),
+                enabled = !verifyButtonDisabled,
+                onClick = { onRequestVerification() }
+            )
         }
 
         // Create event button — only for joined non-member roles (matches iOS canCreateEvent)
@@ -707,17 +750,19 @@ private fun EventsTab(events: List<EventsCardModel>) {
 }
 
 @Composable
-private fun MembersTab() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(400.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            "Members Tab - Coming Soon",
-            style = AppTypography.TextL.medium,
-            color = Palette.blackMedium
-        )
-    }
+private fun MembersTab(
+    store: FeatureStore<ClubDetailsViewState, ClubDetailsAction, ClubDetailsSideEffect>
+) {
+    val sections = store.state.membersData?.sections ?: emptyList()
+    MembersPreview(
+        sections = sections,
+        totalCount = store.state.uiModel?.membersCount ?: sections.sumOf { it.memberCount },
+        viewerRole = store.state.uiModel?.userActivityType
+            ?: AppUIEntities.UserActivityRole.NOT_JOINED,
+        currentUserId = store.state.currentUserId,
+        activityType = AppUIEntities.ActivityType.CLUBS,
+        onMemberTap = { member -> store.send(ClubDetailsAction.MemberTapped(member)) },
+        onSeeAll = { store.send(ClubDetailsAction.SeeAllMembersTapped) },
+        onAssignRole = { userId, role -> store.send(ClubDetailsAction.AssignRole(userId, role)) }
+    )
 }

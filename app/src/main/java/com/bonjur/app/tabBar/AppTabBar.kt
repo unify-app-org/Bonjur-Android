@@ -50,6 +50,7 @@ import com.bonjur.groups.navigation.GroupsScreens
 import com.bonjur.groups.navigation.groupsNavGraph
 import com.bonjur.hangouts.navigation.HangoutsScreens
 import com.bonjur.hangouts.navigation.hangoutsNavGraph
+import com.bonjur.member.list.memberNavGraph
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
@@ -100,17 +101,10 @@ fun AppTabBar(
     // Update bottom bar visibility based on current destination
     val navBackStackEntry by currentNavController.currentBackStackEntryAsState()
     LaunchedEffect(navBackStackEntry) {
-        val currentRoute = navBackStackEntry?.destination?.route
-
-        // Define root routes where bottom bar should be visible
-        shouldShowBottomBar.value = when (currentRoute) {
-            DiscoverScreens.Discover::class.qualifiedName,
-            ClubsScreens.List::class.qualifiedName,
-            GroupsScreens.List::class.qualifiedName,
-            ProfileScreens.ProfileDetail::class.qualifiedName,
-            null -> true
-            else -> false
-        }
+        // Show the bottom bar only at a tab's root (no entry behind it); hide on any pushed
+        // screen — generic hidesBottomBarWhenPushed. This also distinguishes the root Profile
+        // tab from a ProfileDetail pushed off a members list, which share the same route.
+        shouldShowBottomBar.value = currentNavController.previousBackStackEntry == null
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -254,6 +248,7 @@ fun ClubsTabContent(
         startDestination = ClubsScreens.List
     ) {
         clubsNavGraph(navigator)
+        memberNavGraph(navigator)
     }
 }
 
@@ -279,6 +274,7 @@ fun DiscoverTabContent(
         hangoutsNavGraph(navigator)
         clubsNavGraph(navigator)
         profileNavGraph(navigator)
+        memberNavGraph(navigator)
     }
 }
 
@@ -297,6 +293,7 @@ fun MyPlansTabContent(
         startDestination = GroupsScreens.List
     ) {
         groupsNavGraph(navigator)
+        memberNavGraph(navigator)
     }
 }
 
@@ -319,6 +316,7 @@ fun ProfileTabContent(
         clubsNavGraph(navigator)
         eventsNavGraph(navigator)
         hangoutsNavGraph(navigator)
+        memberNavGraph(navigator)
     }
 }
 

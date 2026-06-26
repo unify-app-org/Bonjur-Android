@@ -48,7 +48,12 @@ class ProfileDetailViewModel @Inject constructor(
         if (::inputData.isInitialized) return
         this.inputData = inputData
         this.navigator = navigator
-        updateState(state.copy(isOwnProfile = inputData.userId.isNullOrEmpty()))
+        updateState(
+            state.copy(
+                isOwnProfile = inputData.userId.isNullOrEmpty(),
+                isPushed = inputData.isPushed
+            )
+        )
         fetchData()
     }
 

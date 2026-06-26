@@ -193,16 +193,17 @@ class CommunitiesUseCaseImpl @Inject constructor(
         name = name ?: "-",
         communityName = communityName ?: "-",
         logoURL = clubProfile ?: "",
-        memberCount = count ?: 0,
+        memberCount = memberCount ?: 0,
         totalCapacity = capacity ?: 0,
         community = communityName ?: "-",
         members = members.map { AppUIEntities.Member(id = it.id?.hashCode() ?: 0, profileImage = it.url) },
         bgType = background.toBackgroundType(),
         accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
-        requestType = if (joined == true) AppUIEntities.RequestType.JOINED else AppUIEntities.RequestType.NONE,
+        requestType = requestStatus.toRequestType(),
         role = role?.toUserActivityRole(),
         upcomingEventsCount = eventCount ?: 0,
-        categories = categoryResponses.map { it.title }
+        categories = categoryResponses.map { it.title },
+        isVerified = AppUIEntities.ClubStatus.from(clubStatus)?.isVerified == true
     )
 
     private fun CommunityListResponse.toCardModel() = CommunityCardModel(
@@ -283,5 +284,12 @@ class CommunitiesUseCaseImpl @Inject constructor(
         "ORANGE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Orange)
         "PINK" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Pink)
         else -> AppUIEntities.BackgroundType.Primary
+    }
+
+    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
+        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
+        "PENDING" -> AppUIEntities.RequestType.PENDING
+        "REJECTED" -> AppUIEntities.RequestType.REJECTED
+        else -> AppUIEntities.RequestType.NONE
     }
 }

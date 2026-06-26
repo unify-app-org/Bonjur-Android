@@ -20,6 +20,8 @@ import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,6 +34,14 @@ class HangoutsListViewModel @Inject constructor(
     private lateinit var inputData: HangoutsListInputData
     private lateinit var navigator: Navigator
 
+    private val paginationStep = 10
+    private val searchDebounceMs = 300L
+    private var hangoutsSize = paginationStep
+    private var isLoadingMore = false
+    private var hasMore = true
+    private var selectedCategoryIds: List<Int> = emptyList()
+    private var searchJob: Job? = null
+
     fun init(inputData: HangoutsListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
@@ -41,6 +51,7 @@ class HangoutsListViewModel @Inject constructor(
     override fun handle(action: HangoutsListAction) {
         when (action) {
             HangoutsListAction.FetchData -> fetchData()
+            HangoutsListAction.LoadMore -> loadMore()
             HangoutsListAction.Dismiss -> dismiss()
             is HangoutsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is HangoutsListAction.FilterSelected -> handleFilterSelected(action.items)
@@ -64,19 +75,54 @@ class HangoutsListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getHangoutsData() {
-        postEffect(HangoutsListSideEffect.Loading(true))
+    private suspend fun getHangoutsData(showLoading: Boolean = true) {
+        if (showLoading) postEffect(HangoutsListSideEffect.Loading(true))
         try {
-            val data = useCase.fetchHangoutsData()
+            val data = useCase.fetchHangoutsData(
+                categoryIds = selectedCategoryIds,
+                keyword = currentKeyword(),
+                page = 0,
+                size = hangoutsSize
+            )
+            hasMore = data.size >= hangoutsSize
             updateState(
                 state.copy(uiModel = state.uiModel.copy(hangouts = data))
             )
         } catch (e: ApiException) {
             postEffect(HangoutsListSideEffect.Error(e))
         } finally {
-            postEffect(HangoutsListSideEffect.Loading(false))
+            if (showLoading) postEffect(HangoutsListSideEffect.Loading(false))
         }
     }
+
+    private fun loadMore() {
+        if (isLoadingMore || !hasMore) return
+        isLoadingMore = true
+        val previousSize = hangoutsSize
+        hangoutsSize += paginationStep
+
+        viewModelScope.launch {
+            try {
+                val previousCount = state.uiModel.hangouts.size
+                val data = useCase.fetchHangoutsData(
+                    categoryIds = selectedCategoryIds,
+                    keyword = currentKeyword(),
+                    page = 0,
+                    size = hangoutsSize
+                )
+                hasMore = data.size > previousCount
+                updateState(state.copy(uiModel = state.uiModel.copy(hangouts = data)))
+            } catch (e: ApiException) {
+                hangoutsSize = previousSize
+                postEffect(HangoutsListSideEffect.Error(e))
+            } finally {
+                isLoadingMore = false
+            }
+        }
+    }
+
+    private fun currentKeyword(): String? =
+        state.uiModel.searchText.trim().ifEmpty { null }
 
     private suspend fun getFilters() {
         try {
@@ -93,10 +139,24 @@ class HangoutsListViewModel @Inject constructor(
         updateState(
             state.copy(uiModel = state.uiModel.copy(searchText = text))
         )
+        hangoutsSize = paginationStep
+        hasMore = true
+
+        // Debounced server-side search, mirroring iOS. No local filtering.
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(searchDebounceMs)
+            getHangoutsData(showLoading = false)
+        }
     }
 
     private fun handleFilterSelected(items: List<FilterView.Items>) {
-        // Handle filter logic
+        selectedCategoryIds = items.map { it.id }
+        hangoutsSize = paginationStep
+        hasMore = true
+        viewModelScope.launch {
+            getHangoutsData()
+        }
     }
 
     private fun dismiss() {

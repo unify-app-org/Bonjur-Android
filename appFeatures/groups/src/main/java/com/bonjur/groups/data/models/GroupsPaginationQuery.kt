@@ -2,13 +2,13 @@ package com.bonjur.groups.data.models
 
 /**
  * Pagination + search query for the joined-activity endpoints.
- * Mirrors iOS `GroupsDTOModel.PaginationQuery` (page, size, name).
- * `name` is sent only when non-blank.
+ * Mirrors iOS `GroupsDTOModel.PaginationQuery` (page, size, keyword).
+ * `keyword` is sent only when non-blank.
  */
 data class GroupsPaginationQuery(
     val page: Int,
     val size: Int,
-    val name: String?
+    val keyword: String?
 ) {
     fun toMap(): Map<String, String> {
         // NB: build with mutableMapOf, not buildMap { ... } — inside buildMap's
@@ -18,7 +18,7 @@ data class GroupsPaginationQuery(
             "page" to page.toString(),
             "size" to size.toString()
         )
-        name?.takeIf { it.isNotBlank() }?.let { params["name"] = it }
+        keyword?.takeIf { it.isNotBlank() }?.let { params["keyword"] = it }
         return params
     }
 }

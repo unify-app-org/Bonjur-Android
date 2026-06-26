@@ -70,7 +70,7 @@ class ProfileUseCaseImpl @Inject constructor(
         name = name ?: "-",
         communityName = communityName ?: "-",
         logoURL = clubProfile ?: "",
-        memberCount = count ?: 0,
+        memberCount = memberCount ?: 0,
         totalCapacity = capacity ?: 0,
         community = communityName ?: "-",
         members = members.map {
@@ -81,7 +81,8 @@ class ProfileUseCaseImpl @Inject constructor(
         requestType = requestStatus.toRequestType(),
         role = role?.toActivityRole(),
         upcomingEventsCount = eventCount ?: 0,
-        categories = categoryResponses.map { it.title }
+        categories = categoryResponses.map { it.title },
+        isVerified = AppUIEntities.ClubStatus.from(clubStatus)?.isVerified == true
     )
 
     override suspend fun getMyEvents(): List<EventsCardModel> =
@@ -235,7 +236,7 @@ class ProfileUseCaseImpl @Inject constructor(
     private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = when (this?.uppercase()) {
         "MEMBER" -> AppUIEntities.UserActivityRole.MEMBER
         "PRESIDENT" -> AppUIEntities.UserActivityRole.PRESIDENT
-        "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
+        "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
         "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
         else -> AppUIEntities.UserActivityRole.NOT_JOINED
     }

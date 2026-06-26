@@ -90,7 +90,9 @@ class ApiClient @Inject constructor(
                     } else {
                         endpoint.body?.let {
                             contentType(ContentType.Application.Json)
-                            setBody(json.encodeToString(it))
+                            // setBody(it) lets ktor serialize by RUNTIME type. encodeToString(it)
+                            // would serialize the compile-time `Any` → "Serializer for class 'Any'".
+                            setBody(it)
                         }
                     }
 
@@ -98,7 +100,7 @@ class ApiClient @Inject constructor(
                     logger.logRequest(
                         this,
                         multipart?.let { "[multipart: ${it.files.size} file(s)]" }
-                            ?: endpoint.body?.let { json.encodeToString(it) }
+                            ?: endpoint.body?.toString()
                     )
                 }
             }

@@ -21,6 +21,8 @@ import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,11 +37,12 @@ class ClubsListViewModel @Inject constructor(
 
     // Pagination — mirrors iOS ClubsViewModel (grow size, refetch page 0, replace).
     private val paginationStep = 10
+    private val searchDebounceMs = 300L
     private var clubsSize = paginationStep
     private var isLoadingMoreClubs = false
     private var hasMoreClubs = true
-    private var sourceClubs: List<ClubCardModel> = emptyList()
     private var selectedCategoryIds: List<Int> = emptyList()
+    private var searchJob: Job? = null
 
     fun init(inputData: ClubsListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
@@ -64,21 +67,20 @@ class ClubsListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getClubs() {
-        postEffect(ClubsListSideEffect.Loading(true))
+    private suspend fun getClubs(showLoading: Boolean = true) {
+        if (showLoading) postEffect(ClubsListSideEffect.Loading(true))
         try {
             val data = useCase.fetchClubsData(
                 size = clubsSize,
-                name = state.uiModel.searchText,
+                keyword = currentKeyword(),
                 categoryIds = selectedCategoryIds
             )
             hasMoreClubs = data.size >= clubsSize
-            sourceClubs = data
-            applySearch()
+            updateState(state.copy(uiModel = state.uiModel.copy(clubs = data)))
         } catch (e: ApiException) {
             postEffect(ClubsListSideEffect.Error(e))
         } finally {
-            postEffect(ClubsListSideEffect.Loading(false))
+            if (showLoading) postEffect(ClubsListSideEffect.Loading(false))
         }
     }
 
@@ -86,19 +88,18 @@ class ClubsListViewModel @Inject constructor(
         if (isLoadingMoreClubs || !hasMoreClubs) return
         isLoadingMoreClubs = true
         val previousSize = clubsSize
-        val previousCount = sourceClubs.size
+        val previousCount = state.uiModel.clubs.size
         clubsSize += paginationStep
 
         viewModelScope.launch {
             try {
                 val data = useCase.fetchClubsData(
                     size = clubsSize,
-                    name = state.uiModel.searchText,
+                    keyword = currentKeyword(),
                     categoryIds = selectedCategoryIds
                 )
                 hasMoreClubs = data.size > previousCount
-                sourceClubs = data
-                applySearch()
+                updateState(state.copy(uiModel = state.uiModel.copy(clubs = data)))
             } catch (e: ApiException) {
                 clubsSize = previousSize
                 postEffect(ClubsListSideEffect.Error(e))
@@ -123,22 +124,15 @@ class ClubsListViewModel @Inject constructor(
         updateState(
             state.copy(uiModel = state.uiModel.copy(searchText = text))
         )
-        applySearch()
-    }
+        clubsSize = paginationStep
+        hasMoreClubs = true
 
-    /** Client-side filter over the already-fetched source list. Mirrors iOS `applySearch`. */
-    private fun applySearch() {
-        val query = state.uiModel.searchText.trim().lowercase()
-        val filtered = if (query.isEmpty()) {
-            sourceClubs
-        } else {
-            sourceClubs.filter { club ->
-                club.name.lowercase().contains(query) ||
-                    club.communityName.lowercase().contains(query) ||
-                    club.community.lowercase().contains(query)
-            }
+        // Debounced server-side search, mirroring iOS. No local filtering.
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(searchDebounceMs)
+            getClubs(showLoading = false)
         }
-        updateState(state.copy(uiModel = state.uiModel.copy(clubs = filtered)))
     }
 
     /** Filter selection -> categoryIds -> reset paging -> refetch. Mirrors Discover. */
@@ -150,6 +144,9 @@ class ClubsListViewModel @Inject constructor(
             getClubs()
         }
     }
+
+    private fun currentKeyword(): String? =
+        state.uiModel.searchText.trim().ifEmpty { null }
 
     private fun handleSelectedItem(id: Int) {
         viewModelScope.launch {

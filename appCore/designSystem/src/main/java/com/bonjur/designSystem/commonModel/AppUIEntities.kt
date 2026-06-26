@@ -39,7 +39,28 @@ object AppUIEntities {
         PENDING,
         NONE
     }
-    
+
+    // MARK: - Club Status
+
+    /** Verification state of a club. Mirrors iOS `AppPresentationModel.ClubStatus`. */
+    enum class ClubStatus {
+        VERIFIED,
+        UNVERIFIED,
+        PENDING;
+
+        val isVerified: Boolean get() = this == VERIFIED
+
+        companion object {
+            /** Maps the API string ("VERIFIED"/"UNVERIFIED"/"PENDING"); unknown/null → null. */
+            fun from(raw: String?): ClubStatus? = when (raw?.uppercase()) {
+                "VERIFIED" -> VERIFIED
+                "UNVERIFIED" -> UNVERIFIED
+                "PENDING" -> PENDING
+                else -> null
+            }
+        }
+    }
+
     // MARK: - Background Color Type
     
     sealed class BackgroundType {
@@ -131,7 +152,7 @@ object AppUIEntities {
 fun String.toUserActivityRole(): AppUIEntities.UserActivityRole = when (uppercase()) {
     "MEMBER" -> AppUIEntities.UserActivityRole.MEMBER
     "PRESIDENT" -> AppUIEntities.UserActivityRole.PRESIDENT
-    "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
+    "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
     "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
     else -> AppUIEntities.UserActivityRole.NOT_JOINED
 }

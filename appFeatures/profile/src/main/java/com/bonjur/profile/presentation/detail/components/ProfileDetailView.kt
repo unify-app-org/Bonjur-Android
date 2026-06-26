@@ -222,6 +222,7 @@ fun ProfileDetailView(
             isSegmentSticky = isSegmentSticky,
             selectedSegment = store.state.selectedSegment,
             isOwnProfile = store.state.isOwnProfile,
+            isPushed = store.state.isPushed,
             title = store.state.navigationTitle,
             onSettingsTapped = { store.send(ProfileDetailAction.SettingsTapped) },
             onBackTapped = { store.send(ProfileDetailAction.BackTapped) },
@@ -239,6 +240,7 @@ private fun ProfileNavigationOverlay(
     isSegmentSticky: Boolean,
     selectedSegment: ProfileDetailViewState.SegmentTypes,
     isOwnProfile: Boolean,
+    isPushed: Boolean,
     title: String,
     onSettingsTapped: () -> Unit,
     onBackTapped: () -> Unit,
@@ -249,7 +251,12 @@ private fun ProfileNavigationOverlay(
     val density = LocalDensity.current
 
     Column(modifier = modifier.fillMaxWidth()) {
-        // Top nav bar
+        // Top nav bar. Two layouts:
+        //  - Root profile tab (!isPushed): big left-aligned title like the Groups/Clubs tabs.
+        //    The Scaffold already insets content below the status bar, so NO statusBarsPadding here.
+        //  - Pushed (from a members list): compact inline (centered) title with a back button,
+        //    iOS .navigationBarTitleDisplayMode(.inline). Bottom bar is hidden, so the Scaffold
+        //    gives zero top inset — this bar must add its own statusBarsPadding.
         Surface(
             color = Color.White,
             shadowElevation = 0.dp,
@@ -257,39 +264,77 @@ private fun ProfileNavigationOverlay(
                 onNavBarPositioned(with(density) { coordinates.size.height.toDp() })
             }
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                if (!isOwnProfile) {
-                    IconButton(onClick = onBackTapped) {
-                        Icon(
-                            painter = Images.Icons.arrowLeft01(),
-                            contentDescription = "Back",
-                            tint = Palette.blackHigh
-                        )
+            if (isPushed) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 4.dp)
+                        .heightIn(min = 44.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Leading / trailing slots keep the centered title from shifting.
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.size(44.dp), contentAlignment = Alignment.Center) {
+                            IconButton(onClick = onBackTapped) {
+                                Icon(
+                                    painter = Images.Icons.arrowLeft01(),
+                                    contentDescription = "Back",
+                                    tint = Palette.blackHigh
+                                )
+                            }
+                        }
+
+                        Box(modifier = Modifier.size(44.dp), contentAlignment = Alignment.Center) {
+                            if (isOwnProfile) {
+                                IconButton(onClick = onSettingsTapped) {
+                                    Icon(
+                                        painter = Images.Icons.gear(),
+                                        contentDescription = "Settings",
+                                        tint = Palette.blackHigh
+                                    )
+                                }
+                            }
+                        }
                     }
+
+                    Text(
+                        text = title,
+                        style = AppTypography.TitleSm.bold,
+                        color = Palette.black,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 48.dp)
+                    )
                 }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = title,
+                        style = AppTypography.TitleL.extraBold,
+                        color = Palette.black,
+                        modifier = Modifier.weight(1f)
+                    )
 
-                Text(
-                    text = title,
-                    style = AppTypography.TitleL.extraBold,
-                    color = Palette.black,
-                    modifier = Modifier.weight(1f)
-                )
-
-                if (isOwnProfile) {
-                    IconButton(onClick = onSettingsTapped) {
-                        Icon(
-                            painter = Images.Icons.gear(),
-                            contentDescription = "Settings",
-                            tint = Palette.blackHigh
-                        )
+                    if (isOwnProfile) {
+                        IconButton(onClick = onSettingsTapped) {
+                            Icon(
+                                painter = Images.Icons.gear(),
+                                contentDescription = "Settings",
+                                tint = Palette.blackHigh
+                            )
+                        }
                     }
                 }
             }
