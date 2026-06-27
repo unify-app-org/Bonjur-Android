@@ -74,6 +74,7 @@ class ChooseUniversityViewModel @Inject constructor(
             try {
                 val result = dependencies.microsoftAuthManager.signIn(activity)
                 val email = result.email
+                val idToken = result.idToken
                 if (result.error != null || email.isNullOrBlank()) {
                     postEffect(ChooseUniversitySideEffect.Error("Microsoft Sign In Failed"))
                     return@launch
@@ -81,7 +82,8 @@ class ChooseUniversityViewModel @Inject constructor(
                 val isFirstLogin = dependencies.useCase.login(
                     communityId = selectedCommunityId,
                     email = email,
-                    password = null
+                    password = null,
+                    idToken = idToken
                 )
                 if (isFirstLogin) {
                     navigator.navigateTo(

@@ -20,7 +20,12 @@ class AuthUseCaseImpl @Inject constructor(
     val defaultStorage: DefaultStorage
 ) : AuthUseCase {
 
-    override suspend fun login(communityId: Int, email: String, password: String?): Boolean {
+    override suspend fun login(
+        communityId: Int,
+        email: String,
+        password: String?,
+        idToken: String?
+    ): Boolean {
         val response = dataSource.login(
             LoginRequest(
                 mail = email,
@@ -30,7 +35,8 @@ class AuthUseCaseImpl @Inject constructor(
                 devicePlatform = "ANDROID",
                 deviceOs = "Android ${Build.VERSION.RELEASE}",
                 deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}",
-                appVersion = "1.0.0"
+                appVersion = "1.0.0",
+                idToken = idToken
             )
         )
         tokenManager.saveAccessToken(response.accessToken)

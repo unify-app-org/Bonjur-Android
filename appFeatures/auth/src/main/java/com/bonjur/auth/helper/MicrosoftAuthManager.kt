@@ -25,6 +25,7 @@ import kotlin.coroutines.resumeWithException
 data class MsalSignInResult(
     val name: String?,
     val email: String?,
+    val idToken: String?,
     val error: Throwable?
 )
 
@@ -72,14 +73,16 @@ class MicrosoftAuthManager @Inject constructor(
             signOutIfNeeded(app)
             val result = withContext(Dispatchers.Main) { acquireToken(app, activity) }
             val claims = result.account.claims
+            val idToken = result.account.idToken
             MsalSignInResult(
                 name = claims?.get("name") as? String,
                 email = (claims?.get("email") as? String)
                     ?: (claims?.get("preferred_username") as? String),
+                idToken = idToken,
                 error = null
             )
         } catch (e: Throwable) {
-            MsalSignInResult(name = null, email = null, error = e)
+            MsalSignInResult(name = null, email = null, idToken = null, error = e)
         }
     }
 

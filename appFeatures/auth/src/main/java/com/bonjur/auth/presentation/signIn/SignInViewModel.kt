@@ -48,7 +48,8 @@ class SignInViewModel @Inject constructor(
                 val isFirstLogin = useCase.login(
                     communityId = inputData.communityId,
                     email = state.email,
-                    password = state.password
+                    password = state.password,
+                    idToken = null
                 )
                 if (isFirstLogin) {
                     navigator.navigateTo(

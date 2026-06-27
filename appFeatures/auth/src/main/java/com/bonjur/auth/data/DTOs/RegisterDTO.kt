@@ -11,7 +11,8 @@ data class LoginRequest(
     val devicePlatform: String = "ANDROID",
     val deviceOs: String,
     val deviceModel: String,
-    val appVersion: String
+    val appVersion: String,
+    val idToken: String?
 )
 
 @Serializable
