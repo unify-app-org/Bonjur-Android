@@ -19,14 +19,15 @@ sealed class HangoutsEndPoints : AppEndpoint {
     data class GetHangoutMembers(
         val hangoutId: String,
         val page: Int = 0,
-        val size: Int = 100
+        val size: Int = 100,
+        val keyword: String? = null
     ) : HangoutsEndPoints() {
         override val path = "api/hs/v1/hangouts/$hangoutId/members"
         override val method = NetworkMethod.GET
-        override val queryParameters = mapOf(
+        override val queryParameters = mutableMapOf(
             "page" to page.toString(),
             "size" to size.toString()
-        )
+        ).apply { keyword?.takeIf { it.isNotBlank() }?.let { put("keyword", it) } }
     }
 
     data class CreateHangout(

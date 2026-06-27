@@ -38,6 +38,12 @@ class EventsUseCaseImpl @Inject constructor(
         dataSource.getEvents(buildEventsQuery(categoryIds, keyword, page, size))
             .map { it.toCardModel() }
 
+    override suspend fun fetchClubEvents(clubId: Int, page: Int, size: Int): List<EventsCardModel> =
+        dataSource.getClubEvents(
+            clubId,
+            mapOf("page" to page.toString(), "size" to size.toString())
+        ).content.map { it.toCardModel() }
+
     /**
      * Discover events query (GET api/ds/v1/events). Mirrors iOS `EventsRepo.fetchEvents`:
      * page/size always sent, categoryIds comma-joined when present, keyword when non-blank.
@@ -125,11 +131,11 @@ class EventsUseCaseImpl @Inject constructor(
         return GroupedMembersData.from(users)
     }
 
-    override suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int): MembersPage {
-        val users = dataSource.getEventMembers(
-            eventId,
-            mapOf("page" to page.toString(), "size" to size.toString())
-        ).content.map { it.toCellModel() }
+    override suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int, keyword: String?): MembersPage {
+        val query = mutableMapOf("page" to page.toString(), "size" to size.toString())
+        keyword?.trim()?.takeIf { it.isNotEmpty() }?.let { query["keyword"] = it }
+        val users = dataSource.getEventMembers(eventId, query)
+            .content.map { it.toCellModel() }
         return MembersPage(members = users, hasMore = users.size >= size)
     }
 

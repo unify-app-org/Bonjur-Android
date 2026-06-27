@@ -23,7 +23,7 @@ interface CommunitiesUseCase {
     suspend fun fetchCommunityMembers(communityId: Int): GroupedMembersData
 
     /** One page of members for the paginated list. Mirrors iOS `fetchCommunityMembersPage`. */
-    suspend fun fetchCommunityMembersPage(communityId: Int, page: Int, size: Int): MembersPage
+    suspend fun fetchCommunityMembersPage(communityId: Int, page: Int, size: Int, keyword: String?): MembersPage
 
     /** Assign a role to a member. Mirrors iOS `assignRole`. */
     suspend fun assignRole(

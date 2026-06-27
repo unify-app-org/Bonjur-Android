@@ -36,6 +36,15 @@ sealed class EventsEndPoints : AppEndpoint {
         override val queryParameters = query
     }
 
+    data class GetClubEvents(
+        val clubId: Int,
+        val query: Map<String, String>
+    ) : EventsEndPoints() {
+        override val path = "api/es/v1/events/$clubId/events"
+        override val method = NetworkMethod.GET
+        override val queryParameters = query
+    }
+
     data class CreateEvent(val payload: MultipartPayload) : EventsEndPoints() {
         override val path = "api/es/v1/events"
         override val method = NetworkMethod.POST

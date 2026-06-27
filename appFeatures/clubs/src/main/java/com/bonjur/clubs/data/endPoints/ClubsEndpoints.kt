@@ -26,14 +26,15 @@ sealed class ClubsEndpoints : AppEndpoint {
     data class GetClubMembers(
         val clubId: Int,
         val page: Int = 0,
-        val size: Int = 100
+        val size: Int = 100,
+        val keyword: String? = null
     ) : ClubsEndpoints() {
         override val path = "api/cs/v1/clubs/$clubId/members"
         override val method = NetworkMethod.GET
-        override val queryParameters = mapOf(
+        override val queryParameters = mutableMapOf(
             "page" to page.toString(),
             "size" to size.toString()
-        )
+        ).apply { keyword?.takeIf { it.isNotBlank() }?.let { put("keyword", it) } }
     }
 
     data class CreateClub(val payload: MultipartPayload) : ClubsEndpoints() {

@@ -10,7 +10,7 @@ import com.bonjur.hangouts.data.DTOs.HangoutMembersResponse
 interface HangoutsDataSource {
     suspend fun getHangouts(query: Map<String, String>): List<HangoutListResponse>
     suspend fun getHangoutById(hangoutId: String): HangoutDetailResponse
-    suspend fun getHangoutMembers(hangoutId: String, page: Int = 0, size: Int = 100): HangoutMembersResponse
+    suspend fun getHangoutMembers(hangoutId: String, page: Int = 0, size: Int = 100, keyword: String? = null): HangoutMembersResponse
     suspend fun getCategories(): List<HangoutCategorySectionResponse>
     suspend fun createHangout(request: HangoutCreateRequest): ByteArray
     suspend fun editHangout(hangoutId: String, request: HangoutCreateRequest): ByteArray

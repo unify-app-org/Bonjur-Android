@@ -4,6 +4,7 @@ import com.bonjur.appfoundation.*
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.segmentView.SegmentedPickerOption
+import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.member.model.GroupedMembersData
 import com.bonjur.member.model.MemberCellModel
 
@@ -22,6 +23,7 @@ data class ClubDetailsViewState(
     val uiModel: ClubsDetails.UIModel? = null,
     val selectedSegment: SegmentTypes = SegmentTypes.ABOUT,
     val membersData: GroupedMembersData? = null,
+    val eventsData: List<EventsCardModel> = emptyList(),
     val currentUserId: String? = null
 ) : FeatureState {
 
@@ -99,6 +101,7 @@ sealed class ClubDetailsAction : FeatureAction {
     object ExitTapped : ClubDetailsAction()
     object SeeAllMembersTapped : ClubDetailsAction()
     data class MemberTapped(val member: MemberCellModel) : ClubDetailsAction()
+    data class EventTapped(val eventId: String) : ClubDetailsAction()
     data class AssignRole(
         val userId: String,
         val role: AppUIEntities.UserActivityRole

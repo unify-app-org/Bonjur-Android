@@ -71,8 +71,8 @@ class HangoutDetailsViewModel @Inject constructor(
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.HANG_OUTS,
-                    loadPage = { page, size ->
-                        dependencies.useCase.fetchHangoutMembersPage(inputData.hangoutId, page, size)
+                    loadPage = { page, size, keyword ->
+                        dependencies.useCase.fetchHangoutMembersPage(inputData.hangoutId, page, size, keyword)
                     },
                     onMemberTapped = { userId -> navigateToProfile(userId) }
                 )

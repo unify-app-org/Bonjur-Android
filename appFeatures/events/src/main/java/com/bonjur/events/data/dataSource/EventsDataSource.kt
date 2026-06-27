@@ -17,6 +17,7 @@ data class EventAttachmentFile(
 
 interface EventsDataSource {
     suspend fun getEvents(query: Map<String, String>): List<EventListResponse>
+    suspend fun getClubEvents(clubId: Int, query: Map<String, String>): PageNationResponse<List<EventListResponse>>
     suspend fun getClubsForEvents(): PageNationResponse<List<ClubForEventResponse>>
     suspend fun getCategories(): List<EventCategorySectionResponse>
     suspend fun getEventById(eventId: String): EventDetailResponse

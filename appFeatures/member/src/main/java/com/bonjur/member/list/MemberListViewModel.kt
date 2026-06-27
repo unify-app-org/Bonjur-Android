@@ -8,6 +8,7 @@ import com.bonjur.member.model.GroupedMembersData
 import com.bonjur.member.model.MemberCellModel
 import com.bonjur.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +25,7 @@ class MemberListViewModel @Inject constructor() :
 
     companion object {
         private const val PAGE_SIZE = 20
+        private const val SEARCH_DEBOUNCE_MS = 300L
     }
 
     private lateinit var inputData: MemberListInputData
@@ -32,6 +34,7 @@ class MemberListViewModel @Inject constructor() :
     private val loadedMembers = mutableListOf<MemberCellModel>()
     private var nextPage = 0
     private var isFetching = false
+    private var searchJob: kotlinx.coroutines.Job? = null
 
     fun init(inputData: MemberListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
@@ -54,9 +57,23 @@ class MemberListViewModel @Inject constructor() :
             MemberListAction.LoadMore -> loadNextPage(initial = false)
             MemberListAction.BackTapped -> viewModelScope.launch { navigator.navigateUp() }
             is MemberListAction.MemberTapped -> inputData.onMemberTapped(action.member.id)
+            is MemberListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is MemberListAction.AssignRole -> assignRole(action.userId, action.role)
         }
     }
+
+    /** Debounced server-side member search, mirroring the clubs/events list (300ms). */
+    private fun handleSearchTextChanged(text: String) {
+        updateState(state.copy(searchText = text))
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_MS)
+            refreshMembers()
+        }
+    }
+
+    /** Trimmed search term, null when blank so the query param is omitted. */
+    private fun currentKeyword(): String? = state.searchText.trim().ifEmpty { null }
 
     private fun loadNextPage(initial: Boolean) {
         if (isFetching || (!initial && !state.hasMore)) return
@@ -65,7 +82,7 @@ class MemberListViewModel @Inject constructor() :
             if (initial) postEffect(MemberListSideEffect.Loading(true))
             updateState(state.copy(isLoadingMore = !initial))
             try {
-                val page = inputData.loadPage(nextPage, PAGE_SIZE)
+                val page = inputData.loadPage(nextPage, PAGE_SIZE, currentKeyword())
                 loadedMembers.addAll(page.members)
                 nextPage += 1
                 updateState(

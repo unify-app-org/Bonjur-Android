@@ -125,8 +125,8 @@ class ClubsUseCaseImpl @Inject constructor(
         return GroupedMembersData.from(users)
     }
 
-    override suspend fun fetchClubMembersPage(clubId: Int, page: Int, size: Int): MembersPage {
-        val users = dataSource.getClubMembers(clubId, page, size)
+    override suspend fun fetchClubMembersPage(clubId: Int, page: Int, size: Int, keyword: String?): MembersPage {
+        val users = dataSource.getClubMembers(clubId, page, size, keyword)
             .content.map { it.toCellModel() }
         return MembersPage(members = users, hasMore = users.size >= size)
     }

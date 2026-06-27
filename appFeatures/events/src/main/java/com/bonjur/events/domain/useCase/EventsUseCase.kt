@@ -36,6 +36,9 @@ interface EventsUseCase {
         size: Int
     ): List<EventsCardModel>
 
+    /** Active events for a club (first page used by the club-detail Events tab). */
+    suspend fun fetchClubEvents(clubId: Int, page: Int, size: Int): List<EventsCardModel>
+
     suspend fun fetchFilterData(): List<FilterView.Model>
 
     suspend fun fetchDetailsData(id: String): EventsDetails.UIModel
@@ -54,5 +57,5 @@ interface EventsUseCase {
 
     suspend fun fetchEventMembers(eventId: String): GroupedMembersData
 
-    suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int): MembersPage
+    suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int, keyword: String?): MembersPage
 }

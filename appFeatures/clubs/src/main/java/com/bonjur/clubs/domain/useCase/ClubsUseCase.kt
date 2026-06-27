@@ -52,7 +52,7 @@ interface ClubsUseCase {
     suspend fun fetchClubMembers(clubId: Int): GroupedMembersData
 
     /** One page of members for the shared see-all screen. */
-    suspend fun fetchClubMembersPage(clubId: Int, page: Int, size: Int): MembersPage
+    suspend fun fetchClubMembersPage(clubId: Int, page: Int, size: Int, keyword: String?): MembersPage
 
     /** Exit gate for presidents: an owner can only leave once a VP exists. */
     suspend fun clubHasVicePresident(clubId: Int): Boolean

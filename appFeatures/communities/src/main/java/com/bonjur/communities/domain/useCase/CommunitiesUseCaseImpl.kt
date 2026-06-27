@@ -48,9 +48,10 @@ class CommunitiesUseCaseImpl @Inject constructor(
     override suspend fun fetchCommunityMembersPage(
         communityId: Int,
         page: Int,
-        size: Int
+        size: Int,
+        keyword: String?
     ): MembersPage {
-        val users = dataSource.fetchCommunityMembers(communityId, page = page, size = size)
+        val users = dataSource.fetchCommunityMembers(communityId, page = page, size = size, keyword = keyword)
             .content.map { it.toCellModel() }
         return MembersPage(members = users, hasMore = users.size >= size)
     }

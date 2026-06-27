@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
+import com.bonjur.designSystem.components.serach.SearchView
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.designSystem.components.topBar.AppTopBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
@@ -69,6 +70,14 @@ fun MemberListView(
             onBack = { store.send(MemberListAction.BackTapped) },
             title = store.state.title,
             showTitle = true
+        )
+
+        SearchView(
+            text = store.state.searchText,
+            onTextChange = { store.send(MemberListAction.SearchTextChanged(it)) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
         )
 
         LazyColumn(

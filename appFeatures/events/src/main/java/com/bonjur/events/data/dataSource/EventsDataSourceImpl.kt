@@ -24,6 +24,12 @@ class EventsDataSourceImpl @Inject constructor(
     override suspend fun getEvents(query: Map<String, String>): List<EventListResponse> =
         fetch(EventsEndPoints.GetEvents(query))
 
+    override suspend fun getClubEvents(
+        clubId: Int,
+        query: Map<String, String>
+    ): PageNationResponse<List<EventListResponse>> =
+        fetch(EventsEndPoints.GetClubEvents(clubId, query))
+
     override suspend fun getClubsForEvents(): PageNationResponse<List<ClubForEventResponse>> =
         fetch(EventsEndPoints.ClubsForEvents())
 

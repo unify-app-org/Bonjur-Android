@@ -29,8 +29,8 @@ class ClubsDataSourceImpl @Inject constructor(
     override suspend fun getClubById(clubId: Int): ClubDetailResponse =
         fetch(ClubsEndpoints.GetClubById(clubId))
 
-    override suspend fun getClubMembers(clubId: Int, page: Int, size: Int): ClubMemberResponse =
-        fetch(ClubsEndpoints.GetClubMembers(clubId, page, size))
+    override suspend fun getClubMembers(clubId: Int, page: Int, size: Int, keyword: String?): ClubMemberResponse =
+        fetch(ClubsEndpoints.GetClubMembers(clubId, page, size, keyword))
 
     override suspend fun createClub(
         request: ClubCreateRequest,

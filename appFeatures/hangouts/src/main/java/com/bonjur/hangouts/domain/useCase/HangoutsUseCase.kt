@@ -46,5 +46,5 @@ interface HangoutsUseCase {
 
     suspend fun fetchHangoutMembers(hangoutId: String): GroupedMembersData
 
-    suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int): MembersPage
+    suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int, keyword: String?): MembersPage
 }

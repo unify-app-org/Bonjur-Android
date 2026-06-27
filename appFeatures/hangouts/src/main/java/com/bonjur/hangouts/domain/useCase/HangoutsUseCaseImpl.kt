@@ -98,8 +98,8 @@ class HangoutsUseCaseImpl @Inject constructor(
         return GroupedMembersData.from(users)
     }
 
-    override suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int): MembersPage {
-        val users = dataSource.getHangoutMembers(hangoutId, page, size).content.map { it.toCellModel() }
+    override suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int, keyword: String?): MembersPage {
+        val users = dataSource.getHangoutMembers(hangoutId, page, size, keyword).content.map { it.toCellModel() }
         return MembersPage(members = users, hasMore = users.size >= size)
     }
 

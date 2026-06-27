@@ -10,6 +10,9 @@ import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.alert.AppAlert
 import com.bonjur.designSystem.components.alert.AppAlertPresenter
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
+import com.bonjur.events.domain.useCase.EventsUseCase
+import com.bonjur.events.navigation.EventsScreens
+import com.bonjur.events.presentation.details.model.EventDetailsInputData
 import com.bonjur.member.list.MemberListInputData
 import com.bonjur.member.list.MemberListScreens
 import com.bonjur.navigation.Navigator
@@ -30,6 +33,7 @@ class ClubDetailsViewModel @Inject constructor(
 
     data class Dependencies @Inject constructor(
         val useCase: ClubsUseCase,
+        val eventsUseCase: EventsUseCase,
         val tokenManager: TokenManager
     )
 
@@ -57,6 +61,7 @@ class ClubDetailsViewModel @Inject constructor(
             ClubDetailsAction.ExitTapped -> presentExitConfirm()
             ClubDetailsAction.SeeAllMembersTapped -> navigateToMembersList()
             is ClubDetailsAction.MemberTapped -> navigateToProfile(action.member.id)
+            is ClubDetailsAction.EventTapped -> navigateToEvent(action.eventId)
             is ClubDetailsAction.AssignRole -> assignRole(action.userId, action.role)
             ClubDetailsAction.RequestVerificationTapped -> requestVerification()
         }
@@ -88,8 +93,8 @@ class ClubDetailsViewModel @Inject constructor(
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.CLUBS,
-                    loadPage = { page, size ->
-                        dependencies.useCase.fetchClubMembersPage(inputData.clubId, page, size)
+                    loadPage = { page, size, keyword ->
+                        dependencies.useCase.fetchClubMembersPage(inputData.clubId, page, size, keyword)
                     },
                     assignRole = { userId, role ->
                         dependencies.useCase.assignRole(inputData.clubId, userId, role)
@@ -269,6 +274,29 @@ class ClubDetailsViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch {
             fetchUIModel()
+        }
+        fetchEvents()
+    }
+
+    /** Club's active events for the Events tab (first page). Mirrors iOS ClubDetailsViewModel. */
+    private fun fetchEvents() {
+        viewModelScope.launch {
+            try {
+                val events = dependencies.eventsUseCase.fetchClubEvents(
+                    clubId = inputData.clubId,
+                    page = 0,
+                    size = 10
+                )
+                updateState(state.copy(eventsData = events))
+            } catch (e: Exception) {
+                // Events tab is best-effort; keep detail visible without them.
+            }
+        }
+    }
+
+    private fun navigateToEvent(eventId: String) {
+        viewModelScope.launch {
+            navigator.navigateTo(EventsScreens.Details.route, EventDetailsInputData(eventId = eventId))
         }
     }
 

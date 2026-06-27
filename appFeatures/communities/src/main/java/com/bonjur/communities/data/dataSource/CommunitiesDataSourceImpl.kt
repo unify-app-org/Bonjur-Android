@@ -23,9 +23,10 @@ class CommunitiesDataSourceImpl @Inject constructor(
     override suspend fun fetchCommunityMembers(
         communityId: Int,
         page: Int,
-        size: Int
+        size: Int,
+        keyword: String?
     ): CommunityMemberResponse =
-        fetch(CommunitiesEndPoints.FetchCommunityMembers(communityId, page, size))
+        fetch(CommunitiesEndPoints.FetchCommunityMembers(communityId, page, size, keyword))
 
     override suspend fun getClubs(query: Map<String, String>): List<CommunityClubResponse> =
         fetch(CommunitiesEndPoints.GetClubs(query))

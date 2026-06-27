@@ -209,7 +209,10 @@ fun ClubDetailsView(
                                 InfoTab(store.state.uiModel?.infoData ?: emptyList())
 
                             ClubDetailsViewState.SegmentTypes.EVENTS ->
-                                EventsTab(store.state.uiModel?.eventsData ?: emptyList())
+                                EventsTab(
+                                    events = store.state.eventsData,
+                                    onEventTap = { store.send(ClubDetailsAction.EventTapped(it)) }
+                                )
 
                             ClubDetailsViewState.SegmentTypes.MEMBERS ->
                                 MembersTab(store)
@@ -721,7 +724,10 @@ private fun InfoSubItem(subItem: ClubsDetails.SubInfo) {
 }
 
 @Composable
-private fun EventsTab(events: List<EventsCardModel>) {
+private fun EventsTab(
+    events: List<EventsCardModel>,
+    onEventTap: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -735,14 +741,14 @@ private fun EventsTab(events: List<EventsCardModel>) {
                     text = "There are no events for this club yet. Be the pioneer and start the very first one now!",
                     buttonTitle = "Create an event +"
                 ),
-                onButtonClick = { /* Handle create event */ }
+                onButtonClick = { /* Create-event flow deferred */ }
             )
         } else {
             events.forEach { event ->
                 EventsCardView(
                     model = event,
-                    onTap = { /* Handle tap */ },
-                    onButtonTap = { /* Handle button tap */ }
+                    onTap = { onEventTap(event.id) },
+                    onButtonTap = { onEventTap(event.id) }
                 )
             }
         }

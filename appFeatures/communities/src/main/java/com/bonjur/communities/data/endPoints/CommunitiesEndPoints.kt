@@ -21,14 +21,15 @@ sealed class CommunitiesEndPoints : AppEndpoint {
     data class FetchCommunityMembers(
         val communityId: Int,
         val page: Int = 0,
-        val size: Int = 100
+        val size: Int = 100,
+        val keyword: String? = null
     ) : CommunitiesEndPoints() {
         override val path = "api/cs/v1/clubs/$communityId/members"
         override val method = NetworkMethod.GET
-        override val queryParameters = mapOf(
+        override val queryParameters = mutableMapOf(
             "page" to page.toString(),
             "size" to size.toString()
-        )
+        ).apply { keyword?.takeIf { it.isNotBlank() }?.let { put("keyword", it) } }
     }
 
     // Sub-clubs within a community. Mirrors iOS `getClubs` (parentId carried in query).

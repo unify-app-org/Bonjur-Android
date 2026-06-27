@@ -71,8 +71,8 @@ class CommunityDetailViewModel @Inject constructor(
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.COMMUNITY,
-                    loadPage = { page, size ->
-                        dependencies.useCase.fetchCommunityMembersPage(inputData.communityId, page, size)
+                    loadPage = { page, size, keyword ->
+                        dependencies.useCase.fetchCommunityMembersPage(inputData.communityId, page, size, keyword)
                     },
                     assignRole = { userId, role ->
                         dependencies.useCase.assignRole(inputData.communityId, userId, role)

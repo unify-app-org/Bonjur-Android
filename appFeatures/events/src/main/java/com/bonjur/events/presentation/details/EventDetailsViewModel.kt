@@ -76,8 +76,8 @@ class EventDetailsViewModel @Inject constructor(
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.EVENTS,
-                    loadPage = { page, size ->
-                        dependencies.useCase.fetchEventMembersPage(inputData.eventId, page, size)
+                    loadPage = { page, size, keyword ->
+                        dependencies.useCase.fetchEventMembersPage(inputData.eventId, page, size, keyword)
                     },
                     onMemberTapped = { userId -> navigateToProfile(userId) }
                 )

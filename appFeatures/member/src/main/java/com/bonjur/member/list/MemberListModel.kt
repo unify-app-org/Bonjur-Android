@@ -13,6 +13,7 @@ sealed class MemberListSideEffect : SideEffect {
 
 data class MemberListViewState(
     val title: String = "Members",
+    val searchText: String = "",
     val sections: List<MemberListSectionModel> = emptyList(),
     val isLoadingMore: Boolean = false,
     val hasMore: Boolean = true,
@@ -26,6 +27,7 @@ sealed class MemberListAction : FeatureAction {
     object LoadMore : MemberListAction()
     object BackTapped : MemberListAction()
     data class MemberTapped(val member: MemberCellModel) : MemberListAction()
+    data class SearchTextChanged(val text: String) : MemberListAction()
     data class AssignRole(
         val userId: String,
         val role: AppUIEntities.UserActivityRole

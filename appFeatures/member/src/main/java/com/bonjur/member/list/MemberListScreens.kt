@@ -25,7 +25,7 @@ data class MemberListInputData(
     val viewerRole: AppUIEntities.UserActivityRole = AppUIEntities.UserActivityRole.NOT_JOINED,
     val currentUserId: String? = null,
     val activityType: AppUIEntities.ActivityType = AppUIEntities.ActivityType.CLUBS,
-    val loadPage: suspend (page: Int, size: Int) -> MembersPage,
+    val loadPage: suspend (page: Int, size: Int, keyword: String?) -> MembersPage,
     val assignRole: (suspend (userId: String, role: AppUIEntities.UserActivityRole) -> Unit)? = null,
     val onMemberTapped: (memberId: String) -> Unit = {}
 )

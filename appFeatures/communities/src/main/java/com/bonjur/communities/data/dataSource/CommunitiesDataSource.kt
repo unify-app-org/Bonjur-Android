@@ -9,7 +9,7 @@ import com.bonjur.communities.data.DTOs.RoleAssignRequest
 interface CommunitiesDataSource {
     suspend fun fetchCommunities(): List<CommunityListResponse>
     suspend fun fetchCommunityDetail(communityId: Int): CommunityDetailResponse
-    suspend fun fetchCommunityMembers(communityId: Int, page: Int = 0, size: Int = 100): CommunityMemberResponse
+    suspend fun fetchCommunityMembers(communityId: Int, page: Int = 0, size: Int = 100, keyword: String? = null): CommunityMemberResponse
     suspend fun getClubs(query: Map<String, String>): List<CommunityClubResponse>
     suspend fun assignRole(communityId: Int, request: RoleAssignRequest): ByteArray
 }

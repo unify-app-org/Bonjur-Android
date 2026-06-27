@@ -24,9 +24,10 @@ class HangoutsDataSourceImpl @Inject constructor(
     override suspend fun getHangoutMembers(
         hangoutId: String,
         page: Int,
-        size: Int
+        size: Int,
+        keyword: String?
     ): HangoutMembersResponse =
-        fetch(HangoutsEndPoints.GetHangoutMembers(hangoutId, page, size))
+        fetch(HangoutsEndPoints.GetHangoutMembers(hangoutId, page, size, keyword))
 
     override suspend fun getCategories(): List<HangoutCategorySectionResponse> =
         fetch(HangoutsEndPoints.GetCategories())
