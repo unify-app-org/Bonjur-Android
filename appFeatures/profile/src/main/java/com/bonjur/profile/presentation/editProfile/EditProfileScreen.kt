@@ -22,8 +22,15 @@ fun EditProfileScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is EditProfileSideEffect.Loading -> { /* Show/hide loading */ }
-                is EditProfileSideEffect.Error -> { /* Show error snackbar */ }
+                is EditProfileSideEffect.Loading -> {
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
+                }
+                is EditProfileSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
+                    title = effect.title,
+                    subtitle = effect.message ?: "",
+                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
+                )
             }
         }
     ) { store ->

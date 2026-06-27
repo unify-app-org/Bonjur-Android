@@ -107,11 +107,17 @@ class EditProfileViewModel @Inject constructor(
             val langIds = (profile.languages?.map { it.id } ?: emptyList()).toSet()
 
             val categories = runCatching { dependencies.useCase.getCategories() }
+                .onFailure {
+                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                }
                 .getOrDefault(emptyList())
                 .map { section ->
                     section.copy(categories = section.categories.map { it.copy(selected = it.id in catIds) })
                 }
             val languages = runCatching { dependencies.useCase.getLanguages() }
+                .onFailure {
+                    AppSnackBar.show(title = "Couldn't load languages", style = AppSnackBar.Style.ERROR)
+                }
                 .getOrDefault(emptyList())
                 .map { it.copy(selected = it.id in langIds) }
 

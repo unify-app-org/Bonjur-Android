@@ -32,11 +32,14 @@ fun DiscoverScreen(
         handleEffect = { effect ->
             when (effect) {
                 is DiscoverSideEffect.Loading -> {
-                    // Handle loading effect
+                    // Only the filter-apply path posts loading (initial/reappear load inline).
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is DiscoverSideEffect.Error -> {
-                    // Handle error effect
-                }
+                is DiscoverSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
+                    title = effect.error.message ?: "Something went wrong",
+                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
+                )
             }
         }
     ) { store ->

@@ -32,11 +32,13 @@ fun HangoutsListScreen(
         handleEffect = { effect ->
             when (effect) {
                 is HangoutsListSideEffect.Loading -> {
-                    // Handle loading effect
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is HangoutsListSideEffect.Error -> {
-                    // Handle error effect
-                }
+                is HangoutsListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
+                    title = effect.error.message ?: "Something went wrong",
+                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
+                )
             }
         }
     ) { store ->

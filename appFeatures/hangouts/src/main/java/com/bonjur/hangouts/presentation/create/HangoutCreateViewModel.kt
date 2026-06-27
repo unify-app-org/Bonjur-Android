@@ -78,6 +78,9 @@ class HangoutCreateViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { dependencies.useCase.getCategories() }
                 .onSuccess { updateState(state.copy(categorySections = it)) }
+                .onFailure {
+                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                }
             applyPrefill()
         }
     }

@@ -24,7 +24,8 @@ fun CommunityDetailScreen(
         handleEffect = { effect ->
             when (effect) {
                 is CommunityDetailSideEffect.Loading -> {
-                    // Handle loading effect
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
             }
         }

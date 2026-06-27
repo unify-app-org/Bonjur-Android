@@ -22,8 +22,14 @@ fun ClubCreateScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is ClubCreateSideEffect.Loading -> { /* Show/hide loading */ }
-                is ClubCreateSideEffect.Error -> { /* Show error */ }
+                is ClubCreateSideEffect.Loading -> {
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
+                }
+                is ClubCreateSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
+                    title = effect.message,
+                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
+                )
             }
         }
     ) { store ->

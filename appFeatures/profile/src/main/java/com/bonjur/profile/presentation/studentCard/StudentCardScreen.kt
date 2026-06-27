@@ -24,7 +24,8 @@ fun StudentCardScreen(
         handleEffect = { effect ->
             when (effect) {
                 is StudentCardSideEffect.Loading -> {
-                    // Show/hide loading
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
             }
         }

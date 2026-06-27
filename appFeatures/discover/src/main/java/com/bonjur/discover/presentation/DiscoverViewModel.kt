@@ -81,14 +81,13 @@ class DiscoverViewModel @Inject constructor(
 
     private fun fetchData() {
         viewModelScope.launch {
-            postEffect(DiscoverSideEffect.Loading(true))
+            // Initial load streams in inline — no blocking overlay (only filters show it).
             fetchUserData()
             fetchFilterData()
             fetchCommunitiesData()
             fetchClubsData()
             fetchEventsData()
             fetchHangoutsData()
-            postEffect(DiscoverSideEffect.Loading(false))
         }
     }
 
@@ -97,12 +96,11 @@ class DiscoverViewModel @Inject constructor(
     /// and current page depth are preserved. User + categories are NOT refetched.
     private fun refreshActivities() {
         viewModelScope.launch {
-            postEffect(DiscoverSideEffect.Loading(true))
+            // Silent refresh on reappear — no overlay (only filters show loading).
             fetchCommunitiesData()
             fetchClubsData()
             fetchEventsData()
             fetchHangoutsData()
-            postEffect(DiscoverSideEffect.Loading(false))
         }
     }
 

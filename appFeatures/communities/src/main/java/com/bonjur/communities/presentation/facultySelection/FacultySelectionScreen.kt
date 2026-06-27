@@ -22,7 +22,10 @@ fun FacultySelectionScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is FacultySelectionSideEffect.Loading -> { /* Show/hide loading */ }
+                is FacultySelectionSideEffect.Loading -> {
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
+                }
             }
         }
     ) { store ->

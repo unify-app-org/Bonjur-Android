@@ -24,7 +24,10 @@ fun AuthWelcomeScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is AuthWelcomeSideEffect.Loading -> {}
+                is AuthWelcomeSideEffect.Loading -> {
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
+                }
             }
         }
     ) { store ->

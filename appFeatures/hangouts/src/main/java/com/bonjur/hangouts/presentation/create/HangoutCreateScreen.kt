@@ -23,7 +23,10 @@ fun HangoutCreateScreen(
         viewModel = viewModel,
         handleEffect = { effect ->
             when (effect) {
-                is HangoutCreateSideEffect.Loading -> { /* Show/hide loading */ }
+                is HangoutCreateSideEffect.Loading -> {
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
+                }
                 is HangoutCreateSideEffect.Error -> AppSnackBar.show(
                     title = "Couldn't save hangout",
                     subtitle = effect.message,

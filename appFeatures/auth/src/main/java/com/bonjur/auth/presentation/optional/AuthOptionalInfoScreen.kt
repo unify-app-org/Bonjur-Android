@@ -21,7 +21,14 @@ fun AuthOptionalInfoScreen(
 
     FeatureScreen(
         viewModel = viewModel,
-        handleEffect = { /* loading when added later */ }
+        handleEffect = { effect ->
+            when (effect) {
+                is com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect.Loading -> {
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
+                }
+            }
+        }
     ) { store ->
 
         Column(

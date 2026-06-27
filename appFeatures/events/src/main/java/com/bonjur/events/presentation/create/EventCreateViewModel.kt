@@ -108,9 +108,13 @@ class EventCreateViewModel @Inject constructor(
                 }
                 .onFailure {
                     updateState(state.copy(clubsPhase = clubsPhaseFor(empty = false, failed = true)))
+                    AppSnackBar.show(title = "Couldn't load clubs", style = AppSnackBar.Style.ERROR)
                 }
             runCatching { dependencies.useCase.getCategories() }
                 .onSuccess { updateState(state.copy(categorySections = it)) }
+                .onFailure {
+                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                }
             applyPrefill()
         }
     }
@@ -253,16 +257,20 @@ class EventCreateViewModel @Inject constructor(
     private suspend inline fun submit(crossinline call: suspend (EventFormData) -> Unit) {
         val clubId = state.selectedClubId ?: return
         postEffect(EventCreateSideEffect.Loading(true))
-        try {
+        val success = try {
             // Cover is optional, mirroring iOS: upload it only when the club has one.
             val background = downloadBytes(state.coverUrl)
             call(buildForm(clubId, background))
-            navigator.navigateUp()
+            true
         } catch (e: Exception) {
             postEffect(EventCreateSideEffect.Error(e.message ?: "Unknown error"))
+            false
         } finally {
+            // Dismiss BEFORE navigating away — navigateUp disposes this screen and
+            // would drop a later Loading(false), leaving the global overlay stuck.
             postEffect(EventCreateSideEffect.Loading(false))
         }
+        if (success) navigator.navigateUp()
     }
 
     private suspend fun buildForm(clubId: Int, background: ByteArray?): EventFormData {

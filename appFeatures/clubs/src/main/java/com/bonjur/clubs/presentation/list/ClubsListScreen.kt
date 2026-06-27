@@ -32,11 +32,13 @@ fun ClubsListScreen(
         handleEffect = { effect ->
             when (effect) {
                 is ClubsListSideEffect.Loading -> {
-                    // Handle loading effect
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is ClubsListSideEffect.Error -> {
-                    // Handle error effect
-                }
+                is ClubsListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
+                    title = effect.error.message ?: "Something went wrong",
+                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
+                )
             }
         }
     ) { store ->

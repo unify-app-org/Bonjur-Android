@@ -11,6 +11,8 @@ import androidx.navigation.compose.rememberNavController
 import com.bonjur.app.tabBar.navigation.mainNavGraph
 import com.bonjur.auth.navigation.authNavGraph
 import com.bonjur.designSystem.components.alert.AppAlertOverlay
+import com.bonjur.designSystem.components.loading.AppLoadingOverlay
+import com.bonjur.designSystem.components.loading.AppLoadingUI
 import com.bonjur.designSystem.components.snackbar.AppSnackBarOverlay
 import com.bonjur.navigation.AppScreens
 import com.bonjur.navigation.NavigationEffect
@@ -38,6 +40,15 @@ fun AppNavigation(
         navigationFlow = navigator.navigationCommands
     )
 
+    // Clear any stuck global loading whenever the destination changes. A screen that
+    // posts Loading(true) then navigates away disposes before its Loading(false) is
+    // delivered, so the routed dismiss would otherwise never fire.
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.collect {
+            AppLoadingUI.reset()
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         NavHost(
             navController = navController,
@@ -49,5 +60,6 @@ fun AppNavigation(
 
         AppAlertOverlay()
         AppSnackBarOverlay()
+        AppLoadingOverlay()
     }
 }

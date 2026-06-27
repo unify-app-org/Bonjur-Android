@@ -202,6 +202,13 @@ class ProfileDetailViewModel @Inject constructor(
                         style = AppSnackBar.Style.SUCCESS
                     )
                 }
+                .onFailure {
+                    AppSnackBar.show(
+                        title = "Couldn't update cover",
+                        subtitle = "Please try again.",
+                        style = AppSnackBar.Style.ERROR
+                    )
+                }
         }
     }
 

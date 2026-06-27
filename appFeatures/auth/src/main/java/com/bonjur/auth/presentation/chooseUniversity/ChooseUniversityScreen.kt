@@ -46,7 +46,8 @@ fun ChooseUniversityScreen(
         handleEffect = { effect ->
             when (effect) {
                 is ChooseUniversitySideEffect.Loading -> {
-
+                    if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
+                    else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
                 is ChooseUniversitySideEffect.LaunchMicrosoftSignIn -> {
                     context.findActivity()?.let { activity ->

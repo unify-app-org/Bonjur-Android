@@ -94,6 +94,9 @@ class ClubCreateViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch {
             runCatching { dependencies.useCase.getCategories() }
+                .onFailure {
+                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                }
                 .onSuccess { sections ->
                     // Mark categories already selected by the pre-fill (edit mode).
                     val selectedIds = state.values.tags(AppFieldSchema.FieldId.CATEGORY)
