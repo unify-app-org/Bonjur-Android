@@ -69,6 +69,7 @@ dependencies {
     implementation(project(":appFeatures:member"))
     implementation(project(":appFeatures:discover"))
     implementation(project(":appFeatures:profile"))
+    implementation(project(":appFeatures:notification"))
     implementation(project(":appCore:navigation"))
     implementation(project(":appCore:storage"))
     implementation(project(":appCore:appUtils"))

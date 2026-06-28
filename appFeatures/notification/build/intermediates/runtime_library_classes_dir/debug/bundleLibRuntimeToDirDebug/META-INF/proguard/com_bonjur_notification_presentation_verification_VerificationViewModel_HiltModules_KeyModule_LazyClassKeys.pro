@@ -1,0 +1,1 @@
+-keep,allowobfuscation,allowshrinking class com.bonjur.notification.presentation.verification.VerificationViewModel

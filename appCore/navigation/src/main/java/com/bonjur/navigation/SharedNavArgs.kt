@@ -27,6 +27,13 @@ object SharedRoutes {
      * by the profile nav graph). Same pattern as [CLUB_DETAILS].
      */
     const val PROFILE_DETAIL = "com.bonjur.profile.navigation.ProfileScreens.ProfileDetail"
+
+    /**
+     * Qualified name of `NotificationScreens.Feed`. The Discover bell opens the
+     * notification stack by this route string so `discover` needs no dependency
+     * on the `notification` module.
+     */
+    const val NOTIFICATION_FEED = "com.bonjur.notification.navigation.NotificationScreens.Feed"
 }
 
 /** Neutral club-details payload usable across feature modules. */

@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/appFeatures/groups" />
             <option value="$PROJECT_DIR$/appFeatures/hangouts" />
             <option value="$PROJECT_DIR$/appFeatures/member" />
+            <option value="$PROJECT_DIR$/appFeatures/notification" />
             <option value="$PROJECT_DIR$/appFeatures/profile" />
           </set>
         </option>

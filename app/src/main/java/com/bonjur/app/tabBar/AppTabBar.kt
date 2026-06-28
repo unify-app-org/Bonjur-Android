@@ -50,6 +50,7 @@ import com.bonjur.groups.navigation.GroupsScreens
 import com.bonjur.groups.navigation.groupsNavGraph
 import com.bonjur.hangouts.navigation.HangoutsScreens
 import com.bonjur.hangouts.navigation.hangoutsNavGraph
+import com.bonjur.notification.navigation.notificationNavGraph
 import com.bonjur.member.list.memberNavGraph
 import com.bonjur.navigation.NavigationEffect
 import com.bonjur.navigation.Navigator
@@ -275,6 +276,7 @@ fun DiscoverTabContent(
         clubsNavGraph(navigator)
         profileNavGraph(navigator)
         memberNavGraph(navigator)
+        notificationNavGraph(navigator)
     }
 }
 

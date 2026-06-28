@@ -58,6 +58,7 @@ sealed class DiscoverAction : FeatureAction {
     object PullToRefresh : DiscoverAction()
     object RefreshActivities : DiscoverAction()
     object ProfileTapped : DiscoverAction()
+    object NotificationTapped : DiscoverAction()
     data class FilterChanged(val categoryIds: List<Int>) : DiscoverAction()
     data class LoadMore(val type: AppUIEntities.ActivityType) : DiscoverAction()
     data class JoinHangout(val hangoutId: String) : DiscoverAction()

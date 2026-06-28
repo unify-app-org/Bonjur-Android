@@ -68,6 +68,8 @@ class DiscoverViewModel @Inject constructor(
             DiscoverAction.PullToRefresh -> pullToRefresh()
             DiscoverAction.RefreshActivities -> refreshActivities()
             DiscoverAction.ProfileTapped -> profileTapped()
+            DiscoverAction.NotificationTapped ->
+                viewModelScope.launch { navigator.navigateTo(com.bonjur.navigation.SharedRoutes.NOTIFICATION_FEED) }
             is DiscoverAction.FilterChanged -> filterChanged(action.categoryIds)
             is DiscoverAction.LoadMore -> loadMore(action.type)
             is DiscoverAction.JoinHangout -> joinHangout(action.hangoutId)

@@ -182,7 +182,8 @@ fun DiscoverView(
         ) {
             ProfileView(
                 user = state.uiModel.user,
-                onProfileTap = { store.send(DiscoverAction.ProfileTapped) }
+                onProfileTap = { store.send(DiscoverAction.ProfileTapped) },
+                onNotification = { store.send(DiscoverAction.NotificationTapped) }
             )
         }
 
@@ -209,7 +210,8 @@ fun DiscoverView(
 @Composable
 private fun ProfileView(
     user: UserModel,
-    onProfileTap: () -> Unit
+    onProfileTap: () -> Unit,
+    onNotification: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -260,7 +262,7 @@ private fun ProfileView(
         }
 
         IconButton(
-            onClick = { /* Handle notification click */ },
+            onClick = onNotification,
             modifier = Modifier
                 .size(48.dp)
         ) {
