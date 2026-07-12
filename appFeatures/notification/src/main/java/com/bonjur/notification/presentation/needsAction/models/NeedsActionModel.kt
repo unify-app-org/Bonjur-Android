@@ -37,6 +37,7 @@ data class NeedsActionViewState(
     val selectedTab: ActionTab = ActionTab.CLUBS,
     val clubs: RequestSourceState = RequestSourceState(),
     val hangouts: RequestSourceState = RequestSourceState(),
+    val events: RequestSourceState = RequestSourceState(),
     val processingIds: Set<String> = emptySet(),
     val isAdmin: Boolean = false,
     val verificationCount: Int = 0

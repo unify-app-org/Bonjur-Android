@@ -29,7 +29,15 @@ class ProfileSettingsViewModel @Inject constructor(
     data class Dependencies @Inject constructor(
         val useCase: ProfileUseCase,
         val tokenManager: TokenManager,
-        val defaultStorage: DefaultStorage
+        val defaultStorage: DefaultStorage,
+        /**
+         * The Hilt @Singleton [Navigator] that drives the ROOT NavHost (the one
+         * holding authNavGraph). Logout is an app-level transition to
+         * [AppScreens.Auth] — a route the per-tab navigator (passed via [init])
+         * can't reach, so dispatching it there crashes ("destination ... cannot
+         * be found"). App-level nav must go through the root navigator.
+         */
+        val rootNavigator: Navigator
     )
 
     private lateinit var inputData: ProfileSettingsInputData
@@ -137,7 +145,8 @@ class ProfileSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             dependencies.tokenManager.clearTokens()
             dependencies.defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, false)
-            navigator.navigateAndClearStack(AppScreens.Auth.route)
+            // Root navigator, not the per-tab one — Auth lives in the root graph.
+            dependencies.rootNavigator.navigateAndClearStack(AppScreens.Auth.route)
         }
     }
 

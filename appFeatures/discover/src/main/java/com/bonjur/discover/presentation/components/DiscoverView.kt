@@ -182,6 +182,7 @@ fun DiscoverView(
         ) {
             ProfileView(
                 user = state.uiModel.user,
+                unreadCount = state.unreadCount,
                 onProfileTap = { store.send(DiscoverAction.ProfileTapped) },
                 onNotification = { store.send(DiscoverAction.NotificationTapped) }
             )
@@ -210,6 +211,7 @@ fun DiscoverView(
 @Composable
 private fun ProfileView(
     user: UserModel,
+    unreadCount: Int,
     onProfileTap: () -> Unit,
     onNotification: () -> Unit
 ) {
@@ -267,17 +269,39 @@ private fun ProfileView(
                 .size(48.dp)
         ) {
             Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(Palette.grayQuaternary, RoundedCornerShape(14.dp)),
+                modifier = Modifier.size(40.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = Images.Icons.bell(),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp),
-                    tint = Palette.black
-                )
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(Palette.grayQuaternary, RoundedCornerShape(14.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = Images.Icons.bell(),
+                        contentDescription = "Notifications",
+                        modifier = Modifier.size(24.dp),
+                        tint = Palette.black
+                    )
+                }
+                if (unreadCount > 0) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .defaultMinSize(minWidth = 18.dp, minHeight = 18.dp)
+                            .background(Palette.cardBgRed, CircleShape)
+                            .padding(horizontal = 4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (unreadCount > 99) "99+" else unreadCount.toString(),
+                            style = AppTypography.TextSm.bold,
+                            color = Palette.white,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
     }

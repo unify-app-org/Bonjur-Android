@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805525796104",
+    "project_id": "unify-d82fd",
+    "storage_bucket": "unify-d82fd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805525796104:android:09896808dfcbf6493d28bd",
+        "android_client_info": {
+          "package_name": "com.unify.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWwogcIdh1F7H7En-lzx6zRgOM0srV-SE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

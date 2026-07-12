@@ -29,6 +29,13 @@ object SharedRoutes {
     const val PROFILE_DETAIL = "com.bonjur.profile.navigation.ProfileScreens.ProfileDetail"
 
     /**
+     * Qualified name of `EventsScreens.Details`. The notification feed deep-links
+     * an EVENT row here by this route string + [EventDetailsNavArgs] (read as a
+     * fallback by the events nav graph). Same pattern as [CLUB_DETAILS].
+     */
+    const val EVENT_DETAILS = "com.bonjur.events.navigation.EventsScreens.Details"
+
+    /**
      * Qualified name of `NotificationScreens.Feed`. The Discover bell opens the
      * notification stack by this route string so `discover` needs no dependency
      * on the `notification` module.
@@ -38,6 +45,9 @@ object SharedRoutes {
 
 /** Neutral club-details payload usable across feature modules. */
 data class ClubDetailsNavArgs(val clubId: Int)
+
+/** Neutral event-details payload (feed deep-link → event) usable across feature modules. */
+data class EventDetailsNavArgs(val eventId: String)
 
 /** Neutral profile-details payload (member tap → profile) usable across feature modules. */
 data class ProfileDetailNavArgs(val userId: String?)

@@ -1,6 +1,6 @@
 package com.bonjur.notification.domain.models;
 
-@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\f\n\u0002\u0018\u0002\n\u0002\u0010\u0010\n\u0002\b\t\b\u0086\u0081\u0002\u0018\u0000 \t2\b\u0012\u0004\u0012\u00020\u00000\u0001:\u0001\tB\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002j\u0002\b\u0003j\u0002\b\u0004j\u0002\b\u0005j\u0002\b\u0006j\u0002\b\u0007j\u0002\b\b\u00a8\u0006\n"}, d2 = {"Lcom/bonjur/notification/domain/models/NotificationType;", "", "(Ljava/lang/String;I)V", "BIRTHDAY", "HOLIDAY", "EVENT_REMINDER", "REQUEST_OUTCOME", "VERIFICATION_OUTCOME", "GENERAL", "Companion", "notification_debug"})
+@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\u001c\n\u0002\u0018\u0002\n\u0002\u0010\u0010\n\u0002\b\u0002\n\u0002\u0010\u000e\n\u0002\b\u0003\n\u0002\u0010\u000b\n\u0002\b\n\b\u0086\u0081\u0002\u0018\u0000 \u00112\b\u0012\u0004\u0012\u00020\u00000\u0001:\u0001\u0011B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002R\u0013\u0010\u0003\u001a\u0004\u0018\u00010\u00048F\u00a2\u0006\u0006\u001a\u0004\b\u0005\u0010\u0006R\u0011\u0010\u0007\u001a\u00020\b8F\u00a2\u0006\u0006\u001a\u0004\b\t\u0010\nj\u0002\b\u000bj\u0002\b\fj\u0002\b\rj\u0002\b\u000ej\u0002\b\u000fj\u0002\b\u0010\u00a8\u0006\u0012"}, d2 = {"Lcom/bonjur/notification/domain/models/NotificationType;", "", "(Ljava/lang/String;I)V", "apiValue", "", "getApiValue", "()Ljava/lang/String;", "prefersRemoteImage", "", "getPrefersRemoteImage", "()Z", "BIRTHDAY", "HOLIDAY", "EVENT_REMINDER", "REQUEST_OUTCOME", "VERIFICATION_OUTCOME", "GENERAL", "Companion", "notification_debug"})
 public enum NotificationType {
     /*public static final*/ BIRTHDAY /* = new BIRTHDAY() */,
     /*public static final*/ HOLIDAY /* = new HOLIDAY() */,
@@ -12,6 +12,15 @@ public enum NotificationType {
     public static final com.bonjur.notification.domain.models.NotificationType.Companion Companion = null;
     
     NotificationType() {
+    }
+    
+    @org.jetbrains.annotations.Nullable()
+    public final java.lang.String getApiValue() {
+        return null;
+    }
+    
+    public final boolean getPrefersRemoteImage() {
+        return false;
     }
     
     @org.jetbrains.annotations.NotNull()

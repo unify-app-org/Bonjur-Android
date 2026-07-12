@@ -35,7 +35,9 @@ sealed class DiscoverSideEffect : SideEffect {
 // MARK: - View State
 data class DiscoverViewState(
     val uiModel: UIModel = UIModel(),
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    /** Unread notification total for the bell badge (0 hides it). */
+    val unreadCount: Int = 0
 ) : FeatureState {
     data class UIModel(
         val user: UserModel = UserModel(

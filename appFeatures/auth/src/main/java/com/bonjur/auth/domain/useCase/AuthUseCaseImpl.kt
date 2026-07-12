@@ -8,16 +8,17 @@ import com.bonjur.auth.domain.models.OnboardingUIModel
 import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.designSystem.ui.theme.image.Images
+import com.bonjur.apputils.DeviceManager
 import com.bonjur.network.manager.TokenManager
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
-import java.util.UUID
 import javax.inject.Inject
 
 class AuthUseCaseImpl @Inject constructor(
     val dataSource: AuthDataSource,
     val tokenManager: TokenManager,
-    val defaultStorage: DefaultStorage
+    val defaultStorage: DefaultStorage,
+    val deviceManager: DeviceManager
 ) : AuthUseCase {
 
     override suspend fun login(
@@ -31,11 +32,11 @@ class AuthUseCaseImpl @Inject constructor(
                 mail = email,
                 password = password,
                 communityId = communityId,
-                deviceId = UUID.randomUUID().toString(),
-                devicePlatform = "ANDROID",
-                deviceOs = "Android ${Build.VERSION.RELEASE}",
-                deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}",
-                appVersion = "1.0.0",
+                deviceId = deviceManager.deviceId,
+                devicePlatform = deviceManager.devicePlatform,
+                deviceOs = deviceManager.deviceOs,
+                deviceModel = deviceManager.deviceModel,
+                appVersion = deviceManager.appVersion,
                 idToken = idToken
             )
         )

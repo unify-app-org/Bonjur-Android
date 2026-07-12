@@ -24,6 +24,7 @@ fun AppTabView(
     currentPage: Int,
     onPageChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    showIndicator: Boolean = true,
     content: @Composable (page: Int) -> Unit
 ) {
     val pagerState = rememberPagerState(
@@ -63,12 +64,14 @@ fun AppTabView(
             content(page)
         }
 
-        CustomPageIndicator(
-            numberOfPages = pageCount,
-            currentPage = pagerState.currentPage,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 8.dp)
-        )
+        if (showIndicator) {
+            CustomPageIndicator(
+                numberOfPages = pageCount,
+                currentPage = pagerState.currentPage,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 8.dp)
+            )
+        }
     }
 }

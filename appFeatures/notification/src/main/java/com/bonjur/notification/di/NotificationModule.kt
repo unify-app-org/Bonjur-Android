@@ -1,5 +1,7 @@
 package com.bonjur.notification.di
 
+import com.bonjur.navigation.UnreadCountProvider
+import com.bonjur.notification.data.UnreadCountProviderImpl
 import com.bonjur.notification.data.dataSource.NotificationDataSource
 import com.bonjur.notification.data.dataSource.NotificationDataSourceImpl
 import com.bonjur.notification.domain.useCase.NeedsActionUseCase
@@ -33,4 +35,8 @@ abstract class NotificationModule {
     @Binds
     @Singleton
     abstract fun bindVerificationUseCase(impl: VerificationUseCaseImpl): VerificationUseCase
+
+    @Binds
+    @Singleton
+    abstract fun bindUnreadCountProvider(impl: UnreadCountProviderImpl): UnreadCountProvider
 }

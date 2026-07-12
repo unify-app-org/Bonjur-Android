@@ -6,6 +6,7 @@ package com.bonjur.notification.domain.models
 sealed class ActionRequestKind {
     data class Club(val id: Int) : ActionRequestKind()
     data class Hangout(val id: String) : ActionRequestKind()
+    data class Event(val id: String) : ActionRequestKind()
 }
 
 /** A single pending join request, normalized across club + hangout sources. */
@@ -47,6 +48,18 @@ data class VerificationPageResult(
 enum class NotificationType {
     BIRTHDAY, HOLIDAY, EVENT_REMINDER, REQUEST_OUTCOME, VERIFICATION_OUTCOME, GENERAL;
 
+    /** Wire value, round-tripped into the deep-link action; null for GENERAL. */
+    val apiValue: String?
+        get() = if (this == GENERAL) null else name
+
+    /** Types whose row/hero shows a remote `imageUrl`, falling back to the local
+     * type icon. The rest (celebratory + generic) always render the local icon. */
+    val prefersRemoteImage: Boolean
+        get() = when (this) {
+            BIRTHDAY, HOLIDAY, GENERAL -> false
+            EVENT_REMINDER, REQUEST_OUTCOME, VERIFICATION_OUTCOME -> true
+        }
+
     companion object {
         fun from(api: String): NotificationType = when (api.uppercase()) {
             "BIRTHDAY" -> BIRTHDAY
@@ -55,6 +68,20 @@ enum class NotificationType {
             "REQUEST_OUTCOME" -> REQUEST_OUTCOME
             "VERIFICATION_OUTCOME" -> VERIFICATION_OUTCOME
             else -> GENERAL
+        }
+    }
+}
+
+/** Which entity a feed row deep-links into (API `targetType`). */
+enum class NotificationTargetType {
+    EVENT, CLUB, USER, NONE;
+
+    companion object {
+        fun from(api: String?): NotificationTargetType = when (api?.uppercase()) {
+            "EVENT" -> EVENT
+            "CLUB" -> CLUB
+            "USER" -> USER
+            else -> NONE
         }
     }
 }
@@ -68,12 +95,22 @@ data class NotificationFeedItem(
     val note: String?,
     val imageUrl: String?,
     val timeAgo: String,
-    val isRead: Boolean
+    val isRead: Boolean,
+    val targetType: NotificationTargetType = NotificationTargetType.NONE,
+    val targetId: String? = null,
+    /** Parsed server createdAt epoch millis; drives date-bucket grouping. */
+    val createdAtMillis: Long? = null
 )
 
 data class NotificationSection(
     val title: String,
     val items: List<NotificationFeedItem>
+)
+
+/** One page of the notification feed, already mapped to feed items. */
+data class NotificationFeedPage(
+    val items: List<NotificationFeedItem>,
+    val hasMore: Boolean
 )
 
 /** Client-composed banner counts. */

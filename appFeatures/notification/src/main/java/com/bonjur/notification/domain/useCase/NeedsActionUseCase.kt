@@ -9,8 +9,10 @@ import javax.inject.Inject
 interface NeedsActionUseCase {
     suspend fun fetchClubRequests(page: Int, size: Int): RequestPageResult
     suspend fun fetchHangoutRequests(page: Int, size: Int): RequestPageResult
+    suspend fun fetchEventRequests(page: Int, size: Int): RequestPageResult
     suspend fun setClubStatus(clubId: Int, userId: String, accept: Boolean)
     suspend fun setHangoutStatus(hangoutId: String, userId: String, accept: Boolean)
+    suspend fun setEventStatus(eventId: String, userId: String, accept: Boolean)
     /** Admin-only pending-verification total. Throws (e.g. 403) when not an admin. */
     suspend fun fetchVerificationCount(): Int
 }
@@ -35,12 +37,24 @@ class NeedsActionUseCaseImpl @Inject constructor(
         )
     }
 
+    override suspend fun fetchEventRequests(page: Int, size: Int): RequestPageResult {
+        val response = dataSource.fetchEventRequests(page, size)
+        return RequestPageResult(
+            items = response.content.mapNotNull(JoinRequestMapper::item),
+            hasMore = response.hasMore()
+        )
+    }
+
     override suspend fun setClubStatus(clubId: Int, userId: String, accept: Boolean) {
         dataSource.setClubStatus(clubId, userId, accept)
     }
 
     override suspend fun setHangoutStatus(hangoutId: String, userId: String, accept: Boolean) {
         dataSource.setHangoutStatus(hangoutId, userId, accept)
+    }
+
+    override suspend fun setEventStatus(eventId: String, userId: String, accept: Boolean) {
+        dataSource.setEventStatus(eventId, userId, accept)
     }
 
     override suspend fun fetchVerificationCount(): Int =

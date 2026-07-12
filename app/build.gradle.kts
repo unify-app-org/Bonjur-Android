@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
     // serialization
     id("kotlinx-serialization")
     // DI
@@ -16,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.bonjur.app"
+        applicationId = "com.unify.app"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -76,6 +77,10 @@ dependencies {
     implementation(project(":appCore:designSystem"))
     implementation(project(":appCore:network"))
 
+    // Firebase (BOM 33.x = Kotlin 2.0-compatible metadata; 34.x needs Kotlin 2.2+)
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-analytics")
     // Image loading (Coil) — backs CachedAsyncImage + minio host-rewrite interceptor
     implementation("io.coil-kt:coil-compose:2.6.0")
 

@@ -4,6 +4,7 @@ import com.bonjur.network.APIClient.AppEndpoint
 import com.bonjur.network.APIClient.NetworkMethod
 import com.bonjur.notification.data.DTOs.ClubStatusRequest
 import com.bonjur.notification.data.DTOs.ClubVerificationRequest
+import com.bonjur.notification.data.DTOs.EventStatusRequest
 import com.bonjur.notification.data.DTOs.HangoutStatusRequest
 
 /**
@@ -12,6 +13,25 @@ import com.bonjur.notification.data.DTOs.HangoutStatusRequest
  * verification flows are live.
  */
 sealed class NotificationEndpoints : AppEndpoint {
+
+    /** Paged notification feed for the current user. */
+    data class Feed(val query: Map<String, String>) : NotificationEndpoints() {
+        override val path = "api/ns/v1/notifications"
+        override val method = NetworkMethod.GET
+        override val queryParameters = query
+    }
+
+    /** Unread notification total (bell badge). */
+    data object UnreadCount : NotificationEndpoints() {
+        override val path = "api/ns/v1/notifications/unread-count"
+        override val method = NetworkMethod.GET
+    }
+
+    /** Marks every notification read. */
+    data object ReadAll : NotificationEndpoints() {
+        override val path = "api/ns/v1/notifications/read-all"
+        override val method = NetworkMethod.POST
+    }
 
     data class ClubJoinRequests(val query: Map<String, String>) : NotificationEndpoints() {
         override val path = "api/cs/v1/clubs/join-requests"
@@ -38,6 +58,23 @@ sealed class NotificationEndpoints : AppEndpoint {
         val request: HangoutStatusRequest
     ) : NotificationEndpoints() {
         override val path = "api/hs/v1/hangouts/requests/$hangoutId"
+        override val method = NetworkMethod.POST
+        override val body = request
+    }
+
+    /** Pending event join requests for events the caller organizes. */
+    data class EventJoinRequests(val query: Map<String, String>) : NotificationEndpoints() {
+        override val path = "api/es/v1/events/requests"
+        override val method = NetworkMethod.GET
+        override val queryParameters = query
+    }
+
+    /** Accept/reject an event join request. status ∈ {ACCEPTED, REJECTED}. */
+    data class SetEventRequestStatus(
+        val eventId: String,
+        val request: EventStatusRequest
+    ) : NotificationEndpoints() {
+        override val path = "api/es/v1/events/$eventId"
         override val method = NetworkMethod.POST
         override val body = request
     }

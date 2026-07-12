@@ -77,13 +77,11 @@ fun NeedsActionView(store: FeatureStore<NeedsActionViewState, NeedsActionAction,
             pageCount = tabs.size,
             currentPage = tabs.indexOf(state.selectedTab),
             onPageChange = { store.send(NeedsActionAction.SelectTab(tabs[it])) },
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            showIndicator = false
         ) { page ->
             when (tabs[page]) {
-                ActionTab.EVENTS -> ComingSoon(
-                    "No event actions yet",
-                    "Event approvals will appear here once events go live."
-                )
+                ActionTab.EVENTS -> RequestsTab(store, ActionTab.EVENTS, state.events, "No pending event requests right now.")
                 ActionTab.HANGOUTS -> RequestsTab(store, ActionTab.HANGOUTS, state.hangouts, "No pending hangout requests right now.")
                 ActionTab.CLUBS -> RequestsTab(store, ActionTab.CLUBS, state.clubs, "No pending club requests right now.")
             }

@@ -9,6 +9,7 @@ import com.bonjur.events.presentation.create.models.EventCreateInputData
 import com.bonjur.events.presentation.details.model.EventDetailsInputData
 import com.bonjur.events.presentation.details.EventDetailsScreen
 import com.bonjur.events.presentation.list.EventsListScreen
+import com.bonjur.navigation.EventDetailsNavArgs
 import com.bonjur.navigation.MainScreen
 import com.bonjur.navigation.NavArgs
 import com.bonjur.navigation.Navigator
@@ -24,8 +25,11 @@ fun NavGraphBuilder.eventsNavGraph(navigator: Navigator) {
         }
 
         composable<EventsScreens.Details> {
-            val inputData = remember { NavArgs.get<EventDetailsInputData>() }
-                ?: EventDetailsInputData(eventId = "")
+            val inputData = remember {
+                NavArgs.get<EventDetailsInputData>()
+                    ?: NavArgs.get<EventDetailsNavArgs>()?.let { EventDetailsInputData(eventId = it.eventId) }
+                    ?: EventDetailsInputData(eventId = "")
+            }
             EventDetailsScreen(
                 inputData = inputData,
                 navigator = navigator

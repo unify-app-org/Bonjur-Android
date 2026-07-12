@@ -32,6 +32,7 @@ class NeedsActionViewModel @Inject constructor(
     private val pageSize = 20
     private var clubPage = 0
     private var hangoutPage = 0
+    private var eventPage = 0
 
     fun init(navigator: Navigator) {
         if (::navigator.isInitialized) return
@@ -43,6 +44,7 @@ class NeedsActionViewModel @Inject constructor(
             NeedsActionAction.OnAppear -> {
                 if (state.clubs.phase == RequestsPhase.IDLE) loadInitial(ActionTab.CLUBS)
                 if (state.hangouts.phase == RequestsPhase.IDLE) loadInitial(ActionTab.HANGOUTS)
+                if (state.events.phase == RequestsPhase.IDLE) loadInitial(ActionTab.EVENTS)
                 refreshVerificationBanner()
             }
             is NeedsActionAction.SelectTab -> updateState(state.copy(selectedTab = action.tab))
@@ -72,50 +74,50 @@ class NeedsActionViewModel @Inject constructor(
 
     // MARK: - Source plumbing
 
-    private fun source(tab: ActionTab): RequestSourceState? = when (tab) {
+    private fun source(tab: ActionTab): RequestSourceState = when (tab) {
         ActionTab.CLUBS -> state.clubs
         ActionTab.HANGOUTS -> state.hangouts
-        ActionTab.EVENTS -> null
+        ActionTab.EVENTS -> state.events
     }
 
     private fun setSource(tab: ActionTab, source: RequestSourceState) {
         when (tab) {
             ActionTab.CLUBS -> updateState(state.copy(clubs = source))
             ActionTab.HANGOUTS -> updateState(state.copy(hangouts = source))
-            ActionTab.EVENTS -> Unit
+            ActionTab.EVENTS -> updateState(state.copy(events = source))
         }
     }
 
-    private suspend fun fetch(tab: ActionTab, page: Int): RequestPageResult? = when (tab) {
+    private suspend fun fetch(tab: ActionTab, page: Int): RequestPageResult = when (tab) {
         ActionTab.CLUBS -> useCase.fetchClubRequests(page, pageSize)
         ActionTab.HANGOUTS -> useCase.fetchHangoutRequests(page, pageSize)
-        ActionTab.EVENTS -> null
+        ActionTab.EVENTS -> useCase.fetchEventRequests(page, pageSize)
     }
 
     private fun currentPage(tab: ActionTab): Int = when (tab) {
         ActionTab.CLUBS -> clubPage
         ActionTab.HANGOUTS -> hangoutPage
-        ActionTab.EVENTS -> 0
+        ActionTab.EVENTS -> eventPage
     }
 
     private fun setPage(tab: ActionTab, page: Int) {
         when (tab) {
             ActionTab.CLUBS -> clubPage = page
             ActionTab.HANGOUTS -> hangoutPage = page
-            ActionTab.EVENTS -> Unit
+            ActionTab.EVENTS -> eventPage = page
         }
     }
 
     // MARK: - Loading
 
     private fun loadInitial(tab: ActionTab) {
-        val current = source(tab) ?: return
+        val current = source(tab)
         setPage(tab, 0)
         if (current.items.isEmpty()) setSource(tab, current.copy(phase = RequestsPhase.LOADING))
         viewModelScope.launch {
             try {
-                val result = fetch(tab, 0) ?: return@launch
-                val src = source(tab) ?: return@launch
+                val result = fetch(tab, 0)
+                val src = source(tab)
                 setSource(
                     tab,
                     src.copy(
@@ -125,7 +127,7 @@ class NeedsActionViewModel @Inject constructor(
                     )
                 )
             } catch (e: ApiException) {
-                val src = source(tab) ?: return@launch
+                val src = source(tab)
                 if (src.items.isEmpty()) setSource(tab, src.copy(phase = RequestsPhase.FAILED))
                 postEffect(NeedsActionSideEffect.Error(e.message))
             }
@@ -133,15 +135,15 @@ class NeedsActionViewModel @Inject constructor(
     }
 
     private fun loadMore(tab: ActionTab) {
-        val current = source(tab) ?: return
+        val current = source(tab)
         if (!current.canLoadMore || current.isLoadingMore) return
         setSource(tab, current.copy(isLoadingMore = true))
         val next = currentPage(tab) + 1
         viewModelScope.launch {
             try {
-                val result = fetch(tab, next) ?: return@launch
+                val result = fetch(tab, next)
                 setPage(tab, next)
-                val src = source(tab) ?: return@launch
+                val src = source(tab)
                 setSource(
                     tab,
                     src.copy(
@@ -151,7 +153,7 @@ class NeedsActionViewModel @Inject constructor(
                     )
                 )
             } catch (e: ApiException) {
-                val src = source(tab) ?: return@launch
+                val src = source(tab)
                 setSource(tab, src.copy(isLoadingMore = false))
                 postEffect(NeedsActionSideEffect.Error(e.message))
             }
@@ -173,6 +175,7 @@ class NeedsActionViewModel @Inject constructor(
                 when (val kind = item.kind) {
                     is ActionRequestKind.Club -> useCase.setClubStatus(kind.id, userId, accept)
                     is ActionRequestKind.Hangout -> useCase.setHangoutStatus(kind.id, userId, accept)
+                    is ActionRequestKind.Event -> useCase.setEventStatus(kind.id, userId, accept)
                 }
                 finishProcessing(item, removed = true, error = null)
             } catch (e: ApiException) {
@@ -189,6 +192,8 @@ class NeedsActionViewModel @Inject constructor(
                     next.copy(clubs = next.clubs.copy(items = next.clubs.items.filterNot { it.id == item.id }))
                 is ActionRequestKind.Hangout ->
                     next.copy(hangouts = next.hangouts.copy(items = next.hangouts.items.filterNot { it.id == item.id }))
+                is ActionRequestKind.Event ->
+                    next.copy(events = next.events.copy(items = next.events.items.filterNot { it.id == item.id }))
             }
         }
         updateState(next)

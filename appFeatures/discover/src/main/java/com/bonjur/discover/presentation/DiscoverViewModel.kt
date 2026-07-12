@@ -26,6 +26,7 @@ import com.bonjur.hangouts.navigation.HangoutsScreens
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData
 import com.bonjur.navigation.MainScreen
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.UnreadCountProvider
 import com.bonjur.navigation.route
 import com.bonjur.network.model.ApiException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +35,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
-    private val useCase: DiscoverUseCase
+    private val useCase: DiscoverUseCase,
+    private val unreadCountProvider: UnreadCountProvider
 ) : FeatureViewModel<DiscoverViewState, DiscoverAction, DiscoverSideEffect>(
     DiscoverViewState()
 ) {
@@ -91,6 +93,16 @@ class DiscoverViewModel @Inject constructor(
             fetchEventsData()
             fetchHangoutsData()
         }
+        refreshUnreadCount()
+    }
+
+    /** Bell badge — refreshes on appear + every pull-to-refresh. Returning from
+     * the feed zeroes it server-side (read-all), so it clears on reappearance. */
+    private fun refreshUnreadCount() {
+        viewModelScope.launch {
+            val count = unreadCountProvider.unreadCount()
+            updateState(state.copy(unreadCount = count))
+        }
     }
 
     /// Refetch only the 4 activity sections when Discover reappears, so changes
@@ -120,6 +132,7 @@ class DiscoverViewModel @Inject constructor(
             fetchHangoutsData()
             updateState(state.copy(isRefreshing = false))
         }
+        refreshUnreadCount()
     }
 
     private fun filterChanged(categoryIds: List<Int>) {

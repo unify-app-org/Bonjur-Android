@@ -1,6 +1,7 @@
 package com.bonjur.notification.domain.models
 
 import com.bonjur.notification.data.DTOs.ClubJoinRequestDTO
+import com.bonjur.notification.data.DTOs.EventJoinRequestDTO
 import com.bonjur.notification.data.DTOs.HangoutJoinRequestDTO
 import java.util.UUID
 
@@ -28,6 +29,19 @@ object JoinRequestMapper {
             requesterId = dto.userId,
             requesterName = dto.fullName ?: "Someone",
             targetName = dto.hangoutName ?: "a hangout",
+            avatarUrl = dto.userProfileUrl,
+            createdAtMillis = RelativeTime.parse(dto.createdAt)
+        )
+    }
+
+    fun item(dto: EventJoinRequestDTO): ActionRequestItem? {
+        val eventId = dto.eventId ?: return null
+        return ActionRequestItem(
+            id = "event-$eventId-${dto.userId ?: UUID.randomUUID()}",
+            kind = ActionRequestKind.Event(eventId),
+            requesterId = dto.userId,
+            requesterName = dto.fullName ?: "Someone",
+            targetName = dto.eventName ?: "an event",
             avatarUrl = dto.userProfileUrl,
             createdAtMillis = RelativeTime.parse(dto.createdAt)
         )
