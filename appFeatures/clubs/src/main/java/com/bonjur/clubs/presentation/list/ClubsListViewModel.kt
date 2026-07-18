@@ -57,6 +57,7 @@ class ClubsListViewModel @Inject constructor(
             is ClubsListAction.clubItemTapped -> handleSelectedItem(action.id)
             is ClubsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is ClubsListAction.FilterSelected -> handleFilterSelected(action.items)
+            ClubsListAction.CreateTapped -> createTapped()
         }
     }
 
@@ -147,6 +148,12 @@ class ClubsListViewModel @Inject constructor(
 
     private fun currentKeyword(): String? =
         state.uiModel.searchText.trim().ifEmpty { null }
+
+    private fun createTapped() {
+        viewModelScope.launch {
+            navigator.navigateTo(ClubsScreens.Create.route)
+        }
+    }
 
     private fun handleSelectedItem(id: Int) {
         viewModelScope.launch {

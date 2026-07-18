@@ -153,6 +153,9 @@ fun ClubDetailsView(
                     onRequestVerification = {
                         store.send(ClubDetailsAction.RequestVerificationTapped)
                     },
+                    onCreateEvent = {
+                        store.send(ClubDetailsAction.CreateEventTapped)
+                    },
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -211,7 +214,9 @@ fun ClubDetailsView(
                             ClubDetailsViewState.SegmentTypes.EVENTS ->
                                 EventsTab(
                                     events = store.state.eventsData,
-                                    onEventTap = { store.send(ClubDetailsAction.EventTapped(it)) }
+                                    canCreateEvent = store.state.canCreateEvent,
+                                    onEventTap = { store.send(ClubDetailsAction.EventTapped(it)) },
+                                    onCreateEvent = { store.send(ClubDetailsAction.CreateEventTapped) }
                                 )
 
                             ClubDetailsViewState.SegmentTypes.MEMBERS ->
@@ -395,6 +400,7 @@ private fun ClubInfoView(
     showVerifyButton: Boolean,
     verifyButtonDisabled: Boolean,
     onRequestVerification: () -> Unit,
+    onCreateEvent: () -> Unit,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
@@ -516,7 +522,7 @@ private fun ClubInfoView(
                     contentSize = ContentSize.Fill,
                     size = AppButtonSize.Medium
                 ),
-                onClick = { /* Handle create event */ }
+                onClick = onCreateEvent
             )
         }
     }
@@ -726,7 +732,9 @@ private fun InfoSubItem(subItem: ClubsDetails.SubInfo) {
 @Composable
 private fun EventsTab(
     events: List<EventsCardModel>,
-    onEventTap: (String) -> Unit
+    canCreateEvent: Boolean,
+    onEventTap: (String) -> Unit,
+    onCreateEvent: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -735,13 +743,18 @@ private fun EventsTab(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         if (events.isEmpty()) {
+            // Members can't create events, so they get the message without a CTA.
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "There are no events for this club yet. Be the pioneer and start the very first one now!",
-                    buttonTitle = "Create an event +"
+                    text = if (canCreateEvent) {
+                        "This club hasn't run any events yet. Be the pioneer and start the very first one now!"
+                    } else {
+                        "This club hasn't run any events yet. Check back soon."
+                    },
+                    buttonTitle = if (canCreateEvent) "Create an event +" else null
                 ),
-                onButtonClick = { /* Create-event flow deferred */ }
+                onButtonClick = onCreateEvent
             )
         } else {
             events.forEach { event ->

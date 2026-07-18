@@ -41,6 +41,7 @@ sealed class HangoutsListAction : FeatureAction {
     object LoadMore : HangoutsListAction()
     object Dismiss : HangoutsListAction()
     data class SearchTextChanged(val text: String) : HangoutsListAction()
+    object CreateTapped : HangoutsListAction()
     data class ItemSelected(val id: String) : HangoutsListAction()
     data class FilterSelected(val items: List<FilterView.Items>) : HangoutsListAction()
 }

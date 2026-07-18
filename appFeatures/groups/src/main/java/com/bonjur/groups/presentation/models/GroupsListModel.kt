@@ -97,4 +97,5 @@ sealed class GroupsListAction : FeatureAction {
     data class ClubItemTapped(val clubId: Int) : GroupsListAction()
     data class EventItemTapped(val eventId: String) : GroupsListAction()
     data class HangoutItemTapped(val hangoutId: String) : GroupsListAction()
+    data class EmptyStateActionTapped(val segment: GroupsListViewState.SegmentType) : GroupsListAction()
 }

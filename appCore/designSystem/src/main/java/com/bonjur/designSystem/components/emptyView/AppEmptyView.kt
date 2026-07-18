@@ -40,7 +40,7 @@ import com.bonjur.designSystem.ui.theme.image.Images
 @Composable
 fun AppEmptyView(
     model: AppEmptyModel,
-    onButtonClick: () -> Unit,
+    onButtonClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -64,11 +64,11 @@ fun AppEmptyView(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // Icon
-                Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = Palette.grayQuaternary
-                ) {
-                    if (model.icon != null) {
+                if (model.icon != null) {
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = Palette.grayQuaternary
+                    ) {
                         Icon(
                             painter = model.icon,
                             contentDescription = null,
@@ -90,15 +90,17 @@ fun AppEmptyView(
                 )
 
                 // Button
-                AppButton(
-                    title = model.buttonTitle,
-                    model = AppButtonModel(
-                        contentSize = ContentSize.Fill,
-                        size = AppButtonSize.Small
-                    ),
-                    modifier = Modifier.padding(horizontal = 40.dp),
-                    onClick = onButtonClick
-                )
+                if (model.buttonTitle != null) {
+                    AppButton(
+                        title = model.buttonTitle,
+                        model = AppButtonModel(
+                            contentSize = ContentSize.Fill,
+                            size = AppButtonSize.Small
+                        ),
+                        modifier = Modifier.padding(horizontal = 40.dp),
+                        onClick = { onButtonClick?.invoke() }
+                    )
+                }
             }
         }
 
@@ -145,7 +147,7 @@ fun PreviewAppEmptyView() {
         AppEmptyView(
             model = AppEmptyModel(
                 icon = Images.Icons.twoUsers(),
-                text = "There are no clubs for this community yet. Be the pioneer and start the very first one now!",
+                text = "No clubs yet. Be the pioneer and start the very first one now!",
                 buttonTitle = "Create a club +"
             ),
             onButtonClick = {

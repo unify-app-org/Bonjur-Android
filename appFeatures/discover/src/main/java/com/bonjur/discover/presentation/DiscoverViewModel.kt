@@ -74,6 +74,7 @@ class DiscoverViewModel @Inject constructor(
                 viewModelScope.launch { navigator.navigateTo(com.bonjur.navigation.SharedRoutes.NOTIFICATION_FEED) }
             is DiscoverAction.FilterChanged -> filterChanged(action.categoryIds)
             is DiscoverAction.LoadMore -> loadMore(action.type)
+            is DiscoverAction.CreateTapped -> createTapped(action.type)
             is DiscoverAction.JoinHangout -> joinHangout(action.hangoutId)
             is DiscoverAction.ViewAllTapped -> viewAllTapped(action.type)
             is DiscoverAction.CommunityItemTapped -> communityItemTapped(action.communityId)
@@ -83,15 +84,18 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
+    /** First load: nothing is on screen yet, so the whole screen shows the
+     * loading overlay rather than flashing empty states section by section. */
     private fun fetchData() {
         viewModelScope.launch {
-            // Initial load streams in inline — no blocking overlay (only filters show it).
+            postEffect(DiscoverSideEffect.Loading(true))
             fetchUserData()
             fetchFilterData()
             fetchCommunitiesData()
             fetchClubsData()
             fetchEventsData()
             fetchHangoutsData()
+            postEffect(DiscoverSideEffect.Loading(false))
         }
         refreshUnreadCount()
     }
@@ -275,6 +279,22 @@ class DiscoverViewModel @Inject constructor(
 
     private fun profileTapped() {
         inputData.onProfileTab?.invoke()
+    }
+
+    /**
+     * Empty-state CTA per section. `COMMUNITY` has no create flow, so its empty
+     * state renders without a button and never reaches here.
+     */
+    private fun createTapped(type: AppUIEntities.ActivityType) {
+        val route = when (type) {
+            AppUIEntities.ActivityType.CLUBS -> ClubsScreens.Create.route
+            AppUIEntities.ActivityType.EVENTS -> EventsScreens.Create.route
+            AppUIEntities.ActivityType.HANG_OUTS -> HangoutsScreens.Create.route
+            AppUIEntities.ActivityType.COMMUNITY -> return
+        }
+        viewModelScope.launch {
+            navigator.navigateTo(route)
+        }
     }
 
     private fun communityItemTapped(id: Int) {

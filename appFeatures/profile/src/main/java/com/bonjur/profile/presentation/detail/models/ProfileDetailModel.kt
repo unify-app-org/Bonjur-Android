@@ -115,5 +115,6 @@ sealed class ProfileDetailAction : FeatureAction {
     object SettingsTapped : ProfileDetailAction()
     object EditProfileTapped : ProfileDetailAction()
     object UserCardTapped : ProfileDetailAction()
+    data class EmptyStateActionTapped(val segment: ProfileDetailViewState.SegmentTypes) : ProfileDetailAction()
     data class UserCardCoverSaved(val backgroundType: AppUIEntities.BackgroundType?) : ProfileDetailAction()
 }

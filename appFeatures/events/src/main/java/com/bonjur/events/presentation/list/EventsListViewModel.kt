@@ -61,6 +61,13 @@ class EventsListViewModel @Inject constructor(
             is EventsListAction.JoinEvent -> joinEvent(action.id)
             is EventsListAction.ClubTapped -> handleClubTap(action.clubId)
             EventsListAction.Dismiss -> dismiss()
+            EventsListAction.CreateTapped -> createTapped()
+        }
+    }
+
+    private fun createTapped() {
+        viewModelScope.launch {
+            navigator.navigateTo(EventsScreens.Create.route)
         }
     }
 

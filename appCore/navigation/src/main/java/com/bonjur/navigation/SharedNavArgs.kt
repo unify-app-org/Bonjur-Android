@@ -20,6 +20,15 @@ object SharedRoutes {
     /** Qualified name of `ClubsScreens.List` — event-create "browse clubs" funnel. */
     const val CLUB_LIST = "com.bonjur.clubs.navigation.ClubsScreens.List"
 
+    /** Qualified name of `EventsScreens.Create` — empty-state "create an event" CTAs. */
+    const val EVENT_CREATE = "com.bonjur.events.navigation.EventsScreens.Create"
+
+    /** Qualified name of `EventsScreens.List` — empty-state "explore events" CTAs. */
+    const val EVENT_LIST = "com.bonjur.events.navigation.EventsScreens.List"
+
+    /** Qualified name of `HangoutsScreens.Create` — empty-state "create a hangout" CTAs. */
+    const val HANGOUT_CREATE = "com.bonjur.hangouts.navigation.HangoutsScreens.Create"
+
     /**
      * Qualified name of `ProfileScreens.ProfileDetail`. `profile` depends on
      * clubs/events/hangouts, so those modules can't depend back on it — they open a

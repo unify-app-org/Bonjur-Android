@@ -107,4 +107,5 @@ sealed class ClubDetailsAction : FeatureAction {
         val role: AppUIEntities.UserActivityRole
     ) : ClubDetailsAction()
     object RequestVerificationTapped : ClubDetailsAction()
+    object CreateEventTapped : ClubDetailsAction()
 }

@@ -69,4 +69,5 @@ sealed class DiscoverAction : FeatureAction {
     data class CLubItemTapped(val clubId: Int) : DiscoverAction()
     data class EventItemTapped(val eventId: String) : DiscoverAction()
     data class HangoutItemTapped(val hangoutId: String) : DiscoverAction()
+    data class CreateTapped(val type: AppUIEntities.ActivityType) : DiscoverAction()
 }

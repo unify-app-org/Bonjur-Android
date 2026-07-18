@@ -12,5 +12,7 @@ import androidx.compose.ui.graphics.painter.Painter
 data class AppEmptyModel(
     val icon: Painter?,
     val text: String,
-    val buttonTitle: String
+    // `null` hides the action button, for empty states with no destination
+    // to send the user to.
+    val buttonTitle: String? = null
 )

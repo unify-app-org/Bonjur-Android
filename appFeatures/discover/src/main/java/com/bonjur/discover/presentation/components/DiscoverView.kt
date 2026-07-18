@@ -145,7 +145,8 @@ fun DiscoverView(
                         clubs = state.uiModel.clubs,
                         onClubTap = { item -> store.send(DiscoverAction.CLubItemTapped(item.id)) },
                         onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.CLUBS)) },
-                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.CLUBS)) }
+                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.CLUBS)) },
+                        onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.CLUBS)) }
                     )
 
                     EventsView(
@@ -155,7 +156,8 @@ fun DiscoverView(
                         onEventTap = { item -> store.send(DiscoverAction.EventItemTapped(item.id)) },
                         onButtonTap = { /* iOS events card button is a no-op here */ },
                         onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.EVENTS)) },
-                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.EVENTS)) }
+                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.EVENTS)) },
+                        onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.EVENTS)) }
                     )
 
                     HangoutsView(
@@ -164,7 +166,8 @@ fun DiscoverView(
                         onHangoutTap = { item -> store.send(DiscoverAction.HangoutItemTapped(item.id)) },
                         onButtonTap = { item -> store.send(DiscoverAction.JoinHangout(item.id)) },
                         onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.HANG_OUTS)) },
-                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.HANG_OUTS)) }
+                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.HANG_OUTS)) },
+                        onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.HANG_OUTS)) }
                     )
                 }
             }
@@ -374,7 +377,8 @@ private fun ClubsView(
     clubs: List<ClubCardModel>,
     onClubTap: (ClubCardModel) -> Unit,
     onViewAll: () -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    onCreate: () -> Unit
 ) {
     Column {
         SectionHeader(
@@ -403,10 +407,10 @@ private fun ClubsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "There are no clubs for this community yet. Be the pioneer and start the very first one now!",
+                    text = "No clubs here yet. Be the pioneer and start the very first one now!",
                     buttonTitle = "Create a club +"
                 ),
-                onButtonClick = { /* Handle create */ },
+                onButtonClick = onCreate,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -421,7 +425,8 @@ private fun EventsView(
     onEventTap: (EventsCardModel) -> Unit,
     onButtonTap: (EventsCardModel) -> Unit,
     onViewAll: () -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    onCreate: () -> Unit
 ) {
     val isEmpty = events.isEmpty() || clubs.isEmpty()
 
@@ -453,10 +458,10 @@ private fun EventsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "There are no event for the clubs yet. Be the pioneer and start the very first one now!",
-                    buttonTitle = "Create events +"
+                    text = "No events scheduled yet. Be the pioneer and start the very first one now!",
+                    buttonTitle = "Create an event +"
                 ),
-                onButtonClick = { /* Handle create */ },
+                onButtonClick = onCreate,
                 modifier = Modifier.padding(16.dp)
             )
         }
@@ -470,7 +475,8 @@ private fun HangoutsView(
     onHangoutTap: (HangoutsCardModel) -> Unit,
     onButtonTap: (HangoutsCardModel) -> Unit,
     onViewAll: () -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    onCreate: () -> Unit
 ) {
     Column {
         SectionHeader(
@@ -500,10 +506,10 @@ private fun HangoutsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "There are no hangouts for this community yet. Be the pioneer and start the very first one now!",
+                    text = "No hangouts planned yet. Be the pioneer and start the very first one now!",
                     buttonTitle = "Create a hangout +"
                 ),
-                onButtonClick = { /* Handle create */ },
+                onButtonClick = onCreate,
                 modifier = Modifier.padding(16.dp)
             )
         }

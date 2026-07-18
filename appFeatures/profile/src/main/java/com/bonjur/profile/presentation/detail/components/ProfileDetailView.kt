@@ -188,6 +188,13 @@ fun ProfileDetailView(
                                     clubs = store.state.uiModel?.clubs ?: emptyList(),
                                     onItemTapped = { id ->
                                         store.send(ProfileDetailAction.ClubsItemTapped(id))
+                                    },
+                                    onCreate = {
+                                        store.send(
+                                            ProfileDetailAction.EmptyStateActionTapped(
+                                                ProfileDetailViewState.SegmentTypes.CLUBS
+                                            )
+                                        )
                                     }
                                 )
 
@@ -196,6 +203,13 @@ fun ProfileDetailView(
                                     events = store.state.uiModel?.events ?: emptyList(),
                                     onItemTapped = { id ->
                                         store.send(ProfileDetailAction.EventsItemTapped(id))
+                                    },
+                                    onCreate = {
+                                        store.send(
+                                            ProfileDetailAction.EmptyStateActionTapped(
+                                                ProfileDetailViewState.SegmentTypes.EVENTS
+                                            )
+                                        )
                                     }
                                 )
 
@@ -204,6 +218,13 @@ fun ProfileDetailView(
                                     hangouts = store.state.uiModel?.hangouts ?: emptyList(),
                                     onItemTapped = { id ->
                                         store.send(ProfileDetailAction.HangoutsItemTapped(id))
+                                    },
+                                    onCreate = {
+                                        store.send(
+                                            ProfileDetailAction.EmptyStateActionTapped(
+                                                ProfileDetailViewState.SegmentTypes.HANGOUTS
+                                            )
+                                        )
                                     }
                                 )
                         }
@@ -587,7 +608,8 @@ private fun UserInfoCell(
 @Composable
 private fun ClubsTab(
     clubs: List<ClubCardModel>,
-    onItemTapped: (Int) -> Unit
+    onItemTapped: (Int) -> Unit,
+    onCreate: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -596,7 +618,7 @@ private fun ClubsTab(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (clubs.isEmpty()) {
-            EmptyStateView(type = ProfileDetailViewState.SegmentTypes.CLUBS)
+            EmptyStateView(type = ProfileDetailViewState.SegmentTypes.CLUBS, onCreate = onCreate)
         } else {
             clubs.forEach { club ->
                 ClubCardView(
@@ -612,7 +634,8 @@ private fun ClubsTab(
 @Composable
 private fun EventsTab(
     events: List<EventsCardModel>,
-    onItemTapped: (String) -> Unit
+    onItemTapped: (String) -> Unit,
+    onCreate: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -621,7 +644,7 @@ private fun EventsTab(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (events.isEmpty()) {
-            EmptyStateView(type = ProfileDetailViewState.SegmentTypes.EVENTS)
+            EmptyStateView(type = ProfileDetailViewState.SegmentTypes.EVENTS, onCreate = onCreate)
         } else {
             events.forEach { event ->
                 EventsCardView(
@@ -640,7 +663,8 @@ private fun EventsTab(
 @Composable
 private fun HangoutsTab(
     hangouts: List<HangoutsCardModel>,
-    onItemTapped: (String) -> Unit
+    onItemTapped: (String) -> Unit,
+    onCreate: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -649,7 +673,7 @@ private fun HangoutsTab(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (hangouts.isEmpty()) {
-            EmptyStateView(type = ProfileDetailViewState.SegmentTypes.HANGOUTS)
+            EmptyStateView(type = ProfileDetailViewState.SegmentTypes.HANGOUTS, onCreate = onCreate)
         } else {
             hangouts.forEach { hangout ->
                 HangoutsCardView(
@@ -664,7 +688,10 @@ private fun HangoutsTab(
 }
 
 @Composable
-private fun EmptyStateView(type: ProfileDetailViewState.SegmentTypes) {
+private fun EmptyStateView(
+    type: ProfileDetailViewState.SegmentTypes,
+    onCreate: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -674,12 +701,10 @@ private fun EmptyStateView(type: ProfileDetailViewState.SegmentTypes) {
         AppEmptyView(
             model = AppEmptyModel(
                 icon = Images.Icons.twoUsers(),
-                text = "There are no ${type.title.lowercase()} for this community yet. Be the pioneer and start the very first one now!",
+                text = "You haven't joined any ${type.title.lowercase()} yet. Be the pioneer and start the very first one now!",
                 buttonTitle = "Create a ${type.title.lowercase().removeSuffix("s")} +"
             ),
-            onButtonClick = {
-                // Handle create
-            }
+            onButtonClick = onCreate
         )
     }
 }

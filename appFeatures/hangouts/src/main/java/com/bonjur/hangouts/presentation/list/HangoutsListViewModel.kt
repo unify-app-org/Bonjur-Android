@@ -56,6 +56,13 @@ class HangoutsListViewModel @Inject constructor(
             is HangoutsListAction.SearchTextChanged -> handleSearchTextChanged(action.text)
             is HangoutsListAction.FilterSelected -> handleFilterSelected(action.items)
             is HangoutsListAction.ItemSelected -> handleItemSelect(action.id)
+            HangoutsListAction.CreateTapped -> createTapped()
+        }
+    }
+
+    private fun createTapped() {
+        viewModelScope.launch {
+            navigator.navigateTo(HangoutsScreens.Create.route)
         }
     }
 

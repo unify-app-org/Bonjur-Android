@@ -16,7 +16,11 @@ object FilterView {
         val title: String,
         val type: String,
         val items: List<Items>
-    )
+    ) {
+        // Lets screens tell "no data" from "no matches" in their empty states.
+        val hasSelectedItems: Boolean
+            get() = items.any { it.selected }
+    }
     
     data class Items(
         val uuid: UUID = UUID.randomUUID(),

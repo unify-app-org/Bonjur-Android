@@ -32,7 +32,8 @@ fun DiscoverScreen(
         handleEffect = { effect ->
             when (effect) {
                 is DiscoverSideEffect.Loading -> {
-                    // Only the filter-apply path posts loading (initial/reappear load inline).
+                    // Posted by the first load and the filter-apply path. Pull-to-refresh
+                    // and the reappear refresh stay inline (no overlay).
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }

@@ -130,16 +130,25 @@ fun GroupsListView(
                 0 -> ClubsScrollView(
                     clubs = store.state.uiModel.clubs,
                     onItemTap = { id -> store.send(GroupsListAction.ClubItemTapped(id)) },
-                    onLoadMore = { store.send(GroupsListAction.LoadMoreClubs) }
+                    onLoadMore = { store.send(GroupsListAction.LoadMoreClubs) },
+                    onEmptyAction = {
+                        store.send(GroupsListAction.EmptyStateActionTapped(SegmentType.CLUBS))
+                    }
                 )
                 1 -> EventsScrollView(
                     events = store.state.uiModel.events,
-                    onItemTap = { id -> store.send(GroupsListAction.EventItemTapped(id)) }
+                    onItemTap = { id -> store.send(GroupsListAction.EventItemTapped(id)) },
+                    onEmptyAction = {
+                        store.send(GroupsListAction.EmptyStateActionTapped(SegmentType.EVENTS))
+                    }
                 )
                 2 -> HangoutsScrollView(
                     hangouts = store.state.uiModel.hangouts,
                     onItemTap = { id -> store.send(GroupsListAction.HangoutItemTapped(id)) },
-                    onLoadMore = { store.send(GroupsListAction.LoadMoreHangouts) }
+                    onLoadMore = { store.send(GroupsListAction.LoadMoreHangouts) },
+                    onEmptyAction = {
+                        store.send(GroupsListAction.EmptyStateActionTapped(SegmentType.HANGOUTS))
+                    }
                 )
             }
         }
@@ -218,7 +227,8 @@ private fun TopView(
 private fun ClubsScrollView(
     clubs: List<ClubCardModel>,
     onItemTap: (Int) -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    onEmptyAction: () -> Unit
 ) {
     if (clubs.isNotEmpty()) {
         LazyColumn(
@@ -236,14 +246,15 @@ private fun ClubsScrollView(
             }
         }
     } else {
-        EmptyStateView(type = SegmentType.CLUBS)
+        EmptyStateView(type = SegmentType.CLUBS, onAction = onEmptyAction)
     }
 }
 
 @Composable
 private fun EventsScrollView(
     events: List<EventsCardModel>,
-    onItemTap: (String) -> Unit
+    onItemTap: (String) -> Unit,
+    onEmptyAction: () -> Unit
 ) {
     if (events.isNotEmpty()) {
         LazyColumn(
@@ -261,7 +272,7 @@ private fun EventsScrollView(
             }
         }
     } else {
-        EmptyStateView(type = SegmentType.EVENTS)
+        EmptyStateView(type = SegmentType.EVENTS, onAction = onEmptyAction)
     }
 }
 
@@ -269,7 +280,8 @@ private fun EventsScrollView(
 private fun HangoutsScrollView(
     hangouts: List<HangoutsCardModel>,
     onItemTap: (String) -> Unit,
-    onLoadMore: () -> Unit
+    onLoadMore: () -> Unit,
+    onEmptyAction: () -> Unit
 ) {
     if (hangouts.isNotEmpty()) {
         LazyColumn(
@@ -288,7 +300,7 @@ private fun HangoutsScrollView(
             }
         }
     } else {
-        EmptyStateView(type = SegmentType.HANGOUTS)
+        EmptyStateView(type = SegmentType.HANGOUTS, onAction = onEmptyAction)
     }
 }
 
@@ -320,7 +332,10 @@ private fun LoadMoreTrigger(
 }
 
 @Composable
-private fun EmptyStateView(type: SegmentType) {
+private fun EmptyStateView(
+    type: SegmentType,
+    onAction: () -> Unit
+) {
     val icon = when (type) {
         SegmentType.CLUBS -> Images.Icons.twoUsers()
         SegmentType.EVENTS -> Images.Icons.calendar()
@@ -338,7 +353,7 @@ private fun EmptyStateView(type: SegmentType) {
                 text = type.emptyText,
                 buttonTitle = type.emptyButtonTitle
             ),
-            onButtonClick = { /* iOS empty-state button is a no-op in Groups */ }
+            onButtonClick = onAction
         )
     }
 }

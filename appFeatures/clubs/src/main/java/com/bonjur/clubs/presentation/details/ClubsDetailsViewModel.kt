@@ -64,6 +64,7 @@ class ClubDetailsViewModel @Inject constructor(
             is ClubDetailsAction.EventTapped -> navigateToEvent(action.eventId)
             is ClubDetailsAction.AssignRole -> assignRole(action.userId, action.role)
             ClubDetailsAction.RequestVerificationTapped -> requestVerification()
+            ClubDetailsAction.CreateEventTapped -> navigateToCreateEvent()
         }
     }
 
@@ -291,6 +292,12 @@ class ClubDetailsViewModel @Inject constructor(
             } catch (e: Exception) {
                 // Events tab is best-effort; keep detail visible without them.
             }
+        }
+    }
+
+    private fun navigateToCreateEvent() {
+        viewModelScope.launch {
+            navigator.navigateTo(EventsScreens.Create.route)
         }
     }
 

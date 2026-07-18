@@ -98,15 +98,22 @@ fun EventsListView(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Two empty states: nothing here at all (offer to create the
+                    // first event), and nothing matching the active search/filters.
+                    val isFiltering = state.uiModel.searchText.isNotEmpty() ||
+                        state.uiModel.filters.any { it.hasSelectedItems }
+
                     AppEmptyView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
-                            text = "There are no events for this community yet. Be the pioneer and start the very first one now!",
-                            buttonTitle = "Create an event +"
+                            text = if (isFiltering) {
+                                "No events match your search. Try another name or clear your filters."
+                            } else {
+                                "No events yet. Be the pioneer and start the very first one now!"
+                            },
+                            buttonTitle = if (isFiltering) null else "Create an event +"
                         ),
-                        onButtonClick = {
-                            // Handle create event
-                        }
+                        onButtonClick = { store.send(EventsListAction.CreateTapped) }
                     )
                 }
             }

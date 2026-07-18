@@ -115,6 +115,17 @@ class ProfileDetailViewModel @Inject constructor(
                 )
             }
 
+            is ProfileDetailAction.EmptyStateActionTapped -> viewModelScope.launch {
+                // Own-profile tabs are empty because the user has joined nothing
+                // yet, so each CTA opens that activity's create flow.
+                val route = when (action.segment) {
+                    ProfileDetailViewState.SegmentTypes.CLUBS -> ClubsScreens.Create.route
+                    ProfileDetailViewState.SegmentTypes.EVENTS -> EventsScreens.Create.route
+                    ProfileDetailViewState.SegmentTypes.HANGOUTS -> HangoutsScreens.Create.route
+                }
+                navigator.navigateTo(route)
+            }
+
             is ProfileDetailAction.UserCardCoverSaved -> applyUserCardCover(action.backgroundType)
         }
     }

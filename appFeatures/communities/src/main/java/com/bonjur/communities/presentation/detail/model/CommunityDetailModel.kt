@@ -72,6 +72,8 @@ sealed class CommunityDetailAction : FeatureAction {
     object BackTapped : CommunityDetailAction()
     object EditTapped : CommunityDetailAction()
     object SeeAllMembersTapped : CommunityDetailAction()
+    object CreateClubTapped : CommunityDetailAction()
+    object CreateEventTapped : CommunityDetailAction()
     data class AssignRole(
         val userId: String,
         val role: AppUIEntities.UserActivityRole

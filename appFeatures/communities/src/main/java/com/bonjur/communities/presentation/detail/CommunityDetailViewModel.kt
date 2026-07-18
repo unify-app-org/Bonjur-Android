@@ -15,6 +15,7 @@ import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.member.list.MemberListInputData
 import com.bonjur.member.list.MemberListScreens
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.SharedRoutes
 import com.bonjur.navigation.route
 import com.bonjur.network.manager.TokenManager
 import com.bonjur.profile.navigation.ProfileScreens
@@ -52,12 +53,28 @@ class CommunityDetailViewModel @Inject constructor(
             CommunityDetailAction.BackTapped -> navigateBack()
             CommunityDetailAction.EditTapped -> navigateToEdit()
             CommunityDetailAction.SeeAllMembersTapped -> navigateToMembersList()
+            CommunityDetailAction.CreateClubTapped -> navigateToCreateClub()
+            CommunityDetailAction.CreateEventTapped -> navigateToCreateEvent()
             is CommunityDetailAction.AssignRole -> assignRole(action.userId, action.role)
             is CommunityDetailAction.UserTapped -> navigateToUser(action.userId)
             is CommunityDetailAction.ClubItemTapped -> handleClubItemTapped(action.id)
             is CommunityDetailAction.SegmentChanged -> {
                 updateState(state.copy(selectedSegment = action.segment))
             }
+        }
+    }
+
+    private fun navigateToCreateClub() {
+        viewModelScope.launch {
+            navigator.navigateTo(ClubsScreens.Create.route)
+        }
+    }
+
+    // `communities` has no Gradle dependency on `events`, so the event-create
+    // screen is reached by its route string (same pattern as CLUB_DETAILS).
+    private fun navigateToCreateEvent() {
+        viewModelScope.launch {
+            navigator.navigateTo(SharedRoutes.EVENT_CREATE)
         }
     }
 

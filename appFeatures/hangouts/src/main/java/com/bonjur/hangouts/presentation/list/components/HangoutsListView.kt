@@ -95,15 +95,22 @@ fun HangoutsListView(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Two empty states: nothing here at all (offer to create the
+                    // first hangout), and nothing matching the active search/filters.
+                    val isFiltering = state.uiModel.searchText.isNotEmpty() ||
+                        state.uiModel.filters.any { it.hasSelectedItems }
+
                     AppEmptyView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
-                            text = "There are no hangouts for this community yet. Be the pioneer and start the very first one now!",
-                            buttonTitle = "Create a hangout +"
+                            text = if (isFiltering) {
+                                "No hangouts match your search. Try another name or clear your filters."
+                            } else {
+                                "No hangouts yet. Be the pioneer and start the very first one now!"
+                            },
+                            buttonTitle = if (isFiltering) null else "Create a hangout +"
                         ),
-                        onButtonClick = {
-                            // Handle create hangout
-                        }
+                        onButtonClick = { store.send(HangoutsListAction.CreateTapped) }
                     )
                 }
             }

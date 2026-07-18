@@ -163,6 +163,7 @@ fun CommunityDetailView(
                 CommunityInfoView(
                     uiModel = store.state.uiModel,
                     canCreateEvent = store.state.canCreateEvent,
+                    onCreateEvent = { store.send(CommunityDetailAction.CreateEventTapped) },
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -220,6 +221,9 @@ fun CommunityDetailView(
                                     clubs = store.state.clubsData,
                                     onClubTapped = { id ->
                                         store.send(CommunityDetailAction.ClubItemTapped(id))
+                                    },
+                                    onCreateClub = {
+                                        store.send(CommunityDetailAction.CreateClubTapped)
                                     }
                                 )
 
@@ -356,6 +360,7 @@ private fun LogoView(logoUrl: String?) {
 private fun CommunityInfoView(
     uiModel: CommunityDetails.UIModel?,
     canCreateEvent: Boolean,
+    onCreateEvent: () -> Unit,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
@@ -410,7 +415,7 @@ private fun CommunityInfoView(
                     contentSize = ContentSize.Fill,
                     size = AppButtonSize.Medium
                 ),
-                onClick = { }
+                onClick = onCreateEvent
             )
         }
     }
@@ -650,7 +655,8 @@ private fun MembersTab(
 @Composable
 private fun ClubsTab(
     clubs: List<ClubCardModel>,
-    onClubTapped: (Int) -> Unit
+    onClubTapped: (Int) -> Unit,
+    onCreateClub: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -669,10 +675,10 @@ private fun ClubsTab(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "There are no clubs for this community yet. Be the pioneer and start the very first one now!",
+                    text = "This community has no clubs yet. Be the pioneer and start the very first one now!",
                     buttonTitle = "Create a club +"
                 ),
-                onButtonClick = { },
+                onButtonClick = onCreateClub,
                 modifier = Modifier.padding(16.dp)
             )
         }

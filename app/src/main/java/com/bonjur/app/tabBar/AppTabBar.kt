@@ -295,6 +295,11 @@ fun MyPlansTabContent(
         startDestination = GroupsScreens.List
     ) {
         groupsNavGraph(navigator)
+        // Group cards and empty-state CTAs open club/event/hangout screens in
+        // this tab's stack, so their graphs have to be registered here too.
+        clubsNavGraph(navigator)
+        eventsNavGraph(navigator)
+        hangoutsNavGraph(navigator)
         memberNavGraph(navigator)
     }
 }

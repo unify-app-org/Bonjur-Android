@@ -84,13 +84,13 @@ fun CommunitiesListView(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Communities aren't user-created, so there's nothing to
+                    // send the user to — message only, no CTA.
                     AppEmptyView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
-                            text = "There are no communities yet. Be the pioneer and start the very first one now!",
-                            buttonTitle = "Create a community +"
-                        ),
-                        onButtonClick = { }
+                            text = "No communities to show yet. Check back soon."
+                        )
                     )
                 }
             }

@@ -67,6 +67,7 @@ class GroupsListViewModel @Inject constructor(
             is GroupsListAction.ClubItemTapped -> clubItemTapped(action.clubId)
             is GroupsListAction.EventItemTapped -> eventItemTapped(action.eventId)
             is GroupsListAction.HangoutItemTapped -> hangoutItemTapped(action.hangoutId)
+            is GroupsListAction.EmptyStateActionTapped -> emptyStateActionTapped(action.segment)
         }
     }
 
@@ -190,6 +191,19 @@ class GroupsListViewModel @Inject constructor(
     private fun eventItemTapped(id: String) {
         viewModelScope.launch {
             navigator.navigateTo(EventsScreens.Details.route, EventDetailsInputData(eventId = id))
+        }
+    }
+
+    // Clubs/events send the user somewhere to join one; hangouts can be started
+    // outright, so that tab opens the create flow. Mirrors iOS GroupsListViewModel.
+    private fun emptyStateActionTapped(segment: GroupsListViewState.SegmentType) {
+        val route = when (segment) {
+            GroupsListViewState.SegmentType.CLUBS -> ClubsScreens.List.route
+            GroupsListViewState.SegmentType.EVENTS -> EventsScreens.List.route
+            GroupsListViewState.SegmentType.HANGOUTS -> HangoutsScreens.Create.route
+        }
+        viewModelScope.launch {
+            navigator.navigateTo(route)
         }
     }
 

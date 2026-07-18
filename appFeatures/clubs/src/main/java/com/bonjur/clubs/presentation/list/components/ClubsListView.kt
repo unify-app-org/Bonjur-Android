@@ -87,15 +87,22 @@ fun ClubsListView(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Two empty states: nothing here at all (offer to create the
+                    // first club), and nothing matching the active search/filters.
+                    val isFiltering = state.uiModel.searchText.isNotEmpty() ||
+                        state.uiModel.filters.any { it.hasSelectedItems }
+
                     AppEmptyView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
-                            text = "There are no clubs for this community yet. Be the pioneer and start the very first one now!",
-                            buttonTitle = "Create a club +"
+                            text = if (isFiltering) {
+                                "No clubs match your search. Try another name or clear your filters."
+                            } else {
+                                "No clubs yet. Be the pioneer and start the very first one now!"
+                            },
+                            buttonTitle = if (isFiltering) null else "Create a club +"
                         ),
-                        onButtonClick = {
-
-                        }
+                        onButtonClick = { store.send(ClubsListAction.CreateTapped) }
                     )
                 }
             }

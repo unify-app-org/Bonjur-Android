@@ -150,6 +150,7 @@ fun EventDetailsView(
                     uiModel = store.state.uiModel,
                     isFileUploadReachedMaxLimit = store.state.isFileUploadReachedMaxLimit,
                     onClubTap = { store.send(EventDetailsAction.ClubTapped) },
+                    onAddAttachment = { store.send(EventDetailsAction.EditTapped) },
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -328,6 +329,7 @@ private fun EventInfoView(
     uiModel: EventsDetails.UIModel?,
     isFileUploadReachedMaxLimit: Boolean,
     onClubTap: () -> Unit,
+    onAddAttachment: () -> Unit,
     onNamePositioned: (Float) -> Unit
 ) {
     Column(
@@ -423,7 +425,8 @@ private fun EventInfoView(
         // Attachments
         AttachmentsView(
             attachments = uiModel?.attachments ?: emptyList(),
-            isFileUploadReachedMaxLimit = isFileUploadReachedMaxLimit
+            isFileUploadReachedMaxLimit = isFileUploadReachedMaxLimit,
+            onAddAttachment = onAddAttachment
         )
     }
 }
@@ -431,7 +434,8 @@ private fun EventInfoView(
 @Composable
 private fun AttachmentsView(
     attachments: List<AttachmentItemModel>,
-    isFileUploadReachedMaxLimit: Boolean
+    isFileUploadReachedMaxLimit: Boolean,
+    onAddAttachment: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -478,7 +482,7 @@ private fun AttachmentsView(
                         contentSize = ContentSize.Fill,
                         size = AppButtonSize.Small
                     ),
-                    onClick = { /* Handle add attachment */ }
+                    onClick = onAddAttachment
                 )
             }
         } else {
@@ -486,10 +490,10 @@ private fun AttachmentsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = null,
-                    text = "You can upload files up to 15 MB total for this event.",
+                    text = "No attachments yet. You can upload files up to 15 MB total for this event.",
                     buttonTitle = "Add +"
                 ),
-                onButtonClick = { /* Handle add attachment */ }
+                onButtonClick = onAddAttachment
             )
         }
     }
