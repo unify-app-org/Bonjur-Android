@@ -8,6 +8,7 @@ import com.bonjur.communities.presentation.list.components.CommunitiesListView
 import com.bonjur.communities.presentation.list.model.CommunitiesListInputData
 import com.bonjur.communities.presentation.list.model.CommunitiesListSideEffect
 import com.bonjur.navigation.Navigator
+import com.bonjur.network.model.userMessage
 
 @Composable
 fun CommunitiesListScreen(
@@ -27,10 +28,7 @@ fun CommunitiesListScreen(
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is CommunitiesListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
-                    title = effect.error.message ?: "Something went wrong",
-                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
-                )
+                is CommunitiesListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.showError(effect.error.userMessage())
             }
         }
     ) { store ->

@@ -27,6 +27,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class HangoutCreateViewModel @Inject constructor(
@@ -187,7 +188,7 @@ class HangoutCreateViewModel @Inject constructor(
             call(buildForm())
             navigator.navigateUp()
         } catch (e: Exception) {
-            postEffect(HangoutCreateSideEffect.Error(e.message ?: "Unknown error"))
+            postEffect(HangoutCreateSideEffect.Error(e.userMessage()))
         } finally {
             postEffect(HangoutCreateSideEffect.Loading(false))
         }

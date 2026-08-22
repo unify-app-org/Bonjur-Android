@@ -25,6 +25,7 @@ import com.bonjur.navigation.route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class NotificationFeedViewModel @Inject constructor(
@@ -74,7 +75,7 @@ class NotificationFeedViewModel @Inject constructor(
                 )
             } catch (e: ApiException) {
                 if (state.inbox.sections.isEmpty()) updateState(state.copy(phase = RequestsPhase.FAILED))
-                postEffect(NotificationFeedSideEffect.Error(e.message))
+                postEffect(NotificationFeedSideEffect.Error(e.userMessage()))
             }
         }
     }
@@ -97,7 +98,7 @@ class NotificationFeedViewModel @Inject constructor(
                 )
             } catch (e: ApiException) {
                 updateState(state.copy(isLoadingMore = false))
-                postEffect(NotificationFeedSideEffect.Error(e.message))
+                postEffect(NotificationFeedSideEffect.Error(e.userMessage()))
             }
         }
     }
@@ -115,7 +116,7 @@ class NotificationFeedViewModel @Inject constructor(
             try {
                 useCase.markAllRead()
             } catch (e: ApiException) {
-                postEffect(NotificationFeedSideEffect.Error(e.message))
+                postEffect(NotificationFeedSideEffect.Error(e.userMessage()))
             }
         }
     }

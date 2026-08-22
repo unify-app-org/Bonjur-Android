@@ -27,11 +27,7 @@ fun EventCreateScreen(
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is EventCreateSideEffect.Error -> AppSnackBar.show(
-                    title = "Couldn't save event",
-                    subtitle = effect.message,
-                    style = AppSnackBar.Style.ERROR
-                )
+                is EventCreateSideEffect.Error -> AppSnackBar.showError(effect.message)
             }
         }
     ) { store ->

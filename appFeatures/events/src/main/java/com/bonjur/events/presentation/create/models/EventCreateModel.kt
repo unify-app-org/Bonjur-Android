@@ -53,7 +53,7 @@ enum class EventCreateClubsPhase { Loading, Loaded, Empty, Failed }
 // MARK: - Side effects
 sealed class EventCreateSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : EventCreateSideEffect()
-    data class Error(val message: String) : EventCreateSideEffect()
+    data class Error(val message: String?) : EventCreateSideEffect()
 }
 
 // MARK: - View State

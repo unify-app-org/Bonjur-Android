@@ -20,6 +20,7 @@ import com.bonjur.profile.presentation.settings.models.SettingsSectionModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class ProfileSettingsViewModel @Inject constructor(
@@ -144,7 +145,7 @@ class ProfileSettingsViewModel @Inject constructor(
                 dependencies.useCase.deleteAccount()
                 navigator.navigateUp()
             } catch (e: Exception) {
-                postEffect(ProfileSettingsSideEffect.Error(e.message ?: "Error", null))
+                postEffect(ProfileSettingsSideEffect.Error(e.userMessage()))
             } finally {
                 postEffect(ProfileSettingsSideEffect.Loading(false))
             }

@@ -20,7 +20,7 @@ data class EditProfileInputData(
 // MARK: - Side effects
 sealed class EditProfileSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : EditProfileSideEffect()
-    data class Error(val title: String, val message: String?) : EditProfileSideEffect()
+    data class Error(val message: String?) : EditProfileSideEffect()
 }
 
 enum class Gender(val displayName: String) {

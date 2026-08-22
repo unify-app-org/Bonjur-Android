@@ -13,7 +13,7 @@ data class SignInInputData(
 // -------- Side Effect --------
 sealed class SignInSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : SignInSideEffect()
-    data class Error(val message: String) : SignInSideEffect()
+    data class Error(val message: String?) : SignInSideEffect()
 }
 
 // -------- View State --------

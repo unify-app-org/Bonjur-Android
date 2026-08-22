@@ -13,7 +13,7 @@ data class ProfileSettingsInputData(
 // MARK: - Side effects
 sealed class ProfileSettingsSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : ProfileSettingsSideEffect()
-    data class Error(val title: String, val message: String?) : ProfileSettingsSideEffect()
+    data class Error(val message: String?) : ProfileSettingsSideEffect()
 }
 
 data class SettingsItemModel(

@@ -31,6 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class ClubCreateViewModel @Inject constructor(
@@ -192,7 +193,7 @@ class ClubCreateViewModel @Inject constructor(
                 updateState(state.copy(showVerifyPrompt = true, createdClubId = newClubId))
             }
         } catch (e: Exception) {
-            postEffect(ClubCreateSideEffect.Error(e.message ?: LanguageManager.string(R.string.common_unknown_error)))
+            postEffect(ClubCreateSideEffect.Error(e.userMessage()))
         } finally {
             postEffect(ClubCreateSideEffect.Loading(false))
         }
@@ -208,7 +209,7 @@ class ClubCreateViewModel @Inject constructor(
             call(buildForm())
             navigator.navigateUp()
         } catch (e: Exception) {
-            postEffect(ClubCreateSideEffect.Error(e.message ?: LanguageManager.string(R.string.common_unknown_error)))
+            postEffect(ClubCreateSideEffect.Error(e.userMessage()))
         } finally {
             postEffect(ClubCreateSideEffect.Loading(false))
         }

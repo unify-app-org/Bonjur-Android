@@ -42,10 +42,7 @@ fun NeedsActionScreen(
             viewModel = viewModel,
             handleEffect = { effect ->
                 when (effect) {
-                    is NeedsActionSideEffect.Error -> AppSnackBar.show(
-                        title = effect.message ?: "Something went wrong",
-                        style = AppSnackBar.Style.ERROR
-                    )
+                    is NeedsActionSideEffect.Error -> AppSnackBar.showError(effect.message)
                     is NeedsActionSideEffect.ConfirmReject -> AppAlertPresenter.present(
                         AppAlert(
                             config = AppAlert.Config(

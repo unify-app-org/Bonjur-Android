@@ -31,6 +31,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class ProfileDetailViewModel @Inject constructor(
@@ -154,7 +155,7 @@ class ProfileDetailViewModel @Inject constructor(
             val firstError = applyResults(results)
             postEffect(ProfileDetailSideEffect.Loading(false))
             firstError?.let {
-                postEffect(ProfileDetailSideEffect.Error(it.message ?: "Something went wrong", null))
+                postEffect(ProfileDetailSideEffect.Error(it.userMessage()))
             }
         }
     }

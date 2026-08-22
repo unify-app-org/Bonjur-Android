@@ -15,6 +15,7 @@ import com.bonjur.notification.presentation.verification.models.VerificationView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class VerificationViewModel @Inject constructor(
@@ -58,7 +59,7 @@ class VerificationViewModel @Inject constructor(
                 )
             } catch (e: ApiException) {
                 if (state.items.isEmpty()) updateState(state.copy(phase = RequestsPhase.FAILED))
-                postEffect(VerificationSideEffect.Error(e.message))
+                postEffect(VerificationSideEffect.Error(e.userMessage()))
             }
         }
     }
@@ -80,7 +81,7 @@ class VerificationViewModel @Inject constructor(
                 )
             } catch (e: ApiException) {
                 updateState(state.copy(isLoadingMore = false))
-                postEffect(VerificationSideEffect.Error(e.message))
+                postEffect(VerificationSideEffect.Error(e.userMessage()))
             }
         }
     }
@@ -99,7 +100,7 @@ class VerificationViewModel @Inject constructor(
                 )
             } catch (e: ApiException) {
                 updateState(state.copy(processingIds = state.processingIds - item.id))
-                postEffect(VerificationSideEffect.Error(e.message))
+                postEffect(VerificationSideEffect.Error(e.userMessage()))
             }
         }
     }

@@ -45,4 +45,8 @@
     <string name="document_preview_unsupported">Этот тип файла нельзя показать здесь</string>
     <string name="document_preview_open_external">Открыть в другом приложении</string>
     <string name="document_preview_share">Поделиться</string>
+
+    <!-- API error popups -->
+    <string name="error_generic_title">Что-то пошло не так</string>
+    <string name="error_generic_subtitle">Пожалуйста, попробуйте снова.</string>
 </resources>

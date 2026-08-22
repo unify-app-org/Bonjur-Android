@@ -19,7 +19,7 @@ data class ClubCreateInputData(
 // MARK: - Side effects
 sealed class ClubCreateSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : ClubCreateSideEffect()
-    data class Error(val message: String) : ClubCreateSideEffect()
+    data class Error(val message: String?) : ClubCreateSideEffect()
 }
 
 // MARK: - View State

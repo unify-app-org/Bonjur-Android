@@ -20,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
@@ -172,7 +173,7 @@ class EditProfileViewModel @Inject constructor(
                     style = AppSnackBar.Style.SUCCESS
                 )
             } catch (e: Exception) {
-                postEffect(EditProfileSideEffect.Error(e.message ?: "Error", null))
+                postEffect(EditProfileSideEffect.Error(e.userMessage()))
             } finally {
                 postEffect(EditProfileSideEffect.Loading(false))
             }

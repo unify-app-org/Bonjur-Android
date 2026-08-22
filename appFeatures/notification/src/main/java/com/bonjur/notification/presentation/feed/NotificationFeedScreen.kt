@@ -50,10 +50,7 @@ fun NotificationFeedScreen(
             viewModel = viewModel,
             handleEffect = { effect ->
                 when (effect) {
-                    is NotificationFeedSideEffect.Error -> AppSnackBar.show(
-                        title = effect.message ?: "Something went wrong",
-                        style = AppSnackBar.Style.ERROR
-                    )
+                    is NotificationFeedSideEffect.Error -> AppSnackBar.showError(effect.message)
                 }
             }
         ) { store ->

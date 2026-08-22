@@ -45,4 +45,8 @@
     <string name="document_preview_unsupported">Bu fayl tipini burada göstərmək mümkün deyil</string>
     <string name="document_preview_open_external">Başqa tətbiqdə aç</string>
     <string name="document_preview_share">Paylaş</string>
+
+    <!-- API error popups -->
+    <string name="error_generic_title">Nəsə səhv getdi</string>
+    <string name="error_generic_subtitle">Zəhmət olmasa yenidən cəhd edin.</string>
 </resources>

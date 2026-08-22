@@ -15,6 +15,7 @@ import com.bonjur.hangouts.presentation.list.components.HangoutsListView
 import com.bonjur.hangouts.presentation.list.model.HangoutsListInputData
 import com.bonjur.hangouts.presentation.list.model.HangoutsListSideEffect
 import com.bonjur.navigation.Navigator
+import com.bonjur.network.model.userMessage
 
 
 @Composable
@@ -35,10 +36,7 @@ fun HangoutsListScreen(
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is HangoutsListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
-                    title = effect.error.message ?: "Something went wrong",
-                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
-                )
+                is HangoutsListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.showError(effect.error.userMessage())
             }
         }
     ) { store ->

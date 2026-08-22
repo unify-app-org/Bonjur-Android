@@ -35,10 +35,7 @@ fun VerificationScreen(
             viewModel = viewModel,
             handleEffect = { effect ->
                 when (effect) {
-                    is VerificationSideEffect.Error -> AppSnackBar.show(
-                        title = effect.message ?: "Something went wrong",
-                        style = AppSnackBar.Style.ERROR
-                    )
+                    is VerificationSideEffect.Error -> AppSnackBar.showError(effect.message)
                 }
             }
         ) { store ->

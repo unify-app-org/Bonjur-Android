@@ -35,6 +35,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.URL
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class EventCreateViewModel @Inject constructor(
@@ -265,7 +266,7 @@ class EventCreateViewModel @Inject constructor(
             call(buildForm(clubId, background))
             true
         } catch (e: Exception) {
-            postEffect(EventCreateSideEffect.Error(e.message ?: "Unknown error"))
+            postEffect(EventCreateSideEffect.Error(e.userMessage()))
             false
         } finally {
             // Dismiss BEFORE navigating away — navigateUp disposes this screen and

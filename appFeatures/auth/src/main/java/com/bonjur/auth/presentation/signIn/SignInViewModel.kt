@@ -17,6 +17,7 @@ import com.bonjur.navigation.route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -62,7 +63,7 @@ class SignInViewModel @Inject constructor(
                     navigator.navigateAndClearStack(AppScreens.Main.route)
                 }
             } catch (e: Exception) {
-                postEffect(SignInSideEffect.Error(e.message ?: LanguageManager.string(R.string.auth_login_failed)))
+                postEffect(SignInSideEffect.Error(e.userMessage()))
             } finally {
                 postEffect(SignInSideEffect.Loading(false))
             }

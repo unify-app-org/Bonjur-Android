@@ -29,11 +29,7 @@ fun ProfileDetailScreen(
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
                 is ProfileDetailSideEffect.Error -> {
-                    AppSnackBar.show(
-                        title = effect.title,
-                        subtitle = effect.message ?: "",
-                        style = AppSnackBar.Style.ERROR
-                    )
+                    AppSnackBar.showError(effect.message)
                 }
             }
         }

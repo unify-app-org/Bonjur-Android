@@ -1,5 +1,8 @@
 package com.bonjur.designSystem.components.snackbar
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -79,6 +82,26 @@ object AppSnackBar {
 
     internal fun dismiss() {
         _current.value = null
+    }
+
+    /**
+     * The one way to surface an API failure. The server's `message` is a raw
+     * exception string ("No enum constant …EventUserRole.REQUESTED") and must
+     * never be shown, so the title is always generic and the body carries the
+     * server's `errors` entries — comma separated by the caller via
+     * `ApiException.userMessage()`.
+     *
+     * @param details joined `errors`; null/blank falls back to a generic line,
+     * because the backend sends `errors: null` on plenty of failures and an
+     * empty popup body is worse than a vague one.
+     */
+    fun showError(details: String? = null) {
+        show(
+            title = LanguageManager.string(R.string.error_generic_title),
+            subtitle = details?.takeIf { it.isNotBlank() }
+                ?: LanguageManager.string(R.string.error_generic_subtitle),
+            style = Style.ERROR
+        )
     }
 }
 

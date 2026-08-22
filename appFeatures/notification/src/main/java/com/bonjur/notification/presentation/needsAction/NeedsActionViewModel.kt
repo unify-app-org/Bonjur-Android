@@ -21,6 +21,7 @@ import com.bonjur.notification.presentation.needsAction.models.RequestsPhase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class NeedsActionViewModel @Inject constructor(
@@ -129,7 +130,7 @@ class NeedsActionViewModel @Inject constructor(
             } catch (e: ApiException) {
                 val src = source(tab)
                 if (src.items.isEmpty()) setSource(tab, src.copy(phase = RequestsPhase.FAILED))
-                postEffect(NeedsActionSideEffect.Error(e.message))
+                postEffect(NeedsActionSideEffect.Error(e.userMessage()))
             }
         }
     }
@@ -157,7 +158,7 @@ class NeedsActionViewModel @Inject constructor(
             } catch (e: ApiException) {
                 val src = source(tab)
                 setSource(tab, src.copy(isLoadingMore = false))
-                postEffect(NeedsActionSideEffect.Error(e.message))
+                postEffect(NeedsActionSideEffect.Error(e.userMessage()))
             }
         }
     }

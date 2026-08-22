@@ -27,11 +27,7 @@ fun HangoutCreateScreen(
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is HangoutCreateSideEffect.Error -> AppSnackBar.show(
-                    title = "Couldn't save hangout",
-                    subtitle = effect.message,
-                    style = AppSnackBar.Style.ERROR
-                )
+                is HangoutCreateSideEffect.Error -> AppSnackBar.showError(effect.message)
             }
         }
     ) { store ->

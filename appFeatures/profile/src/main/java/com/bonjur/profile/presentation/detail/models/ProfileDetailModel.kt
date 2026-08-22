@@ -30,7 +30,7 @@ data class ProfileDetailInputData(
 // MARK: - Side Effects
 sealed class ProfileDetailSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : ProfileDetailSideEffect()
-    data class Error(val title: String, val message: String?) : ProfileDetailSideEffect()
+    data class Error(val message: String?) : ProfileDetailSideEffect()
 }
 
 // MARK: - View State

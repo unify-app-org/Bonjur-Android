@@ -20,6 +20,7 @@ import com.bonjur.navigation.route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class ChooseUniversityViewModel @Inject constructor(
@@ -96,7 +97,7 @@ class ChooseUniversityViewModel @Inject constructor(
                     navigator.navigateAndClearStack(AppScreens.Main.route)
                 }
             } catch (e: Exception) {
-                postEffect(ChooseUniversitySideEffect.Error(e.message ?: LanguageManager.string(R.string.auth_microsoft_failed)))
+                postEffect(ChooseUniversitySideEffect.Error(e.userMessage()))
             } finally {
                 postEffect(ChooseUniversitySideEffect.Loading(false))
             }

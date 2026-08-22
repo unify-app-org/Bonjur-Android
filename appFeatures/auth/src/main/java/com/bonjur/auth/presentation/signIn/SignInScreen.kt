@@ -35,10 +35,7 @@ fun SignInScreen(
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is SignInSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
-                    title = effect.message,
-                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
-                )
+                is SignInSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.showError(effect.message)
             }
         }
     ) { store ->

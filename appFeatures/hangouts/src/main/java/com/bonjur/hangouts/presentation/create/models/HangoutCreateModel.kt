@@ -25,7 +25,7 @@ data class HangoutCreateInputData(
 // MARK: - Side effects
 sealed class HangoutCreateSideEffect : SideEffect {
     data class Loading(val isLoading: Boolean) : HangoutCreateSideEffect()
-    data class Error(val message: String) : HangoutCreateSideEffect()
+    data class Error(val message: String?) : HangoutCreateSideEffect()
 }
 
 // MARK: - View State

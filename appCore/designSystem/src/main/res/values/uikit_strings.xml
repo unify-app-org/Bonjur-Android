@@ -45,4 +45,8 @@
     <string name="document_preview_unsupported">This file type can\'t be shown here</string>
     <string name="document_preview_open_external">Open in another app</string>
     <string name="document_preview_share">Share</string>
+
+    <!-- API error popups -->
+    <string name="error_generic_title">Something went wrong</string>
+    <string name="error_generic_subtitle">Please try again.</string>
 </resources>

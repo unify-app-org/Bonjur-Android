@@ -15,6 +15,7 @@ import com.bonjur.appfoundation.FeatureScreen
 import com.bonjur.groups.presentation.components.GroupsListView
 import com.bonjur.groups.presentation.models.GroupsListInputData
 import com.bonjur.groups.presentation.models.GroupsListSideEffect
+import com.bonjur.network.model.userMessage
 
 @Preview(showBackground = true)
 @Composable
@@ -34,10 +35,7 @@ fun GroupsListScreen(
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
-                is GroupsListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
-                    title = effect.error.message ?: "Something went wrong",
-                    style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
-                )
+                is GroupsListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.showError(effect.error.userMessage())
             }
         }
     ) { store ->
