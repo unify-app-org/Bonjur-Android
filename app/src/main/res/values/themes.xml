@@ -3,8 +3,10 @@
 
     <style name="Theme.Bonjur" parent="android:Theme.Material.Light.NoActionBar" />
 
+    <!-- Matches the iOS launch storyboard: the Unify wordmark centred on the
+         same light-green field. -->
     <style name="Theme.Bonjur.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#DDFEB6</item>
+        <item name="windowSplashScreenBackground">#DDFEA6</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launch_screen</item>
         <item name="windowSplashScreenAnimationDuration">1000</item>
         <item name="postSplashScreenTheme">@style/Theme.Bonjur</item>

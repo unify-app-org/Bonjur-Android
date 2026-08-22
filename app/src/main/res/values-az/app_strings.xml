@@ -1,0 +1,10 @@
+<resources>
+    <string name="example">exampleAz</string>
+    <string name="dock_my_activities">Fəaliyyətim</string>
+    <string name="create_title">Yarat</string>
+    <string name="create_club">Klub</string>
+    <string name="create_events">Tədbirlər</string>
+    <string name="create_hangouts">Görüşlər</string>
+    <string name="dock_discover">Kəşf et</string>
+    <string name="dock_profile">Profil</string>
+</resources>

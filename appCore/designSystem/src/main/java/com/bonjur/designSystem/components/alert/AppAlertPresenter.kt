@@ -79,11 +79,14 @@ fun AppAlertOverlay() {
                     AppAlertView(
                         alert = currentAlert,
                         onDismiss = { handler ->
-                            if (handler != null) {
-                                handler.invoke()
-                            } else {
-                                AppAlertPresenter.dismiss()
-                            }
+                            // Every action closes the alert — an action that
+                            // carried a handler used to run it and leave the
+                            // alert sitting on screen. Dismiss first, then run
+                            // the handler, so a handler that presents a follow-up
+                            // alert isn't wiped by this one's dismissal. Mirrors
+                            // iOS `dismiss(action.handler)`.
+                            AppAlertPresenter.dismiss()
+                            handler?.invoke()
                         },
                         modifier = Modifier.padding(horizontal = 32.dp)
                     )

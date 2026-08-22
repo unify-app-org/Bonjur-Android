@@ -1,5 +1,8 @@
 package com.bonjur.communities.presentation.detail
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.communities.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.clubs.navigation.ClubsScreens
@@ -83,11 +86,12 @@ class CommunityDetailViewModel @Inject constructor(
             navigator.navigateTo(
                 MemberListScreens.MembersList.route,
                 MemberListInputData(
-                    title = "Members",
+                    title = LanguageManager.string(DesignR.string.common_members),
                     viewerRole = state.uiModel?.userActivity
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.COMMUNITY,
+                    totalCount = state.uiModel?.membersCount,
                     loadPage = { page, size, keyword ->
                         dependencies.useCase.fetchCommunityMembersPage(inputData.communityId, page, size, keyword)
                     },
@@ -132,12 +136,12 @@ class CommunityDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 dependencies.useCase.assignRole(inputData.communityId, userId, role)
-                AppSnackBar.show(title = "Role updated", style = AppSnackBar.Style.SUCCESS)
+                AppSnackBar.show(title = LanguageManager.string(R.string.comm_role_updated), style = AppSnackBar.Style.SUCCESS)
                 refreshMembers()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not update role",
-                    subtitle = "Please try again.",
+                    title = LanguageManager.string(R.string.comm_role_update_fail),
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             }

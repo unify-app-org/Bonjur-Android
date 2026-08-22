@@ -1,0 +1,12 @@
+<resources>
+    <string name="groups_my_activities">Fəaliyyətlərim</string>
+    <string name="groups_clubs_desc">Üzvü olduğunuz və ya idarə etdiyiniz klublar. Üzvlər tədbirlər təşkil edir və görüşür.</string>
+    <string name="groups_events_desc">Qoşulduğunuz və ya sorğu göndərdiyiniz tədbirlər. Hər biri bir klub tərəfindən keçirilir.</string>
+    <string name="groups_hangouts_desc">Sərbəst, birdəfəlik görüşlər — klub lazım deyil. Hər kəs başlada bilər.</string>
+    <string name="groups_clubs_empty">Hələ heç bir kluba qoşulmamısınız və ya yaratmamısınız. İcmaları araşdırın və ya öz klubunuzu yaradın.</string>
+    <string name="groups_events_empty">Hələ tədbir yoxdur. Tədbirləri kəşf etmək üçün kluba qoşulun və ya iştirak üçün sorğu göndərin.</string>
+    <string name="groups_hangouts_empty">Hələ görüş yoxdur. Onlar sərbəst görüşlərdir — birini başladın və dostları dəvət edin.</string>
+    <string name="groups_explore_clubs">Klublara bax</string>
+    <string name="groups_explore_events">Tədbirlərə bax</string>
+    <string name="groups_start_hangout">Görüş başlat +</string>
+</resources>

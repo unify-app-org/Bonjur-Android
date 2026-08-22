@@ -45,8 +45,41 @@ data class VerificationPageResult(
 
 // MARK: - Notification feed (inbox)
 
+/**
+ * Feed row type (API `type`). Full mirror of iOS `NotificationType` — the wire
+ * value round-trips into the deep-link action, so the catalog has to match.
+ */
 enum class NotificationType {
-    BIRTHDAY, HOLIDAY, EVENT_REMINDER, REQUEST_OUTCOME, VERIFICATION_OUTCOME, GENERAL;
+    EVENT_REMINDER,
+    BIRTHDAY,
+    HOLIDAY,
+    REQUEST_OUTCOME,
+    VERIFICATION_OUTCOME,
+
+    REQUEST_CLUB,
+    // The backend's name for a join request on a PRIVATE activity. Missing from the
+    // catalog, so these rows fell through to GENERAL and their "Continue" went
+    // nowhere — the reported "tapping the notification does not navigate".
+    USER_REQUESTED_PRIVATE_CLUB,
+    REJECTED_USER_FROM_CLUB,
+    ACCEPTED_USER_FROM_CLUB,
+    USER_JOINED_PUBLIC_CLUB,
+    REQUEST_CLUB_VERIFICATION,
+    VERIFIED_CLUB,
+    REJECTED_CLUB_VERIFICATION,
+
+    REQUEST_HANGOUT,
+    USER_REQUESTED_PRIVATE_HANGOUT,
+    REJECTED_USER_FROM_HANGOUT,
+    ACCEPTED_USER_FROM_HANGOUT,
+    USER_JOINED_PUBLIC_HANGOUT,
+
+    REQUEST_EVENT,
+    USER_REQUESTED_PRIVATE_EVENT,
+    REJECTED_USER_FROM_EVENT,
+    ACCEPTED_USER_FROM_EVENT,
+
+    GENERAL;
 
     /** Wire value, round-tripped into the deep-link action; null for GENERAL. */
     val apiValue: String?
@@ -57,29 +90,48 @@ enum class NotificationType {
     val prefersRemoteImage: Boolean
         get() = when (this) {
             BIRTHDAY, HOLIDAY, GENERAL -> false
-            EVENT_REMINDER, REQUEST_OUTCOME, VERIFICATION_OUTCOME -> true
+            else -> true
         }
 
-    companion object {
-        fun from(api: String): NotificationType = when (api.uppercase()) {
-            "BIRTHDAY" -> BIRTHDAY
-            "HOLIDAY" -> HOLIDAY
-            "EVENT_REMINDER" -> EVENT_REMINDER
-            "REQUEST_OUTCOME" -> REQUEST_OUTCOME
-            "VERIFICATION_OUTCOME" -> VERIFICATION_OUTCOME
-            else -> GENERAL
+    /** Where tapping a row of this type should go (mirrors iOS `tapDestination`). */
+    val tapDestination: TapDestination
+        get() = when (this) {
+            // Incoming requests the user must act on.
+            REQUEST_CLUB, REQUEST_HANGOUT, REQUEST_EVENT,
+            USER_REQUESTED_PRIVATE_CLUB, USER_REQUESTED_PRIVATE_HANGOUT,
+            USER_REQUESTED_PRIVATE_EVENT,
+            REQUEST_CLUB_VERIFICATION -> TapDestination.NEEDS_ACTION
+            // Purely informational — nowhere meaningful to go.
+            BIRTHDAY, HOLIDAY, GENERAL -> TapDestination.NONE
+            // Outcomes & reminders open the related detail.
+            else -> TapDestination.TARGET
         }
+
+    enum class TapDestination {
+        /** The join-request / verification accept-reject screen. */
+        NEEDS_ACTION,
+        /** The related club/hangout/event/user detail (via target). */
+        TARGET,
+        /** Informational — no navigation, only mark as read. */
+        NONE
+    }
+
+    companion object {
+        fun from(api: String): NotificationType =
+            entries.firstOrNull { it != GENERAL && it.name == api.uppercase() } ?: GENERAL
     }
 }
 
 /** Which entity a feed row deep-links into (API `targetType`). */
 enum class NotificationTargetType {
-    EVENT, CLUB, USER, NONE;
+    EVENT, CLUB, HANGOUT, COMMUNITY, USER, NONE;
 
     companion object {
         fun from(api: String?): NotificationTargetType = when (api?.uppercase()) {
             "EVENT" -> EVENT
             "CLUB" -> CLUB
+            "HANGOUT" -> HANGOUT
+            "COMMUNITY" -> COMMUNITY
             "USER" -> USER
             else -> NONE
         }
@@ -113,21 +165,11 @@ data class NotificationFeedPage(
     val hasMore: Boolean
 )
 
-/** Client-composed banner counts. */
-data class NeedsActionSummary(
-    val requests: Int,
-    val verifications: Int
-) {
-    val total: Int get() = requests + verifications
-    val hasActions: Boolean get() = total > 0
-}
-
 /** Full payload backing the notification inbox screen. */
 data class NotificationInbox(
-    val action: NeedsActionSummary,
     val sections: List<NotificationSection>
 ) {
     companion object {
-        val empty = NotificationInbox(NeedsActionSummary(0, 0), emptyList())
+        val empty = NotificationInbox(emptyList())
     }
 }

@@ -7,6 +7,8 @@
 
 package com.bonjur.designSystem.components.filter
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -81,13 +83,13 @@ private fun TopView() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Filter",
+            text = LanguageManager.string(R.string.filter),
             style = AppTypography.TitleL.extraBold,
             color = Palette.black,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Select your interests to find the perfect community events for you.",
+            text = LanguageManager.string(R.string.filter_subtitle),
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary,
             modifier = Modifier.fillMaxWidth()
@@ -151,7 +153,7 @@ private fun ActionButtons(
         horizontalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         AppButton(
-            title = "Remove",
+            title = LanguageManager.string(R.string.remove),
             model = AppButtonModel(
                 type = ButtonType.Secondary,
                 contentSize = ContentSize.Fill
@@ -164,7 +166,7 @@ private fun ActionButtons(
         )
         
         AppButton(
-            title = "Apply",
+            title = LanguageManager.string(R.string.apply),
             model = AppButtonModel(
                 contentSize = ContentSize.Fill
             ),

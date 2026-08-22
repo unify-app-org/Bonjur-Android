@@ -7,7 +7,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.bonjur.auth.R
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityAction
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversitySideEffect
@@ -38,12 +40,12 @@ fun ChooseUniversityView(
         // Top View
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(
-                text = "Choose \nUniversity",
+                text = stringResource(R.string.auth_choose_university_title),
                 style = AppTypography.TitleXL.extraBold,
                 color = Palette.blackHigh
             )
             Text(
-                text = "In which university are you studying?",
+                text = stringResource(R.string.auth_choose_university_subtitle),
                 style = AppTypography.BodyTextMd.regular,
                 color = Palette.grayPrimary
             )
@@ -67,7 +69,7 @@ fun ChooseUniversityView(
         }
 
         AppButton(
-            title = "Next",
+            title = stringResource(R.string.auth_next),
             model = AppButtonModel(
                 contentSize = ContentSize.Fill
             ),

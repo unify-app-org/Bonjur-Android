@@ -1,5 +1,8 @@
 package com.bonjur.hangouts.presentation.detail
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.components.alert.AppAlert
@@ -66,11 +69,12 @@ class HangoutDetailsViewModel @Inject constructor(
             navigator.navigateTo(
                 MemberListScreens.MembersList.route,
                 MemberListInputData(
-                    title = "Members",
+                    title = LanguageManager.string(DesignR.string.common_members),
                     viewerRole = state.uiModel?.userActivityType
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.HANG_OUTS,
+                    totalCount = state.uiModel?.membersCount,
                     loadPage = { page, size, keyword ->
                         dependencies.useCase.fetchHangoutMembersPage(inputData.hangoutId, page, size, keyword)
                     },
@@ -112,7 +116,7 @@ class HangoutDetailsViewModel @Inject constructor(
             } catch (e: Exception) {
                 AppSnackBar.show(
                     title = "Could not join",
-                    subtitle = "Please try again.",
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             } finally {
@@ -126,7 +130,7 @@ class HangoutDetailsViewModel @Inject constructor(
         val name = state.uiModel?.name ?: "the hangout"
         if (state.isPrivate) {
             AppSnackBar.show(
-                title = "Request sent",
+                title = LanguageManager.string(R.string.hangouts_join_request_sent),
                 subtitle = "$name will review your request",
                 style = AppSnackBar.Style.SUCCESS
             )
@@ -142,15 +146,14 @@ class HangoutDetailsViewModel @Inject constructor(
             AppAlert(
                 config = AppAlert.Config(
                     title = "Leave hangout?",
-                    subtitle = "Are you sure you want to leave this hangout? You will no longer " +
-                        "be able to participate or see updates."
+                    subtitle = LanguageManager.string(R.string.hangouts_exit_subtitle)
                 ),
                 actions = listOf(
                     AppAlert.Action(
                         title = "Leave hangout",
                         style = AppAlert.Action.Style.DESTRUCTIVE
                     ) { performExit() },
-                    AppAlert.Action(title = "Cancel", style = AppAlert.Action.Style.PRIMARY)
+                    AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.PRIMARY)
                 )
             )
         )
@@ -161,12 +164,12 @@ class HangoutDetailsViewModel @Inject constructor(
             postEffect(HangoutDetailsSideEffect.Loading(true))
             try {
                 dependencies.useCase.exitHangout(inputData.hangoutId)
-                AppSnackBar.show(title = "You left the hangout", style = AppSnackBar.Style.SUCCESS)
+                AppSnackBar.show(title = LanguageManager.string(R.string.hangouts_left), style = AppSnackBar.Style.SUCCESS)
                 navigator.navigateUp()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not leave hangout",
-                    subtitle = "Please try again.",
+                    title = LanguageManager.string(R.string.hangouts_exit_fail),
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             } finally {

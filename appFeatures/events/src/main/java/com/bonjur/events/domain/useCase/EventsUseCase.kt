@@ -55,6 +55,9 @@ interface EventsUseCase {
 
     suspend fun exitEvent(eventId: String)
 
+    /** Broadcasts the event reminder. No body comes back; re-fetch the detail after. */
+    suspend fun sendReminder(eventId: String)
+
     suspend fun fetchEventMembers(eventId: String): GroupedMembersData
 
     suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int, keyword: String?): MembersPage

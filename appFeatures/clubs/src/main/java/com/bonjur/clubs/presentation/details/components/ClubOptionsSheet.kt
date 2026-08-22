@@ -1,5 +1,8 @@
 package com.bonjur.clubs.presentation.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.clubs.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,9 +53,9 @@ fun ClubOptionsSheet(
         ) {
             if (showReport) {
                 ClubOptionRow(
-                    title = "Report club",
+                    title = stringResource(R.string.clubs_report),
                     tint = DestructiveRed,
-                    trailing = "Coming soon",
+                    trailing = stringResource(DesignR.string.common_coming_soon),
                     enabled = false
                 ) {}
                 RowDivider()
@@ -60,7 +63,7 @@ fun ClubOptionsSheet(
 
             if (showExit) {
                 ClubOptionRow(
-                    title = "Exit club",
+                    title = stringResource(R.string.clubs_exit_confirm),
                     tint = DestructiveRed
                 ) {
                     onDismiss()
@@ -70,9 +73,9 @@ fun ClubOptionsSheet(
             }
 
             ClubOptionRow(
-                title = "Share",
+                title = stringResource(R.string.common_share),
                 tint = Palette.blackMedium,
-                trailing = "Coming soon",
+                trailing = stringResource(DesignR.string.common_coming_soon),
                 enabled = false
             ) {}
         }

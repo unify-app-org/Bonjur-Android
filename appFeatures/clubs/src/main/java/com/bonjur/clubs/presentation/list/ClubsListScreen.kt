@@ -7,6 +7,9 @@
 
 package com.bonjur.clubs.presentation.list
 
+import com.bonjur.designSystem.localization.LanguageManager
+import androidx.compose.ui.res.stringResource
+import com.bonjur.clubs.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,7 +39,7 @@ fun ClubsListScreen(
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }
                 is ClubsListSideEffect.Error -> com.bonjur.designSystem.components.snackbar.AppSnackBar.show(
-                    title = effect.error.message ?: "Something went wrong",
+                    title = effect.error.message ?: LanguageManager.string(R.string.common_something_went_wrong),
                     style = com.bonjur.designSystem.components.snackbar.AppSnackBar.Style.ERROR
                 )
             }

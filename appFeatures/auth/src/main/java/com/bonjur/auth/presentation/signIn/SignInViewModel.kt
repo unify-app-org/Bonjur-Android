@@ -1,6 +1,8 @@
 package com.bonjur.auth.presentation.signIn
 
 import androidx.lifecycle.viewModelScope
+import com.bonjur.auth.R
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.auth.domain.useCase.AuthUseCase
 import com.bonjur.auth.navigation.AuthScreens
@@ -60,7 +62,7 @@ class SignInViewModel @Inject constructor(
                     navigator.navigateAndClearStack(AppScreens.Main.route)
                 }
             } catch (e: Exception) {
-                postEffect(SignInSideEffect.Error(e.message ?: "Login failed"))
+                postEffect(SignInSideEffect.Error(e.message ?: LanguageManager.string(R.string.auth_login_failed)))
             } finally {
                 postEffect(SignInSideEffect.Loading(false))
             }

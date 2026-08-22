@@ -7,6 +7,10 @@
 
 package com.bonjur.groups.presentation.models
 
+import androidx.annotation.StringRes
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.groups.R
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -38,32 +42,36 @@ data class GroupsListViewState(
         val hangouts: List<HangoutsCardModel> = emptyList()
     )
 
-    enum class SegmentType(val title: String) {
-        CLUBS("Clubs"),
-        EVENTS("Events"),
-        HANGOUTS("Hangouts");
+    enum class SegmentType(@StringRes private val titleRes: Int) {
+        CLUBS(DesignR.string.clubs),
+        EVENTS(DesignR.string.events),
+        HANGOUTS(DesignR.string.hangouts);
+
+        // Resolved on read: enum constructors run at class load, before
+        // LanguageManager has a Context, and would freeze the first language.
+        val title: String get() = LanguageManager.string(titleRes)
 
         /** One-line explanation of what this tab lists, shown above its cards. */
         val caption: String
             get() = when (this) {
-                CLUBS -> "Clubs you belong to or run. Members organise events and meet up."
-                EVENTS -> "Events you've joined or requested. Each one is hosted by a club."
-                HANGOUTS -> "Casual, one-off meetups — no club needed. Anyone can start one."
+                CLUBS -> LanguageManager.string(R.string.groups_clubs_desc)
+                EVENTS -> LanguageManager.string(R.string.groups_events_desc)
+                HANGOUTS -> LanguageManager.string(R.string.groups_hangouts_desc)
             }
 
         /** Copy shown when this tab has no items. */
         val emptyText: String
             get() = when (this) {
-                CLUBS -> "You haven't joined or created any clubs yet. Explore communities or start your own."
-                EVENTS -> "No events yet. Join a club to discover its events, or request to attend one."
-                HANGOUTS -> "No hangouts yet. They're casual meetups — start one and invite friends."
+                CLUBS -> LanguageManager.string(R.string.groups_clubs_empty)
+                EVENTS -> LanguageManager.string(R.string.groups_events_empty)
+                HANGOUTS -> LanguageManager.string(R.string.groups_hangouts_empty)
             }
 
         val emptyButtonTitle: String
             get() = when (this) {
-                CLUBS -> "Explore clubs"
-                EVENTS -> "Explore events"
-                HANGOUTS -> "Start a hangout +"
+                CLUBS -> LanguageManager.string(R.string.groups_explore_clubs)
+                EVENTS -> LanguageManager.string(R.string.groups_explore_events)
+                HANGOUTS -> LanguageManager.string(R.string.groups_start_hangout)
             }
 
         companion object {

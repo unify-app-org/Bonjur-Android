@@ -1,0 +1,15 @@
+<resources>
+    <string name="discover_communities">Сообщества</string>
+    <string name="discover_clubs">Клубы</string>
+    <string name="discover_events">События</string>
+    <string name="discover_hangouts">Тусовки</string>
+    <string name="discover_view_all">показать все</string>
+    <string name="discover_clubs_empty">Пока нет клубов. Станьте первым и создайте свой!</string>
+    <string name="discover_events_empty">Пока нет запланированных событий. Станьте первым и создайте своё!</string>
+    <string name="discover_hangouts_empty">Пока нет запланированных тусовок. Станьте первым и создайте свою!</string>
+    <string name="discover_create_club">Создать клуб +</string>
+    <string name="discover_create_event">Создать событие +</string>
+    <string name="discover_create_hangout">Создать тусовку +</string>
+    <string name="common_got_it">Понятно</string>
+    <string name="common_unknown_error">Неизвестная ошибка</string>
+</resources>

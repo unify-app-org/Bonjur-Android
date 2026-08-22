@@ -1,0 +1,29 @@
+<resources>
+    <plurals name="members_count">
+        <item quantity="one">%1$d участник</item>
+        <item quantity="few">%1$d участника</item>
+        <item quantity="many">%1$d участников</item>
+        <item quantity="other">%1$d участника</item>
+    </plurals>
+
+    <plurals name="clubs_count">
+        <item quantity="one">%1$d клуб</item>
+        <item quantity="few">%1$d клуба</item>
+        <item quantity="many">%1$d клубов</item>
+        <item quantity="other">%1$d клуба</item>
+    </plurals>
+
+    <plurals name="events_count">
+        <item quantity="one">%1$d событие</item>
+        <item quantity="few">%1$d события</item>
+        <item quantity="many">%1$d событий</item>
+        <item quantity="other">%1$d события</item>
+    </plurals>
+
+    <plurals name="clubs_awaiting_approval">
+        <item quantity="one">%1$d клуб ожидает вашего одобрения</item>
+        <item quantity="few">%1$d клуба ожидают вашего одобрения</item>
+        <item quantity="many">%1$d клубов ожидают вашего одобрения</item>
+        <item quantity="other">%1$d клуба ожидают вашего одобрения</item>
+    </plurals>
+</resources>

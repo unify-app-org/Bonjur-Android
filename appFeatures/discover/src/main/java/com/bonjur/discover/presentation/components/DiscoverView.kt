@@ -7,6 +7,8 @@
 
 package com.bonjur.discover.presentation.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.discover.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -341,7 +343,7 @@ private fun CommunitiesView(
     if (communities.isNotEmpty()) {
         Column {
             SectionHeader(
-                title = "Communities",
+                title = stringResource(R.string.discover_communities),
                 showViewAll = false,
                 onViewAll = {}
             )
@@ -382,7 +384,7 @@ private fun ClubsView(
 ) {
     Column {
         SectionHeader(
-            title = "Clubs",
+            title = stringResource(R.string.discover_clubs),
             showViewAll = clubs.isNotEmpty(),
             onViewAll = onViewAll
         )
@@ -407,8 +409,8 @@ private fun ClubsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "No clubs here yet. Be the pioneer and start the very first one now!",
-                    buttonTitle = "Create a club +"
+                    text = stringResource(R.string.discover_clubs_empty),
+                    buttonTitle = stringResource(R.string.discover_create_club)
                 ),
                 onButtonClick = onCreate,
                 modifier = Modifier.padding(16.dp)
@@ -432,7 +434,7 @@ private fun EventsView(
 
     Column {
         SectionHeader(
-            title = "Events",
+            title = stringResource(R.string.discover_events),
             showViewAll = events.isNotEmpty(),
             onViewAll = onViewAll
         )
@@ -458,8 +460,8 @@ private fun EventsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "No events scheduled yet. Be the pioneer and start the very first one now!",
-                    buttonTitle = "Create an event +"
+                    text = stringResource(R.string.discover_events_empty),
+                    buttonTitle = stringResource(R.string.discover_create_event)
                 ),
                 onButtonClick = onCreate,
                 modifier = Modifier.padding(16.dp)
@@ -480,7 +482,7 @@ private fun HangoutsView(
 ) {
     Column {
         SectionHeader(
-            title = "Hangouts",
+            title = stringResource(R.string.discover_hangouts),
             showViewAll = hangouts.isNotEmpty(),
             onViewAll = onViewAll
         )
@@ -506,8 +508,8 @@ private fun HangoutsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "No hangouts planned yet. Be the pioneer and start the very first one now!",
-                    buttonTitle = "Create a hangout +"
+                    text = stringResource(R.string.discover_hangouts_empty),
+                    buttonTitle = stringResource(R.string.discover_create_hangout)
                 ),
                 onButtonClick = onCreate,
                 modifier = Modifier.padding(16.dp)
@@ -555,7 +557,7 @@ private fun SectionHeader(
         if (showViewAll) {
             TextButton(onClick = onViewAll) {
                 Text(
-                    text = "view all",
+                    text = stringResource(R.string.discover_view_all),
                     style = AppTypography.TextL.semiBold,
                     color = Palette.black,
                     textDecoration = TextDecoration.Underline

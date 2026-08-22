@@ -7,9 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
+import com.bonjur.auth.R
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeAction
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeSideEffect
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeViewState
@@ -53,12 +55,14 @@ fun AuthWelcomeView(
         }
 
         Text(
-            text = state.uiModel.title,
+            text = state.uiModel.titleArg
+                ?.let { stringResource(state.uiModel.titleRes, it) }
+                ?: stringResource(state.uiModel.titleRes),
             style = AppTypography.TitleXL.extraBold
         )
 
         Text(
-            text = state.uiModel.subtitle,
+            text = stringResource(state.uiModel.subtitleRes),
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary,
             modifier = Modifier.padding(top = 4.dp, bottom = 16.dp)
@@ -71,7 +75,7 @@ fun AuthWelcomeView(
         )
 
         AppButton(
-            title = "Continue",
+            title = stringResource(R.string.auth_continue),
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = {
                 store.send(AuthWelcomeAction.ContinueTapped)

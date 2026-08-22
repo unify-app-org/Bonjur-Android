@@ -3,6 +3,7 @@ package com.bonjur.profile.presentation.settings.models
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.designSystem.localization.AppLanguage
 
 // MARK: - ProfileSettings input
 data class ProfileSettingsInputData(
@@ -33,7 +34,9 @@ data class SettingsSectionModel(
 // MARK: - View State
 data class ProfileSettingsViewState(
     val sections: List<SettingsSectionModel> = emptyList(),
-    val notificationsEnabled: Boolean = true
+    val notificationsEnabled: Boolean = true,
+    /** Language picker sheet (shared component, also used pre-auth in onboarding). */
+    val showLanguagePicker: Boolean = false
 ) : FeatureState
 
 // MARK: - Feature Action
@@ -41,6 +44,8 @@ sealed class ProfileSettingsAction : FeatureAction {
     object FetchData : ProfileSettingsAction()
     object BackTapped : ProfileSettingsAction()
     object LanguageTapped : ProfileSettingsAction()
+    object DismissLanguagePicker : ProfileSettingsAction()
+    data class LanguageSelected(val language: AppLanguage) : ProfileSettingsAction()
     object HelpCenterTapped : ProfileSettingsAction()
     object TermsTapped : ProfileSettingsAction()
     object DeleteAccountTapped : ProfileSettingsAction()

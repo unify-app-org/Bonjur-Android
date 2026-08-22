@@ -1,0 +1,2 @@
+
+Pixel_9a37€Âª‘*	arm64-v8a2Google:emulator-5556BPixel_9aRsdk_gphone16k_arm64

@@ -1,0 +1,10 @@
+<resources>
+    <string name="example">exampleEn</string>
+    <string name="dock_my_activities">My Activities</string>
+    <string name="create_title">Create</string>
+    <string name="create_club">Club</string>
+    <string name="create_events">Events</string>
+    <string name="create_hangouts">Hangouts</string>
+    <string name="dock_discover">Discover</string>
+    <string name="dock_profile">Profile</string>
+</resources>

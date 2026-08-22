@@ -1,5 +1,10 @@
 package com.bonjur.clubs.domain.useCase
 
+import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.commonModel.dialablePhone
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.clubs.R
 import com.bonjur.clubs.data.DTOs.CategorySectionResponse
 import com.bonjur.clubs.data.DTOs.ClubCreateRequest
 import com.bonjur.clubs.data.DTOs.ClubDetailResponse
@@ -78,12 +83,15 @@ class ClubsUseCaseImpl @Inject constructor(
     override suspend fun getCategories(): List<CategorySection> =
         dataSource.getCategories().map { it.toSection() }
 
-    override suspend fun createClub(form: ClubFormData) {
+    override suspend fun createClub(form: ClubFormData): Int? =
         dataSource.createClub(
             request = form.toRequest(),
             logo = form.logo,
             cover = form.cover
-        )
+        ).id
+
+    override suspend fun requestVerify(clubId: Int) {
+        dataSource.requestVerify(clubId)
     }
 
     override suspend fun editClub(clubId: Int, form: ClubFormData) {
@@ -126,9 +134,12 @@ class ClubsUseCaseImpl @Inject constructor(
     }
 
     override suspend fun fetchClubMembersPage(clubId: Int, page: Int, size: Int, keyword: String?): MembersPage {
-        val users = dataSource.getClubMembers(clubId, page, size, keyword)
-            .content.map { it.toCellModel() }
-        return MembersPage(members = users, hasMore = users.size >= size)
+        val response = dataSource.getClubMembers(clubId, page, size, keyword)
+        return MembersPage(
+            members = response.content.map { it.toCellModel() },
+            hasMore = response.hasMore,
+            totalCount = response.totalElements
+        )
     }
 
     private fun ClubMemberResponse.ClubMember.toCellModel() = MemberCellModel(
@@ -169,17 +180,7 @@ class ClubsUseCaseImpl @Inject constructor(
         }
     )
 
-    private fun AppUIEntities.BackgroundType.toRequestString(): String = when (this) {
-        is AppUIEntities.BackgroundType.Primary -> "PRIMARY"
-        is AppUIEntities.BackgroundType.Secondary -> "SECONDARY"
-        is AppUIEntities.BackgroundType.Tertiary -> "TERTIARY"
-        is AppUIEntities.BackgroundType.CustomColor -> when (colorType) {
-            is AppUIEntities.ColorType.Orange -> "ORANGE"
-            is AppUIEntities.ColorType.Red -> "RED"
-            is AppUIEntities.ColorType.Pink -> "PURPLE"
-            is AppUIEntities.ColorType.Custom -> "PRIMARY"
-        }
-    }
+    private fun AppUIEntities.BackgroundType.toRequestString(): String = apiValue
 
     private fun ClubListResponse.toCardModel() = ClubCardModel(
         id = id ?: 0,
@@ -193,7 +194,7 @@ class ClubsUseCaseImpl @Inject constructor(
             AppUIEntities.Member(id = it.id?.hashCode() ?: 0, profileImage = it.url)
         },
         bgType = background.toBackgroundType(),
-        accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
+        accessType = AppUIEntities.AccessType.fromApi(visibility),
         requestType = requestStatus.toRequestType(),
         role = role?.let { it.toActivityRole() },
         upcomingEventsCount = eventCount ?: 0,
@@ -209,13 +210,41 @@ class ClubsUseCaseImpl @Inject constructor(
         coverImage = backgroundUrl,
         coverColorType = backgroundColour.toBackgroundType(),
         userActivityType = clubUserRole.toActivityRole(),
-        accessType = if (visibility == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE,
+        accessType = AppUIEntities.AccessType.fromApi(visibility),
         tags = categories.map { AppUIEntities.Tags(id = it.id, type = "CATEGORY", title = it.title) },
         infoData = buildInfoData(this),
         eventsData = emptyList(),
         editPrefillData = toEditPrefill(),
+        joinButton = toJoinButton(),
+        eventsCount = eventCount,
+        clubsCount = clubCount,
         clubStatus = AppUIEntities.ClubStatus.from(clubStatus)
     )
+
+    /**
+     * Bottom join/request button. Mirrors iOS `ClubRepo.mapButtonModel`: hidden once the
+     * viewer is accepted, a disabled "Request sent" while pending, and "Request" after a
+     * rejection. Driven by `clubUserStatus` — keying it off the role alone (what Android
+     * did) made a pending requester see an enabled Join button again.
+     */
+    private fun ClubDetailResponse.toJoinButton(): ClubsDetails.JoinButton? {
+        val request = clubUserStatus.toRequestType()
+        if (request == AppUIEntities.RequestType.JOINED) return null
+        if (clubUserRole.toActivityRole() != AppUIEntities.UserActivityRole.NOT_JOINED) return null
+        if (request == AppUIEntities.RequestType.PENDING) {
+            return ClubsDetails.JoinButton(
+                title = LanguageManager.string(R.string.clubs_join_request_sent),
+                disabled = true
+            )
+        }
+        val isPublic = AppUIEntities.AccessType.fromApi(visibility) == AppUIEntities.AccessType.PUBLIC
+        val title = if (request == AppUIEntities.RequestType.REJECTED || !isPublic) {
+            LanguageManager.string(R.string.clubs_request)
+        } else {
+            LanguageManager.string(R.string.clubs_join)
+        }
+        return ClubsDetails.JoinButton(title = title, disabled = false)
+    }
 
     /** Builds the edit-screen pre-fill (form values + image URLs). Mirrors iOS `mapPrefilData`. */
     private fun ClubDetailResponse.toEditPrefill() = ClubsDetails.ClubEditPrefill(
@@ -248,50 +277,40 @@ class ClubsUseCaseImpl @Inject constructor(
     private fun buildInfoData(detail: ClubDetailResponse): List<ClubsDetails.Info> = buildList {
         if (detail.about.isNotBlank()) {
             add(ClubsDetails.Info(
-                title = "About",
+                title = LanguageManager.string(R.string.clubs_about_label),
                 subItems = listOf(ClubsDetails.SubInfo(title = null, description = detail.about))
             ))
         }
         add(ClubsDetails.Info(
-            title = "Event info",
+            // This is a club, not an event — iOS relabelled these 2026-08-17.
+            title = LanguageManager.string(R.string.clubs_info_section),
             subItems = buildList {
-                detail.modifiedAt?.let { add(ClubsDetails.SubInfo(title = "Updated", description = it)) }
-                detail.ownerContact?.let { add(ClubsDetails.SubInfo(title = "Owner contact", description = it)) }
-                detail.capacity?.let { add(ClubsDetails.SubInfo(title = "Capacity", description = "${detail.membersCount ?: 0}/$it members")) }
-                detail.rule?.let { add(ClubsDetails.SubInfo(title = "Rules", description = it)) }
-                detail.location?.let { add(ClubsDetails.SubInfo(title = "Location", description = it)) }
+                detail.modifiedAt?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(DesignR.string.created_updated_date), description = it)) }
+                detail.ownerContact?.let {
+                    add(
+                        ClubsDetails.SubInfo(
+                            title = LanguageManager.string(R.string.clubs_owner_contact_label),
+                            description = it,
+                            phoneNumber = it.dialablePhone()
+                        )
+                    )
+                }
+                detail.capacity?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(R.string.clubs_capacity_label), description = memberOfCapacityText(detail.membersCount ?: 0, it))) }
+                detail.rule?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(R.string.clubs_rules_label), description = it)) }
+                detail.location?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(R.string.clubs_location_label), description = it)) }
             }
         ))
         if (detail.links.isNotEmpty()) {
             add(ClubsDetails.Info(
-                title = "Links",
+                title = LanguageManager.string(R.string.clubs_row_links),
                 subItems = detail.links.map { ClubsDetails.SubInfo(title = it.name, description = it.url, isLink = true) }
             ))
         }
     }
 
-    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = when (this?.uppercase()) {
-        "SECONDARY" -> AppUIEntities.BackgroundType.Secondary
-        "GREEN" -> AppUIEntities.BackgroundType.Primary
-        "BLUE" -> AppUIEntities.BackgroundType.Secondary
-        "RED" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Red)
-        "ORANGE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Orange)
-        "PURPLE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Pink)
-        else -> AppUIEntities.BackgroundType.Primary
-    }
+    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.fromApi(this)
 
-    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = when (this?.uppercase()) {
-        "MEMBER" -> AppUIEntities.UserActivityRole.MEMBER
-        "PRESIDENT" -> AppUIEntities.UserActivityRole.PRESIDENT
-        "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
-        "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
-        else -> AppUIEntities.UserActivityRole.NOT_JOINED
-    }
+    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = AppUIEntities.UserActivityRole.fromApi(this)
 
-    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
-        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
-        "PENDING" -> AppUIEntities.RequestType.PENDING
-        "REJECTED" -> AppUIEntities.RequestType.REJECTED
-        else -> AppUIEntities.RequestType.NONE
-    }
+    private fun String?.toRequestType(): AppUIEntities.RequestType = AppUIEntities.RequestType.fromApi(this)
 }

@@ -1,0 +1,69 @@
+com.bonjur.notification.test.notification-ui-test-release-0 /Users/huseynhasanov/.gradle/caches/8.13/transforms/089126a4a5ad5d0ee3f64fbd7f611a79/transformed/ui-test-release/res
+com.bonjur.notification.test.notification-ui-release-1 /Users/huseynhasanov/.gradle/caches/8.13/transforms/095f95b264bdadf6c4ffc5b82242fe8c/transformed/ui-release/res
+com.bonjur.notification.test.notification-activity-1.11.0-2 /Users/huseynhasanov/.gradle/caches/8.13/transforms/0a65e467d47f5658c33ada0111ab115b/transformed/activity-1.11.0/res
+com.bonjur.notification.test.notification-recyclerview-1.1.0-3 /Users/huseynhasanov/.gradle/caches/8.13/transforms/10a0494aab9c169195370c226d81ae1a/transformed/recyclerview-1.1.0/res
+com.bonjur.notification.test.notification-ui-test-manifest-1.9.0-4 /Users/huseynhasanov/.gradle/caches/8.13/transforms/10b9b10538cafc8c763942502b03c1b7/transformed/ui-test-manifest-1.9.0/res
+com.bonjur.notification.test.notification-core-1.7.0-5 /Users/huseynhasanov/.gradle/caches/8.13/transforms/166f39116a9a1f04e6dc07789d66ef06/transformed/core-1.7.0/res
+com.bonjur.notification.test.notification-lifecycle-viewmodel-savedstate-release-6 /Users/huseynhasanov/.gradle/caches/8.13/transforms/1909b2c42a352299b2510b68fa8b8d28/transformed/lifecycle-viewmodel-savedstate-release/res
+com.bonjur.notification.test.notification-emoji2-views-helper-1.4.0-7 /Users/huseynhasanov/.gradle/caches/8.13/transforms/1a192a65e92730fff11a1e2dc2afa43f/transformed/emoji2-views-helper-1.4.0/res
+com.bonjur.notification.test.notification-hilt-lifecycle-viewmodel-1.3.0-8 /Users/huseynhasanov/.gradle/caches/8.13/transforms/1d521d2581b0616a0aba320cdd3dffd4/transformed/hilt-lifecycle-viewmodel-1.3.0/res
+com.bonjur.notification.test.notification-lifecycle-runtime-compose-release-9 /Users/huseynhasanov/.gradle/caches/8.13/transforms/1e1e5ec6bb9e59edc1fcdc287b174105/transformed/lifecycle-runtime-compose-release/res
+com.bonjur.notification.test.notification-profileinstaller-1.4.0-10 /Users/huseynhasanov/.gradle/caches/8.13/transforms/2fcf4eb432ca933a3773bf16a1912cab/transformed/profileinstaller-1.4.0/res
+com.bonjur.notification.test.notification-savedstate-ktx-1.3.1-11 /Users/huseynhasanov/.gradle/caches/8.13/transforms/3033b160432ba165f77e86d28b353267/transformed/savedstate-ktx-1.3.1/res
+com.bonjur.notification.test.notification-coordinatorlayout-1.1.0-12 /Users/huseynhasanov/.gradle/caches/8.13/transforms/323681e1b9ae3681d4813a885e198a4c/transformed/coordinatorlayout-1.1.0/res
+com.bonjur.notification.test.notification-lifecycle-viewmodel-ktx-2.9.4-13 /Users/huseynhasanov/.gradle/caches/8.13/transforms/3a57b0ef60ca9358a6cac5a6cf48ce35/transformed/lifecycle-viewmodel-ktx-2.9.4/res
+com.bonjur.notification.test.notification-graphics-path-1.0.1-14 /Users/huseynhasanov/.gradle/caches/8.13/transforms/3b1cb863a14e169b8676c92b6acc85fb/transformed/graphics-path-1.0.1/res
+com.bonjur.notification.test.notification-lifecycle-runtime-release-15 /Users/huseynhasanov/.gradle/caches/8.13/transforms/3f8461345b3feb7b4bc53224917990af/transformed/lifecycle-runtime-release/res
+com.bonjur.notification.test.notification-material-1.10.0-16 /Users/huseynhasanov/.gradle/caches/8.13/transforms/4186a6ca0a53b775f9aae978f73373cc/transformed/material-1.10.0/res
+com.bonjur.notification.test.notification-savedstate-release-17 /Users/huseynhasanov/.gradle/caches/8.13/transforms/4620de8ec9fc3f24510cfa5f5e0ed6e1/transformed/savedstate-release/res
+com.bonjur.notification.test.notification-navigation-runtime-release-18 /Users/huseynhasanov/.gradle/caches/8.13/transforms/477085357e0d3307f75a0627bad29811/transformed/navigation-runtime-release/res
+com.bonjur.notification.test.notification-coil-base-2.6.0-19 /Users/huseynhasanov/.gradle/caches/8.13/transforms/49e0644b7186d31421f837dbd330a3fc/transformed/coil-base-2.6.0/res
+com.bonjur.notification.test.notification-activity-ktx-1.11.0-20 /Users/huseynhasanov/.gradle/caches/8.13/transforms/4a846a3669715c8ce1684caa31259586/transformed/activity-ktx-1.11.0/res
+com.bonjur.notification.test.notification-material-release-21 /Users/huseynhasanov/.gradle/caches/8.13/transforms/4bc20f48845b03021ad223cba4526c6a/transformed/material-release/res
+com.bonjur.notification.test.notification-material3-release-22 /Users/huseynhasanov/.gradle/caches/8.13/transforms/4d0296daa8ec9bd8e5399b80c25a484b/transformed/material3-release/res
+com.bonjur.notification.test.notification-lifecycle-livedata-2.9.4-23 /Users/huseynhasanov/.gradle/caches/8.13/transforms/56ec0866f0b58510194b2020be533063/transformed/lifecycle-livedata-2.9.4/res
+com.bonjur.notification.test.notification-lifecycle-viewmodel-compose-release-24 /Users/huseynhasanov/.gradle/caches/8.13/transforms/5ba0c4f69b9444d84d3f888f7c71c22c/transformed/lifecycle-viewmodel-compose-release/res
+com.bonjur.notification.test.notification-fragment-1.5.1-25 /Users/huseynhasanov/.gradle/caches/8.13/transforms/60c795d38fdc484763bddceeeb0563b9/transformed/fragment-1.5.1/res
+com.bonjur.notification.test.notification-core-1.17.0-26 /Users/huseynhasanov/.gradle/caches/8.13/transforms/62eb4c606d2aed194b39965c17751842/transformed/core-1.17.0/res
+com.bonjur.notification.test.notification-material-icons-core-release-27 /Users/huseynhasanov/.gradle/caches/8.13/transforms/69eb2cecdc6839c33f0a95f74dde5f0a/transformed/material-icons-core-release/res
+com.bonjur.notification.test.notification-hilt-lifecycle-viewmodel-compose-1.3.0-28 /Users/huseynhasanov/.gradle/caches/8.13/transforms/6d58cf040ce271306d18d23c611d166d/transformed/hilt-lifecycle-viewmodel-compose-1.3.0/res
+com.bonjur.notification.test.notification-security-crypto-1.1.0-alpha06-29 /Users/huseynhasanov/.gradle/caches/8.13/transforms/6f888378476859e0313a11fb4b4c746f/transformed/security-crypto-1.1.0-alpha06/res
+com.bonjur.notification.test.notification-core-viewtree-1.0.0-30 /Users/huseynhasanov/.gradle/caches/8.13/transforms/706de77a1cda9833f15710da583816dd/transformed/core-viewtree-1.0.0/res
+com.bonjur.notification.test.notification-savedstate-compose-release-31 /Users/huseynhasanov/.gradle/caches/8.13/transforms/74e42706455b121fa91ed1cea5654972/transformed/savedstate-compose-release/res
+com.bonjur.notification.test.notification-foundation-release-32 /Users/huseynhasanov/.gradle/caches/8.13/transforms/7afbf526e9da1866fee24179c0a819d8/transformed/foundation-release/res
+com.bonjur.notification.test.notification-activity-compose-1.11.0-33 /Users/huseynhasanov/.gradle/caches/8.13/transforms/8354892b9a49c7e30ed9bed143247ef3/transformed/activity-compose-1.11.0/res
+com.bonjur.notification.test.notification-lifecycle-livedata-core-ktx-2.9.4-34 /Users/huseynhasanov/.gradle/caches/8.13/transforms/8938e800fd20b63bb4a768cdf0c31961/transformed/lifecycle-livedata-core-ktx-2.9.4/res
+com.bonjur.notification.test.notification-emoji2-1.4.0-35 /Users/huseynhasanov/.gradle/caches/8.13/transforms/99225492d842c82dc8a767b25ceb156a/transformed/emoji2-1.4.0/res
+com.bonjur.notification.test.notification-customview-poolingcontainer-1.0.0-36 /Users/huseynhasanov/.gradle/caches/8.13/transforms/9b2937c94c671df457d656a7c39ba38a/transformed/customview-poolingcontainer-1.0.0/res
+com.bonjur.notification.test.notification-core-ktx-1.17.0-37 /Users/huseynhasanov/.gradle/caches/8.13/transforms/9dbfe306bf37eb93965e1f4bea551d68/transformed/core-ktx-1.17.0/res
+com.bonjur.notification.test.notification-transition-1.2.0-38 /Users/huseynhasanov/.gradle/caches/8.13/transforms/a69b2635648a13b07ce0e3b120d507a1/transformed/transition-1.2.0/res
+com.bonjur.notification.test.notification-ui-graphics-release-39 /Users/huseynhasanov/.gradle/caches/8.13/transforms/a7a6b4213e5333a446785a0c4fc082f1/transformed/ui-graphics-release/res
+com.bonjur.notification.test.notification-constraintlayout-2.0.1-40 /Users/huseynhasanov/.gradle/caches/8.13/transforms/a9b8e150ce5d816b7daa750110c7ce17/transformed/constraintlayout-2.0.1/res
+com.bonjur.notification.test.notification-cardview-1.0.0-41 /Users/huseynhasanov/.gradle/caches/8.13/transforms/ab6e66685bb2dbf987056b8858308aa9/transformed/cardview-1.0.0/res
+com.bonjur.notification.test.notification-material-ripple-release-42 /Users/huseynhasanov/.gradle/caches/8.13/transforms/b1bd8d039ea3737bb9f8626787e6c931/transformed/material-ripple-release/res
+com.bonjur.notification.test.notification-viewpager2-1.0.0-43 /Users/huseynhasanov/.gradle/caches/8.13/transforms/b557115e09537a10e9e0e25c3eada18b/transformed/viewpager2-1.0.0/res
+com.bonjur.notification.test.notification-navigation-common-release-44 /Users/huseynhasanov/.gradle/caches/8.13/transforms/c0979cc534af40eebf3e0148824b7cd3/transformed/navigation-common-release/res
+com.bonjur.notification.test.notification-lifecycle-viewmodel-release-45 /Users/huseynhasanov/.gradle/caches/8.13/transforms/c2bf6369f5b9614c3131e07c0862c5ac/transformed/lifecycle-viewmodel-release/res
+com.bonjur.notification.test.notification-lifecycle-process-2.9.4-46 /Users/huseynhasanov/.gradle/caches/8.13/transforms/c3ab0c94e622c019246ac4e9b3574c28/transformed/lifecycle-process-2.9.4/res
+com.bonjur.notification.test.notification-navigation-compose-release-47 /Users/huseynhasanov/.gradle/caches/8.13/transforms/c752b84abeaa20554a581670c33a398e/transformed/navigation-compose-release/res
+com.bonjur.notification.test.notification-drawerlayout-1.1.1-48 /Users/huseynhasanov/.gradle/caches/8.13/transforms/c7a18b3a69861b7cc5135b9c8b1267da/transformed/drawerlayout-1.1.1/res
+com.bonjur.notification.test.notification-hilt-navigation-compose-1.3.0-49 /Users/huseynhasanov/.gradle/caches/8.13/transforms/cab6f2f75324ac1ea079f3b4316580d5/transformed/hilt-navigation-compose-1.3.0/res
+com.bonjur.notification.test.notification-tracing-1.2.0-50 /Users/huseynhasanov/.gradle/caches/8.13/transforms/cc0dd5d6e9e1eb9b027552b59518e755/transformed/tracing-1.2.0/res
+com.bonjur.notification.test.notification-lifecycle-livedata-core-2.9.4-51 /Users/huseynhasanov/.gradle/caches/8.13/transforms/cef0033a021973a02858ec175fab84bb/transformed/lifecycle-livedata-core-2.9.4/res
+com.bonjur.notification.test.notification-core-runtime-2.2.0-52 /Users/huseynhasanov/.gradle/caches/8.13/transforms/d1eb21d5d05fecc42207d77218686cd3/transformed/core-runtime-2.2.0/res
+com.bonjur.notification.test.notification-annotation-experimental-1.4.1-53 /Users/huseynhasanov/.gradle/caches/8.13/transforms/dfe553c00cc6b2407a39cd48eeab412a/transformed/annotation-experimental-1.4.1/res
+com.bonjur.notification.test.notification-startup-runtime-1.1.1-54 /Users/huseynhasanov/.gradle/caches/8.13/transforms/e36e7e6fb368611d41916f2857411b35/transformed/startup-runtime-1.1.1/res
+com.bonjur.notification.test.notification-appcompat-1.6.1-55 /Users/huseynhasanov/.gradle/caches/8.13/transforms/f4292110ebb73fd24b4045204c59b609/transformed/appcompat-1.6.1/res
+com.bonjur.notification.test.notification-appcompat-resources-1.6.1-56 /Users/huseynhasanov/.gradle/caches/8.13/transforms/fe568d622ce0b726ef013adafaf7edc1/transformed/appcompat-resources-1.6.1/res
+com.bonjur.notification.test.notification-debug-57 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appFoundation/build/intermediates/packaged_res/debug/packageDebugResources
+com.bonjur.notification.test.notification-debug-58 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appUtils/build/intermediates/packaged_res/debug/packageDebugResources
+com.bonjur.notification.test.notification-debug-59 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/designSystem/build/intermediates/packaged_res/debug/packageDebugResources
+com.bonjur.notification.test.notification-debug-60 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/navigation/build/intermediates/packaged_res/debug/packageDebugResources
+com.bonjur.notification.test.notification-debug-61 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/network/build/intermediates/packaged_res/debug/packageDebugResources
+com.bonjur.notification.test.notification-debug-62 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/storage/build/intermediates/packaged_res/debug/packageDebugResources
+com.bonjur.notification.test.notification-androidTest-63 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/generated/res/resValues/androidTest/debug
+com.bonjur.notification.test.notification-updated_navigation_xml-64 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/generated/updated_navigation_xml/debugAndroidTest
+com.bonjur.notification.test.notification-mergeDebugAndroidTestResources-65 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
+com.bonjur.notification.test.notification-mergeDebugAndroidTestResources-66 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
+com.bonjur.notification.test.notification-debugAndroidTest-67 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/intermediates/merged_res/debugAndroidTest/mergeDebugAndroidTestResources
+com.bonjur.notification.test.notification-debug-68 /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/intermediates/packaged_res/debug/packageDebugResources

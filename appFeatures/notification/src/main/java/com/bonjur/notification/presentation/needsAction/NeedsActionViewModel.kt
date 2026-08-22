@@ -121,7 +121,7 @@ class NeedsActionViewModel @Inject constructor(
                 setSource(
                     tab,
                     src.copy(
-                        items = sortedByNewest(result.items),
+                        items = sortedByNewest(dedupedById(result.items)),
                         canLoadMore = result.hasMore,
                         phase = RequestsPhase.LOADED
                     )
@@ -147,7 +147,9 @@ class NeedsActionViewModel @Inject constructor(
                 setSource(
                     tab,
                     src.copy(
-                        items = sortedByNewest(src.items + result.items),
+                        // De-dupe before sorting: the request endpoints can repeat rows
+                        // across pages, and `items(key = { it.id })` throws on a duplicate.
+                        items = sortedByNewest(dedupedById(src.items + result.items)),
                         canLoadMore = result.hasMore,
                         isLoadingMore = false
                     )
@@ -218,4 +220,8 @@ class NeedsActionViewModel @Inject constructor(
     /** Newest first; rows missing createdAt sink to the bottom but keep order. */
     private fun sortedByNewest(items: List<ActionRequestItem>): List<ActionRequestItem> =
         items.sortedWith(compareByDescending { it.createdAtMillis ?: Long.MIN_VALUE })
+
+    /** Keeps the first occurrence of each id; duplicates crash the keyed LazyColumn. */
+    private fun dedupedById(items: List<ActionRequestItem>): List<ActionRequestItem> =
+        items.distinctBy { it.id }
 }

@@ -1,5 +1,7 @@
 package com.bonjur.member.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -173,7 +175,7 @@ private fun MemberAccessoryView(
         ) {
             Icon(
                 painter = Images.Icons.ellipsis02(),
-                contentDescription = "Options",
+                contentDescription = stringResource(R.string.common_options),
                 tint = Palette.graySecondary,
                 modifier = Modifier.size(20.dp)
             )

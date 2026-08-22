@@ -1,5 +1,7 @@
 package com.bonjur.profile.presentation.editProfile
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.profile.R
 import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
@@ -108,7 +110,7 @@ class EditProfileViewModel @Inject constructor(
 
             val categories = runCatching { dependencies.useCase.getCategories() }
                 .onFailure {
-                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                    AppSnackBar.show(title = LanguageManager.string(R.string.editprofile_categories_fail), style = AppSnackBar.Style.ERROR)
                 }
                 .getOrDefault(emptyList())
                 .map { section ->
@@ -116,7 +118,7 @@ class EditProfileViewModel @Inject constructor(
                 }
             val languages = runCatching { dependencies.useCase.getLanguages() }
                 .onFailure {
-                    AppSnackBar.show(title = "Couldn't load languages", style = AppSnackBar.Style.ERROR)
+                    AppSnackBar.show(title = LanguageManager.string(R.string.editprofile_languages_fail), style = AppSnackBar.Style.ERROR)
                 }
                 .getOrDefault(emptyList())
                 .map { it.copy(selected = it.id in langIds) }
@@ -165,8 +167,8 @@ class EditProfileViewModel @Inject constructor(
                 inputData.onSaved()
                 navigator.navigateUp()
                 AppSnackBar.show(
-                    title = "Profile updated successfully",
-                    subtitle = "Your changes are saved",
+                    title = LanguageManager.string(R.string.editprofile_updated),
+                    subtitle = LanguageManager.string(R.string.profile_changes_saved),
                     style = AppSnackBar.Style.SUCCESS
                 )
             } catch (e: Exception) {
@@ -216,15 +218,5 @@ class EditProfileViewModel @Inject constructor(
     }
 
     // Backend enum = colour names (iOS BackgroundType raw values), not Primary/Secondary.
-    private fun AppUIEntities.BackgroundType.toRequestString(): String = when (this) {
-        is AppUIEntities.BackgroundType.Primary -> "GREEN"
-        is AppUIEntities.BackgroundType.Secondary -> "BLUE"
-        is AppUIEntities.BackgroundType.Tertiary -> "PURPLE"
-        is AppUIEntities.BackgroundType.CustomColor -> when (colorType) {
-            is AppUIEntities.ColorType.Orange -> "ORANGE"
-            is AppUIEntities.ColorType.Red -> "RED"
-            is AppUIEntities.ColorType.Pink -> "PINK"
-            is AppUIEntities.ColorType.Custom -> "GREEN"
-        }
-    }
+    private fun AppUIEntities.BackgroundType.toRequestString(): String = apiValue
 }

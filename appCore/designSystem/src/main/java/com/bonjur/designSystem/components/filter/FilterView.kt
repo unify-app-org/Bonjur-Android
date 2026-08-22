@@ -7,6 +7,8 @@
 
 package com.bonjur.designSystem.components.filter
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -221,7 +223,7 @@ private fun SelectSubItems(
                 horizontalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 AppButton(
-                    title = "Remove",
+                    title = LanguageManager.string(R.string.remove),
                     model = AppButtonModel(
                         type = ButtonType.Secondary,
                         contentSize = ContentSize.Fill,
@@ -234,7 +236,7 @@ private fun SelectSubItems(
                 )
 
                 AppButton(
-                    title = "Apply",
+                    title = LanguageManager.string(R.string.apply),
                     model = AppButtonModel(
                         contentSize = ContentSize.Fill,
                         size = AppButtonSize.Small
@@ -325,11 +327,11 @@ private fun FilterChip(
             ) {
                 Icon(
                     painter = Images.Icons.filter(),
-                    contentDescription = "Filter",
+                    contentDescription = LanguageManager.string(R.string.filter),
                     tint = Palette.black
                 )
                 Text(
-                    text = "Filter",
+                    text = LanguageManager.string(R.string.filter),
                     style = AppTypography.TextL.regular,
                     color = Palette.black
                 )
@@ -369,7 +371,7 @@ private fun AllChip(
         border = if (isActive) BorderStroke(1.dp, Palette.border) else null
     ) {
         Text(
-            text = "All",
+            text = LanguageManager.string(R.string.all),
             style = AppTypography.TextL.regular,
             color = Palette.black,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)

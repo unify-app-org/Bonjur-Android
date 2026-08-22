@@ -1,5 +1,8 @@
 package com.bonjur.hangouts.presentation.detail.model
 
+import androidx.annotation.StringRes
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -30,12 +33,30 @@ data class HangoutDetailsViewState(
     val isPrivate: Boolean
         get() = uiModel?.accessType == AppUIEntities.AccessType.PRIVATE
 
+    /** Owner/VP may edit the hangout. Mirrors iOS `isEditable`. */
+    val isEditable: Boolean
+        get() = uiModel?.userActivityType == AppUIEntities.UserActivityRole.VISE_PRESIDENT ||
+            uiModel?.userActivityType == AppUIEntities.UserActivityRole.PRESIDENT
+
+    /** Any joined non-member role may create events. Mirrors iOS `canCreateEvent`. */
+    val canCreateEvent: Boolean
+        get() = uiModel != null &&
+            uiModel.userActivityType != AppUIEntities.UserActivityRole.MEMBER &&
+            uiModel.userActivityType != AppUIEntities.UserActivityRole.NOT_JOINED
+
+    val hasJoined: Boolean
+        get() = uiModel != null &&
+            uiModel.userActivityType != AppUIEntities.UserActivityRole.NOT_JOINED
+
     enum class SegmentTypes(
-        override val title: String
+        @StringRes private val titleRes: Int
     ) : SegmentedPickerOption {
 
-        ABOUT("About"),
-        MEMBERS("Members");
+        ABOUT(R.string.hangouts_about_label),
+        MEMBERS(R.string.hangouts_members_title);
+
+        // Resolved on read; see ClubsDetailsModel.SegmentTypes.
+        override val title: String get() = LanguageManager.string(titleRes)
 
         override val id: String get() = name
 

@@ -1,5 +1,8 @@
 package com.bonjur.profile.presentation.detail
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.profile.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.clubs.navigation.ClubsScreens
@@ -176,7 +179,7 @@ class ProfileDetailViewModel @Inject constructor(
                         hangouts = results.hangouts.getOrDefault(emptyList())
                     ),
                     isOwnProfile = !isOther,
-                    navigationTitle = if (isOther) "About user" else "Profile"
+                    navigationTitle = if (isOther) LanguageManager.string(R.string.profile_about_user) else LanguageManager.string(R.string.profile_title)
                 )
             )
         }
@@ -208,15 +211,15 @@ class ProfileDetailViewModel @Inject constructor(
             runCatching { dependencies.useCase.editProfile(request, null) }
                 .onSuccess {
                     AppSnackBar.show(
-                        title = "Cover updated successfully",
-                        subtitle = "Your changes are saved",
+                        title = LanguageManager.string(R.string.profile_cover_updated),
+                        subtitle = LanguageManager.string(R.string.profile_changes_saved),
                         style = AppSnackBar.Style.SUCCESS
                     )
                 }
                 .onFailure {
                     AppSnackBar.show(
                         title = "Couldn't update cover",
-                        subtitle = "Please try again.",
+                        subtitle = LanguageManager.string(DesignR.string.common_try_again),
                         style = AppSnackBar.Style.ERROR
                     )
                 }
@@ -224,15 +227,5 @@ class ProfileDetailViewModel @Inject constructor(
     }
 
     // Backend enum = colour names (iOS BackgroundType raw values), not Primary/Secondary.
-    private fun AppUIEntities.BackgroundType.toRequestString(): String = when (this) {
-        is AppUIEntities.BackgroundType.Primary -> "GREEN"
-        is AppUIEntities.BackgroundType.Secondary -> "BLUE"
-        is AppUIEntities.BackgroundType.Tertiary -> "PURPLE"
-        is AppUIEntities.BackgroundType.CustomColor -> when (colorType) {
-            is AppUIEntities.ColorType.Orange -> "ORANGE"
-            is AppUIEntities.ColorType.Red -> "RED"
-            is AppUIEntities.ColorType.Pink -> "PINK"
-            is AppUIEntities.ColorType.Custom -> "GREEN"
-        }
-    }
+    private fun AppUIEntities.BackgroundType.toRequestString(): String = apiValue
 }

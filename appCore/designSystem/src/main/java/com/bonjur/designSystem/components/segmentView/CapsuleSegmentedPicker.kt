@@ -1,5 +1,7 @@
 package com.bonjur.designSystem.components.segmentView
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +37,9 @@ fun <T : SegmentedPickerOption> CapsuleSegmentedPicker(
     options: List<T>,
     selectedOption: T,
     onOptionSelected: (T) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Overrides the label, e.g. to append a count: "Clubs (2)". Defaults to `title`. */
+    titleFor: (T) -> String = { it.title }
 ) {
     var itemSizes by remember { mutableStateOf(List(options.size) { IntSize.Zero }) }
     val density = LocalDensity.current
@@ -73,7 +77,7 @@ fun <T : SegmentedPickerOption> CapsuleSegmentedPicker(
                     }
 
                     Text(
-                        text = option.title,
+                        text = titleFor(option),
                         style = if (isSelected) {
                             AppTypography.TextL.bold
                         } else {
@@ -104,17 +108,17 @@ fun <T : SegmentedPickerOption> CapsuleSegmentedPicker(
 
 sealed interface TabOption : SegmentedPickerOption {
     data object Clubs : TabOption {
-        override val title = "Clubs"
+        override val title get() = LanguageManager.string(R.string.clubs)
         override val id = "clubs"
     }
 
     data object Events : TabOption {
-        override val title = "Events"
+        override val title get() = LanguageManager.string(R.string.events)
         override val id = "events"
     }
 
     data object Hangouts : TabOption {
-        override val title = "Hangouts"
+        override val title get() = LanguageManager.string(R.string.hangouts)
         override val id = "hangouts"
     }
 

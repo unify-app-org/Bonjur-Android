@@ -71,4 +71,14 @@ sealed class EventsEndPoints : AppEndpoint {
         override val path = "api/es/v1/events/$eventId/exit"
         override val method = NetworkMethod.DELETE
     }
+
+    /**
+     * Broadcasts the event reminder to the group. Returns 200 with no body; the
+     * spent state is read back from the detail payload's `isReminder`, so the
+     * server keeps ownership of the one-per-day window (mirrors iOS).
+     */
+    data class SendReminder(val eventId: String) : EventsEndPoints() {
+        override val path = "api/es/v1/events/$eventId/reminder"
+        override val method = NetworkMethod.POST
+    }
 }

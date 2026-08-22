@@ -1,5 +1,7 @@
 package com.bonjur.notification.presentation.feed.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.notification.R
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect

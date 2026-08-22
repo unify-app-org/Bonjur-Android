@@ -45,6 +45,13 @@ object SharedRoutes {
     const val EVENT_DETAILS = "com.bonjur.events.navigation.EventsScreens.Details"
 
     /**
+     * Qualified name of `HangoutsScreens.Details`. The notification feed
+     * deep-links a HANGOUT row here by this route string + [HangoutDetailsNavArgs]
+     * (read as a fallback by the hangouts nav graph). Same pattern as [CLUB_DETAILS].
+     */
+    const val HANGOUT_DETAILS = "com.bonjur.hangouts.navigation.HangoutsScreens.Details"
+
+    /**
      * Qualified name of `NotificationScreens.Feed`. The Discover bell opens the
      * notification stack by this route string so `discover` needs no dependency
      * on the `notification` module.
@@ -57,6 +64,9 @@ data class ClubDetailsNavArgs(val clubId: Int)
 
 /** Neutral event-details payload (feed deep-link → event) usable across feature modules. */
 data class EventDetailsNavArgs(val eventId: String)
+
+/** Neutral hangout-details payload (feed deep-link → hangout) usable across feature modules. */
+data class HangoutDetailsNavArgs(val hangoutId: String)
 
 /** Neutral profile-details payload (member tap → profile) usable across feature modules. */
 data class ProfileDetailNavArgs(val userId: String?)

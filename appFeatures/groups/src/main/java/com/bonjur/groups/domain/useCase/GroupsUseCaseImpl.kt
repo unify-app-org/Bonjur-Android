@@ -79,20 +79,11 @@ class GroupsUseCaseImpl @Inject constructor(
     )
 
     private fun String?.toAccessType(): AppUIEntities.AccessType =
-        if (this == "PUBLIC") AppUIEntities.AccessType.PUBLIC else AppUIEntities.AccessType.PRIVATE
+        AppUIEntities.AccessType.fromApi(this)
 
     private fun String?.toRequestType(): AppUIEntities.RequestType =
-        when (this?.uppercase()) {
-            "ACCEPTED", "JOINED" -> AppUIEntities.RequestType.JOINED
-            "PENDING" -> AppUIEntities.RequestType.PENDING
-            "REJECTED" -> AppUIEntities.RequestType.REJECTED
-            else -> AppUIEntities.RequestType.NONE
-        }
+        AppUIEntities.RequestType.fromApi(this)
 
     private fun String?.toBackgroundType(): AppUIEntities.BackgroundType =
-        when (this?.uppercase()) {
-            "BLUE" -> AppUIEntities.BackgroundType.Secondary
-            "PURPLE" -> AppUIEntities.BackgroundType.Tertiary
-            else -> AppUIEntities.BackgroundType.Primary
-        }
+        AppUIEntities.BackgroundType.fromApi(this)
 }

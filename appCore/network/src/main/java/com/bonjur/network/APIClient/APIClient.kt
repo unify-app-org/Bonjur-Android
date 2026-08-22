@@ -1,6 +1,7 @@
 package com.bonjur.network.APIClient
 
 import com.bonjur.network.AppConfig
+import com.bonjur.storage.language.AppLanguageStore
 import com.bonjur.network.logger.NetworkLogger
 import com.bonjur.network.manager.TokenManager
 import com.bonjur.network.model.ApiException
@@ -337,10 +338,10 @@ class ApiClient @Inject constructor(
     }
 
     /** Restrict device locale to supported languages; default to English. */
-    private fun acceptLanguage(): String {
-        val lang = java.util.Locale.getDefault().language.lowercase()
-        return if (lang in setOf("az", "en", "ru")) lang else "en"
-    }
+    // The in-app language, not `Locale.getDefault()`: Android re-applies the device
+    // configuration when an Activity is created, which used to clobber the stored
+    // choice and send `Accept-Language: en` on every cold start.
+    private fun acceptLanguage(): String = AppLanguageStore.code
 
     private fun MultipartPayload.toFormDataContent(): MultiPartFormDataContent =
         MultiPartFormDataContent(

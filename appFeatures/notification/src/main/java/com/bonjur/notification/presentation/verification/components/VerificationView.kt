@@ -1,5 +1,7 @@
 package com.bonjur.notification.presentation.verification.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.notification.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,6 +21,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,20 +52,31 @@ fun VerificationView(store: FeatureStore<VerificationViewState, VerificationActi
     val state = store.state
     LaunchedEffect(Unit) { store.send(VerificationAction.OnAppear) }
 
+    // Non-null while the reject-note sheet is up for that row.
+    var rejectTarget by remember { mutableStateOf<VerificationItem?>(null) }
+
+    rejectTarget?.let { target ->
+        RejectVerificationSheet(
+            item = target,
+            onDismiss = { rejectTarget = null },
+            onReject = { note -> store.send(VerificationAction.PerformReject(target, note)) }
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Palette.grayQuaternary.copy(alpha = 0.4f))
     ) {
         if (state.items.isNotEmpty()) {
-            VerificationList(store, state)
+            VerificationList(store, state, onReject = { rejectTarget = it })
         } else {
             when (state.phase) {
                 RequestsPhase.IDLE, RequestsPhase.LOADING -> LoadingState()
                 RequestsPhase.FAILED -> ErrorState { store.send(VerificationAction.Retry) }
                 RequestsPhase.LOADED -> ComingSoon(
-                    "Nothing to verify",
-                    "All club verification requests are handled."
+                    stringResource(R.string.notif_nothing_to_verify),
+                    stringResource(R.string.notif_all_handled)
                 )
             }
         }
@@ -69,7 +86,8 @@ fun VerificationView(store: FeatureStore<VerificationViewState, VerificationActi
 @Composable
 private fun VerificationList(
     store: FeatureStore<VerificationViewState, VerificationAction, VerificationSideEffect>,
-    state: VerificationViewState
+    state: VerificationViewState,
+    onReject: (VerificationItem) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -85,7 +103,7 @@ private fun VerificationList(
                 isProcessing = state.processingIds.contains(item.id),
                 onTap = { store.send(VerificationAction.CellTapped(item)) },
                 onVerify = { store.send(VerificationAction.Verify(item)) },
-                onReject = { store.send(VerificationAction.Reject(item)) }
+                onReject = { onReject(item) }
             )
         }
         if (state.isLoadingMore) {
@@ -133,13 +151,13 @@ private fun VerificationRow(
         } else {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 AppButton(
-                    title = "Reject",
+                    title = stringResource(R.string.notif_reject),
                     onClick = onReject,
                     modifier = Modifier.weight(1f),
                     model = AppButtonModel(type = ButtonType.Destructive, contentSize = ContentSize.Fill, size = AppButtonSize.Small)
                 )
                 AppButton(
-                    title = "Verify",
+                    title = stringResource(R.string.notif_verify),
                     onClick = onVerify,
                     modifier = Modifier.weight(1f),
                     model = AppButtonModel(type = ButtonType.Primary, contentSize = ContentSize.Fill, size = AppButtonSize.Small)

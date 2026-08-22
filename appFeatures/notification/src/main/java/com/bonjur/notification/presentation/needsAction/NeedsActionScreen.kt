@@ -1,5 +1,9 @@
 package com.bonjur.notification.presentation.needsAction
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.notification.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -31,7 +35,7 @@ fun NeedsActionScreen(
         AppTopBar(
             isScrolled = true,
             showTitle = true,
-            title = "Needs your action",
+            title = stringResource(R.string.notif_needs_action),
             onBack = { scope.launch { navigator.navigateUp() } }
         )
         FeatureScreen(
@@ -45,13 +49,13 @@ fun NeedsActionScreen(
                     is NeedsActionSideEffect.ConfirmReject -> AppAlertPresenter.present(
                         AppAlert(
                             config = AppAlert.Config(
-                                title = "Reject request?",
+                                title = LanguageManager.string(R.string.notif_reject_request),
                                 subtitle = "Are you sure you want to reject ${effect.item.requesterName}'s request to join ${effect.item.targetName}?"
                             ),
                             actions = listOf(
-                                AppAlert.Action(title = "Cancel", style = AppAlert.Action.Style.SECONDARY),
+                                AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.SECONDARY),
                                 AppAlert.Action(
-                                    title = "Reject",
+                                    title = LanguageManager.string(R.string.notif_reject),
                                     style = AppAlert.Action.Style.DESTRUCTIVE,
                                     handler = { viewModel.store.send(NeedsActionAction.PerformReject(effect.item)) }
                                 )

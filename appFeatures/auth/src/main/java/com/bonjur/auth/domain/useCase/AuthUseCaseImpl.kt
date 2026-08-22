@@ -5,6 +5,8 @@ import com.bonjur.auth.data.DTOs.LoginRequest
 import com.bonjur.auth.data.dataSource.AuthDataSource
 import com.bonjur.auth.domain.models.AuthInterestsModel
 import com.bonjur.auth.domain.models.OnboardingUIModel
+import com.bonjur.auth.R
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -44,6 +46,10 @@ class AuthUseCaseImpl @Inject constructor(
         tokenManager.saveRefreshToken(response.refreshToken)
         tokenManager.saveUserId(response.userId)
         defaultStorage.saveInt(DefaultStorageKey.COMMUNITY_ID, communityId)
+        defaultStorage.saveString(
+            DefaultStorageKey.USER_COMMUNITY_ROLE,
+            response.userCommunityRole
+        )
         defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, true)
         return response.isFirstLogin
     }
@@ -51,28 +57,29 @@ class AuthUseCaseImpl @Inject constructor(
     override fun onboarding(): List<OnboardingUIModel> = listOf(
         OnboardingUIModel(
             id = "1",
-            title = "Find Your \nPeople",
-            subtitle = "Join your university community and start connecting with like-minded friends.",
+            titleRes = R.string.auth_onboarding_1_title,
+            subtitleRes = R.string.auth_onboarding_1_subtitle,
             image = { Images.Icons.bigGraduationHat() }
         ),
         OnboardingUIModel(
             id = "2",
-            title = "Chat Your \nWay",
-            subtitle = "Send messages and share ideas instantly, all through your favorite apps.",
+            titleRes = R.string.auth_onboarding_2_title,
+            subtitleRes = R.string.auth_onboarding_2_subtitle,
             image = { Images.Icons.bigLamps() }
         ),
         OnboardingUIModel(
             id = "3",
-            title = "Make It \nYours",
-            subtitle = "Customize your app style and enjoy conversations your way.",
+            titleRes = R.string.auth_onboarding_3_title,
+            subtitleRes = R.string.auth_onboarding_3_subtitle,
             image = { Images.Icons.bigPeopleGroups() }
         )
     )
 
     override fun welcome(name: String): OnboardingUIModel = OnboardingUIModel(
         id = "1",
-        title = "Welcome $name",
-        subtitle = "Complete your profile for better interaction. It will take only 5 minutes.",
+        titleRes = R.string.auth_welcome_greeting,
+        subtitleRes = R.string.auth_welcome_subtitle,
+        titleArg = name,
         image = { Images.Icons.resume() }
     )
 
@@ -96,8 +103,16 @@ class AuthUseCaseImpl @Inject constructor(
     }
 
     override suspend fun genders(): List<SelectableListItemModel> = listOf(
-        SelectableListItemModel(id = 1, title = "Male", selected = false),
-        SelectableListItemModel(id = 2, title = "Female", selected = false)
+        SelectableListItemModel(
+            id = 1,
+            title = LanguageManager.string(R.string.auth_gender_male),
+            selected = false
+        ),
+        SelectableListItemModel(
+            id = 2,
+            title = LanguageManager.string(R.string.auth_gender_female),
+            selected = false
+        )
     )
 
     override suspend fun languages(): List<SelectableListItemModel> {

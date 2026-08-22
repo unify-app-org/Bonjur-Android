@@ -1,5 +1,7 @@
 package com.bonjur.member.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -117,17 +119,17 @@ private fun MenuScreen(
         )
 
         if (input.showChangeRole) {
-            MenuRow(title = "Change role", tint = Palette.black, onClick = onChangeRole)
+            MenuRow(title = stringResource(R.string.member_change_role), tint = Palette.black, onClick = onChangeRole)
             MenuDivider()
         }
         if (input.showReport) {
-            MenuRow(title = "Report user", tint = Palette.appBlue, onClick = onReport)
+            MenuRow(title = stringResource(R.string.member_report_user), tint = Palette.appBlue, onClick = onReport)
             MenuDivider()
         }
         MenuRow(
-            title = "Share",
+            title = stringResource(R.string.common_share),
             tint = Palette.graySecondary,
-            trailing = "Coming soon",
+            trailing = stringResource(R.string.common_coming_soon),
             enabled = false,
             onClick = {}
         )
@@ -183,10 +185,10 @@ private fun AssignRoleScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SheetHeader(title = "Assign role", onBack = onBack)
+        SheetHeader(title = stringResource(R.string.member_assign_role), onBack = onBack)
 
         Text(
-            text = "Choose a role for this member",
+            text = stringResource(R.string.member_choose_role),
             style = AppTypography.BodyTextMd.regular,
             color = Palette.graySecondary
         )
@@ -207,7 +209,7 @@ private fun AssignRoleScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             AppButton(
-                title = "Cancel",
+                title = stringResource(R.string.common_cancel),
                 onClick = onBack,
                 modifier = Modifier.weight(1f),
                 model = AppButtonModel(
@@ -217,7 +219,7 @@ private fun AssignRoleScreen(
                 )
             )
             AppButton(
-                title = "Confirm",
+                title = stringResource(R.string.member_confirm),
                 onClick = { onConfirm(selected) },
                 modifier = Modifier.weight(1f),
                 model = AppButtonModel(
@@ -282,7 +284,7 @@ private fun ReportScreen(
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 8.dp)
     ) {
-        SheetHeader(title = "Report user", onBack = onBack)
+        SheetHeader(title = stringResource(R.string.member_report_user), onBack = onBack)
 
         Column(
             modifier = Modifier
@@ -300,7 +302,7 @@ private fun ReportScreen(
         }
 
         AppButton(
-            title = "Report",
+            title = stringResource(R.string.common_report),
             onClick = { onSubmit(selected) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -370,7 +372,7 @@ private fun SheetHeader(title: String, onBack: () -> Unit) {
         ) {
             Icon(
                 painter = Images.Icons.xmark(),
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.common_back),
                 tint = Palette.black,
                 modifier = Modifier.size(20.dp)
             )

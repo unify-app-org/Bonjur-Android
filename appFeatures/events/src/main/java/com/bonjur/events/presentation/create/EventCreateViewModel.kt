@@ -1,5 +1,7 @@
 package com.bonjur.events.presentation.create
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
@@ -108,12 +110,12 @@ class EventCreateViewModel @Inject constructor(
                 }
                 .onFailure {
                     updateState(state.copy(clubsPhase = clubsPhaseFor(empty = false, failed = true)))
-                    AppSnackBar.show(title = "Couldn't load clubs", style = AppSnackBar.Style.ERROR)
+                    AppSnackBar.show(title = LanguageManager.string(R.string.events_clubs_load_fail), style = AppSnackBar.Style.ERROR)
                 }
             runCatching { dependencies.useCase.getCategories() }
                 .onSuccess { updateState(state.copy(categorySections = it)) }
                 .onFailure {
-                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                    AppSnackBar.show(title = LanguageManager.string(R.string.events_categories_load_fail), style = AppSnackBar.Style.ERROR)
                 }
             applyPrefill()
         }
@@ -239,7 +241,7 @@ class EventCreateViewModel @Inject constructor(
     private suspend fun createEvent(form: EventFormData) {
         dependencies.useCase.createEvent(form)
         AppSnackBar.show(
-            title = "Event created successfully",
+            title = LanguageManager.string(R.string.events_created),
             subtitle = "${form.name} · now active",
             style = AppSnackBar.Style.SUCCESS
         )
@@ -248,7 +250,7 @@ class EventCreateViewModel @Inject constructor(
     private suspend fun editEvent(eventId: String, form: EventFormData) {
         dependencies.useCase.editEvent(eventId, form)
         AppSnackBar.show(
-            title = "Event updated successfully",
+            title = LanguageManager.string(R.string.events_updated),
             subtitle = form.name,
             style = AppSnackBar.Style.SUCCESS
         )

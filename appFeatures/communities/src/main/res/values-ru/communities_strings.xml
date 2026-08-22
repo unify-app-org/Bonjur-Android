@@ -1,0 +1,37 @@
+<resources>
+    <string name="comm_info_section">Информация о сообществе</string>
+    <string name="comm_row_owner_contact">Контакт владельца</string>
+    <string name="comm_row_links">Ссылки</string>
+    <string name="comm_add_members">Добавить участников</string>
+    <string name="comm_all_member">Все участники</string>
+    <string name="comm_assign_role">Назначить роль</string>
+    <string name="comm_change_role">Изменить роль</string>
+    <string name="comm_choose_role">Выберите роль для участника</string>
+    <string name="comm_capacity_limit">Достигнут лимит вместимости</string>
+    <string name="comm_confirm">Подтвердить</string>
+    <string name="comm_role_update_fail">Не удалось обновить роль</string>
+    <string name="comm_role_updated">Роль обновлена</string>
+    <string name="comm_create_club">Создать клуб +</string>
+    <string name="comm_create_event">Создать новое событие +</string>
+    <string name="comm_no_faculties">Факультеты не найдены</string>
+    <string name="comm_no_members_found">Участники не найдены</string>
+    <string name="comm_no_members_yet">Пока нет участников</string>
+    <string name="comm_no_students_available">Нет доступных студентов</string>
+    <string name="comm_no_students_found">Студенты не найдены</string>
+    <string name="comm_owner_role">Владелец</string>
+    <string name="comm_president">Президент</string>
+    <string name="comm_report">Пожаловаться</string>
+    <string name="comm_report_user">Пожаловаться на пользователя</string>
+    <string name="comm_report_submitted">Жалоба отправлена</string>
+    <string name="comm_skip">Пропустить</string>
+    <string name="comm_next">Далее</string>
+    <string name="comm_select_all_member">выбрать всех</string>
+    <string name="comm_select_group">выбрать группу</string>
+    <string name="comm_view_all">показать все</string>
+    <string name="comm_row_location">Место</string>
+    <string name="comm_row_rules">Правила</string>
+    <string name="comm_clubs_empty">В этом сообществе пока нет клубов.</string>
+    <string name="comm_clubs_empty_long">В этом сообществе пока нет клубов. Станьте первым и создайте самый первый!</string>
+    <string name="comm_communities_empty">Пока нет сообществ. Загляните позже.</string>
+    <string name="comm_communities_title">Сообщества</string>
+</resources>

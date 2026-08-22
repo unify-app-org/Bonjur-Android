@@ -1,5 +1,7 @@
 package com.bonjur.profile.presentation.settings.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.profile.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
+import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.designSystem.components.topBar.AppTopBar
+import com.bonjur.designSystem.localization.LanguageSelectionView
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
@@ -34,10 +38,18 @@ fun ProfileSettingsView(
         AppTopBar(
             isScrolled = false,
             showTitle = true,
-            title = "Settings",
+            title = stringResource(R.string.settings_title),
             onBack = { store.send(ProfileSettingsAction.BackTapped) }
         )
         SettingsList(store)
+    }
+
+    if (store.state.showLanguagePicker) {
+        AppBottomSheet(onDismiss = { store.send(ProfileSettingsAction.DismissLanguagePicker) }) {
+            LanguageSelectionView { language ->
+                store.send(ProfileSettingsAction.LanguageSelected(language))
+            }
+        }
     }
 }
 

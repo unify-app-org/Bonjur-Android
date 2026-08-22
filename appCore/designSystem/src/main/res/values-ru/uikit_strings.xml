@@ -1,0 +1,48 @@
+<resources>
+    <string name="filter">Фильтр</string>
+    <string name="all">Все</string>
+    <string name="about">Описание</string>
+    <string name="events">События</string>
+    <string name="members">Участники</string>
+    <string name="clubs">Клубы</string>
+    <string name="hangouts">Тусовки</string>
+    <string name="capacity">Вместимость</string>
+    <string name="created_updated_date">Дата создания/обновления</string>
+    <string name="search">Поиск</string>
+    <string name="remove">Убрать</string>
+    <string name="apply">Применить</string>
+    <string name="owner">Владелец</string>
+    <string name="visibility_private">Приватный</string>
+    <string name="visibility_public">Публичный</string>
+    <string name="filter_subtitle">Выберите интересы, чтобы найти подходящие события сообщества.</string>
+    <string name="president">Президент</string>
+    <string name="vise_president">Вице-президент</string>
+    <string name="event_creators">Создатели событий</string>
+    <string name="member">Участник</string>
+    <string name="vice_president">Вице-президент</string>
+    <string name="creator">Создатель</string>
+    <string name="notification">Уведомления</string>
+    <string name="count_events">%1$d событий</string>
+    <string name="count_members">%1$d участников</string>
+    <string name="count_of_members">%1$d из %2$d участников</string>
+    <string name="count_of">%1$d из %2$d</string>
+    <string name="count_clubs">%1$d клубов</string>
+    <string name="field_optional">(необязательно)</string>
+    <string name="field_write_something">Напишите что-нибудь</string>
+    <string name="common_coming_soon">Скоро</string>
+    <string name="count_students">%1$d студентов</string>
+    <string name="count_see_all_members">Показать всех (%1$d)</string>
+    <string name="language_title">Язык</string>
+    <string name="language_english">Английский</string>
+    <string name="language_azerbaijan">Азербайджанский</string>
+    <string name="language_russian">Русский</string>
+    <string name="common_dont_show_again">Больше не показывать</string>
+
+    <!-- Document preview -->
+    <string name="document_preview_loading">Открываем документ…</string>
+    <string name="document_preview_failed">Не удалось открыть этот файл</string>
+    <string name="document_preview_retry">Попробовать снова</string>
+    <string name="document_preview_unsupported">Этот тип файла нельзя показать здесь</string>
+    <string name="document_preview_open_external">Открыть в другом приложении</string>
+    <string name="document_preview_share">Поделиться</string>
+</resources>

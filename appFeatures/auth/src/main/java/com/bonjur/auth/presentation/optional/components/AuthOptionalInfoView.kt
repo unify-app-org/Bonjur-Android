@@ -12,9 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.bonjur.auth.R
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
@@ -184,13 +186,13 @@ private fun BottomSection(
     ) {
         if (currentStep > 0) {
             AppButton(
-                title = "Back",
+                title = stringResource(R.string.auth_back),
                 model = AppButtonModel(type = ButtonType.Tertiary),
                 onClick = onSkip
             )
         }
         AppButton(
-            title = "Next",
+            title = stringResource(R.string.auth_next),
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = onNext
         )

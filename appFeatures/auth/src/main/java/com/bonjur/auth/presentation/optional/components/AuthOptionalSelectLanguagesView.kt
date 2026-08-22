@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import com.bonjur.auth.R
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
@@ -16,6 +17,7 @@ import com.bonjur.designSystem.components.selectableList.SelectableListItem
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.material3.Text
 import com.bonjur.designSystem.components.serach.SearchView
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
@@ -55,13 +57,13 @@ private fun TopView() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Which language do you know?",
+            text = stringResource(R.string.auth_languages_title),
             style = AppTypography.TitleXL.extraBold,
             color = Palette.black,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Select languages you know",
+            text = stringResource(R.string.auth_languages_subtitle),
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary,
             modifier = Modifier.fillMaxWidth()

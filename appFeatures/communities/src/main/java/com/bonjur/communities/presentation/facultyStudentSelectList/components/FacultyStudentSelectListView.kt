@@ -1,5 +1,7 @@
 package com.bonjur.communities.presentation.facultyStudentSelectList.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.communities.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -66,7 +68,7 @@ fun FacultyStudentSelectListView(
                         modifier = Modifier.fillMaxWidth().padding(40.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No members found", style = AppTypography.TextL.medium, color = Palette.blackMedium)
+                        Text(stringResource(R.string.comm_no_members_found), style = AppTypography.TextL.medium, color = Palette.blackMedium)
                     }
                 }
             }

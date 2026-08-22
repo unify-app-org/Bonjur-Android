@@ -17,6 +17,9 @@ interface ClubsDataSource {
         logo: ByteArray?,
         cover: ByteArray?
     ): ClubDetailResponse
+    /** POST api/cs/v1/clubs/verify/{clubId} — no response body. */
+    suspend fun requestVerify(clubId: Int): ByteArray
+
     suspend fun editClub(
         clubId: Int,
         request: ClubCreateRequest,

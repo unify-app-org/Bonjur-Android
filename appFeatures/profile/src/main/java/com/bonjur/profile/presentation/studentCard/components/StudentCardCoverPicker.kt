@@ -1,5 +1,7 @@
 package com.bonjur.profile.presentation.studentCard.components
 
+import com.bonjur.profile.R
+import androidx.compose.ui.res.stringResource
 import CardBackgroundView
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -162,7 +164,7 @@ private fun CoverItemView(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Default",
+                text = stringResource(R.string.profile_card_default),
                 style = AppTypography.BodyTextMd.regular,
                 color = if (isSelected) Palette.primary else Palette.graySecondary
             )

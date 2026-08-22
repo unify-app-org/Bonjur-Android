@@ -34,10 +34,15 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.layout.ContentScale
 import com.bonjur.auth.presentation.onboarding.model.OnboardingAction
 import com.bonjur.auth.presentation.onboarding.model.OnboardingSideEffect
+import com.bonjur.auth.R
 import com.bonjur.auth.presentation.onboarding.model.OnboardingViewState
+import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designSystem.localization.LanguageSelectionView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun OnboardingView(
@@ -45,6 +50,7 @@ fun OnboardingView(
 ) {
     val state = store.state
     var currentPage by remember { mutableStateOf(0) }
+    var showLanguagePicker by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         currentPage = 0
@@ -63,8 +69,13 @@ fun OnboardingView(
                 .padding(16.dp)
                 .height(44.dp)
         ) {
-            if (currentPage > 0) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+            // Back (when past slide 1) on the left, language flag on the right —
+            // language is switchable before sign-in, mirroring iOS.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (currentPage > 0) {
                     Image(
                         painter = Images.Icons.arrowLeft01(),
                         contentDescription = null,
@@ -77,25 +88,20 @@ fun OnboardingView(
                             }
                             .size(width = 28.dp, height = 28.dp)
                     )
-                    Spacer(modifier = Modifier.weight(1f))
                 }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = Images.Icons.logoWithText(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .width(105.dp)
-                        .height(32.dp),
-                    contentScale = ContentScale.FillBounds
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = LanguageManager.language.flag,
+                    fontSize = 26.sp,
+                    modifier = Modifier.clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { showLanguagePicker = true }
                 )
             }
+
+            // No logo here — iOS onboarding shows only the back arrow, the
+            // language flag and the slide artwork.
         }
 
         AppTabView(
@@ -115,12 +121,14 @@ fun OnboardingView(
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Text(
-                        text = item.title,
+                        text = item.titleArg
+                            ?.let { stringResource(item.titleRes, it) }
+                            ?: stringResource(item.titleRes),
                         style = AppTypography.TitleXL.extraBold,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                     Text(
-                        text = item.subtitle,
+                        text = stringResource(item.subtitleRes),
                         style = AppTypography.BodyTextMd.regular,
                         color = Palette.grayPrimary,
                         modifier = Modifier.padding(horizontal = 16.dp)
@@ -142,14 +150,14 @@ fun OnboardingView(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             AppButton(
-                title = "Skip",
+                title = stringResource(R.string.auth_skip),
                 model = AppButtonModel(type = ButtonType.Tertiary),
                 onClick = {
                     store.send(OnboardingAction.SkipClicked)
                 }
             )
             AppButton(
-                title = "Next",
+                title = stringResource(R.string.auth_next),
                 model = AppButtonModel(contentSize = ContentSize.Fill),
                 onClick = {
                     currentPage += 1
@@ -161,5 +169,13 @@ fun OnboardingView(
             )
         }
     }
-}
 
+    if (showLanguagePicker) {
+        AppBottomSheet(onDismiss = { showLanguagePicker = false }) {
+            LanguageSelectionView { language ->
+                LanguageManager.select(language)
+                showLanguagePicker = false
+            }
+        }
+    }
+}

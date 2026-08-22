@@ -1,5 +1,7 @@
 package com.bonjur.designSystem.components.fieldSchema
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -395,7 +397,7 @@ private fun FieldLabel(field: AppFieldSchema.Field) {
             Text(text = "*", style = AppTypography.HeadingMd.medium, color = Palette.green900)
         } else {
             Text(
-                text = "(optional)",
+                text = LanguageManager.string(R.string.field_optional),
                 style = AppTypography.BodyTextSm.regular,
                 color = Palette.blackMedium
             )
@@ -468,7 +470,7 @@ private fun DateTimeField(
                 }) { Text(text = "Next") }
             },
             dismissButton = {
-                TextButton(onClick = { showDate = false }) { Text(text = "Cancel") }
+                TextButton(onClick = { showDate = false }) { Text(text = LanguageManager.string(R.string.common_cancel)) }
             }
         ) {
             DatePicker(state = dateState)

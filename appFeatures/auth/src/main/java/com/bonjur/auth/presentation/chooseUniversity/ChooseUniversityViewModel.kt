@@ -2,6 +2,8 @@ package com.bonjur.auth.presentation.chooseUniversity
 
 import android.app.Activity
 import androidx.lifecycle.viewModelScope
+import com.bonjur.auth.R
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.auth.domain.useCase.AuthUseCase
 import com.bonjur.auth.helper.MicrosoftAuthManager
@@ -76,7 +78,7 @@ class ChooseUniversityViewModel @Inject constructor(
                 val email = result.email
                 val idToken = result.idToken
                 if (result.error != null || email.isNullOrBlank()) {
-                    postEffect(ChooseUniversitySideEffect.Error("Microsoft Sign In Failed"))
+                    postEffect(ChooseUniversitySideEffect.Error(LanguageManager.string(R.string.auth_microsoft_failed)))
                     return@launch
                 }
                 val isFirstLogin = dependencies.useCase.login(
@@ -94,7 +96,7 @@ class ChooseUniversityViewModel @Inject constructor(
                     navigator.navigateAndClearStack(AppScreens.Main.route)
                 }
             } catch (e: Exception) {
-                postEffect(ChooseUniversitySideEffect.Error(e.message ?: "Microsoft Sign In Failed"))
+                postEffect(ChooseUniversitySideEffect.Error(e.message ?: LanguageManager.string(R.string.auth_microsoft_failed)))
             } finally {
                 postEffect(ChooseUniversitySideEffect.Loading(false))
             }

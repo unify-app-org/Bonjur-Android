@@ -1,0 +1,26 @@
+<resources>
+    <!--
+      Counts go through plurals, not "$n members": Russian needs three forms and
+      iOS's flat "%d members" cannot express that. Azerbaijani does not inflect
+      the noun after a numeral, so both slots carry the same form.
+    -->
+    <plurals name="members_count">
+        <item quantity="one">%1$d member</item>
+        <item quantity="other">%1$d members</item>
+    </plurals>
+
+    <plurals name="clubs_count">
+        <item quantity="one">%1$d club</item>
+        <item quantity="other">%1$d clubs</item>
+    </plurals>
+
+    <plurals name="events_count">
+        <item quantity="one">%1$d event</item>
+        <item quantity="other">%1$d events</item>
+    </plurals>
+
+    <plurals name="clubs_awaiting_approval">
+        <item quantity="one">%1$d club awaiting your approval</item>
+        <item quantity="other">%1$d clubs awaiting your approval</item>
+    </plurals>
+</resources>

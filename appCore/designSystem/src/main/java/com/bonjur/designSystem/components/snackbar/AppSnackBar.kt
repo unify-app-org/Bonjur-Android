@@ -88,14 +88,14 @@ internal val AppSnackBar.Style.backgroundColor: Color
     get() = when (this) {
         AppSnackBar.Style.SUCCESS -> Palette.greenLight
         AppSnackBar.Style.WARNING -> Palette.cardBgOrange.copy(alpha = 0.18f)
-        AppSnackBar.Style.ERROR -> Palette.cardBgRed.copy(alpha = 0.12f)
+        AppSnackBar.Style.ERROR -> Palette.destructiveRed.copy(alpha = 0.12f)
     }
 
 internal val AppSnackBar.Style.iconColor: Color
     get() = when (this) {
         AppSnackBar.Style.SUCCESS -> Palette.green900
         AppSnackBar.Style.WARNING -> Palette.cardBgOrange
-        AppSnackBar.Style.ERROR -> Palette.cardBgRed
+        AppSnackBar.Style.ERROR -> Palette.destructiveRed
     }
 
 internal val AppSnackBar.Style.iconGlyph: String
@@ -161,8 +161,12 @@ internal fun AppSnackBarView(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp))
+            .shadow(elevation = 8.dp, shape = RoundedCornerShape(16.dp), clip = false)
             .clip(RoundedCornerShape(16.dp))
+            // Opaque white base under the tint. The style colours are translucent
+            // (0.12–0.18 alpha), so painting them straight onto the shadow let the
+            // elevation bleed through and read as a muddy halo around the card.
+            .background(Palette.white)
             .background(style.backgroundColor)
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),

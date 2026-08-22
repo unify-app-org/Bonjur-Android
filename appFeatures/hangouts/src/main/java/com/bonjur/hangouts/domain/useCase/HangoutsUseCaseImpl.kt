@@ -1,5 +1,9 @@
 package com.bonjur.hangouts.domain.useCase
 
+import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.commonModel.dialablePhone
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.categorieChips.CategorySection
@@ -99,8 +103,12 @@ class HangoutsUseCaseImpl @Inject constructor(
     }
 
     override suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int, keyword: String?): MembersPage {
-        val users = dataSource.getHangoutMembers(hangoutId, page, size, keyword).content.map { it.toCellModel() }
-        return MembersPage(members = users, hasMore = users.size >= size)
+        val response = dataSource.getHangoutMembers(hangoutId, page, size, keyword)
+        return MembersPage(
+            members = response.content.map { it.toCellModel() },
+            hasMore = response.hasMore,
+            totalCount = response.totalElements
+        )
     }
 
     private fun HangoutMemberResponse.toCellModel() = MemberCellModel(
@@ -175,9 +183,9 @@ class HangoutsUseCaseImpl @Inject constructor(
             request == AppUIEntities.RequestType.JOINED
         ) return null
         if (request == AppUIEntities.RequestType.PENDING) {
-            return HangoutDetails.JoinButton(title = "Request sent", disabled = true)
+            return HangoutDetails.JoinButton(title = LanguageManager.string(R.string.hangouts_join_request_sent), disabled = true)
         }
-        val title = if (visibility?.uppercase() == "PUBLIC") "Join" else "Request"
+        val title = if (visibility?.uppercase() == "PUBLIC") LanguageManager.string(R.string.hangouts_join) else LanguageManager.string(R.string.hangouts_request)
         return HangoutDetails.JoinButton(title = title, disabled = false)
     }
 
@@ -206,24 +214,24 @@ class HangoutsUseCaseImpl @Inject constructor(
 
     /** Mirrors iOS `HangoutRepoImpl.fetchDetailHangout` info sections (no reminders/cover). */
     private fun buildInfoData(detail: HangoutDetailResponse): List<HangoutDetails.Info> = buildList {
-        appendSection("About", listOf(infoRow(title = null, value = detail.about)))
+        appendSection(LanguageManager.string(R.string.hangouts_about_label), listOf(infoRow(title = null, value = detail.about)))
 
         appendSection(
-            "Event info",
+            "Hangout info",
             listOf(
-                infoRow(title = "Date", value = detail.hangoutDate.meetupDate()),
+                infoRow(title = LanguageManager.string(R.string.hangouts_row_date), value = detail.hangoutDate.meetupDate()),
                 infoRow(
-                    title = "Owner Contact",
+                    title = LanguageManager.string(R.string.hangouts_row_owner_contact),
                     value = cleaned(detail.ownerContact),
                     phoneNumber = detail.ownerContact.dialablePhone()
                 ),
-                infoRow(title = "Capacity", value = capacityText(detail.membersCount, detail.capacity)),
-                infoRow(title = "Rules", value = detail.rules),
-                infoRow(title = "Location", value = detail.location)
+                infoRow(title = LanguageManager.string(R.string.hangouts_capacity_label), value = capacityText(detail.membersCount, detail.capacity)),
+                infoRow(title = LanguageManager.string(R.string.hangouts_rules_label), value = detail.rules),
+                infoRow(title = LanguageManager.string(R.string.hangouts_location_label), value = detail.location)
             )
         )
 
-        appendSection("Links", detail.links.map {
+        appendSection(LanguageManager.string(R.string.hangouts_row_links), detail.links.map {
             infoRow(title = it.name, value = it.url, isLink = true)
         })
     }
@@ -254,16 +262,9 @@ class HangoutsUseCaseImpl @Inject constructor(
 
     private fun capacityText(members: Int?, capacity: Int?): String? {
         if (capacity == null || capacity <= 0) return null
-        return "${members ?: 0}/$capacity members"
+        return memberOfCapacityText(members ?: 0, capacity)
     }
 
-    /** Returns the contact only when it looks dialable. Mirrors iOS `phoneNumber`. */
-    private fun String?.dialablePhone(): String? {
-        val v = cleaned(this) ?: return null
-        val digits = v.count { it.isDigit() }
-        val allowed = v.all { it.isDigit() || it in "+ -()" }
-        return if (allowed && digits >= 7) v else null
-    }
 
     // MARK: - Date helpers
 
@@ -281,7 +282,7 @@ class HangoutsUseCaseImpl @Inject constructor(
     /** Meetup date+time in device-local time, e.g. "14 June 2026 18:00". */
     private fun String?.meetupDate(): String? {
         val date = parseIso(this) ?: return null
-        return SimpleDateFormat("d MMMM yyyy HH:mm", Locale.US).apply {
+        return SimpleDateFormat("d MMMM yyyy HH:mm", LanguageManager.locale).apply {
             timeZone = TimeZone.getDefault()
         }.format(date)
     }
@@ -328,21 +329,9 @@ class HangoutsUseCaseImpl @Inject constructor(
     }
 
     private fun String?.toAccessType(): AppUIEntities.AccessType =
-        if (this?.uppercase() == "PUBLIC") AppUIEntities.AccessType.PUBLIC
-        else AppUIEntities.AccessType.PRIVATE
+        AppUIEntities.AccessType.fromApi(this)
 
-    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
-        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
-        "PENDING" -> AppUIEntities.RequestType.PENDING
-        "REJECTED" -> AppUIEntities.RequestType.REJECTED
-        else -> AppUIEntities.RequestType.NONE
-    }
+    private fun String?.toRequestType(): AppUIEntities.RequestType = AppUIEntities.RequestType.fromApi(this)
 
-    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = when (this?.uppercase()) {
-        "MEMBER" -> AppUIEntities.UserActivityRole.MEMBER
-        "PRESIDENT" -> AppUIEntities.UserActivityRole.PRESIDENT
-        "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
-        "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
-        else -> AppUIEntities.UserActivityRole.NOT_JOINED
-    }
+    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = AppUIEntities.UserActivityRole.fromApi(this)
 }

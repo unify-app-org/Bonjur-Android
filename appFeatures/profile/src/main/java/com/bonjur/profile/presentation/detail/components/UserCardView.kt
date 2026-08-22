@@ -1,5 +1,7 @@
 package com.bonjur.profile.presentation.detail.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.profile.R
 import CardBackgroundView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -114,9 +116,9 @@ private fun UserInfoContent(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            AdditionalInfoItem(title = "course", subtitle = model.course)
-            AdditionalInfoItem(title = "degree", subtitle = model.degree)
-            AdditionalInfoItem(title = "entry", subtitle = model.entryYear)
+            AdditionalInfoItem(title = stringResource(R.string.profile_card_course), subtitle = model.course)
+            AdditionalInfoItem(title = stringResource(R.string.profile_card_degree), subtitle = model.degree)
+            AdditionalInfoItem(title = stringResource(R.string.profile_card_entry), subtitle = model.entryYear)
         }
 
         // Email footer

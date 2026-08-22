@@ -44,6 +44,12 @@ sealed class ClubsEndpoints : AppEndpoint {
         override val multipart = payload
     }
 
+    /** Asks the community admins to verify this club. Returns no body. */
+    data class RequestVerify(val clubId: Int) : ClubsEndpoints() {
+        override val path = "api/cs/v1/clubs/verify/$clubId"
+        override val method = NetworkMethod.POST
+    }
+
     data class EditClub(val clubId: Int, val payload: MultipartPayload) : ClubsEndpoints() {
         override val path = "api/cs/v1/clubs/$clubId"
         override val method = NetworkMethod.PUT

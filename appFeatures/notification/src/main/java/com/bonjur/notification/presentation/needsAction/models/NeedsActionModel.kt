@@ -1,5 +1,7 @@
 package com.bonjur.notification.presentation.needsAction.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R as DesignR
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -13,9 +15,9 @@ enum class ActionTab(
     override val title: String,
     override val id: String
 ) : SegmentedPickerOption {
-    EVENTS("Events", "events"),
-    HANGOUTS("Hangouts", "hangouts"),
-    CLUBS("Clubs", "clubs")
+    EVENTS(LanguageManager.string(DesignR.string.events), "events"),
+    HANGOUTS(LanguageManager.string(DesignR.string.hangouts), "hangouts"),
+    CLUBS(LanguageManager.string(DesignR.string.clubs), "clubs")
 }
 
 // MARK: - Load phase

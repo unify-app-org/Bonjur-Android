@@ -38,7 +38,11 @@ interface ClubsUseCase {
 
     suspend fun getCategories(): List<CategorySection>
 
-    suspend fun createClub(form: ClubFormData)
+    /** Creates the club and returns the new club id (needed to fire the verify request). */
+    suspend fun createClub(form: ClubFormData): Int?
+
+    /** Asks community admins to verify this club. */
+    suspend fun requestVerify(clubId: Int)
 
     suspend fun editClub(clubId: Int, form: ClubFormData)
 

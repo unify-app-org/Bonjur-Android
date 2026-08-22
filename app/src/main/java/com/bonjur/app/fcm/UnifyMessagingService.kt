@@ -1,5 +1,6 @@
 package com.bonjur.app.fcm
 
+import com.bonjur.designSystem.localization.LanguageManager
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -52,7 +53,7 @@ class UnifyMessagingService : FirebaseMessagingService() {
      *  or for data-only messages in any state. */
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val title = message.notification?.title ?: message.data["title"] ?: "Unify"
+        val title = message.notification?.title ?: message.data["title"] ?: LanguageManager.string(R.string.app_name)
         val body = message.notification?.body ?: message.data["body"] ?: ""
         showNotification(title, body)
     }

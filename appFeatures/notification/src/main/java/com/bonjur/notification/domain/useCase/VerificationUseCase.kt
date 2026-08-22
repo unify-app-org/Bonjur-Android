@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 interface VerificationUseCase {
     suspend fun fetchPending(page: Int, size: Int): VerificationPageResult
-    suspend fun setStatus(clubId: Int, accept: Boolean)
+    suspend fun setStatus(clubId: Int, accept: Boolean, rejectionReason: String? = null)
 }
 
 class VerificationUseCaseImpl @Inject constructor(
@@ -22,7 +22,7 @@ class VerificationUseCaseImpl @Inject constructor(
         )
     }
 
-    override suspend fun setStatus(clubId: Int, accept: Boolean) {
-        dataSource.setClubVerification(clubId, accept)
+    override suspend fun setStatus(clubId: Int, accept: Boolean, rejectionReason: String?) {
+        dataSource.setClubVerification(clubId, accept, rejectionReason)
     }
 }

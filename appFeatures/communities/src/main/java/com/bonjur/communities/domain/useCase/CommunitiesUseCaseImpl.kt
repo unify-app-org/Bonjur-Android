@@ -1,5 +1,9 @@
 package com.bonjur.communities.domain.useCase
 
+import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.communities.R
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.communities.data.DTOs.CommunityClubResponse
@@ -51,9 +55,17 @@ class CommunitiesUseCaseImpl @Inject constructor(
         size: Int,
         keyword: String?
     ): MembersPage {
-        val users = dataSource.fetchCommunityMembers(communityId, page = page, size = size, keyword = keyword)
-            .content.map { it.toCellModel() }
-        return MembersPage(members = users, hasMore = users.size >= size)
+        val response = dataSource.fetchCommunityMembers(
+            communityId,
+            page = page,
+            size = size,
+            keyword = keyword
+        )
+        return MembersPage(
+            members = response.content.map { it.toCellModel() },
+            hasMore = response.hasMore,
+            totalCount = response.totalElements
+        )
     }
 
     override suspend fun assignRole(
@@ -73,6 +85,8 @@ class CommunitiesUseCaseImpl @Inject constructor(
         CommunityDetails.UIModel(
             name = name,
             membersCount = membersCount ?: 0,
+            clubsCount = clubCount,
+            eventsCount = eventCount,
             logo = logoUrl,
             coverImage = backgroundUrl,
             coverColorType = backgroundColour.toBackgroundType(),
@@ -111,23 +125,23 @@ class CommunitiesUseCaseImpl @Inject constructor(
     )
 
     private fun buildInfoData(detail: CommunityDetailResponse): List<CommunityDetails.Info> = buildList {
-        appendSection(this, "About", listOf(row(title = null, value = detail.about)))
+        appendSection(this, LanguageManager.string(DesignR.string.about), listOf(row(title = null, value = detail.about)))
 
         appendSection(
-            this, "Event info", listOf(
-                row(title = "Created/Updated Date", value = modifiedDate(detail.modifiedAt)),
+            this, LanguageManager.string(R.string.comm_info_section), listOf(
+                row(title = LanguageManager.string(DesignR.string.created_updated_date), value = modifiedDate(detail.modifiedAt)),
                 row(
-                    title = "Owner Contact",
+                    title = LanguageManager.string(R.string.comm_row_owner_contact),
                     value = cleaned(detail.ownerContact),
                     phoneNumber = phoneNumber(detail.ownerContact)
                 ),
-                row(title = "Capacity", value = capacityText(detail.membersCount, detail.capacity)),
-                row(title = "Rules", value = detail.rule),
-                row(title = "Location", value = detail.location)
+                row(title = LanguageManager.string(DesignR.string.capacity), value = capacityText(detail.membersCount, detail.capacity)),
+                row(title = LanguageManager.string(R.string.comm_row_rules), value = detail.rule),
+                row(title = LanguageManager.string(R.string.comm_row_location), value = detail.location)
             )
         )
 
-        appendSection(this, "Links", (detail.links ?: emptyList()).map { row(title = it.name, value = it.url, isLink = true) })
+        appendSection(this, LanguageManager.string(R.string.comm_row_links), (detail.links ?: emptyList()).map { row(title = it.name, value = it.url, isLink = true) })
     }
 
     // MARK: - Info builders (mirror iOS private CommunityRepoImpl extensions)
@@ -166,7 +180,7 @@ class CommunitiesUseCaseImpl @Inject constructor(
 
     private fun capacityText(members: Int?, capacity: Int?): String? {
         if (capacity == null || capacity <= 0) return null
-        return "${members ?: 0}/$capacity members"
+        return memberOfCapacityText(members ?: 0, capacity)
     }
 
     /** `dd-MM-yyyy HH:mm:ss` audit stamp → date-only display; falls back to raw on parse failure. */
@@ -174,7 +188,7 @@ class CommunitiesUseCaseImpl @Inject constructor(
         val v = cleaned(value) ?: return null
         return runCatching {
             val parsed = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(v)
-            parsed?.let { SimpleDateFormat("d MMMM yyyy", Locale.getDefault()).format(it) }
+            parsed?.let { SimpleDateFormat("d MMMM yyyy", LanguageManager.locale).format(it) }
         }.getOrNull()?.takeIf { it.isNotBlank() } ?: v
     }
 
@@ -210,7 +224,7 @@ class CommunitiesUseCaseImpl @Inject constructor(
     private fun CommunityListResponse.toCardModel() = CommunityCardModel(
         id = id ?: 0,
         name = name ?: "-",
-        subTitle = "Community",
+        subTitle = LanguageManager.string(DesignR.string.community_subtitle),
         logoURL = profile ?: "",
         memberCount = membersCount ?: 0,
         members = members.mapIndexed { index, m -> AppUIEntities.Member(id = index, profileImage = m.url) },
@@ -277,20 +291,7 @@ class CommunitiesUseCaseImpl @Inject constructor(
         AppUIEntities.UserActivityRole.NOT_JOINED -> ""
     }
 
-    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = when (this?.uppercase()) {
-        "GREEN", "PRIMARY" -> AppUIEntities.BackgroundType.Primary
-        "BLUE", "SECONDARY" -> AppUIEntities.BackgroundType.Secondary
-        "PURPLE", "TERTIARY" -> AppUIEntities.BackgroundType.Tertiary
-        "RED" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Red)
-        "ORANGE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Orange)
-        "PINK" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Pink)
-        else -> AppUIEntities.BackgroundType.Primary
-    }
+    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.fromApi(this)
 
-    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
-        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
-        "PENDING" -> AppUIEntities.RequestType.PENDING
-        "REJECTED" -> AppUIEntities.RequestType.REJECTED
-        else -> AppUIEntities.RequestType.NONE
-    }
+    private fun String?.toRequestType(): AppUIEntities.RequestType = AppUIEntities.RequestType.fromApi(this)
 }

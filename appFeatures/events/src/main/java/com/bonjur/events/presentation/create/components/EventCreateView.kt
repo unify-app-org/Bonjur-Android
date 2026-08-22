@@ -1,5 +1,7 @@
 package com.bonjur.events.presentation.create.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.events.R
 import CardBackgroundView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -66,8 +68,8 @@ fun EventCreateView(
                     AppEmptyView(
                         model = AppEmptyModel(
                             icon = Images.Icons.helpCircle(),
-                            text = "Couldn't load your clubs",
-                            buttonTitle = "Retry"
+                            text = stringResource(R.string.events_your_clubs_load_fail),
+                            buttonTitle = stringResource(R.string.events_retry)
                         ),
                         onButtonClick = { store.send(EventCreateAction.RetryClubsTapped) }
                     )
@@ -152,7 +154,7 @@ private fun BoxScope.FormBody(
                 Text(text = state.topTitle, style = AppTypography.TitleL.extraBold)
 
                 Text(
-                    text = "Fields marked with * are required.",
+                    text = stringResource(R.string.events_required_hint),
                     style = AppTypography.BodyTextMd.regular,
                     color = Palette.appBlue
                 )
@@ -183,7 +185,7 @@ private fun BoxScope.FormBody(
         }
 
         AppButton(
-            title = "Continue",
+            title = stringResource(R.string.events_continue),
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = { store.send(EventCreateAction.ContinueTapped) },
             modifier = Modifier
@@ -235,21 +237,20 @@ private fun NoEligibleClubsCard(
             )
         }
         Text(
-            text = "No clubs to post to. To create an event you must be a president, " +
-                "vice president, or organizer of a verified club.",
+            text = stringResource(R.string.events_no_clubs_to_post),
             style = AppTypography.BodyTextSm.medium,
             color = Palette.blackMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
         AppButton(
-            title = "Create a club",
+            title = stringResource(R.string.events_create_club),
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = onCreateClub,
             modifier = Modifier.fillMaxWidth()
         )
         AppButton(
-            title = "Browse clubs",
+            title = stringResource(R.string.events_browse_clubs),
             model = AppButtonModel(type = ButtonType.Secondary, contentSize = ContentSize.Fill),
             onClick = onBrowseClubs,
             modifier = Modifier.fillMaxWidth()
@@ -294,7 +295,7 @@ private fun ClubSelector(
         modifier = Modifier.alpha(if (isDisabled) 0.5f else 1f)
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(text = "Choose club", style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
+            Text(text = stringResource(R.string.events_choose_club), style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
             Text(text = "*", style = AppTypography.HeadingMd.medium, color = Palette.green900)
         }
         Row(
@@ -310,7 +311,7 @@ private fun ClubSelector(
         ) {
             ClubAvatar(url = selectedClub?.profileUrl, size = 32.dp)
             Text(
-                text = selectedName ?: "Select club",
+                text = selectedName ?: stringResource(R.string.events_select_club),
                 style = AppTypography.BodyTextMd.regular,
                 color = if (selectedName == null) Palette.grayPrimary else Palette.blackHigh,
                 modifier = Modifier.weight(1f)
@@ -352,13 +353,13 @@ private fun ClubPicker(
             .padding(top = 24.dp, bottom = 8.dp)
     ) {
         Text(
-            text = "Select club",
+            text = stringResource(R.string.events_select_club),
             style = AppTypography.HeadingXL.bold,
             color = Palette.blackHigh,
             modifier = Modifier.padding(top = 8.dp)
         )
         Text(
-            text = "Select the club where this event will be created.",
+            text = stringResource(R.string.events_select_club_hint),
             style = AppTypography.BodyTextSm.regular,
             color = Palette.blackMedium,
             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
@@ -407,7 +408,7 @@ private fun ClubPickerRow(
                 color = Palette.blackHigh
             )
             Text(
-                text = club.role.title,
+                text = club.role.displayTitle,
                 style = AppTypography.BodyTextSm.regular,
                 color = Palette.blackMedium
             )

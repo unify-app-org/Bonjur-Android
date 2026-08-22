@@ -7,6 +7,10 @@
 
 package com.bonjur.events.presentation.list.models
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import java.util.UUID
 
@@ -31,19 +35,19 @@ data class EventsCardModel(
     val buttonTitle: String
         get() = when (requestType) {
             AppUIEntities.RequestType.JOINED -> ""
-            AppUIEntities.RequestType.REJECTED -> "Request again"
-            AppUIEntities.RequestType.PENDING -> "Request sent"
+            AppUIEntities.RequestType.REJECTED -> LanguageManager.string(R.string.events_request_again)
+            AppUIEntities.RequestType.PENDING -> LanguageManager.string(R.string.events_join_request_sent)
             AppUIEntities.RequestType.NONE -> when (accessType) {
-                AppUIEntities.AccessType.PUBLIC -> "Join"
-                AppUIEntities.AccessType.PRIVATE -> "Request"
+                AppUIEntities.AccessType.PUBLIC -> LanguageManager.string(R.string.events_join)
+                AppUIEntities.AccessType.PRIVATE -> LanguageManager.string(R.string.events_request)
             }
         }
 
     val memberCountText: String
         get() = if (totalCapacity != null) {
-            "$memberCount of $totalCapacity"
+            LanguageManager.string(DesignR.string.count_of, memberCount, totalCapacity)
         } else {
-            "$memberCount members"
+            memberCountText(memberCount)
         }
     
     data class Club(

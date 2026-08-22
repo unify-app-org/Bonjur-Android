@@ -31,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -38,6 +39,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.bonjur.auth.R
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
@@ -107,13 +109,13 @@ private fun TopView() {
             .spacedBy(16.dp)
     ) {
         Text(
-            text = "Your profile photo",
+            text = stringResource(R.string.auth_photo_title),
             style = AppTypography.TitleXL.extraBold,
             color = Palette.black,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "Upload a photo to get started",
+            text = stringResource(R.string.auth_photo_subtitle),
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary,
             modifier = Modifier.fillMaxWidth()
@@ -179,7 +181,7 @@ private fun SelectedImage(
         bitmap?.let {
             Image(
                 bitmap = it.asImageBitmap(),
-                contentDescription = "Selected photo",
+                contentDescription = stringResource(R.string.auth_selected_photo),
                 modifier = Modifier
                     .width(width)
                     .height(height)
@@ -233,7 +235,7 @@ private fun ChangeOrAddPhotoButton(
                 modifier = Modifier.size(16.dp)
             )
             Text(
-                text = if (hasImage) "Change" else "Add",
+                text = if (hasImage) stringResource(R.string.auth_photo_change) else stringResource(R.string.auth_photo_add),
                 color = Palette.black,
                 style = AppTypography.BodyTextMd.regular
             )

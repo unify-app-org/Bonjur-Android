@@ -1,5 +1,18 @@
 package com.bonjur.clubs.presentation.components
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designSystem.commonModel.clubCountText
+import com.bonjur.designSystem.commonModel.eventCountText
+import androidx.compose.ui.platform.LocalContext
+import android.net.Uri
+import android.content.Intent
+import android.content.Context
+import android.content.ClipboardManager
+import android.content.ClipData
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.clubs.R
 import CardBackgroundView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -34,6 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.clubs.presentation.model.*
@@ -252,22 +266,22 @@ fun ClubDetailsView(
             modifier = Modifier.zIndex(1f)
         )
 
-        // Join / Request button — only for not-yet-joined viewers
-        if (store.state.showJoinButton) {
+        // Join / Request button — driven by the mapped joinButton (mirrors iOS)
+        store.state.uiModel?.joinButton?.let { joinButton ->
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(Color.White)
+                    // Edge-to-edge: clear the system navigation bar before padding.
+                    .navigationBarsPadding()
                     .padding(16.dp)
-                    .padding(bottom = 16.dp)
                     .zIndex(2f)
             ) {
                 AppButton(
-                    title = if (store.state.isPrivate) "Request" else "Join",
-                    model = AppButtonModel(
-                        contentSize = ContentSize.Fill
-                    ),
+                    title = joinButton.title,
+                    model = AppButtonModel(contentSize = ContentSize.Fill),
+                    enabled = !joinButton.disabled,
                     onClick = { store.send(ClubDetailsAction.JoinClubTapped) }
                 )
             }
@@ -436,7 +450,7 @@ private fun ClubInfoView(
                 )
             ) {
                 Text(
-                    text = if (isPrivate) "Private" else "Public",
+                    text = if (isPrivate) stringResource(R.string.clubs_private) else stringResource(R.string.clubs_public),
                     style = AppTypography.TextSm.medium,
                     color = if (isPrivate) Palette.blackHigh else Palette.whiteHigh,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -453,12 +467,30 @@ private fun ClubInfoView(
             )
         }
 
-        // Member count
-        Text(
-            text = "${uiModel?.membersCount ?: 0} members",
-            style = AppTypography.TextMd.regular,
-            color = Palette.blackHigh
-        )
+        // Members • events • clubs, mirroring iOS `memberCount`
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(
+                text = memberCountText(uiModel?.membersCount ?: 0),
+                style = AppTypography.TextMd.regular,
+                color = Palette.blackHigh
+            )
+            uiModel?.eventsCount?.let { count ->
+                Text(text = "•", style = AppTypography.TextMd.regular, color = Palette.blackHigh)
+                Text(
+                    text = eventCountText(count),
+                    style = AppTypography.TextMd.regular,
+                    color = Palette.blackHigh
+                )
+            }
+            uiModel?.clubsCount?.let { count ->
+                Text(text = "•", style = AppTypography.TextMd.regular, color = Palette.blackHigh)
+                Text(
+                    text = clubCountText(count),
+                    style = AppTypography.TextMd.regular,
+                    color = Palette.blackHigh
+                )
+            }
+        }
 
         // Tags
         FlowRow(
@@ -490,19 +522,19 @@ private fun ClubInfoView(
             ) {
                 Icon(
                     painter = Images.Icons.verifiedSeal(),
-                    contentDescription = "Verified club",
+                    contentDescription = stringResource(R.string.clubs_verified),
                     tint = Palette.appBlue,
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
-                    text = "Verified club",
+                    text = stringResource(R.string.clubs_verified),
                     style = AppTypography.TextSm.medium,
                     color = Palette.appBlue
                 )
             }
         } else if (showVerifyButton) {
             AppButton(
-                title = "Request verification from admins",
+                title = stringResource(R.string.clubs_request_verification_from_admins),
                 model = AppButtonModel(
                     type = ButtonType.Secondary,
                     contentSize = ContentSize.Fill,
@@ -516,7 +548,7 @@ private fun ClubInfoView(
         // Create event button — only for joined non-member roles (matches iOS canCreateEvent)
         if (canCreateEvent) {
             AppButton(
-                title = "Create new event +",
+                title = stringResource(R.string.clubs_create_new_event),
                 model = AppButtonModel(
                     type = ButtonType.Secondary,
                     contentSize = ContentSize.Fill,
@@ -684,7 +716,7 @@ private fun InfoTab(infoData: List<ClubsDetails.Info>) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "No information available",
+                    stringResource(DesignR.string.common_no_information),
                     style = AppTypography.TextL.medium,
                     color = Palette.blackMedium
                 )
@@ -710,7 +742,32 @@ private fun InfoTab(infoData: List<ClubsDetails.Info>) {
 
 @Composable
 private fun InfoSubItem(subItem: ClubsDetails.SubInfo) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    val context = LocalContext.current
+    val isActionable = subItem.isLink || subItem.phoneNumber != null
+
+    val onTap: () -> Unit = {
+        val phone = subItem.phoneNumber
+        when {
+            phone != null -> {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText("contact", phone))
+                AppSnackBar.show(
+                    title = LanguageManager.string(DesignR.string.common_copied_to_clipboard),
+                    style = AppSnackBar.Style.SUCCESS
+                )
+            }
+            subItem.isLink -> runCatching {
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(subItem.description)))
+            }
+        }
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .let { if (isActionable) it.clickable(onClick = onTap) else it }
+    ) {
         subItem.title?.let { title ->
             Text(
                 text = title,
@@ -723,7 +780,7 @@ private fun InfoSubItem(subItem: ClubsDetails.SubInfo) {
         Text(
             text = subItem.description,
             style = AppTypography.BodyTextSm.regular,
-            color = if (subItem.isLink) Palette.appBlue else Palette.blackHigh,
+            color = if (isActionable) Palette.appBlue else Palette.blackHigh,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -752,7 +809,7 @@ private fun EventsTab(
                     } else {
                         "This club hasn't run any events yet. Check back soon."
                     },
-                    buttonTitle = if (canCreateEvent) "Create an event +" else null
+                    buttonTitle = if (canCreateEvent) stringResource(R.string.clubs_create_event) else null
                 ),
                 onButtonClick = onCreateEvent
             )

@@ -1,5 +1,8 @@
 package com.bonjur.profile.presentation.detail.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.profile.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -244,7 +247,7 @@ fun ProfileDetailView(
             selectedSegment = store.state.selectedSegment,
             isOwnProfile = store.state.isOwnProfile,
             isPushed = store.state.isPushed,
-            title = store.state.navigationTitle,
+            title = store.state.navigationTitle ?: stringResource(R.string.profile_title),
             onSettingsTapped = { store.send(ProfileDetailAction.SettingsTapped) },
             onBackTapped = { store.send(ProfileDetailAction.BackTapped) },
             onSegmentSelected = { segment ->
@@ -304,7 +307,7 @@ private fun ProfileNavigationOverlay(
                             IconButton(onClick = onBackTapped) {
                                 Icon(
                                     painter = Images.Icons.arrowLeft01(),
-                                    contentDescription = "Back",
+                                    contentDescription = stringResource(DesignR.string.common_back),
                                     tint = Palette.blackHigh
                                 )
                             }
@@ -315,7 +318,7 @@ private fun ProfileNavigationOverlay(
                                 IconButton(onClick = onSettingsTapped) {
                                     Icon(
                                         painter = Images.Icons.gear(),
-                                        contentDescription = "Settings",
+                                        contentDescription = stringResource(R.string.settings_title),
                                         tint = Palette.blackHigh
                                     )
                                 }
@@ -352,7 +355,7 @@ private fun ProfileNavigationOverlay(
                         IconButton(onClick = onSettingsTapped) {
                             Icon(
                                 painter = Images.Icons.gear(),
-                                contentDescription = "Settings",
+                                contentDescription = stringResource(R.string.settings_title),
                                 tint = Palette.blackHigh
                             )
                         }
@@ -496,7 +499,7 @@ private fun UserInfoView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "About",
+                text = stringResource(R.string.profile_about),
                 style = AppTypography.HeadingMd.medium,
                 color = Palette.black
             )
@@ -513,7 +516,7 @@ private fun UserInfoView(
 
         // About text
         Text(
-            text = uiModel?.about ?: "No information",
+            text = uiModel?.about ?: stringResource(R.string.profile_no_information),
             style = AppTypography.BodyTextSm.regular,
             color = Palette.blackHigh
         )
@@ -546,17 +549,19 @@ private fun UserInfoView(
         Column(verticalArrangement = Arrangement.spacedBy(21.dp)) {
             UserInfoCell(
                 icon = Images.Icons.user(),
-                title = "Gender",
+                title = stringResource(R.string.profile_gender),
                 subtitle = uiModel?.gender ?: "-"
             )
             UserInfoCell(
                 icon = Images.Icons.user(),
-                title = "Birthday",
+                title = stringResource(R.string.profile_birthday),
                 subtitle = uiModel?.birthday ?: "-"
             )
             UserInfoCell(
-                icon = Images.Icons.user(),
-                title = "Languages",
+                // iOS uses a globe here; gender/birthday still fall back to the
+                // person icon because this module has no gender/cake drawable yet.
+                icon = Images.Icons.globe(),
+                title = stringResource(R.string.profile_languages),
                 subtitle = uiModel?.languages?.joinToString(", ") { it.title } ?: "-"
             )
         }

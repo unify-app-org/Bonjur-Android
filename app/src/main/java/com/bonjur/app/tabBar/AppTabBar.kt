@@ -1,5 +1,10 @@
 package com.bonjur.app.tabBar
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.app.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -120,10 +125,14 @@ fun AppTabBar(
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(bottom = 16.dp)
                             .fillMaxWidth()
-                            .height(80.dp)
-                            .background(Color.White),
+                            .background(Color.White)
+                            // The app draws edge-to-edge, so the dock has to clear the
+                            // system navigation bar itself. A fixed 16dp only covered the
+                            // gesture pill; with 3-button navigation the labels sat under it.
+                            .navigationBarsPadding()
+                            .padding(bottom = 16.dp)
+                            .height(80.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         TabBarItem(
@@ -353,9 +362,14 @@ fun TabBarItem(
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
+            // Single line: translated labels are longer than the English ones and
+            // used to wrap into the centre create button.
             text = item.label,
             color = if (selected) Palette.blackHigh else Palette.graySecondary,
-            fontSize = 12.sp
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -483,9 +497,9 @@ fun CreateMenu(
     onCreateTypeSelected: (CreateType) -> Unit
 ) {
     val menuItems = listOf(
-        CreateMenuItem("Club", Images.Icons.twoUsers(), CreateType.CLUB),
-        CreateMenuItem("Events", Images.Icons.calendar(), CreateType.EVENT),
-        CreateMenuItem("Hangouts", Images.Icons.chat(), CreateType.HANGOUT)
+        CreateMenuItem(LanguageManager.string(R.string.create_club), Images.Icons.twoUsers(), CreateType.CLUB),
+        CreateMenuItem(LanguageManager.string(R.string.create_events), Images.Icons.calendar(), CreateType.EVENT),
+        CreateMenuItem(LanguageManager.string(R.string.create_hangouts), Images.Icons.chat(), CreateType.HANGOUT)
     )
 
     Box(
@@ -509,6 +523,7 @@ fun CreateMenu(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
+                    .navigationBarsPadding()
                     .padding(bottom = 75.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .background(Color.White)
@@ -516,7 +531,7 @@ fun CreateMenu(
                     .padding(start = 24.dp)
             ) {
                 Text(
-                    text = "Create",
+                    text = LanguageManager.string(R.string.create_title),
                     style = AppTypography.HeadingXL.bold,
                     color = Palette.blackHigh,
                     modifier = Modifier.padding(bottom = 20.dp)

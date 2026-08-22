@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.bonjur.notification.test.notification-mergeDebugAndroidTestResources-64:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+            "map": [
+                {
+                    "source": "/Users/huseynhasanov/.gradle/caches/8.13/transforms/4186a6ca0a53b775f9aae978f73373cc/transformed/material-1.10.0/res/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "75",
+                        "endOffsets": "126"
+                    }
+                }
+            ]
+        }
+    ]
+}

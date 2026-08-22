@@ -1,2 +1,33 @@
 R_DEF: Internal format may change without notice
 local
+string notif_accept
+string notif_action_subtitle
+string notif_action_subtitle_idle
+string notif_all_caught_up
+string notif_all_handled
+string notif_close
+string notif_continue
+string notif_earlier
+string notif_empty_desc
+string notif_load_fail
+string notif_mark_all_confirm
+string notif_mark_all_read
+string notif_mark_all_title
+string notif_needs_action
+string notif_no_notifications
+string notif_note
+string notif_nothing_to_verify
+string notif_reject
+string notif_reject_note_desc
+string notif_reject_note_hint
+string notif_reject_note_label
+string notif_reject_request
+string notif_reject_verification
+string notif_requests_load_fail
+string notif_this_week
+string notif_today
+string notif_try_again
+string notif_verification_requests
+string notif_verifications_load_fail
+string notif_verify
+string notif_yesterday

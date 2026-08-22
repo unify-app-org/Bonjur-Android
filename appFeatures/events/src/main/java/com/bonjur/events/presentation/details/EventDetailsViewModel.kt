@@ -1,5 +1,8 @@
 package com.bonjur.events.presentation.details
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.components.alert.AppAlert
@@ -21,6 +24,8 @@ import com.bonjur.navigation.SharedRoutes
 import com.bonjur.navigation.route
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.network.manager.TokenManager
+import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +39,8 @@ class EventDetailsViewModel @Inject constructor(
     
     data class Dependencies @Inject constructor(
         val useCase: EventsUseCase,
-        val tokenManager: TokenManager
+        val tokenManager: TokenManager,
+        val defaultStorage: DefaultStorage
     )
 
     private lateinit var inputData: EventDetailsInputData
@@ -63,6 +69,7 @@ class EventDetailsViewModel @Inject constructor(
             EventDetailsAction.ClubTapped -> navigateToClub()
             EventDetailsAction.SeeAllMembersTapped -> navigateToMembersList()
             is EventDetailsAction.MemberTapped -> navigateToProfile(action.member.id)
+            EventDetailsAction.RemindTapped -> remindTapped()
         }
     }
 
@@ -71,11 +78,12 @@ class EventDetailsViewModel @Inject constructor(
             navigator.navigateTo(
                 MemberListScreens.MembersList.route,
                 MemberListInputData(
-                    title = "Members",
+                    title = LanguageManager.string(DesignR.string.common_members),
                     viewerRole = state.uiModel?.userActivityType
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.EVENTS,
+                    totalCount = state.uiModel?.membersCount,
                     loadPage = { page, size, keyword ->
                         dependencies.useCase.fetchEventMembersPage(inputData.eventId, page, size, keyword)
                     },
@@ -127,7 +135,7 @@ class EventDetailsViewModel @Inject constructor(
             } catch (e: Exception) {
                 AppSnackBar.show(
                     title = "Could not join",
-                    subtitle = "Please try again.",
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             } finally {
@@ -141,7 +149,7 @@ class EventDetailsViewModel @Inject constructor(
         val name = state.uiModel?.name ?: "the event"
         if (state.isPrivate) {
             AppSnackBar.show(
-                title = "Request sent",
+                title = LanguageManager.string(R.string.events_join_request_sent),
                 subtitle = "$name will review your request",
                 style = AppSnackBar.Style.SUCCESS
             )
@@ -152,20 +160,94 @@ class EventDetailsViewModel @Inject constructor(
 
     // MARK: - Exit flow (events have no owner-transfer gate)
 
+    // MARK: - Reminder flow
+
+    /**
+     * One reminder per day. The spent state is server-owned (`isReminder` on the
+     * detail payload), so a spent button never even opens the warning. Mirrors iOS.
+     */
+    private fun remindTapped() {
+        if (state.uiModel?.isReminderSent == true) return
+
+        if (dependencies.defaultStorage.getBoolean(
+                DefaultStorageKey.HIDE_EVENT_REMINDER_WARNING,
+                false
+            )
+        ) {
+            sendReminder()
+            return
+        }
+
+        var suppressWarning = false
+        AppAlertPresenter.present(
+            AppAlert(
+                config = AppAlert.Config(
+                    title = LanguageManager.string(R.string.events_reminder_warning_title),
+                    subtitle = LanguageManager.string(R.string.events_reminder_warning_subtitle),
+                    checkbox = AppAlert.Checkbox(title = LanguageManager.string(DesignR.string.common_dont_show_again)) { isOn ->
+                        suppressWarning = isOn
+                    }
+                ),
+                actions = listOf(
+                    AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.SECONDARY),
+                    AppAlert.Action(
+                        title = LanguageManager.string(R.string.events_reminder_send),
+                        style = AppAlert.Action.Style.PRIMARY
+                    ) {
+                        if (suppressWarning) {
+                            dependencies.defaultStorage.saveBoolean(
+                                DefaultStorageKey.HIDE_EVENT_REMINDER_WARNING,
+                                true
+                            )
+                        }
+                        sendReminder()
+                    }
+                )
+            )
+        )
+    }
+
+    /**
+     * `POST api/es/v1/events/{id}/reminder` returns no body, so success re-fetches
+     * the detail and reads the spent state back from `isReminder` instead of
+     * flipping local state — the server owns the daily window.
+     */
+    private fun sendReminder() {
+        viewModelScope.launch {
+            postEffect(EventDetailsSideEffect.Loading(true))
+            try {
+                dependencies.useCase.sendReminder(inputData.eventId)
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.events_reminder_sent),
+                    subtitle = LanguageManager.string(R.string.events_reminder_sent_sub),
+                    style = AppSnackBar.Style.SUCCESS
+                )
+                fetchData()
+            } catch (e: Exception) {
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.events_reminder_fail),
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
+                    style = AppSnackBar.Style.ERROR
+                )
+            } finally {
+                postEffect(EventDetailsSideEffect.Loading(false))
+            }
+        }
+    }
+
     private fun presentExitConfirm() {
         AppAlertPresenter.present(
             AppAlert(
                 config = AppAlert.Config(
-                    title = "Leave event?",
-                    subtitle = "Are you sure you want to leave this event? You will no longer " +
-                        "be able to participate or see updates."
+                    title = LanguageManager.string(R.string.events_leave_title),
+                    subtitle = LanguageManager.string(R.string.events_leave_subtitle)
                 ),
                 actions = listOf(
                     AppAlert.Action(
-                        title = "Leave event",
+                        title = LanguageManager.string(R.string.events_leave_confirm),
                         style = AppAlert.Action.Style.DESTRUCTIVE
                     ) { performExit() },
-                    AppAlert.Action(title = "Cancel", style = AppAlert.Action.Style.PRIMARY)
+                    AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.PRIMARY)
                 )
             )
         )
@@ -176,12 +258,12 @@ class EventDetailsViewModel @Inject constructor(
             postEffect(EventDetailsSideEffect.Loading(true))
             try {
                 dependencies.useCase.exitEvent(inputData.eventId)
-                AppSnackBar.show(title = "You left the event", style = AppSnackBar.Style.SUCCESS)
+                AppSnackBar.show(title = LanguageManager.string(R.string.events_left), style = AppSnackBar.Style.SUCCESS)
                 navigator.navigateUp()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not leave event",
-                    subtitle = "Please try again.",
+                    title = LanguageManager.string(R.string.events_leave_fail),
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             } finally {

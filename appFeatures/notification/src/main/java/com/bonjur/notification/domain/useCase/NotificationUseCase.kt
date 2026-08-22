@@ -9,8 +9,9 @@ interface NotificationUseCase {
     /** One page of the live notification feed (`api/ns`). */
     suspend fun fetchFeedPage(page: Int, size: Int): NotificationFeedPage
     suspend fun markAllRead()
-    /** Live pending-request total for the banner (club + hangout + event). */
-    suspend fun fetchRequestCounts(): Int
+
+    /** Marks a single notification read (row tap). */
+    suspend fun markRead(id: String)
     /** Admin-only pending-verification total; throws (403) when not an admin. */
     suspend fun fetchVerificationCount(): Int
     /** Unread notification total for the Discover bell badge. */
@@ -29,18 +30,15 @@ class NotificationUseCaseImpl @Inject constructor(
         )
     }
 
+    override suspend fun markRead(id: String) {
+        dataSource.markRead(id)
+    }
+
     override suspend fun markAllRead() {
         dataSource.markAllRead()
     }
 
     /** Cheap `size=1` probes — only `totalElements` is read from each source. */
-    override suspend fun fetchRequestCounts(): Int {
-        val clubs = dataSource.fetchClubRequests(page = 0, size = 1).totalElements ?: 0
-        val hangouts = dataSource.fetchHangoutRequests(page = 0, size = 1).totalElements ?: 0
-        val events = dataSource.fetchEventRequests(page = 0, size = 1).totalElements ?: 0
-        return clubs + hangouts + events
-    }
-
     override suspend fun fetchVerificationCount(): Int =
         dataSource.fetchPendingClubs(page = 0, size = 1).totalElements ?: 0
 

@@ -1,17 +1,26 @@
 package com.bonjur.app.tabBar
 
+import com.bonjur.app.R
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R as DesignR
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import com.bonjur.designSystem.ui.theme.image.Images
 
 sealed class TabItem(
-    val label: String,
+    @StringRes private val labelRes: Int,
     val icon: @Composable () -> Painter
 ) {
-    object Discover : TabItem("Discover", { Images.Icons.home() })
-    object Clubs : TabItem("Clubs", { Images.Icons.userGroups() })
-    object MyPlans : TabItem("My plans", { Images.Icons.clipboardList() })
-    object Profile : TabItem("Profile", { Images.Icons.profile() })
+    // Resolved on read, not in the constructor: these objects initialize at class
+    // load, before LanguageManager has a Context, and a captured value could never
+    // follow a language switch.
+    val label: String get() = LanguageManager.string(labelRes)
+
+    object Discover : TabItem(R.string.dock_discover, { Images.Icons.home() })
+    object Clubs : TabItem(DesignR.string.clubs, { Images.Icons.userGroups() })
+    object MyPlans : TabItem(R.string.dock_my_activities, { Images.Icons.clipboardList() })
+    object Profile : TabItem(R.string.dock_profile, { Images.Icons.profile() })
 }
 
 data class CreateMenuItem(

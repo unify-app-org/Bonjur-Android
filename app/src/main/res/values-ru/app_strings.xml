@@ -1,0 +1,10 @@
+<resources>
+    <string name="example">exampleRu</string>
+    <string name="dock_my_activities">Активность</string>
+    <string name="create_title">Создать</string>
+    <string name="create_club">Клуб</string>
+    <string name="create_events">События</string>
+    <string name="create_hangouts">Тусовки</string>
+    <string name="dock_discover">Обзор</string>
+    <string name="dock_profile">Профиль</string>
+</resources>

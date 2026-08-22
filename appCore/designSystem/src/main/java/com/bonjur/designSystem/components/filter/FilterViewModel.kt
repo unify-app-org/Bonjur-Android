@@ -7,6 +7,8 @@
 
 package com.yourapp.discover.viewmodel
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.lifecycle.ViewModel
 import com.bonjur.designSystem.components.filter.FilterView
 import kotlinx.coroutines.flow.MutableStateFlow

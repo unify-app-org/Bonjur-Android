@@ -7,6 +7,10 @@
 
 package com.bonjur.hangouts.presentation.list.model
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import java.util.UUID
 
@@ -28,19 +32,19 @@ data class HangoutsCardModel(
 ) {
     val memberCountText: String
         get() = if (totalCapacity != null) {
-            "$memberCount of $totalCapacity"
+            LanguageManager.string(DesignR.string.count_of, memberCount, totalCapacity)
         } else {
-            "$memberCount members"
+            memberCountText(memberCount)
         }
 
     val buttonTitle: String
         get() = when (requestType) {
             AppUIEntities.RequestType.JOINED -> "Participating"
             AppUIEntities.RequestType.REJECTED -> "Request again"
-            AppUIEntities.RequestType.PENDING -> "Request sent"
+            AppUIEntities.RequestType.PENDING -> LanguageManager.string(R.string.hangouts_join_request_sent)
             AppUIEntities.RequestType.NONE -> when (accessType) {
-                AppUIEntities.AccessType.PUBLIC -> "Join"
-                AppUIEntities.AccessType.PRIVATE -> "Request"
+                AppUIEntities.AccessType.PUBLIC -> LanguageManager.string(R.string.hangouts_join)
+                AppUIEntities.AccessType.PRIVATE -> LanguageManager.string(R.string.hangouts_request)
             }
         }
 
@@ -54,7 +58,7 @@ object HangoutsCardMocks {
     val previewMock = listOf(
         HangoutsCardModel(
             id = UUID.randomUUID().toString(),
-            name = "Study night at cafe",
+            name = LanguageManager.string(R.string.hangouts_name_ph),
             description = "I want to have a coffee and then go to evening if someone want just",
             memberCount = 27,
             totalCapacity = 35,

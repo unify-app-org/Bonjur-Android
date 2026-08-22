@@ -5,7 +5,7 @@ package com.bonjur.notification.data.endPoints;
  * The notification feed itself is still mock; only the join-request +
  * verification flows are live.
  */
-@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000:\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\f\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\b7\u0018\u00002\u00020\u0001:\u000b\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\rB\u0007\b\u0004\u00a2\u0006\u0002\u0010\u0002\u0082\u0001\u000b\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u00a8\u0006\u0019"}, d2 = {"Lcom/bonjur/notification/data/endPoints/NotificationEndpoints;", "Lcom/bonjur/network/APIClient/AppEndpoint;", "()V", "ClubJoinRequests", "ClubPending", "EventJoinRequests", "Feed", "HangoutJoinRequests", "ReadAll", "SetClubRequestStatus", "SetClubVerification", "SetEventRequestStatus", "SetHangoutRequestStatus", "UnreadCount", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$ClubJoinRequests;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$ClubPending;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$EventJoinRequests;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$Feed;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$HangoutJoinRequests;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$ReadAll;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetClubRequestStatus;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetClubVerification;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetEventRequestStatus;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetHangoutRequestStatus;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$UnreadCount;", "notification_debug"})
+@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000>\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\b\r\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\b7\u0018\u00002\u00020\u0001:\f\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000eB\u0007\b\u0004\u00a2\u0006\u0002\u0010\u0002\u0082\u0001\f\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u00a8\u0006\u001b"}, d2 = {"Lcom/bonjur/notification/data/endPoints/NotificationEndpoints;", "Lcom/bonjur/network/APIClient/AppEndpoint;", "()V", "ClubJoinRequests", "ClubPending", "EventJoinRequests", "Feed", "HangoutJoinRequests", "Read", "ReadAll", "SetClubRequestStatus", "SetClubVerification", "SetEventRequestStatus", "SetHangoutRequestStatus", "UnreadCount", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$ClubJoinRequests;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$ClubPending;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$EventJoinRequests;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$Feed;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$HangoutJoinRequests;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$Read;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$ReadAll;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetClubRequestStatus;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetClubVerification;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetEventRequestStatus;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$SetHangoutRequestStatus;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$UnreadCount;", "notification_debug"})
 public abstract class NotificationEndpoints implements com.bonjur.network.APIClient.AppEndpoint {
     
     private NotificationEndpoints() {
@@ -364,6 +364,68 @@ public abstract class NotificationEndpoints implements com.bonjur.network.APICli
         @org.jetbrains.annotations.NotNull()
         public final com.bonjur.notification.data.endPoints.NotificationEndpoints.HangoutJoinRequests copy(@org.jetbrains.annotations.NotNull()
         java.util.Map<java.lang.String, java.lang.String> query) {
+            return null;
+        }
+        
+        @java.lang.Override()
+        public boolean equals(@org.jetbrains.annotations.Nullable()
+        java.lang.Object other) {
+            return false;
+        }
+        
+        @java.lang.Override()
+        public int hashCode() {
+            return 0;
+        }
+        
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public java.lang.String toString() {
+            return null;
+        }
+    }
+    
+    /**
+     * Marks one notification read (row tap).
+     */
+    @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000.\n\u0002\u0018\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\t\n\u0002\u0010\u000b\n\u0000\n\u0002\u0010\u0000\n\u0000\n\u0002\u0010\b\n\u0002\b\u0002\b\u0087\b\u0018\u00002\u00020\u0001B\r\u0012\u0006\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\u0002\u0010\u0004J\t\u0010\r\u001a\u00020\u0003H\u00c6\u0003J\u0013\u0010\u000e\u001a\u00020\u00002\b\b\u0002\u0010\u0002\u001a\u00020\u0003H\u00c6\u0001J\u0013\u0010\u000f\u001a\u00020\u00102\b\u0010\u0011\u001a\u0004\u0018\u00010\u0012H\u00d6\u0003J\t\u0010\u0013\u001a\u00020\u0014H\u00d6\u0001J\t\u0010\u0015\u001a\u00020\u0003H\u00d6\u0001R\u0014\u0010\u0005\u001a\u00020\u0006X\u0096\u0004\u00a2\u0006\b\n\u0000\u001a\u0004\b\u0007\u0010\bR\u0011\u0010\u0002\u001a\u00020\u0003\u00a2\u0006\b\n\u0000\u001a\u0004\b\t\u0010\nR\u0014\u0010\u000b\u001a\u00020\u0003X\u0096\u0004\u00a2\u0006\b\n\u0000\u001a\u0004\b\f\u0010\n\u00a8\u0006\u0016"}, d2 = {"Lcom/bonjur/notification/data/endPoints/NotificationEndpoints$Read;", "Lcom/bonjur/notification/data/endPoints/NotificationEndpoints;", "notificationId", "", "(Ljava/lang/String;)V", "method", "Lcom/bonjur/network/APIClient/NetworkMethod;", "getMethod", "()Lcom/bonjur/network/APIClient/NetworkMethod;", "getNotificationId", "()Ljava/lang/String;", "path", "getPath", "component1", "copy", "equals", "", "other", "", "hashCode", "", "toString", "notification_debug"})
+    public static final class Read extends com.bonjur.notification.data.endPoints.NotificationEndpoints {
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String notificationId = null;
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String path = null;
+        @org.jetbrains.annotations.NotNull()
+        private final com.bonjur.network.APIClient.NetworkMethod method = com.bonjur.network.APIClient.NetworkMethod.POST;
+        
+        public Read(@org.jetbrains.annotations.NotNull()
+        java.lang.String notificationId) {
+        }
+        
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getNotificationId() {
+            return null;
+        }
+        
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public java.lang.String getPath() {
+            return null;
+        }
+        
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public com.bonjur.network.APIClient.NetworkMethod getMethod() {
+            return null;
+        }
+        
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String component1() {
+            return null;
+        }
+        
+        @org.jetbrains.annotations.NotNull()
+        public final com.bonjur.notification.data.endPoints.NotificationEndpoints.Read copy(@org.jetbrains.annotations.NotNull()
+        java.lang.String notificationId) {
             return null;
         }
         

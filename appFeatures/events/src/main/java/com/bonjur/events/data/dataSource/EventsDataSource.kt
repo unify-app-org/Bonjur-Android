@@ -35,4 +35,6 @@ interface EventsDataSource {
     ): ByteArray
     suspend fun joinEvent(eventId: String): ByteArray
     suspend fun exitEvent(eventId: String): ByteArray
+
+    suspend fun sendReminder(eventId: String): ByteArray
 }

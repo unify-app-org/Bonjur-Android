@@ -1,5 +1,6 @@
 package com.bonjur.auth.presentation.optional.components
 
+import com.bonjur.designSystem.localization.LanguageManager
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,10 +9,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bonjur.auth.R
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoAction
 import com.bonjur.auth.presentation.optional.model.AuthOptionalInfoSideEffect
@@ -66,13 +69,13 @@ private fun InputField(
         ) {
             if (date != null) {
                 Text(
-                    text = date.format(java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy")),
+                    text = date.format(java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy", LanguageManager.locale)),
                     modifier = Modifier.weight(1f),
                     color = Palette.blackHigh
                 )
             } else {
                 Text(
-                    text = "Date of birth",
+                    text = stringResource(R.string.auth_birthday_placeholder),
                     modifier = Modifier.weight(1f),
                     color = Palette.blackDisabled
                 )
@@ -94,13 +97,13 @@ private fun TopView() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Your Birthday",
+            text = stringResource(R.string.auth_birthday_title),
             style = AppTypography.TitleXL.extraBold,
             color = Palette.blackHigh,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "What's your date of birth?",
+            text = stringResource(R.string.auth_birthday_subtitle),
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary,
             modifier = Modifier.fillMaxWidth()

@@ -23,8 +23,30 @@ data class PaginationQuery(
 
 @Serializable
 data class CommunityMemberResponse(
-    val content: List<CommunityMember> = emptyList()
+    val content: List<CommunityMember> = emptyList(),
+    /**
+     * Spring page metadata. Decoding only `content` made "has more" a guess
+     * (`received >= size`), which reads a duplicate-heavy page as the last one.
+     * Mirrors the iOS DTO fix.
+     */
+    val page: Int? = null,
+    val size: Int? = null,
+    val totalElements: Int? = null,
+    val numberOfElements: Int? = null,
+    val totalPages: Int? = null
 ) {
+
+    /** Page metadata first; fall back to a full page meaning "probably more". */
+    val hasMore: Boolean
+        get() {
+            val page = page
+            val totalPages = totalPages
+            if (page != null && totalPages != null) return page + 1 < totalPages
+            val received = numberOfElements ?: content.size
+            val size = size ?: return false
+            return size > 0 && received >= size
+        }
+
     @Serializable
     data class CommunityMember(
         val userId: String? = null,
@@ -94,6 +116,9 @@ data class CommunityDetailResponse(
     val modifiedAt: String? = null,
     val capacity: Int? = null,
     val membersCount: Int? = null,
+    // Rendered beside the member count on the detail header, like iOS.
+    val clubCount: Int? = null,
+    val eventCount: Int? = null,
     val communityName: String? = null,
     val links: List<CommunityLink>? = null,
     val categories: List<CommunityCategory> = emptyList()

@@ -39,6 +39,9 @@ class ClubsDataSourceImpl @Inject constructor(
     ): ClubDetailResponse =
         fetch(ClubsEndpoints.CreateClub(buildPayload(request, logo, cover)))
 
+    override suspend fun requestVerify(clubId: Int): ByteArray =
+        fetchRawData(ClubsEndpoints.RequestVerify(clubId))
+
     override suspend fun editClub(
         clubId: Int,
         request: ClubCreateRequest,

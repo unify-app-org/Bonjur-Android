@@ -10,6 +10,9 @@ interface NotificationDataSource {
     suspend fun fetchFeed(page: Int, size: Int): PageNationResponse<List<NotificationDTO>>
     suspend fun fetchUnreadCount(): Int
     suspend fun markAllRead()
+
+    /** POST api/ns/v1/notifications/read/{id} — single-row read. */
+    suspend fun markRead(id: String)
     suspend fun fetchClubRequests(page: Int, size: Int): PageNationResponse<List<ClubJoinRequestDTO>>
     suspend fun fetchHangoutRequests(page: Int, size: Int): PageNationResponse<List<HangoutJoinRequestDTO>>
     suspend fun fetchEventRequests(page: Int, size: Int): PageNationResponse<List<EventJoinRequestDTO>>
@@ -17,5 +20,5 @@ interface NotificationDataSource {
     suspend fun setHangoutStatus(hangoutId: String, userId: String, accept: Boolean): ByteArray
     suspend fun setEventStatus(eventId: String, userId: String, accept: Boolean): ByteArray
     suspend fun fetchPendingClubs(page: Int, size: Int): PageNationResponse<List<ClubJoinRequestDTO>>
-    suspend fun setClubVerification(clubId: Int, accept: Boolean): ByteArray
+    suspend fun setClubVerification(clubId: Int, accept: Boolean, rejectionReason: String?): ByteArray
 }

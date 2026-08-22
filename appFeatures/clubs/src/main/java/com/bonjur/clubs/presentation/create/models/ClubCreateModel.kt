@@ -36,14 +36,26 @@ data class ClubCreateViewState(
      * hard gate to creating events in it. Shown only on the create path. Mirrors iOS.
      */
     val showVerifyPrompt: Boolean = false,
+    /** Id of the just-created club, used to fire the verify request from the prompt. */
+    val createdClubId: Int? = null,
     val isLoading: Boolean = false,
     val isEdit: Boolean = false
 ) : FeatureState {
 
     val schema: List<AppFieldSchema.Field> get() = ClubCreateSchema.fields
 
+    /**
+     * A profile photo is mandatory: require a freshly-picked logo on create, or an
+     * existing one on edit. Cover stays optional (a colour is used as fallback).
+     * Mirrors iOS `ClubCreateViewState.hasProfilePhoto`.
+     */
+    val hasProfilePhoto: Boolean
+        get() = logoUri != null || existingLogoUrl != null
+
     val isValid: Boolean
-        get() = values.isValid(schema) && values.text(AppFieldSchema.FieldId.CLUB_NAME).isNotBlank()
+        get() = hasProfilePhoto &&
+            values.isValid(schema) &&
+            values.text(AppFieldSchema.FieldId.CLUB_NAME).isNotBlank()
 
     val topTitle: String
         get() = if (isEdit) "Edit club" else "Create new club"

@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.bonjur.auth.R
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.auth.presentation.signIn.model.SignInAction
 import com.bonjur.auth.presentation.signIn.model.SignInSideEffect
@@ -40,18 +42,18 @@ fun SignInView(
             AppTextField(
                 text = state.email,
                 onTextChange = { store.send(SignInAction.EmailChanged(it)) },
-                placeHolder = "Enter your email",
+                placeHolder = stringResource(R.string.auth_email_placeholder),
                 model = AppTextFieldModel(
-                    title = "Email"
+                    title = stringResource(R.string.auth_email)
                 )
             )
 
             AppTextField(
                 text = state.password,
                 onTextChange = { store.send(SignInAction.PasswordChanged(it)) },
-                placeHolder = "Enter your password",
+                placeHolder = stringResource(R.string.auth_password_placeholder),
                 model = AppTextFieldModel(
-                    title = "Password",
+                    title = stringResource(R.string.auth_password),
                     type = FieldType.Secure
                 )
             )
@@ -60,7 +62,7 @@ fun SignInView(
         Spacer(modifier = Modifier.weight(1f))
 
         AppButton(
-            title = "Sign in",
+            title = stringResource(R.string.auth_sign_in_button),
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = { store.send(SignInAction.SignIn) }
         )
@@ -71,13 +73,13 @@ fun SignInView(
 private fun TopView() {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
-            text = "Sign In",
+            text = stringResource(R.string.auth_sign_in_title),
             style = AppTypography.TitleXL.extraBold,
             color = Palette.black
         )
 
         Text(
-            text = "Only continue if you downloaded the app from a store or website that you trust.",
+            text = stringResource(R.string.auth_sign_in_subtitle),
             style = AppTypography.BodyTextMd.regular,
             color = Palette.grayPrimary
         )

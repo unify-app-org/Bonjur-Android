@@ -20,7 +20,13 @@ data class LoginResponse(
     val accessToken: String,
     val refreshToken: String,
     val userId: String,
-    val isFirstLogin: Boolean
+    val isFirstLogin: Boolean,
+    /**
+     * The user's role in the community they signed in to (raw backend code, e.g.
+     * "PRESIDENT"). Drives the community-president shortcuts (skip club verify
+     * prompt) and admin-only screens. Mirrors iOS `LoginResponse.userCommunityRole`.
+     */
+    val userCommunityRole: String? = null
 )
 
 @Serializable

@@ -1,5 +1,8 @@
 package com.bonjur.events.presentation.details.model
 
+import androidx.annotation.StringRes
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -33,10 +36,13 @@ data class EventDetailsViewState(
         get() = uiModel?.accessType == AppUIEntities.AccessType.PRIVATE
 
     enum class SegmentTypes(
-        override val title: String
+        @StringRes private val titleRes: Int
     ) : SegmentedPickerOption {
-        ABOUT("About"),
-        MEMBERS("Members");
+        ABOUT(R.string.events_row_about),
+        MEMBERS(R.string.events_members_title);
+
+        // Resolved on read; see ClubsDetailsModel.SegmentTypes.
+        override val title: String get() = LanguageManager.string(titleRes)
 
         override val id: String get() = name
 
@@ -58,5 +64,7 @@ sealed class EventDetailsAction : FeatureAction {
     object ExitTapped : EventDetailsAction()
     object ClubTapped : EventDetailsAction()
     object SeeAllMembersTapped : EventDetailsAction()
+    /** Broadcast the event reminder (organizers only, one per day). */
+    object RemindTapped : EventDetailsAction()
     data class MemberTapped(val member: MemberCellModel) : EventDetailsAction()
 }

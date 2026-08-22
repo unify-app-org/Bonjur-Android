@@ -1,5 +1,7 @@
 package com.bonjur.designSystem.components.serach
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -54,7 +56,7 @@ fun SearchView(
     ) {
         Image(
             painter = Images.Icons.search(),
-            contentDescription = "Search",
+            contentDescription = LanguageManager.string(R.string.common_search),
             modifier = Modifier.size(24.dp)
         )
         
@@ -78,7 +80,7 @@ fun SearchView(
                 ) {
                     if (text.isEmpty()) {
                         Text(
-                            text = "Search",
+                            text = LanguageManager.string(R.string.common_search),
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 color = Color.Gray

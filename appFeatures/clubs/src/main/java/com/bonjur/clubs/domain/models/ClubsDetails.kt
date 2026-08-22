@@ -1,5 +1,7 @@
 package com.bonjur.clubs.domain.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.clubs.R
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.events.presentation.list.models.EventsCardMocks
@@ -12,6 +14,9 @@ object ClubsDetails {
         val name: String,
         val communityName: String,
         val membersCount: Int,
+        /** Rendered beside the member count when present, mirroring iOS. */
+        val eventsCount: Int? = null,
+        val clubsCount: Int? = null,
         val logo: String?,
         val coverImage: String?,
         val coverColorType: AppUIEntities.BackgroundType,
@@ -21,6 +26,12 @@ object ClubsDetails {
         val infoData: List<Info>,
         val eventsData: List<EventsCardModel>,
         val editPrefillData: ClubEditPrefill,
+        /**
+         * Bottom join/request button. `null` hides it (already joined). Mirrors iOS
+         * `ClubsDetailsModel.JoinButton` — the state comes from `clubUserStatus`, not
+         * from the role alone, so a pending requester keeps a disabled "Request sent".
+         */
+        val joinButton: JoinButton? = null,
         /** nil/unverified → request-verify button (admins); verified → badge. Mirrors iOS. */
         val clubStatus: AppUIEntities.ClubStatus? = null
     )
@@ -30,6 +41,12 @@ object ClubsDetails {
         val logoUrl: String?,
         val coverUrl: String?,
         val values: Map<AppFieldSchema.FieldId, AppFieldSchema.FieldValue>
+    )
+
+    /** Bottom join/request button state. Mirrors iOS `ClubsDetailsModel.JoinButton`. */
+    data class JoinButton(
+        val title: String,
+        val disabled: Boolean
     )
 
     data class Info(
@@ -42,12 +59,14 @@ object ClubsDetails {
         val id: String = UUID.randomUUID().toString(),
         val title: String?,
         val description: String,
-        val isLink: Boolean = false
+        val isLink: Boolean = false,
+        /** When set, the row is tappable and offers call/copy. Mirrors iOS. */
+        val phoneNumber: String? = null
     )
 }
 
 val ClubsDetailsMockData = ClubsDetails.UIModel(
-    name = "Football Club",
+    name = LanguageManager.string(R.string.clubs_name_ph),
     communityName = "UFAZ community",
     membersCount = 12,
     logo = null,
@@ -63,7 +82,7 @@ val ClubsDetailsMockData = ClubsDetails.UIModel(
     ),
     infoData = listOf(
         ClubsDetails.Info(
-            title = "About",
+            title = LanguageManager.string(R.string.clubs_about_label),
             subItems = listOf(
                 ClubsDetails.SubInfo(
                     title = null,
@@ -72,26 +91,26 @@ val ClubsDetailsMockData = ClubsDetails.UIModel(
             )
         ),
         ClubsDetails.Info(
-            title = "Event info",
+            title = LanguageManager.string(R.string.clubs_info_section),
             subItems = listOf(
                 ClubsDetails.SubInfo(
                     title = "Created/Updated Data",
                     description = "30 noyabr 2025"
                 ),
                 ClubsDetails.SubInfo(
-                    title = "Owner contact",
+                    title = LanguageManager.string(R.string.clubs_owner_contact_label),
                     description = "+994 123 45 67"
                 ),
                 ClubsDetails.SubInfo(
-                    title = "Capacity",
+                    title = LanguageManager.string(R.string.clubs_capacity_label),
                     description = "161/200 members"
                 ),
                 ClubsDetails.SubInfo(
-                    title = "Rules",
+                    title = LanguageManager.string(R.string.clubs_rules_label),
                     description = "Everyone can come"
                 ),
                 ClubsDetails.SubInfo(
-                    title = "Location",
+                    title = LanguageManager.string(R.string.clubs_location_label),
                     description = "Cafetaria, 2nd floor"
                 )
             )

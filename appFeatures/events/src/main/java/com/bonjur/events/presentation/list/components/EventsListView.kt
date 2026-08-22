@@ -7,6 +7,9 @@
 
 package com.bonjur.events.presentation.list.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.events.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -107,11 +110,11 @@ fun EventsListView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
                             text = if (isFiltering) {
-                                "No events match your search. Try another name or clear your filters."
+                                stringResource(R.string.events_search_empty)
                             } else {
-                                "No events yet. Be the pioneer and start the very first one now!"
+                                stringResource(R.string.events_empty)
                             },
-                            buttonTitle = if (isFiltering) null else "Create an event +"
+                            buttonTitle = if (isFiltering) null else stringResource(R.string.events_create)
                         ),
                         onButtonClick = { store.send(EventsListAction.CreateTapped) }
                     )
@@ -139,7 +142,7 @@ fun EventsListView(
             ) {
                 Icon(
                     painter = Images.Icons.arrowLeft01(),
-                    contentDescription = "Back",
+                    contentDescription = stringResource(DesignR.string.common_back),
                     tint = Palette.black
                 )
             }
@@ -185,7 +188,7 @@ private fun TopView(
     ) {
         // Title
         Text(
-            text = "Events",
+            text = stringResource(R.string.events_title),
             style = AppTypography.TitleL.extraBold,
             color = Palette.black,
             modifier = Modifier

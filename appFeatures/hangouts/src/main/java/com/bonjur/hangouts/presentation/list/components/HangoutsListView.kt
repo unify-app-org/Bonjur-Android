@@ -7,6 +7,9 @@
 
 package com.bonjur.hangouts.presentation.list.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.hangouts.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -104,11 +107,11 @@ fun HangoutsListView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
                             text = if (isFiltering) {
-                                "No hangouts match your search. Try another name or clear your filters."
+                                stringResource(R.string.hangouts_search_empty)
                             } else {
-                                "No hangouts yet. Be the pioneer and start the very first one now!"
+                                stringResource(R.string.hangouts_empty)
                             },
-                            buttonTitle = if (isFiltering) null else "Create a hangout +"
+                            buttonTitle = if (isFiltering) null else stringResource(R.string.hangouts_create)
                         ),
                         onButtonClick = { store.send(HangoutsListAction.CreateTapped) }
                     )
@@ -136,7 +139,7 @@ fun HangoutsListView(
             ) {
                 Icon(
                     painter = Images.Icons.arrowLeft01(),
-                    contentDescription = "Back",
+                    contentDescription = stringResource(DesignR.string.common_back),
                     tint = Palette.black
                 )
             }
@@ -182,7 +185,7 @@ private fun TopView(
     ) {
         // Title
         Text(
-            text = "Hangouts",
+            text = stringResource(R.string.hangouts_title),
             style = AppTypography.TitleL.extraBold,
             color = Palette.black,
             modifier = Modifier

@@ -1,5 +1,10 @@
 package com.bonjur.communities.presentation.detail.components
 
+import com.bonjur.designSystem.commonModel.eventCountText
+import com.bonjur.designSystem.commonModel.clubCountText
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.communities.R
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -59,6 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.clubs.presentation.list.components.ClubCardView
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
@@ -381,7 +387,11 @@ private fun CommunityInfoView(
         )
 
         Text(
-            text = "${uiModel?.membersCount ?: 0} members",
+            text = buildString {
+                append(memberCountText(uiModel?.membersCount ?: 0))
+                uiModel?.clubsCount?.let { append(" • ").append(clubCountText(it)) }
+                uiModel?.eventsCount?.let { append(" • ").append(eventCountText(it)) }
+            },
             style = AppTypography.TextMd.regular,
             color = Palette.blackHigh
         )
@@ -409,7 +419,7 @@ private fun CommunityInfoView(
 
         if (canCreateEvent) {
             AppButton(
-                title = "Create new event +",
+                title = stringResource(R.string.comm_create_event),
                 model = AppButtonModel(
                     type = ButtonType.Secondary,
                     contentSize = ContentSize.Fill,
@@ -567,7 +577,7 @@ private fun InfoTab(infoData: List<CommunityDetails.Info>) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "No information available",
+                    stringResource(DesignR.string.common_no_information),
                     style = AppTypography.TextL.medium,
                     color = Palette.blackMedium
                 )
@@ -675,8 +685,8 @@ private fun ClubsTab(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = Images.Icons.twoUsers(),
-                    text = "This community has no clubs yet. Be the pioneer and start the very first one now!",
-                    buttonTitle = "Create a club +"
+                    text = stringResource(R.string.comm_clubs_empty_long),
+                    buttonTitle = stringResource(R.string.comm_create_club)
                 ),
                 onButtonClick = onCreateClub,
                 modifier = Modifier.padding(16.dp)

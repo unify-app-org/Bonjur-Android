@@ -1,0 +1,21 @@
+<resources>
+    <plurals name="members_count">
+        <item quantity="one">%1$d üzv</item>
+        <item quantity="other">%1$d üzv</item>
+    </plurals>
+
+    <plurals name="clubs_count">
+        <item quantity="one">%1$d klub</item>
+        <item quantity="other">%1$d klub</item>
+    </plurals>
+
+    <plurals name="events_count">
+        <item quantity="one">%1$d tədbir</item>
+        <item quantity="other">%1$d tədbir</item>
+    </plurals>
+
+    <plurals name="clubs_awaiting_approval">
+        <item quantity="one">%1$d klub təsdiqinizi gözləyir</item>
+        <item quantity="other">%1$d klub təsdiqinizi gözləyir</item>
+    </plurals>
+</resources>

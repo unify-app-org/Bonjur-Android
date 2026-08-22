@@ -1,5 +1,7 @@
 package com.bonjur.communities.presentation.detail.model
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R as DesignR
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -40,9 +42,9 @@ data class CommunityDetailViewState(
         override val title: String
     ) : SegmentedPickerOption {
 
-        ABOUT("About"),
-        CLUBS("Clubs"),
-        MEMBERS("Members");
+        ABOUT(LanguageManager.string(DesignR.string.about)),
+        CLUBS(LanguageManager.string(DesignR.string.clubs)),
+        MEMBERS(LanguageManager.string(DesignR.string.common_members));
 
         override val id: String get() = name
 

@@ -1,5 +1,7 @@
 package com.bonjur.hangouts.presentation.create.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
 import androidx.compose.ui.text.input.KeyboardType
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
@@ -14,72 +16,72 @@ import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema.FieldType
  */
 object HangoutCreateSchema {
 
-    val fields: List<Field> = listOf(
+    // `get()`, not a stored value: the labels resolve through LanguageManager and a
+    // list built once at class load would freeze in whatever language was active then.
+    val fields: List<Field> get() = listOf(
         Field(
             id = FieldId.VISIBILITY,
-            label = "Who can see your hangout?",
+            label = LanguageManager.string(R.string.hangouts_visibility_q),
             type = FieldType.RadioGroup(
                 options = listOf(
                     AppFieldSchema.RadioOption(
                         value = AppUIEntities.AccessType.PUBLIC,
-                        label = "Public",
-                        description = "This is a Public Hangout. Feel free to use the contact " +
-                            "details below to get in touch with the organizers."
+                        label = LanguageManager.string(R.string.hangouts_public),
+                        description = LanguageManager.string(R.string.hangouts_public_desc)
                     ),
                     AppFieldSchema.RadioOption(
                         value = AppUIEntities.AccessType.PRIVATE,
-                        label = "Private",
-                        description = "Contact details and group links are only visible to " +
-                            "members. Join the hangout to access this information."
+                        label = LanguageManager.string(R.string.hangouts_private),
+                        description = LanguageManager.string(R.string.hangouts_private_desc)
                     )
                 )
             )
         ),
         Field(
             id = FieldId.HANGOUT_NAME,
-            label = "Hangout name",
-            type = FieldType.Text(placeholder = "Study night at cafe")
+            label = LanguageManager.string(R.string.hangouts_name_label),
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.hangouts_name_ph))
         ),
         Field(
             id = FieldId.OWNER_CONTACT,
-            label = "Owner contact",
+            label = LanguageManager.string(R.string.hangouts_owner_contact_label),
             type = FieldType.Text(placeholder = "+994 123 45 67")
         ),
         Field(
             id = FieldId.CATEGORY,
-            label = "Category",
-            type = FieldType.ChipInput(placeholder = "Add category")
+            label = LanguageManager.string(R.string.hangouts_category_label),
+            type = FieldType.ChipInput(placeholder = LanguageManager.string(R.string.hangouts_add_category))
         ),
         Field(
             id = FieldId.LINKS,
-            label = "Add link",
+            label = LanguageManager.string(R.string.hangouts_add_link),
             required = false,
-            type = FieldType.LinkInput(placeholder = "Add link")
+            type = FieldType.LinkInput(placeholder = LanguageManager.string(R.string.hangouts_add_link))
         ),
         Field(
             id = FieldId.CAPACITY,
-            label = "Capacity",
+            label = LanguageManager.string(R.string.hangouts_capacity_label),
             required = false,
             type = FieldType.Text(placeholder = "200", keyboardType = KeyboardType.Number)
         ),
         Field(
             id = FieldId.LOCATION,
-            label = "Location",
-            type = FieldType.Text(placeholder = "Library")
+            label = LanguageManager.string(R.string.hangouts_location_label),
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.hangouts_location_ph))
         ),
         Field(
             id = FieldId.HANGOUT_DATE,
-            label = "Start date",
+            label = LanguageManager.string(R.string.hangouts_start_date),
             type = FieldType.DateTime(placeholder = "dd/mm/yyyy")
         ),
         Field(
             id = FieldId.RULES,
-            label = "Rules",
+            label = LanguageManager.string(R.string.hangouts_rules_label),
             type = FieldType.TextArea(placeholder = "", maxLength = 500)
         ),
         Field(
             id = FieldId.ABOUT,
-            label = "About",
+            label = LanguageManager.string(R.string.hangouts_about_label),
             type = FieldType.TextArea(placeholder = "", maxLength = 500)
         )
     )

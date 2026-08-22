@@ -1,0 +1,37 @@
+<resources>
+    <string name="comm_info_section">Community info</string>
+    <string name="comm_row_owner_contact">Owner Contact</string>
+    <string name="comm_row_links">Links</string>
+    <string name="comm_add_members">Add members</string>
+    <string name="comm_all_member">All member</string>
+    <string name="comm_assign_role">Assign role</string>
+    <string name="comm_change_role">Change role</string>
+    <string name="comm_choose_role">Choose a role for this member</string>
+    <string name="comm_capacity_limit">Capacity limit reached</string>
+    <string name="comm_confirm">Confirm</string>
+    <string name="comm_role_update_fail">Could not update role</string>
+    <string name="comm_role_updated">Role updated</string>
+    <string name="comm_create_club">Create a club +</string>
+    <string name="comm_create_event">Create new event +</string>
+    <string name="comm_no_faculties">No faculties found</string>
+    <string name="comm_no_members_found">No members found</string>
+    <string name="comm_no_members_yet">No members yet</string>
+    <string name="comm_no_students_available">No students available</string>
+    <string name="comm_no_students_found">No students found</string>
+    <string name="comm_owner_role">Owner</string>
+    <string name="comm_president">President</string>
+    <string name="comm_report">Report</string>
+    <string name="comm_report_user">Report user</string>
+    <string name="comm_report_submitted">Report submitted</string>
+    <string name="comm_skip">Skip</string>
+    <string name="comm_next">Next</string>
+    <string name="comm_select_all_member">select all member</string>
+    <string name="comm_select_group">select group</string>
+    <string name="comm_view_all">view all</string>
+    <string name="comm_row_location">Location</string>
+    <string name="comm_row_rules">Rules</string>
+    <string name="comm_clubs_empty">This community has no clubs yet.</string>
+    <string name="comm_clubs_empty_long">This community has no clubs yet. Be the pioneer and start the very first one now!</string>
+    <string name="comm_communities_empty">No communities to show yet. Check back soon.</string>
+    <string name="comm_communities_title">Communities</string>
+</resources>

@@ -7,6 +7,8 @@
 
 package com.bonjur.events.presentation.list.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.events.R
 import CardBackgroundView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -295,7 +297,7 @@ private fun TopChipsView(model: EventsCardModel) {
             )
         ) {
             Text(
-                text = if (isPrivate) "Private" else "Public",
+                text = if (isPrivate) stringResource(R.string.events_private) else stringResource(R.string.events_public),
                 style = AppTypography.TextSm.regular,
                 color = if (isPrivate) Palette.blackHigh else Palette.whiteHigh,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -365,7 +367,7 @@ private fun BottomView(
                 borderColor = Palette.secondary
             )
             AppUIEntities.RequestType.PENDING -> StatusLabel(
-                text = "Request sent",
+                text = stringResource(R.string.events_join_request_sent),
                 foreground = Palette.graySecondary,
                 background = Palette.grayQuaternary,
                 borderColor = Palette.grayTeritary

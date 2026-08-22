@@ -1,0 +1,48 @@
+<resources>
+    <string name="filter">Filter</string>
+    <string name="all">All</string>
+    <string name="about">About</string>
+    <string name="events">Events</string>
+    <string name="members">Members</string>
+    <string name="clubs">Clubs</string>
+    <string name="hangouts">Hangouts</string>
+    <string name="capacity">Capacity</string>
+    <string name="created_updated_date">Created/Updated Date</string>
+    <string name="search">Search</string>
+    <string name="remove">Remove</string>
+    <string name="apply">Apply</string>
+    <string name="owner">Owner</string>
+    <string name="visibility_private">Private</string>
+    <string name="visibility_public">Public</string>
+    <string name="filter_subtitle">Select your interests to find the perfect community events for you.</string>
+    <string name="president">President</string>
+    <string name="vise_president">Vice president</string>
+    <string name="event_creators">Event creators</string>
+    <string name="member">Member</string>
+    <string name="vice_president">Vice president</string>
+    <string name="creator">Creator</string>
+    <string name="notification">Notification</string>
+    <string name="count_events">%1$d events</string>
+    <string name="count_members">%1$d members</string>
+    <string name="count_of_members">%1$d of %2$d members</string>
+    <string name="count_of">%1$d of %2$d</string>
+    <string name="count_clubs">%1$d clubs</string>
+    <string name="field_optional">(optional)</string>
+    <string name="field_write_something">Write something</string>
+    <string name="common_coming_soon">Coming soon</string>
+    <string name="count_students">%1$d students</string>
+    <string name="count_see_all_members">See all %1$d members</string>
+    <string name="language_title">Language</string>
+    <string name="language_english">English</string>
+    <string name="language_azerbaijan">Azerbaijani</string>
+    <string name="language_russian">Russian</string>
+    <string name="common_dont_show_again">Don\'t show this again</string>
+
+    <!-- Document preview -->
+    <string name="document_preview_loading">Opening document…</string>
+    <string name="document_preview_failed">Could not open this file</string>
+    <string name="document_preview_retry">Try again</string>
+    <string name="document_preview_unsupported">This file type can\'t be shown here</string>
+    <string name="document_preview_open_external">Open in another app</string>
+    <string name="document_preview_share">Share</string>
+</resources>

@@ -1,5 +1,7 @@
 package com.bonjur.member.policy
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import com.bonjur.designSystem.commonModel.AppUIEntities
 
 /**
@@ -102,9 +104,9 @@ object MemberOptionsPolicy {
  */
 val AppUIEntities.UserActivityRole.assignTitle: String
     get() = when (this) {
-        AppUIEntities.UserActivityRole.MEMBER -> "Member"
-        AppUIEntities.UserActivityRole.PRESIDENT -> "President"
-        AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "Vice president"
+        AppUIEntities.UserActivityRole.MEMBER -> LanguageManager.string(R.string.member)
+        AppUIEntities.UserActivityRole.PRESIDENT -> LanguageManager.string(R.string.role_president)
+        AppUIEntities.UserActivityRole.VISE_PRESIDENT -> LanguageManager.string(R.string.role_vice_president)
         AppUIEntities.UserActivityRole.EVENT_CREATOR -> "Event organizer"
         AppUIEntities.UserActivityRole.NOT_JOINED -> ""
     }

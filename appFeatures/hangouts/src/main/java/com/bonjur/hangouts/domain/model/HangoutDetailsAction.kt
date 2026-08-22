@@ -1,5 +1,7 @@
 package com.bonjur.hangouts.domain.model
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.hangouts.presentation.create.models.HangoutCreatePrefillData
 
@@ -33,7 +35,7 @@ object HangoutDetails {
                     ),
                     infoData = listOf(
                         Info(
-                            title = "About",
+                            title = LanguageManager.string(R.string.hangouts_about_label),
                             subItems = listOf(
                                 SubInfo(
                                     title = null,
@@ -42,13 +44,13 @@ object HangoutDetails {
                             )
                         ),
                         Info(
-                            title = "Event info",
+                            title = "Hangout info",
                             subItems = listOf(
                                 SubInfo(title = "Created/Updated Data", description = "30 noyabr 2025"),
-                                SubInfo(title = "Owner contact", description = "+994 123 45 67"),
-                                SubInfo(title = "Capacity", description = "161/200 members"),
-                                SubInfo(title = "Rules", description = "Everyone can come"),
-                                SubInfo(title = "Location", description = "Cafetaria, 2nd floor")
+                                SubInfo(title = LanguageManager.string(R.string.hangouts_owner_contact_label), description = "+994 123 45 67"),
+                                SubInfo(title = LanguageManager.string(R.string.hangouts_capacity_label), description = "161/200 members"),
+                                SubInfo(title = LanguageManager.string(R.string.hangouts_rules_label), description = "Everyone can come"),
+                                SubInfo(title = LanguageManager.string(R.string.hangouts_location_label), description = "Cafetaria, 2nd floor")
                             )
                         ),
                         Info(

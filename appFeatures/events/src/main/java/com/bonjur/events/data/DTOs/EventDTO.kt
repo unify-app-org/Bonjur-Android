@@ -1,5 +1,7 @@
 package com.bonjur.events.data.DTOs
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import kotlinx.serialization.Serializable
 
 // MARK: - Create request (JSON "request" part of multipart POST api/es/v1/events)
@@ -96,15 +98,27 @@ data class EventDetailResponse(
     val backgroundUrl: String? = null,
     val membersCount: Int? = null,
     val eventUserRole: String? = null,
+    /**
+     * Detail endpoint sends the join state as `eventUserStatus`; the list endpoint
+     * calls the same concept `requestStatus`. Decoding only the list key made the
+     * detail screen always render "Join" while the card said "Participating"
+     * (fixed on iOS 2026-08-17 via CodingKeys, same fallback here).
+     */
+    val eventUserStatus: String? = null,
     /** Pending/accepted state for the current user. Older backends may omit it. */
     val requestStatus: String? = null,
+    /** Root flag: true once today's reminder has been sent (server owns the window). */
+    val isReminder: Boolean? = null,
     val attachments: List<EventAttachmentResponse> = emptyList(),
     val links: List<EventLinkDTO> = emptyList(),
     val categories: List<EventCategoryResponse> = emptyList(),
     val reminderTimes: List<String> = emptyList(),
     val isDeleted: Boolean? = null,
     val modifiedAt: String? = null
-)
+) {
+    /** Join state, preferring the detail key and falling back to the list key. */
+    val joinStatus: String? get() = eventUserStatus ?: requestStatus
+}
 
 /** Attachment object on the detail response (`{ url, name, size }`), mirrors iOS. */
 @Serializable

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notif_accept">Принять</string>
+    <string name="notif_action_subtitle">%1$d запросов · %2$d на проверку</string>
+    <string name="notif_action_subtitle_idle">Просмотрите заявки на вступление и подтверждения</string>
+    <string name="notif_all_caught_up">Вы всё просмотрели</string>
+    <string name="notif_all_handled">Все запросы на верификацию обработаны.</string>
+    <string name="notif_close">Закрыть</string>
+    <string name="notif_continue">Продолжить</string>
+    <string name="notif_earlier">Ранее</string>
+    <string name="notif_empty_desc">Здесь появятся напоминания, результаты запросов и другое.</string>
+    <string name="notif_load_fail">Не удалось загрузить уведомления</string>
+    <string name="notif_mark_all_confirm">Отметить все</string>
+    <string name="notif_mark_all_read">Все уведомления будут отмечены как прочитанные.</string>
+    <string name="notif_mark_all_title">Отметить все как прочитанные?</string>
+    <string name="notif_needs_action">Требует действия</string>
+    <string name="notif_no_notifications">Пока нет уведомлений</string>
+    <string name="notif_note">Заметка</string>
+    <string name="notif_nothing_to_verify">Нечего верифицировать</string>
+    <string name="notif_reject">Отклонить</string>
+    <string name="notif_reject_note_desc">Вы отклоняете запрос на верификацию клуба %1$s.</string>
+    <string name="notif_reject_note_hint">Организатор клуба увидит эту заметку в уведомлении. Оставьте поле пустым, чтобы отклонить без причины.</string>
+    <string name="notif_reject_note_label">Заметка (необязательно)</string>
+    <string name="notif_reject_request">Отклонить запрос?</string>
+    <string name="notif_reject_verification">Отклонить верификацию?</string>
+    <string name="notif_requests_load_fail">Не удалось загрузить запросы</string>
+    <string name="notif_this_week">На этой неделе</string>
+    <string name="notif_today">Сегодня</string>
+    <string name="notif_try_again">Повторить</string>
+    <string name="notif_verification_requests">Запросы на верификацию</string>
+    <string name="notif_verifications_load_fail">Не удалось загрузить верификации</string>
+    <string name="notif_verify">Верифицировать</string>
+    <string name="notif_yesterday">Вчера</string>
+</resources>

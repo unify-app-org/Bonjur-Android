@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.bonjur.apputils.DeviceManager
 import com.bonjur.app.fcm.data.DeviceDataSource
 import com.bonjur.app.navigation.AppNavigation
+import com.bonjur.designSystem.localization.AppLocalizationProvider
 import com.bonjur.designSystem.ui.theme.colors.BonjurTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -57,8 +58,12 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            BonjurTheme {
-                AppNavigation()
+            // Applies the user's chosen app language to every string below,
+            // switching live without a restart (mirrors iOS LanguageManager).
+            AppLocalizationProvider {
+                BonjurTheme {
+                    AppNavigation()
+                }
             }
         }
     }

@@ -1,0 +1,35 @@
+INFO: Constructing runner from config.
+INFO: Configuring Android Instrumentation driver: android_instrumentation_runtime {
+  instrumentation_info {
+    app_package: "com.bonjur.notification.test"
+    test_package: "com.bonjur.notification.test"
+    test_runner_class: "androidx.test.runner.AndroidJUnitRunner"
+  }
+  instrumentation_args {
+    args_map {
+      key: "additionalTestOutputDir"
+      value: "/sdcard/Android/media/com.bonjur.notification.test/additional_test_output"
+    }
+  }
+}
+am_instrument_timeout: 31536000
+
+INFO: Configuring AndroidTestApkInstallerPlugin: apks_to_install {
+  apk_paths: "/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/apk/androidTest/debug/notification-debug-androidTest.apk"
+  install_options {
+  }
+  uninstall_after_test: true
+}
+instrumentation_target_package_id: "com.bonjur.notification.test"
+
+INFO: No installables found in test fixture. Nothing to install.
+INFO: Installing [/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/apk/androidTest/debug/notification-debug-androidTest.apk] on device emulator-5556.
+INFO: Start logcat streaming.
+INFO: Running Android Instrumentation driver.
+INFO: Copying files from device to host: /sdcard/Android/media/com.bonjur.notification.test/additional_test_output to /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected/Pixel_9a(AVD) - 17
+INFO: Stop logcat streaming.
+INFO: Uninstalling com.bonjur.notification.test for device emulator-5556.
+INFO: Execute com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest.bannerStaysOnScreenAfterScrollingTheFeed: PASSED
+INFO: Execute com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest.bannerIsOnScreenWithAFullFeed: PASSED
+INFO: Execute com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest.bannerIsOnScreenWithAnEmptyFeed: PASSED
+INFO: Execute com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest.openingTheFeedOnlyLoadsTheFeed: PASSED

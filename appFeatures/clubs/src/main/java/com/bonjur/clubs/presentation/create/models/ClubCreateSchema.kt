@@ -1,5 +1,8 @@
 package com.bonjur.clubs.presentation.create.models
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.clubs.R
 import androidx.compose.ui.text.input.KeyboardType
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
@@ -10,85 +13,87 @@ import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema.FieldType
 /** Declarative club-create form. Mirrors iOS `clubsCreateSchema`. */
 object ClubCreateSchema {
 
-    val fields: List<Field> = listOf(
+    // `get()`, not a stored value: the labels resolve through LanguageManager and a
+    // list built once at class load would freeze in whatever language was active then.
+    val fields: List<Field> get() = listOf(
         Field(
             id = FieldId.COVER,
-            label = "Cover",
+            label = LanguageManager.string(DesignR.string.common_cover),
             required = false,
             type = FieldType.CoverPicker(
                 AppFieldSchema.CoverItem(
-                    title = "Cover color",
-                    description = "Pick a background colour for your club card.",
+                    title = LanguageManager.string(R.string.clubs_cover_color_title),
+                    description = LanguageManager.string(R.string.clubs_cover_color_desc),
                     covers = AppFieldSchema.defaultCovers
                 )
             )
         ),
         Field(
             id = FieldId.VISIBILITY,
-            label = "Visibility",
+            label = LanguageManager.string(R.string.clubs_visibility_label),
             required = false,
             type = FieldType.RadioGroup(
                 options = listOf(
                     AppFieldSchema.RadioOption(
                         value = AppUIEntities.AccessType.PUBLIC,
-                        label = "Public",
-                        description = "Anyone in the community can find and join this club."
+                        label = LanguageManager.string(R.string.clubs_public),
+                        description = LanguageManager.string(R.string.clubs_public_desc_short)
                     ),
                     AppFieldSchema.RadioOption(
                         value = AppUIEntities.AccessType.PRIVATE,
-                        label = "Private",
-                        description = "Only people you approve can join. Contact stays hidden."
+                        label = LanguageManager.string(R.string.clubs_private),
+                        description = LanguageManager.string(R.string.clubs_private_desc_short)
                     )
                 )
             )
         ),
         Field(
             id = FieldId.CLUB_NAME,
-            label = "Club name",
+            label = LanguageManager.string(R.string.clubs_name_label),
             required = true,
-            type = FieldType.Text(placeholder = "Enter club name")
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.clubs_name_placeholder))
         ),
         Field(
             id = FieldId.OWNER_CONTACT,
-            label = "Owner contact",
+            label = LanguageManager.string(R.string.clubs_owner_contact_label),
             required = false,
-            type = FieldType.Text(placeholder = "Enter owner contact")
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.clubs_owner_contact_placeholder))
         ),
         Field(
             id = FieldId.CATEGORY,
-            label = "Category",
+            label = LanguageManager.string(R.string.clubs_category_label),
             required = true,
-            type = FieldType.ChipInput(placeholder = "Add category")
+            type = FieldType.ChipInput(placeholder = LanguageManager.string(R.string.clubs_add_category))
         ),
         Field(
             id = FieldId.LINKS,
-            label = "Add link",
+            label = LanguageManager.string(R.string.clubs_add_link),
             required = false,
-            type = FieldType.LinkInput(placeholder = "Add link")
+            type = FieldType.LinkInput(placeholder = LanguageManager.string(R.string.clubs_add_link))
         ),
         Field(
             id = FieldId.ABOUT,
-            label = "About",
+            label = LanguageManager.string(R.string.clubs_about_label),
             required = false,
-            type = FieldType.TextArea(placeholder = "About", maxLength = 500)
+            type = FieldType.TextArea(placeholder = LanguageManager.string(R.string.clubs_about_label), maxLength = 500)
         ),
         Field(
             id = FieldId.LOCATION,
-            label = "Location",
+            label = LanguageManager.string(R.string.clubs_location_label),
             required = false,
-            type = FieldType.Text(placeholder = "Enter location")
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.clubs_location_placeholder))
         ),
         Field(
             id = FieldId.CAPACITY,
-            label = "Capacity",
+            label = LanguageManager.string(R.string.clubs_capacity_label),
             required = false,
-            type = FieldType.Text(placeholder = "Enter capacity", keyboardType = KeyboardType.Number)
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.clubs_capacity_placeholder), keyboardType = KeyboardType.Number)
         ),
         Field(
             id = FieldId.RULES,
-            label = "Rules",
+            label = LanguageManager.string(R.string.clubs_rules_label),
             required = false,
-            type = FieldType.TextArea(placeholder = "Rules", maxLength = 500)
+            type = FieldType.TextArea(placeholder = LanguageManager.string(R.string.clubs_rules_label), maxLength = 500)
         )
     )
 }

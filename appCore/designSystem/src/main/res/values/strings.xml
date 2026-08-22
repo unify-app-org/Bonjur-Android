@@ -1,3 +1,45 @@
 <resources>
     <string name="title_activity_main">MainActivity</string>
+
+    <!-- Language picker (shared: profile settings + onboarding) -->
+
+    <!-- Shared actions -->
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_save">Save</string>
+    <string name="common_delete">Delete</string>
+    <string name="common_continue">Continue</string>
+    <string name="common_try_again">Please try again.</string>
+    <string name="common_search">Search</string>
+    <string name="common_see_all">See all</string>
+    <string name="common_members">Members</string>
+    <string name="common_no_members_found">No members found</string>
+    <string name="common_public">Public</string>
+    <string name="common_private">Private</string>
+    <string name="common_report">Report</string>
+    <string name="common_report_submitted">Report submitted</string>
+    <string name="common_role_updated">Role updated</string>
+    <string name="common_role_update_failed">Could not update role</string>
+
+    <!-- Member roles (section titles) -->
+    <string name="role_members">Members</string>
+    <string name="role_president">President</string>
+    <string name="role_vice_president">Vice president</string>
+    <string name="role_event_creators">Event creators</string>
+    <string name="member_assign_role">Assign role</string>
+    <string name="member_change_role">Change role</string>
+    <string name="member_choose_role">Choose a role for this member</string>
+    <string name="member_report_user">Report user</string>
+    <string name="member_confirm">Confirm</string>
+    <string name="member_no_members_yet">No members yet</string>
+    <string name="member_see_all_members">See all %1$d members</string>
+    <string name="member_options">Members</string>
+    <string name="common_back">Back</string>
+    <string name="common_share">Share</string>
+    <string name="common_options">Options</string>
+    <string name="common_close">Close</string>
+    <string name="community_subtitle">Community</string>
+    <string name="common_no_information">No information available</string>
+    <string name="common_cover">Cover</string>
+    <string name="common_copied_to_clipboard">Copied to clipboard</string>
 </resources>

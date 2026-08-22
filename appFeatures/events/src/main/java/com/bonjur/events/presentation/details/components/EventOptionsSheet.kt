@@ -1,5 +1,8 @@
 package com.bonjur.events.presentation.details.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.events.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,9 +54,9 @@ fun EventOptionsSheet(
         ) {
             if (showReport) {
                 EventOptionRow(
-                    title = "Report event",
+                    title = stringResource(R.string.events_report),
                     tint = DestructiveRed,
-                    trailing = "Coming soon",
+                    trailing = stringResource(DesignR.string.common_coming_soon),
                     enabled = false
                 ) {}
                 RowDivider()
@@ -61,7 +64,7 @@ fun EventOptionsSheet(
 
             if (showExit) {
                 EventOptionRow(
-                    title = "Leave event",
+                    title = stringResource(R.string.events_leave_confirm),
                     tint = DestructiveRed
                 ) {
                     onDismiss()
@@ -71,9 +74,9 @@ fun EventOptionsSheet(
             }
 
             EventOptionRow(
-                title = "Share",
+                title = stringResource(DesignR.string.common_share),
                 tint = Palette.blackMedium,
-                trailing = "Coming soon",
+                trailing = stringResource(DesignR.string.common_coming_soon),
                 enabled = false
             ) {}
         }

@@ -1,0 +1,33 @@
+<resources>
+    <string name="notif_accept">Qəbul et</string>
+    <string name="notif_reject">Rədd et</string>
+    <string name="notif_verify">Təsdiqlə</string>
+    <string name="notif_close">Bağla</string>
+    <string name="notif_continue">Davam et</string>
+    <string name="notif_try_again">Yenidən cəhd et</string>
+    <string name="notif_note">Qeyd</string>
+    <string name="notif_needs_action">Sizin əməliyyatınız lazımdır</string>
+    <string name="notif_verification_requests">Təsdiq sorğuları</string>
+    <string name="notif_no_notifications">Hələ bildiriş yoxdur</string>
+    <string name="notif_nothing_to_verify">Təsdiqlənəcək bir şey yoxdur</string>
+    <string name="notif_all_caught_up">Hər şey qaydasındadır</string>
+    <string name="notif_all_handled">Bütün klub təsdiq sorğuları həll edildi.</string>
+    <string name="notif_empty_desc">Tədbir xatırlatmaları, sorğu nəticələri və daha çoxu burada görünəcək.</string>
+    <string name="notif_mark_all_read">Bu, bütün bildirişləri oxunmuş kimi işarələyir.</string>
+    <string name="notif_reject_request">Sorğu rədd edilsin?</string>
+    <string name="notif_reject_verification">Təsdiq rədd edilsin?</string>
+    <string name="notif_load_fail">Bildirişlər yüklənə bilmədi</string>
+    <string name="notif_requests_load_fail">Sorğular yüklənə bilmədi</string>
+    <string name="notif_verifications_load_fail">Təsdiqlər yüklənə bilmədi</string>
+    <string name="notif_action_subtitle">%1$d qoşulma sorğusu · %2$d təsdiq</string>
+    <string name="notif_action_subtitle_idle">Qoşulma sorğularını və təsdiqləri nəzərdən keçirin</string>
+    <string name="notif_mark_all_title">Hamısı oxunmuş kimi işarələnsin?</string>
+    <string name="notif_mark_all_confirm">Hamısını oxu</string>
+    <string name="notif_today">Bu gün</string>
+    <string name="notif_yesterday">Dünən</string>
+    <string name="notif_this_week">Bu həftə</string>
+    <string name="notif_earlier">Əvvəllər</string>
+    <string name="notif_reject_note_desc">%1$s klubunun təsdiq sorğusunu rədd edirsiniz.</string>
+    <string name="notif_reject_note_label">Qeyd (istəyə bağlı)</string>
+    <string name="notif_reject_note_hint">Klub təşkilatçısı bu qeydi bildirişində görəcək. Səbəb göstərmədən rədd etmək üçün boş buraxın.</string>
+</resources>

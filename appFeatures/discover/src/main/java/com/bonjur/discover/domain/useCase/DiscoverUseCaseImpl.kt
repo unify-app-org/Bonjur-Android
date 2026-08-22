@@ -1,5 +1,7 @@
 package com.bonjur.discover.domain.useCase
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R as DesignR
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -184,7 +186,7 @@ class DiscoverUseCaseImpl @Inject constructor(
     private fun DiscoverCommunity.toCardModel() = CommunityCardModel(
         id = id ?: 0,
         name = name ?: "-",
-        subTitle = "Community",
+        subTitle = LanguageManager.string(DesignR.string.community_subtitle),
         logoURL = profile ?: "",
         memberCount = membersCount ?: 0,
         members = members.toMembers(),
@@ -198,15 +200,9 @@ class DiscoverUseCaseImpl @Inject constructor(
         } ?: emptyList()
 
     private fun String?.toAccessType(): AppUIEntities.AccessType =
-        if (this?.uppercase() == "PUBLIC") AppUIEntities.AccessType.PUBLIC
-        else AppUIEntities.AccessType.PRIVATE
+        AppUIEntities.AccessType.fromApi(this)
 
-    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
-        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
-        "PENDING" -> AppUIEntities.RequestType.PENDING
-        "REJECTED" -> AppUIEntities.RequestType.REJECTED
-        else -> AppUIEntities.RequestType.NONE
-    }
+    private fun String?.toRequestType(): AppUIEntities.RequestType = AppUIEntities.RequestType.fromApi(this)
 
     // MARK: - Date helpers (mirrors HangoutsUseCaseImpl; card date badge: day / MMM / HH:mm)
 
@@ -239,13 +235,5 @@ class DiscoverUseCaseImpl @Inject constructor(
         return null
     }
 
-    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = when (this?.uppercase()) {
-        "GREEN", "PRIMARY" -> AppUIEntities.BackgroundType.Primary
-        "BLUE", "SECONDARY" -> AppUIEntities.BackgroundType.Secondary
-        "PURPLE", "TERTIARY" -> AppUIEntities.BackgroundType.Tertiary
-        "RED" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Red)
-        "ORANGE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Orange)
-        "PINK" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Pink)
-        else -> AppUIEntities.BackgroundType.Primary
-    }
+    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.fromApi(this)
 }

@@ -12,7 +12,9 @@ data class AttachmentItemModel(
     val size: String,
     val name: String,
     val type: AttachmentType = AttachmentType.NONE,
-    val canEdit: Boolean = false
+    val canEdit: Boolean = false,
+    /** Remote file URL. When set, tapping the row opens the document. */
+    val url: String? = null
 ) {
     enum class AttachmentType {
         PDF,

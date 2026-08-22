@@ -1,0 +1,15 @@
+<resources>
+    <string name="discover_communities">Communities</string>
+    <string name="discover_clubs">Clubs</string>
+    <string name="discover_events">Events</string>
+    <string name="discover_hangouts">Hangouts</string>
+    <string name="discover_view_all">view all</string>
+    <string name="discover_clubs_empty">No clubs here yet. Be the pioneer and start the very first one now!</string>
+    <string name="discover_events_empty">No events scheduled yet. Be the pioneer and start the very first one now!</string>
+    <string name="discover_hangouts_empty">No hangouts planned yet. Be the pioneer and start the very first one now!</string>
+    <string name="discover_create_club">Create a club +</string>
+    <string name="discover_create_event">Create an event +</string>
+    <string name="discover_create_hangout">Create a hangout +</string>
+    <string name="common_got_it">Got it</string>
+    <string name="common_unknown_error">Unknown error</string>
+</resources>

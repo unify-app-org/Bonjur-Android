@@ -1,5 +1,7 @@
 package com.bonjur.hangouts.presentation.create.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.hangouts.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -48,7 +50,7 @@ fun HangoutCreateView(
                 Text(text = state.topTitle, style = AppTypography.TitleL.extraBold)
 
                 Text(
-                    text = "Fields marked with * are required.",
+                    text = stringResource(R.string.hangouts_required_hint),
                     style = AppTypography.BodyTextMd.regular,
                     color = Palette.appBlue
                 )
@@ -73,7 +75,7 @@ fun HangoutCreateView(
             }
 
             AppButton(
-                title = "Continue",
+                title = stringResource(R.string.hangouts_continue),
                 model = AppButtonModel(contentSize = ContentSize.Fill),
                 onClick = { store.send(HangoutCreateAction.ContinueTapped) },
                 modifier = Modifier

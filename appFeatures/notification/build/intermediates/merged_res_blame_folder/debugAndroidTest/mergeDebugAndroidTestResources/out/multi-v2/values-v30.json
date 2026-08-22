@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.bonjur.notification.test.notification-mergeDebugAndroidTestResources-64:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/Users/huseynhasanov/.gradle/caches/8.13/transforms/4d0296daa8ec9bd8e5399b80c25a484b/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,5 +1,10 @@
 package com.bonjur.notification.presentation.feed.components
 
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.ui.res.stringResource
+import com.bonjur.notification.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,9 +49,9 @@ import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designsystem.R as DesignR
-import com.bonjur.notification.domain.models.NeedsActionSummary
 import com.bonjur.notification.domain.models.NotificationFeedItem
 import com.bonjur.notification.domain.models.NotificationTargetType
+import com.bonjur.notification.domain.models.RelativeTime
 import com.bonjur.notification.domain.models.NotificationType
 import com.bonjur.notification.presentation.feed.models.NotificationFeedAction
 import com.bonjur.notification.presentation.feed.models.NotificationFeedSideEffect
@@ -80,23 +85,27 @@ private fun NotificationFeedContent(
     store: FeatureStore<NotificationFeedViewState, NotificationFeedAction, NotificationFeedSideEffect>
 ) {
     val state = store.state
-    if (state.inbox.sections.isEmpty()) {
-        when (state.phase) {
-            RequestsPhase.IDLE, RequestsPhase.LOADING -> LoadingState()
-            RequestsPhase.FAILED -> ErrorState { store.send(NotificationFeedAction.Retry) }
-            RequestsPhase.LOADED ->
-                if (state.inbox.action.hasActions) {
-                    FeedList(store)
-                } else {
-                    ComingSoon(
-                        "You're all caught up",
-                        "Event reminders, request outcomes and more will show up here."
-                    )
-                }
+    Column(modifier = Modifier.fillMaxSize()) {
+        // Pinned above the feed, not an item inside it. As a list item it went
+        // off-screen whenever LazyColumn restored a previous scroll position on
+        // re-entry, so the entry point was only reachable by scrolling back up.
+        Box(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 4.dp)) {
+            ActionBanner { store.send(NotificationFeedAction.ActionBannerTapped) }
         }
-        return
+
+        if (state.inbox.sections.isEmpty()) {
+            when (state.phase) {
+                RequestsPhase.IDLE, RequestsPhase.LOADING -> LoadingState()
+                RequestsPhase.FAILED -> ErrorState { store.send(NotificationFeedAction.Retry) }
+                RequestsPhase.LOADED -> ComingSoon(
+                    stringResource(R.string.notif_all_caught_up),
+                    stringResource(R.string.notif_empty_desc)
+                )
+            }
+        } else {
+            FeedList(store)
+        }
     }
-    FeedList(store)
 }
 
 @Composable
@@ -109,14 +118,16 @@ private fun FeedList(
         modifier = Modifier
             .fillMaxSize()
             .background(Palette.grayQuaternary.copy(alpha = 0.4f)),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 55.dp),
+        // The fixed bottom inset assumed a gesture-nav bar; with 3-button navigation the
+        // last row scrolled underneath it.
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 8.dp,
+            bottom = 55.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        ),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        if (inbox.action.hasActions) {
-            item {
-                ActionBanner(inbox.action) { store.send(NotificationFeedAction.ActionBannerTapped) }
-            }
-        }
         inbox.sections.forEach { section ->
             item(key = "section-${section.title}") {
                 Text(
@@ -144,7 +155,7 @@ private fun FeedList(
 }
 
 @Composable
-private fun ActionBanner(action: NeedsActionSummary, onClick: () -> Unit) {
+private fun ActionBanner(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,14 +174,13 @@ private fun ActionBanner(action: NeedsActionSummary, onClick: () -> Unit) {
             Text("✓", style = AppTypography.BodyTextMd.semiBold, color = Palette.white)
         }
         Column(modifier = Modifier.weight(1f)) {
-            Text("Needs your action", style = AppTypography.BodyTextMd.semiBold, color = Palette.black)
+            Text(stringResource(R.string.notif_needs_action), style = AppTypography.BodyTextMd.semiBold, color = Palette.black)
             Text(
-                "${action.requests} join requests · ${action.verifications} to verify",
+                stringResource(R.string.notif_action_subtitle_idle),
                 style = AppTypography.TextSm.regular,
                 color = Palette.graySecondary
             )
         }
-        Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(Palette.cardBgRed))
     }
 }
 
@@ -200,6 +210,17 @@ private fun FeedRow(item: NotificationFeedItem, onClick: () -> Unit) {
                         .clip(RoundedCornerShape(10.dp))
                         .background(Palette.grayQuaternary)
                         .padding(horizontal = 10.dp, vertical = 7.dp)
+                )
+            }
+            // Recomputed at render so a screen left open doesn't keep showing
+            // the stamp baked in at map time.
+            val time = RelativeTime.short(item.createdAtMillis)
+            if (time.isNotEmpty()) {
+                Text(
+                    time,
+                    style = AppTypography.TextSm.regular,
+                    color = Palette.graySecondary,
+                    modifier = Modifier.padding(top = 2.dp)
                 )
             }
         }
@@ -255,9 +276,31 @@ private fun notificationIconPainter(type: NotificationType) = painterResource(
     when (type) {
         NotificationType.BIRTHDAY -> DesignR.drawable.ic_gift
         NotificationType.HOLIDAY -> DesignR.drawable.ic_party
-        NotificationType.EVENT_REMINDER -> DesignR.drawable.ic_calendar
-        NotificationType.REQUEST_OUTCOME -> DesignR.drawable.ic_two_users
-        NotificationType.VERIFICATION_OUTCOME -> DesignR.drawable.ic_verified_seal
+
+        NotificationType.EVENT_REMINDER,
+        NotificationType.REQUEST_EVENT,
+        NotificationType.USER_REQUESTED_PRIVATE_EVENT,
+        NotificationType.REJECTED_USER_FROM_EVENT,
+        NotificationType.ACCEPTED_USER_FROM_EVENT -> DesignR.drawable.ic_calendar
+
+        NotificationType.REQUEST_OUTCOME,
+        NotificationType.REQUEST_CLUB,
+        NotificationType.REJECTED_USER_FROM_CLUB,
+        NotificationType.ACCEPTED_USER_FROM_CLUB,
+        NotificationType.REQUEST_HANGOUT,
+        NotificationType.USER_REQUESTED_PRIVATE_CLUB,
+        NotificationType.USER_REQUESTED_PRIVATE_HANGOUT,
+        NotificationType.REJECTED_USER_FROM_HANGOUT,
+        NotificationType.ACCEPTED_USER_FROM_HANGOUT -> DesignR.drawable.ic_two_users
+
+        NotificationType.USER_JOINED_PUBLIC_CLUB,
+        NotificationType.USER_JOINED_PUBLIC_HANGOUT -> DesignR.drawable.ic_users_group
+
+        NotificationType.VERIFICATION_OUTCOME,
+        NotificationType.REQUEST_CLUB_VERIFICATION,
+        NotificationType.VERIFIED_CLUB,
+        NotificationType.REJECTED_CLUB_VERIFICATION -> DesignR.drawable.ic_verified_seal
+
         NotificationType.GENERAL -> DesignR.drawable.ic_bell
     }
 )
@@ -304,13 +347,13 @@ private fun NotificationDetailSheet(
                         .padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    Text("Note", style = AppTypography.CaptionMd.medium, color = Palette.graySecondary)
+                    Text(stringResource(R.string.notif_note), style = AppTypography.CaptionMd.medium, color = Palette.graySecondary)
                     Text(item.note, style = AppTypography.TextL.regular, color = Palette.black)
                 }
             }
             Spacer(Modifier.height(4.dp))
             AppButton(
-                title = if (isActionable) "Continue" else "Close",
+                title = if (isActionable) stringResource(R.string.notif_continue) else stringResource(R.string.notif_close),
                 onClick = { if (isActionable) onContinue() else onClose() },
                 modifier = Modifier.fillMaxWidth(),
                 model = AppButtonModel(

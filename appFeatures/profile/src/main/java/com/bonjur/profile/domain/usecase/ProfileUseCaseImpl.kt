@@ -223,32 +223,12 @@ class ProfileUseCaseImpl @Inject constructor(
     // ── Mappers (mirror the per-feature helpers in Clubs/Events use cases) ─────
 
     private fun String?.toAccessType(): AppUIEntities.AccessType =
-        if (this?.uppercase() == "PUBLIC") AppUIEntities.AccessType.PUBLIC
-        else AppUIEntities.AccessType.PRIVATE
+        AppUIEntities.AccessType.fromApi(this)
 
-    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
-        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
-        "PENDING" -> AppUIEntities.RequestType.PENDING
-        "REJECTED" -> AppUIEntities.RequestType.REJECTED
-        else -> AppUIEntities.RequestType.NONE
-    }
+    private fun String?.toRequestType(): AppUIEntities.RequestType = AppUIEntities.RequestType.fromApi(this)
 
-    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = when (this?.uppercase()) {
-        "MEMBER" -> AppUIEntities.UserActivityRole.MEMBER
-        "PRESIDENT" -> AppUIEntities.UserActivityRole.PRESIDENT
-        "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
-        "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
-        else -> AppUIEntities.UserActivityRole.NOT_JOINED
-    }
+    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = AppUIEntities.UserActivityRole.fromApi(this)
 
     // Backend colour enum (iOS BackgroundType raw values) → UI type.
-    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = when (this?.uppercase()) {
-        "GREEN" -> AppUIEntities.BackgroundType.Primary
-        "BLUE" -> AppUIEntities.BackgroundType.Secondary
-        "PURPLE" -> AppUIEntities.BackgroundType.Tertiary
-        "RED" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Red)
-        "ORANGE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Orange)
-        "PINK" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Pink)
-        else -> AppUIEntities.BackgroundType.Primary
-    }
+    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.fromApi(this)
 }

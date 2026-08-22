@@ -1,5 +1,7 @@
 package com.bonjur.designSystem.components.textView
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -27,7 +29,7 @@ fun TextView(
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     characterLimit: Int = 500,
-    placeholder: String = "Write something"
+    placeholder: String = LanguageManager.string(R.string.field_write_something)
 ) {
     var isFocused by remember { mutableStateOf(false) }
     

@@ -7,6 +7,10 @@
 
 package com.bonjur.clubs.presentation.list.components
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.clubs.R
 import CardBackgroundView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.bonjur.designSystem.commonModel.eventCountText
+import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.clubs.presentation.list.models.ClubCardMocks
 import com.bonjur.clubs.presentation.list.models.ClubCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -76,7 +83,7 @@ private fun TopLeftView(model: ClubCardModel) {
                 color = Palette.whiteHigh
             ) {
                 Text(
-                    text = if (model.accessType == AppUIEntities.AccessType.PRIVATE) "Private" else "Public",
+                    text = if (model.accessType == AppUIEntities.AccessType.PRIVATE) stringResource(R.string.clubs_private) else stringResource(R.string.clubs_public),
                     style = AppTypography.TextSm.medium,
                     color = Palette.blackHigh,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -99,7 +106,7 @@ private fun TopLeftView(model: ClubCardModel) {
             if (model.isVerified) {
                 Icon(
                     painter = Images.Icons.verifiedSeal(),
-                    contentDescription = "Verified club",
+                    contentDescription = stringResource(R.string.clubs_verified),
                     tint = model.bgType.foregroundColor,
                     modifier = Modifier.size(14.dp)
                 )
@@ -133,8 +140,8 @@ private fun EventsMetaRow(model: ClubCardModel) {
             modifier = Modifier.size(12.dp)
         )
         Text(
-            text = if (model.upcomingEventsCount == 1) "1 event"
-                   else "${model.upcomingEventsCount} events",
+            // plurals already handle the singular form in every language
+            text = eventCountText(model.upcomingEventsCount),
             style = AppTypography.TextSm.medium,
             color = model.bgType.foregroundColor
         )
@@ -150,7 +157,8 @@ private fun EventsMetaRow(model: ClubCardModel) {
 }
 
 private fun roleBadgeText(role: AppUIEntities.UserActivityRole): String =
-    if (role == AppUIEntities.UserActivityRole.PRESIDENT) "👑 Owner" else role.title
+    if (role == AppUIEntities.UserActivityRole.PRESIDENT) "👑 " + LanguageManager.string(DesignR.string.owner)
+    else role.displayTitle
 
 @Composable
 private fun CategoriesRow(model: ClubCardModel) {
@@ -288,8 +296,8 @@ private fun MembersView(
         Spacer(modifier = Modifier.width((members.size.coerceAtMost(3) * 6).dp))
 
         Text(
-            text = if (totalCapacity > 0) "$memberCount of $totalCapacity members"
-                   else "$memberCount members",
+            text = if (totalCapacity > 0) memberOfCapacityText(memberCount, totalCapacity)
+                   else memberCountText(memberCount),
             style = AppTypography.TextMd.regular,
             color = foregroundColor,
             textAlign = TextAlign.Start

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Cached documents handed to other apps when we can't render them ourselves. -->
+    <cache-path name="document_preview" path="document_preview/" />
+</paths>

@@ -10,6 +10,7 @@ import com.bonjur.hangouts.presentation.detail.HangoutDetailsScreen
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData
 import com.bonjur.hangouts.presentation.list.HangoutsListScreen
 import com.bonjur.hangouts.presentation.list.model.HangoutsListInputData
+import com.bonjur.navigation.HangoutDetailsNavArgs
 import com.bonjur.navigation.MainScreen
 import com.bonjur.navigation.NavArgs
 import com.bonjur.navigation.Navigator
@@ -26,7 +27,14 @@ fun NavGraphBuilder.hangoutsNavGraph(navigator: Navigator) {
         }
 
         composable<HangoutsScreens.Details> {
-            val inputData = remember { NavArgs.get<HangoutDetailsInputData>() ?: HangoutDetailsInputData(hangoutId = "") }
+            // Accept the hangouts-local payload, or the neutral cross-feature
+            // payload (e.g. from the notification feed, which can't depend on
+            // the hangouts module).
+            val inputData = remember {
+                NavArgs.get<HangoutDetailsInputData>()
+                    ?: NavArgs.get<HangoutDetailsNavArgs>()?.let { HangoutDetailsInputData(hangoutId = it.hangoutId) }
+                    ?: HangoutDetailsInputData(hangoutId = "")
+            }
             HangoutDetailsScreen(
                 inputData = inputData,
                 navigator

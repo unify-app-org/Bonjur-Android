@@ -1,5 +1,9 @@
 package com.bonjur.notification.presentation.needsAction.components
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import androidx.compose.ui.res.stringResource
+import com.bonjur.notification.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -67,6 +71,15 @@ fun NeedsActionView(store: FeatureStore<NeedsActionViewState, NeedsActionAction,
             options = ActionTab.entries,
             selectedOption = state.selectedTab,
             onOptionSelected = { store.send(NeedsActionAction.SelectTab(it)) },
+            // Pending count per tab, always shown — "Clubs (0)" when there is nothing.
+            titleFor = { tab ->
+                val count = when (tab) {
+                    ActionTab.CLUBS -> state.clubs.items.size
+                    ActionTab.HANGOUTS -> state.hangouts.items.size
+                    ActionTab.EVENTS -> state.events.items.size
+                }
+                "${tab.title} ($count)"
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 10.dp)
@@ -113,9 +126,9 @@ private fun VerificationBanner(count: Int, onClick: () -> Unit) {
             Text("✓", style = AppTypography.BodyTextMd.semiBold, color = Palette.white)
         }
         Column(modifier = Modifier.weight(1f)) {
-            Text("Verification requests", style = AppTypography.BodyTextMd.semiBold, color = Palette.black)
+            Text(stringResource(R.string.notif_verification_requests), style = AppTypography.BodyTextMd.semiBold, color = Palette.black)
             Text(
-                "$count clubs awaiting your approval",
+                LanguageManager.plural(DesignR.plurals.clubs_awaiting_approval, count),
                 style = AppTypography.TextSm.regular,
                 color = Palette.graySecondary
             )
@@ -145,7 +158,7 @@ private fun RequestsTab(
     when (source.phase) {
         RequestsPhase.IDLE, RequestsPhase.LOADING -> LoadingState()
         RequestsPhase.FAILED -> ErrorState { store.send(NeedsActionAction.Retry(tab)) }
-        RequestsPhase.LOADED -> ComingSoon("You're all caught up", emptySubtitle)
+        RequestsPhase.LOADED -> ComingSoon(stringResource(R.string.notif_all_caught_up), emptySubtitle)
     }
 }
 
@@ -227,13 +240,13 @@ private fun RequestRow(
         } else {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 AppButton(
-                    title = "Reject",
+                    title = stringResource(R.string.notif_reject),
                     onClick = onReject,
                     modifier = Modifier.weight(1f),
                     model = AppButtonModel(type = ButtonType.Destructive, contentSize = ContentSize.Fill, size = AppButtonSize.Small)
                 )
                 AppButton(
-                    title = "Accept",
+                    title = stringResource(R.string.notif_accept),
                     onClick = onAccept,
                     modifier = Modifier.weight(1f),
                     model = AppButtonModel(type = ButtonType.Primary, contentSize = ContentSize.Fill, size = AppButtonSize.Small)
@@ -280,10 +293,10 @@ internal fun ErrorState(onRetry: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Couldn't load requests", style = AppTypography.BodyTextMd.semiBold, color = Palette.black)
+        Text(stringResource(R.string.notif_requests_load_fail), style = AppTypography.BodyTextMd.semiBold, color = Palette.black)
         Spacer(Modifier.height(8.dp))
         Text(
-            "Try again",
+            stringResource(R.string.notif_try_again),
             style = AppTypography.BodyTextMd.semiBold,
             color = Palette.green900,
             modifier = Modifier.clickable(onClick = onRetry)

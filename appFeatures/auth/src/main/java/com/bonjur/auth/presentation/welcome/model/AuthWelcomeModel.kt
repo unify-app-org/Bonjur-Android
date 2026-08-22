@@ -3,6 +3,7 @@ package com.bonjur.auth.presentation.welcome.model
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
+import com.bonjur.auth.R
 import com.bonjur.auth.domain.models.OnboardingUIModel
 import com.bonjur.designSystem.ui.theme.image.Images
 import kotlinx.serialization.Serializable
@@ -19,8 +20,8 @@ sealed class AuthWelcomeSideEffect : SideEffect {
 data class AuthWelcomeViewState(
     val uiModel: OnboardingUIModel = OnboardingUIModel(
         id = "",
-        title = "",
-        subtitle = "",
+        titleRes = R.string.auth_welcome_title,
+        subtitleRes = R.string.auth_welcome_subtitle,
         image = { Images.Icons.bigGraduationHat() }
     )
 ) : FeatureState

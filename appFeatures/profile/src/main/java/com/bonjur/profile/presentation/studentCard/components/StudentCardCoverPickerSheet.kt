@@ -1,5 +1,7 @@
 package com.bonjur.profile.presentation.studentCard.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.profile.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,7 +30,7 @@ fun StudentCardCoverPickerSheet(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Choose cover",
+            text = stringResource(R.string.profile_card_choose_cover),
             style = AppTypography.TitleMd.extraBold,
             modifier = Modifier
                 .fillMaxWidth()
@@ -49,12 +51,12 @@ fun StudentCardCoverPickerSheet(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AppButton(
-                title = "Cancel",
+                title = stringResource(R.string.common_cancel),
                 onClick = onCancel,
                 model = AppButtonModel(type = ButtonType.Tertiary)
             )
             AppButton(
-                title = "Save",
+                title = stringResource(R.string.editprofile_save),
                 onClick = onSave,
                 model = AppButtonModel(contentSize = ContentSize.Fill),
                 modifier = Modifier.weight(1f)

@@ -1,5 +1,7 @@
 package com.bonjur.events.presentation.create.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import androidx.compose.ui.text.input.KeyboardType
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
@@ -10,94 +12,96 @@ import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema.FieldType
 /** Declarative event-create form. Mirrors the club-create schema; rendered by `FieldSchemaRouter`. */
 object EventCreateSchema {
 
-    val fields: List<Field> = listOf(
+    // `get()`, not a stored value: the labels resolve through LanguageManager and a
+    // list built once at class load would freeze in whatever language was active then.
+    val fields: List<Field> get() = listOf(
         Field(
             id = FieldId.VISIBILITY,
-            label = "Visibility",
+            label = LanguageManager.string(R.string.events_visibility),
             required = false,
             type = FieldType.RadioGroup(
                 options = listOf(
                     AppFieldSchema.RadioOption(
                         value = AppUIEntities.AccessType.PUBLIC,
-                        label = "Public",
-                        description = "Anyone in the community can find and join this event."
+                        label = LanguageManager.string(R.string.events_public),
+                        description = LanguageManager.string(R.string.events_public_desc)
                     ),
                     AppFieldSchema.RadioOption(
                         value = AppUIEntities.AccessType.PRIVATE,
-                        label = "Private",
-                        description = "Only people you approve can join. Contact stays hidden."
+                        label = LanguageManager.string(R.string.events_private),
+                        description = LanguageManager.string(R.string.events_private_desc)
                     )
                 )
             )
         ),
         Field(
             id = FieldId.EVENT_NAME,
-            label = "Event name",
+            label = LanguageManager.string(R.string.events_name_label),
             required = true,
-            type = FieldType.Text(placeholder = "Enter event name")
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.events_name_ph))
         ),
         Field(
             id = FieldId.OWNER_CONTACT,
-            label = "Owner contact",
+            label = LanguageManager.string(R.string.events_owner_contact_label),
             required = false,
-            type = FieldType.Text(placeholder = "Enter owner contact")
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.events_owner_contact_ph))
         ),
         Field(
             id = FieldId.ABOUT,
-            label = "About",
+            label = LanguageManager.string(R.string.events_row_about),
             required = false,
-            type = FieldType.TextArea(placeholder = "About", maxLength = 500)
+            type = FieldType.TextArea(placeholder = LanguageManager.string(R.string.events_row_about), maxLength = 500)
         ),
         Field(
             id = FieldId.CATEGORY,
-            label = "Category",
+            label = LanguageManager.string(R.string.events_category_label),
             required = false,
-            type = FieldType.ChipInput(placeholder = "Add category")
+            type = FieldType.ChipInput(placeholder = LanguageManager.string(R.string.events_add_category))
         ),
         Field(
             id = FieldId.LOCATION,
-            label = "Location",
+            label = LanguageManager.string(R.string.events_row_location),
             required = false,
-            type = FieldType.Text(placeholder = "Enter location")
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.events_location_ph))
         ),
         Field(
             id = FieldId.EVENT_DATE,
-            label = "Date",
+            label = LanguageManager.string(R.string.events_row_date),
             required = true,
-            type = FieldType.DateTime(placeholder = "Pick date & time")
+            type = FieldType.DateTime(placeholder = LanguageManager.string(R.string.events_pick_datetime))
         ),
         Field(
             id = FieldId.REMINDER,
-            label = "Reminder",
+            label = LanguageManager.string(R.string.events_reminder),
             required = false,
-            type = FieldType.Reminder(placeholder = "None")
+            type = FieldType.Reminder(placeholder = LanguageManager.string(R.string.events_none))
         ),
         Field(
             id = FieldId.CAPACITY,
-            label = "Capacity",
+            label = LanguageManager.string(R.string.events_row_capacity),
             required = false,
-            type = FieldType.Text(placeholder = "Enter capacity", keyboardType = KeyboardType.Number)
+            type = FieldType.Text(placeholder = LanguageManager.string(R.string.events_capacity_ph), keyboardType = KeyboardType.Number)
         ),
         Field(
             id = FieldId.LINKS,
-            label = "Add link",
+            label = LanguageManager.string(R.string.events_add_link),
             required = false,
-            type = FieldType.LinkInput(placeholder = "Add link")
+            type = FieldType.LinkInput(placeholder = LanguageManager.string(R.string.events_add_link))
         ),
         Field(
             id = FieldId.ATTACHMENT,
-            label = "Attachment",
+            label = LanguageManager.string(R.string.events_attachment),
             required = false,
             type = FieldType.Attachment(
-                placeholder = "Add",
-                description = "You can upload files up to 15 MB total for this event."
+                placeholder = LanguageManager.string(R.string.events_add),
+                description = LanguageManager.string(R.string.events_attachment_hint)
             )
         ),
         Field(
             id = FieldId.RULES,
-            label = "Rules",
+            label = LanguageManager.string(R.string.events_row_rules),
             required = false,
-            type = FieldType.TextArea(placeholder = "Rules", maxLength = 500)
+            type = FieldType.TextArea(placeholder = LanguageManager.string(R.string.events_row_rules), maxLength = 500)
         )
     )
 }

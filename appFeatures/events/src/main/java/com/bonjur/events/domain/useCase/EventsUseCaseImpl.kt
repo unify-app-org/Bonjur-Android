@@ -1,5 +1,10 @@
 package com.bonjur.events.domain.useCase
 
+import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.commonModel.dialablePhone
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.attachments.AttachmentItemModel
 import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
@@ -121,6 +126,10 @@ class EventsUseCaseImpl @Inject constructor(
         dataSource.joinEvent(eventId)
     }
 
+    override suspend fun sendReminder(eventId: String) {
+        dataSource.sendReminder(eventId)
+    }
+
     override suspend fun exitEvent(eventId: String) {
         dataSource.exitEvent(eventId)
     }
@@ -134,9 +143,19 @@ class EventsUseCaseImpl @Inject constructor(
     override suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int, keyword: String?): MembersPage {
         val query = mutableMapOf("page" to page.toString(), "size" to size.toString())
         keyword?.trim()?.takeIf { it.isNotEmpty() }?.let { query["keyword"] = it }
-        val users = dataSource.getEventMembers(eventId, query)
-            .content.map { it.toCellModel() }
-        return MembersPage(members = users, hasMore = users.size >= size)
+        val response = dataSource.getEventMembers(eventId, query)
+        val received = response.numberOfElements ?: response.content.size
+        val pageIndex = response.page
+        val totalPages = response.totalPages
+        return MembersPage(
+            members = response.content.map { it.toCellModel() },
+            hasMore = if (pageIndex != null && totalPages != null) {
+                pageIndex + 1 < totalPages
+            } else {
+                received >= size
+            },
+            totalCount = response.totalElements
+        )
     }
 
     private fun EventMembersResponse.EventMember.toCellModel() = MemberCellModel(
@@ -209,12 +228,15 @@ class EventsUseCaseImpl @Inject constructor(
         attachments = attachments.mapIndexed { index, item ->
             AttachmentItemModel(
                 id = index,
-                name = item.name ?: item.url?.substringAfterLast('/').orEmpty().ifBlank { "Attachment" },
-                size = item.size ?: ""
+                name = item.name ?: item.url?.substringAfterLast('/').orEmpty().ifBlank { LanguageManager.string(R.string.events_attachment) },
+                size = item.size ?: "",
+                // Needed to open the document on tap; the mapper used to drop it.
+                url = item.url
             )
         },
         joinButton = toJoinButton(),
-        editPrefillData = toEditPrefill()
+        editPrefillData = toEditPrefill(),
+        isReminderSent = isReminder ?: false
     )
 
     /**
@@ -223,14 +245,14 @@ class EventsUseCaseImpl @Inject constructor(
      */
     private fun EventDetailResponse.toJoinButton(): EventsDetails.JoinButton? {
         val role = eventUserRole.toActivityRole()
-        val request = requestStatus.toRequestType()
+        val request = joinStatus.toRequestType()
         if (role != AppUIEntities.UserActivityRole.NOT_JOINED ||
             request == AppUIEntities.RequestType.JOINED
         ) return null
         if (request == AppUIEntities.RequestType.PENDING) {
-            return EventsDetails.JoinButton(title = "Request sent", disabled = true)
+            return EventsDetails.JoinButton(title = LanguageManager.string(R.string.events_join_request_sent), disabled = true)
         }
-        val title = if (visibility?.uppercase() == "PUBLIC") "Join" else "Request"
+        val title = if (visibility?.uppercase() == "PUBLIC") LanguageManager.string(R.string.events_join) else LanguageManager.string(R.string.events_request)
         return EventsDetails.JoinButton(title = title, disabled = false)
     }
 
@@ -310,29 +332,29 @@ class EventsUseCaseImpl @Inject constructor(
 
     /** Mirrors iOS `EventsRepoImpl.mapInfo` field-by-field. */
     private fun buildInfoData(detail: EventDetailResponse): List<EventsDetails.Info> = buildList {
-        appendSection("About", listOf(infoRow(title = null, value = detail.about)))
+        appendSection(LanguageManager.string(R.string.events_row_about), listOf(infoRow(title = null, value = detail.about)))
 
         val eventRows = mutableListOf<EventsDetails.SubInfo?>(
-            infoRow(title = "Date", value = detail.eventDate.meetupDate()),
-            infoRow(title = "Created/Updated Date", value = detail.modifiedAt.modifiedDate()),
+            infoRow(title = LanguageManager.string(R.string.events_row_date), value = detail.eventDate.meetupDate()),
+            infoRow(title = LanguageManager.string(DesignR.string.created_updated_date), value = detail.modifiedAt.modifiedDate()),
             infoRow(
-                title = "Owner Contact",
+                title = LanguageManager.string(R.string.events_row_owner_contact),
                 value = cleaned(detail.ownerContact),
                 phoneNumber = detail.ownerContact.dialablePhone()
             ),
-            infoRow(title = "Capacity", value = capacityText(detail.membersCount, detail.capacity)),
-            infoRow(title = "Rules", value = detail.rule),
-            infoRow(title = "Location", value = detail.location)
+            infoRow(title = LanguageManager.string(R.string.events_row_capacity), value = capacityText(detail.membersCount, detail.capacity)),
+            infoRow(title = LanguageManager.string(R.string.events_row_rules), value = detail.rule),
+            infoRow(title = LanguageManager.string(R.string.events_row_location), value = detail.location)
         )
         // Reminders are an organiser broadcast config — only organisers see them.
         if (isOrganizer(detail.eventUserRole.toActivityRole())) {
             reminderText(detail.reminderTimes)?.let {
-                eventRows.add(infoRow(title = "Reminders", value = it))
+                eventRows.add(infoRow(title = LanguageManager.string(R.string.events_reminders), value = it))
             }
         }
-        appendSection("Event info", eventRows)
+        appendSection(LanguageManager.string(R.string.events_info_section), eventRows)
 
-        appendSection("Links", detail.links.map {
+        appendSection(LanguageManager.string(R.string.events_row_links), detail.links.map {
             infoRow(title = it.name, value = it.url, isLink = true)
         })
     }
@@ -363,7 +385,7 @@ class EventsUseCaseImpl @Inject constructor(
 
     private fun capacityText(members: Int?, capacity: Int?): String? {
         if (capacity == null || capacity <= 0) return null
-        return "${members ?: 0}/$capacity members"
+        return memberOfCapacityText(members ?: 0, capacity)
     }
 
     private fun isOrganizer(role: AppUIEntities.UserActivityRole): Boolean = role in setOf(
@@ -382,13 +404,6 @@ class EventsUseCaseImpl @Inject constructor(
         return if (labels.isEmpty()) null else labels.joinToString(", ")
     }
 
-    /** Returns the contact only when it looks dialable. Mirrors iOS `phoneNumber`. */
-    private fun String?.dialablePhone(): String? {
-        val v = cleaned(this) ?: return null
-        val digits = v.count { it.isDigit() }
-        val allowed = v.all { it.isDigit() || it in "+ -()" }
-        return if (allowed && digits >= 7) v else null
-    }
 
     // MARK: - Date display helpers
 
@@ -405,7 +420,7 @@ class EventsUseCaseImpl @Inject constructor(
     /** Meetup date+time in device-local time, e.g. "14 June 2026 18:00". */
     private fun String?.meetupDate(): String? {
         val date = parseIso(this) ?: return null
-        return SimpleDateFormat("d MMMM yyyy HH:mm", Locale.US).apply {
+        return SimpleDateFormat("d MMMM yyyy HH:mm", LanguageManager.locale).apply {
             timeZone = TimeZone.getDefault()
         }.format(date)
     }
@@ -416,7 +431,7 @@ class EventsUseCaseImpl @Inject constructor(
         val parsed = runCatching {
             SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).parse(v)
         }.getOrNull() ?: parseIso(v) ?: return v
-        return SimpleDateFormat("d MMMM yyyy", Locale.US).format(parsed)
+        return SimpleDateFormat("d MMMM yyyy", LanguageManager.locale).format(parsed)
     }
 
     private fun parseIso(value: String?): java.util.Date? {
@@ -453,31 +468,11 @@ class EventsUseCaseImpl @Inject constructor(
     }
 
     private fun String?.toAccessType(): AppUIEntities.AccessType =
-        if (this?.uppercase() == "PUBLIC") AppUIEntities.AccessType.PUBLIC
-        else AppUIEntities.AccessType.PRIVATE
+        AppUIEntities.AccessType.fromApi(this)
 
-    private fun String?.toRequestType(): AppUIEntities.RequestType = when (this?.uppercase()) {
-        "JOINED", "ACCEPTED" -> AppUIEntities.RequestType.JOINED
-        "PENDING" -> AppUIEntities.RequestType.PENDING
-        "REJECTED" -> AppUIEntities.RequestType.REJECTED
-        else -> AppUIEntities.RequestType.NONE
-    }
+    private fun String?.toRequestType(): AppUIEntities.RequestType = AppUIEntities.RequestType.fromApi(this)
 
-    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = when (this?.uppercase()) {
-        "MEMBER" -> AppUIEntities.UserActivityRole.MEMBER
-        "PRESIDENT" -> AppUIEntities.UserActivityRole.PRESIDENT
-        "VISE_PRESIDENT", "VICE_PRESIDENT" -> AppUIEntities.UserActivityRole.VISE_PRESIDENT
-        "EVENT_CREATOR" -> AppUIEntities.UserActivityRole.EVENT_CREATOR
-        else -> AppUIEntities.UserActivityRole.NOT_JOINED
-    }
+    private fun String?.toActivityRole(): AppUIEntities.UserActivityRole = AppUIEntities.UserActivityRole.fromApi(this)
 
-    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = when (this?.uppercase()) {
-        "GREEN", "PRIMARY" -> AppUIEntities.BackgroundType.Primary
-        "BLUE", "SECONDARY" -> AppUIEntities.BackgroundType.Secondary
-        "PURPLE", "TERTIARY" -> AppUIEntities.BackgroundType.Tertiary
-        "RED" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Red)
-        "ORANGE" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Orange)
-        "PINK" -> AppUIEntities.BackgroundType.CustomColor(AppUIEntities.ColorType.Pink)
-        else -> AppUIEntities.BackgroundType.Primary
-    }
+    private fun String?.toBackgroundType(): AppUIEntities.BackgroundType = AppUIEntities.BackgroundType.fromApi(this)
 }

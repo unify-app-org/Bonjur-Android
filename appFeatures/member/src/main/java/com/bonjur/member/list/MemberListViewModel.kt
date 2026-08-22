@@ -1,5 +1,7 @@
 package com.bonjur.member.list
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -32,9 +34,19 @@ class MemberListViewModel @Inject constructor() :
     private lateinit var navigator: Navigator
 
     private val loadedMembers = mutableListOf<MemberCellModel>()
+    private val loadedIds = mutableSetOf<String>()
     private var nextPage = 0
     private var isFetching = false
     private var searchJob: kotlinx.coroutines.Job? = null
+    private var loadJob: kotlinx.coroutines.Job? = null
+
+    /**
+     * Bumped by every restart-from-page-0 (search, refresh, first load). A page
+     * that comes back under an older generation is dropped instead of being
+     * appended onto the new result set — otherwise an in-flight `loadMore` lands
+     * after a search and puts the previous 20 rows back on top of the one match.
+     */
+    private var loadGeneration = 0
 
     fun init(inputData: MemberListInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
@@ -45,7 +57,8 @@ class MemberListViewModel @Inject constructor() :
                 title = inputData.title,
                 viewerRole = inputData.viewerRole,
                 currentUserId = inputData.currentUserId,
-                activityType = inputData.activityType
+                activityType = inputData.activityType,
+                totalCount = inputData.totalCount
             )
         )
         handle(MemberListAction.OnAppear)
@@ -53,7 +66,7 @@ class MemberListViewModel @Inject constructor() :
 
     override fun handle(action: MemberListAction) {
         when (action) {
-            MemberListAction.OnAppear -> loadNextPage(initial = true)
+            MemberListAction.OnAppear -> refreshMembers()
             MemberListAction.LoadMore -> loadNextPage(initial = false)
             MemberListAction.BackTapped -> viewModelScope.launch { navigator.navigateUp() }
             is MemberListAction.MemberTapped -> inputData.onMemberTapped(action.member.id)
@@ -76,26 +89,48 @@ class MemberListViewModel @Inject constructor() :
     private fun currentKeyword(): String? = state.searchText.trim().ifEmpty { null }
 
     private fun loadNextPage(initial: Boolean) {
-        if (isFetching || (!initial && !state.hasMore)) return
+        // A restart always wins: cancel whatever page is in flight rather than
+        // dropping the new request on the `isFetching` guard.
+        if (initial) {
+            loadJob?.cancel()
+            isFetching = false
+        } else if (isFetching || !state.hasMore) {
+            return
+        }
         isFetching = true
-        viewModelScope.launch {
+        val generation = loadGeneration
+        val requestedPage = nextPage
+        loadJob = viewModelScope.launch {
             if (initial) postEffect(MemberListSideEffect.Loading(true))
             updateState(state.copy(isLoadingMore = !initial))
             try {
-                val page = inputData.loadPage(nextPage, PAGE_SIZE, currentKeyword())
-                loadedMembers.addAll(page.members)
-                nextPage += 1
+                val page = inputData.loadPage(requestedPage, PAGE_SIZE, currentKeyword())
+                if (generation != loadGeneration) return@launch
+                // The backend sorts by a non-unique `modifiedAt`, so pages overlap.
+                // De-dupe by id: duplicate keys would otherwise crash the LazyColumn.
+                page.members.forEach { member ->
+                    // Members with no userId all share the "-" placeholder, so only
+                    // de-dupe real ids — otherwise distinct people collapse into one row.
+                    val hasRealId = member.id.isNotBlank() && member.id != "-"
+                    if (!hasRealId || loadedIds.add(member.id)) loadedMembers.add(member)
+                }
+                nextPage = requestedPage + 1
                 updateState(
                     state.copy(
                         sections = GroupedMembersData.from(loadedMembers).sections,
-                        hasMore = page.hasMore
+                        hasMore = page.hasMore,
+                        totalCount = page.totalCount ?: state.totalCount
                     )
                 )
             } catch (e: Exception) {
                 // Keep current state
             } finally {
-                isFetching = false
-                updateState(state.copy(isLoadingMore = false))
+                // Release the flags on the stale path too, or a dropped page
+                // leaves isLoadingMore stuck and blocks all later paging.
+                if (generation == loadGeneration) {
+                    isFetching = false
+                    updateState(state.copy(isLoadingMore = false))
+                }
                 if (initial) postEffect(MemberListSideEffect.Loading(false))
             }
         }
@@ -106,22 +141,31 @@ class MemberListViewModel @Inject constructor() :
         viewModelScope.launch {
             try {
                 assign(userId, role)
-                AppSnackBar.show(title = "Role updated", style = AppSnackBar.Style.SUCCESS)
+                AppSnackBar.show(title = LanguageManager.string(R.string.common_role_updated), style = AppSnackBar.Style.SUCCESS)
                 refreshMembers()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not update role",
-                    subtitle = "Please try again.",
+                    title = LanguageManager.string(R.string.common_role_update_failed),
+                    subtitle = LanguageManager.string(R.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             }
         }
     }
 
+    /** Restart from page 0, invalidating anything already in flight. */
     private fun refreshMembers() {
+        loadGeneration += 1
         loadedMembers.clear()
+        loadedIds.clear()
         nextPage = 0
-        updateState(state.copy(hasMore = true))
+        updateState(
+            state.copy(
+                hasMore = true,
+                totalCount = null,
+                listResetToken = state.listResetToken + 1
+            )
+        )
         loadNextPage(initial = true)
     }
 }

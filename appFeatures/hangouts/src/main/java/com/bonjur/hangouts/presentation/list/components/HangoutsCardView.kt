@@ -7,6 +7,8 @@
 
 package com.bonjur.hangouts.presentation.list.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.hangouts.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -107,7 +109,7 @@ private fun TopView(model: HangoutsCardModel) {
                 )
             ) {
                 Text(
-                    text = if (isPrivate) "Private" else "Public",
+                    text = if (isPrivate) stringResource(R.string.hangouts_private) else stringResource(R.string.hangouts_public),
                     style = AppTypography.TextSm.medium,
                     color = if (isPrivate) Palette.blackHigh else Palette.whiteHigh,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -207,7 +209,7 @@ private fun BottomView(
                 borderColor = Palette.secondary
             )
             AppUIEntities.RequestType.PENDING -> HangoutStatusLabel(
-                text = "Request sent",
+                text = stringResource(R.string.hangouts_join_request_sent),
                 foreground = Palette.graySecondary,
                 background = Palette.grayQuaternary,
                 borderColor = Palette.grayTeritary

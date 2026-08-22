@@ -33,6 +33,12 @@ sealed class NotificationEndpoints : AppEndpoint {
         override val method = NetworkMethod.POST
     }
 
+    /** Marks one notification read (row tap). */
+    data class Read(val notificationId: String) : NotificationEndpoints() {
+        override val path = "api/ns/v1/notifications/read/$notificationId"
+        override val method = NetworkMethod.POST
+    }
+
     data class ClubJoinRequests(val query: Map<String, String>) : NotificationEndpoints() {
         override val path = "api/cs/v1/clubs/join-requests"
         override val method = NetworkMethod.GET

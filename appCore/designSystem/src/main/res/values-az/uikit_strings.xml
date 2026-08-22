@@ -1,0 +1,48 @@
+<resources>
+    <string name="filter">Filtr</string>
+    <string name="all">Hamısı</string>
+    <string name="about">Haqqında</string>
+    <string name="events">Tədbirlər</string>
+    <string name="members">Üzvlər</string>
+    <string name="clubs">Klublar</string>
+    <string name="hangouts">Görüşlər</string>
+    <string name="capacity">Tutum</string>
+    <string name="created_updated_date">Yaradılma/Yenilənmə tarixi</string>
+    <string name="search">Axtar</string>
+    <string name="remove">Sil</string>
+    <string name="apply">Tətbiq et</string>
+    <string name="owner">Sahib</string>
+    <string name="visibility_private">Qapalı</string>
+    <string name="visibility_public">Açıq</string>
+    <string name="filter_subtitle">Sizə uyğun icma tədbirlərini tapmaq üçün maraqlarınızı seçin.</string>
+    <string name="president">Prezident</string>
+    <string name="vise_president">Vitse-prezident</string>
+    <string name="event_creators">Tədbir yaradanlar</string>
+    <string name="member">Üzv</string>
+    <string name="vice_president">Vitse-prezident</string>
+    <string name="creator">Yaradan</string>
+    <string name="notification">Bildirişlər</string>
+    <string name="count_events">%1$d tədbir</string>
+    <string name="count_members">%1$d üzv</string>
+    <string name="count_of_members">%1$d / %2$d üzv</string>
+    <string name="count_of">%1$d / %2$d</string>
+    <string name="count_clubs">%1$d klub</string>
+    <string name="field_optional">(istəyə bağlı)</string>
+    <string name="field_write_something">Nəsə yazın</string>
+    <string name="common_coming_soon">Tezliklə</string>
+    <string name="count_students">%1$d tələbə</string>
+    <string name="count_see_all_members">Bütün %1$d üzvə bax</string>
+    <string name="language_title">Dil</string>
+    <string name="language_english">İngilis dili</string>
+    <string name="language_azerbaijan">Azərbaycan dili</string>
+    <string name="language_russian">Rus dili</string>
+    <string name="common_dont_show_again">Bunu bir daha göstərmə</string>
+
+    <!-- Document preview -->
+    <string name="document_preview_loading">Sənəd açılır…</string>
+    <string name="document_preview_failed">Bu faylı açmaq mümkün olmadı</string>
+    <string name="document_preview_retry">Yenidən cəhd et</string>
+    <string name="document_preview_unsupported">Bu fayl tipini burada göstərmək mümkün deyil</string>
+    <string name="document_preview_open_external">Başqa tətbiqdə aç</string>
+    <string name="document_preview_share">Paylaş</string>
+</resources>

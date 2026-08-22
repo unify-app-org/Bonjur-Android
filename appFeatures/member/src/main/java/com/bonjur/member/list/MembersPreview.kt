@@ -1,5 +1,8 @@
 package com.bonjur.member.list
 
+import com.bonjur.designSystem.localization.LanguageManager
+import androidx.compose.ui.res.stringResource
+import com.bonjur.designsystem.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +63,7 @@ fun MembersPreview(
                 showReport = MemberOptionsPolicy.canReport(isSelf),
                 onAssignRole = { role -> onAssignRole(member.id, role) },
                 onReport = {
-                    AppSnackBar.show(title = "Report submitted", style = AppSnackBar.Style.SUCCESS)
+                    AppSnackBar.show(title = LanguageManager.string(R.string.common_report_submitted), style = AppSnackBar.Style.SUCCESS)
                 }
             ),
             onDismiss = { optionsMember = null }

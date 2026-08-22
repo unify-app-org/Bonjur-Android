@@ -1,5 +1,7 @@
 package com.bonjur.communities.presentation.facultyStudentList.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.communities.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -73,7 +75,7 @@ fun FacultyStudentListView(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "No members found",
+                        stringResource(R.string.comm_no_members_found),
                         style = AppTypography.TextL.medium,
                         color = Palette.blackMedium
                     )

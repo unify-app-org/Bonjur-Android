@@ -1,5 +1,8 @@
 package com.bonjur.profile.presentation.detail.models
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.profile.R
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -35,16 +38,16 @@ data class ProfileDetailViewState(
     val uiModel: ProfileDetail.UIModel? = null,
     val isOwnProfile: Boolean = true,
     val isPushed: Boolean = false,
-    val navigationTitle: String = "Profile",
+    val navigationTitle: String? = null,
     val selectedSegment: SegmentTypes = SegmentTypes.CLUBS
 ) : FeatureState {
 
     enum class SegmentTypes(
         override val title: String
     ): SegmentedPickerOption {
-        CLUBS("Clubs"),
-        EVENTS("Events"),
-        HANGOUTS("Hangouts");
+        CLUBS(LanguageManager.string(DesignR.string.clubs)),
+        EVENTS(LanguageManager.string(DesignR.string.events)),
+        HANGOUTS(LanguageManager.string(DesignR.string.hangouts));
 
         override val id: String get() = name
 

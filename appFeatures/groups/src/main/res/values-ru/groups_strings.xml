@@ -1,0 +1,12 @@
+<resources>
+    <string name="groups_my_activities">Моя активность</string>
+    <string name="groups_clubs_desc">Клубы, в которых вы состоите или которыми управляете. Участники организуют события и встречи.</string>
+    <string name="groups_events_desc">События, к которым вы присоединились или запросили. Каждое проводит клуб.</string>
+    <string name="groups_hangouts_desc">Неформальные разовые встречи — клуб не нужен. Начать может каждый.</string>
+    <string name="groups_clubs_empty">Вы ещё не вступили и не создали клубов. Изучите сообщества или создайте свой.</string>
+    <string name="groups_events_empty">Пока нет событий. Вступите в клуб, чтобы найти события, или запросите участие.</string>
+    <string name="groups_hangouts_empty">Пока нет тусовок. Это неформальные встречи — начните и пригласите друзей.</string>
+    <string name="groups_explore_clubs">Смотреть клубы</string>
+    <string name="groups_explore_events">Смотреть события</string>
+    <string name="groups_start_hangout">Начать тусовку +</string>
+</resources>

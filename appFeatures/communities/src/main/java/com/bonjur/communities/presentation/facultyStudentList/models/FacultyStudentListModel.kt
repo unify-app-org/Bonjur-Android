@@ -1,5 +1,7 @@
 package com.bonjur.communities.presentation.facultyStudentList.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R as DesignR
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -10,7 +12,7 @@ import com.bonjur.member.model.MemberListSectionModel
 data class FacultyStudentListInputData(
     val communityId: String = "",
     val facultyId: String = "",   // degree string used to filter
-    val title: String = "Members"
+    val title: String = LanguageManager.string(DesignR.string.common_members)
 )
 
 // MARK: - Side effects
@@ -20,7 +22,7 @@ sealed class FacultyStudentListSideEffect : SideEffect {
 
 // MARK: - View State
 data class FacultyStudentListViewState(
-    val title: String = "Members",
+    val title: String = LanguageManager.string(DesignR.string.common_members),
     val sections: List<MemberListSectionModel> = emptyList(),
     val isLoading: Boolean = false
 ) : FeatureState

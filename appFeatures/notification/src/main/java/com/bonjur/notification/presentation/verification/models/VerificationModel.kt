@@ -16,7 +16,6 @@ data class VerificationViewState(
 
 sealed class VerificationSideEffect : SideEffect {
     data class Error(val message: String?) : VerificationSideEffect()
-    data class ConfirmReject(val item: VerificationItem) : VerificationSideEffect()
 }
 
 sealed class VerificationAction : FeatureAction {
@@ -25,7 +24,11 @@ sealed class VerificationAction : FeatureAction {
     object LoadMore : VerificationAction()
     object Retry : VerificationAction()
     data class Verify(val item: VerificationItem) : VerificationAction()
-    data class Reject(val item: VerificationItem) : VerificationAction()
-    data class PerformReject(val item: VerificationItem) : VerificationAction()
+
+    /**
+     * User confirmed the rejection in the note sheet — performs the API call.
+     * [note] is the optional reason shown to the club; null when left blank.
+     */
+    data class PerformReject(val item: VerificationItem, val note: String?) : VerificationAction()
     data class CellTapped(val item: VerificationItem) : VerificationAction()
 }

@@ -1,5 +1,8 @@
 package com.bonjur.member.list
 
+import com.bonjur.designSystem.localization.LanguageManager
+import androidx.compose.ui.res.stringResource
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +61,13 @@ fun MemberListView(
             total > 0 && last >= total - 3
         }
     }
-    LaunchedEffect(shouldLoadMore) {
+    // A search that collapses 40 rows to 1 leaves the viewport past the end of the
+    // new content, so the screen looks empty. Snap back to the top on every reset.
+    LaunchedEffect(store.state.listResetToken) {
+        if (store.state.listResetToken > 0) listState.scrollToItem(0)
+    }
+
+    LaunchedEffect(shouldLoadMore, store.state.sections) {
         if (shouldLoadMore && store.state.hasMore && !store.state.isLoadingMore) {
             store.send(MemberListAction.LoadMore)
         }
@@ -85,13 +94,23 @@ fun MemberListView(
             modifier = Modifier.fillMaxWidth().weight(1f),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            store.state.sections.forEach { section ->
-                item(key = "header_${section.title}") {
-                    MemberSectionHeader(title = section.title, memberCountText = "${section.memberCount}")
+            store.state.sections.forEachIndexed { sectionIndex, section ->
+                item(key = "header_${sectionIndex}_${section.title}") {
+                    // The last section is the one paging fills, so it carries the
+                    // server total; earlier sections are already complete.
+                    val isPagingSection = section === store.state.sections.last()
+                    val count = if (isPagingSection) {
+                        store.state.totalCount ?: section.memberCount
+                    } else {
+                        section.memberCount
+                    }
+                    MemberSectionHeader(title = section.title, memberCountText = "$count")
                     Box(modifier = Modifier.size(12.dp))
                 }
-                section.members.forEach { member ->
-                    item(key = "member_${member.id}") {
+                // Key includes the position: a member with no userId falls back to a
+                // shared placeholder id, and two of those in one page would collide.
+                section.members.forEachIndexed { memberIndex, member ->
+                    item(key = "member_${sectionIndex}_${memberIndex}_${member.id}") {
                         MemberCell(
                             member = member,
                             accessory = memberOptionsAccessory(member, currentUserId),
@@ -120,7 +139,7 @@ fun MemberListView(
                         modifier = Modifier.fillMaxWidth().padding(40.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("No members found", style = AppTypography.TextL.medium, color = Palette.blackMedium)
+                        Text(stringResource(R.string.common_no_members_found), style = AppTypography.TextL.medium, color = Palette.blackMedium)
                     }
                 }
             }
@@ -141,7 +160,7 @@ fun MemberListView(
                 ),
                 showReport = MemberOptionsPolicy.canReport(isSelf),
                 onAssignRole = { role -> store.send(MemberListAction.AssignRole(member.id, role)) },
-                onReport = { AppSnackBar.show(title = "Report submitted", style = AppSnackBar.Style.SUCCESS) }
+                onReport = { AppSnackBar.show(title = LanguageManager.string(R.string.common_report_submitted), style = AppSnackBar.Style.SUCCESS) }
             ),
             onDismiss = { optionsMember = null }
         )

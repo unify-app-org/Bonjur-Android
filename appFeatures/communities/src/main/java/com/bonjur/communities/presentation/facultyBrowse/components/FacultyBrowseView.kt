@@ -1,5 +1,7 @@
 package com.bonjur.communities.presentation.facultyBrowse.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.communities.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -49,7 +51,7 @@ fun FacultyBrowseView(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No faculties found",
+                        text = stringResource(R.string.comm_no_faculties),
                         style = AppTypography.HeadingMd.regular,
                         color = Palette.blackMedium
                     )

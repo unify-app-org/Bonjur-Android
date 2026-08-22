@@ -1,0 +1,15 @@
+<resources>
+    <string name="discover_communities">İcmalar</string>
+    <string name="discover_clubs">Klublar</string>
+    <string name="discover_events">Tədbirlər</string>
+    <string name="discover_hangouts">Görüşlər</string>
+    <string name="discover_view_all">hamısına bax</string>
+    <string name="discover_clubs_empty">Hələ klub yoxdur. Öncül ol və ilkini indi yarat!</string>
+    <string name="discover_events_empty">Hələ planlaşdırılmış tədbir yoxdur. Öncül ol və ilkini indi yarat!</string>
+    <string name="discover_hangouts_empty">Hələ planlaşdırılmış görüş yoxdur. Öncül ol və ilkini indi yarat!</string>
+    <string name="discover_create_club">Klub yarat +</string>
+    <string name="discover_create_event">Tədbir yarat +</string>
+    <string name="discover_create_hangout">Görüş yarat +</string>
+    <string name="common_got_it">Anladım</string>
+    <string name="common_unknown_error">Naməlum xəta</string>
+</resources>

@@ -68,6 +68,10 @@ class EventsDataSourceImpl @Inject constructor(
     override suspend fun exitEvent(eventId: String): ByteArray =
         fetchRawData(EventsEndPoints.ExitEvent(eventId))
 
+    // 200 with no body — raw fetch so an empty payload isn't treated as a decode failure.
+    override suspend fun sendReminder(eventId: String): ByteArray =
+        fetchRawData(EventsEndPoints.SendReminder(eventId))
+
     /** Builds the multipart body mirroring iOS: JSON "request" part + required background + optional attachments. */
     private fun buildPayload(
         request: EventCreateRequest,

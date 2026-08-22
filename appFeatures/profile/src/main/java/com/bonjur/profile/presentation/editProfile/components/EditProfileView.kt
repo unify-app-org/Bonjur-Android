@@ -1,5 +1,8 @@
 package com.bonjur.profile.presentation.editProfile.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.profile.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -58,7 +61,7 @@ fun EditProfileView(
         AppTopBar(
             isScrolled = false,
             showTitle = true,
-            title = "Edit profile",
+            title = stringResource(R.string.editprofile_title),
             onBack = { store.send(EditProfileAction.BackTapped) }
         )
         Column(
@@ -133,31 +136,31 @@ fun EditProfileView(
                 AppTextField(
                     text = store.state.name,
                     onTextChange = {},
-                    model = AppTextFieldModel(title = "Name and surname"),
+                    model = AppTextFieldModel(title = stringResource(R.string.editprofile_name)),
                     enabled = false
                 )
                 AppTextField(
                     text = store.state.faculty,
                     onTextChange = {},
-                    model = AppTextFieldModel(title = "Faculty"),
+                    model = AppTextFieldModel(title = stringResource(R.string.editprofile_faculty)),
                     enabled = false
                 )
                 AppTextField(
                     text = store.state.community,
                     onTextChange = {},
-                    model = AppTextFieldModel(title = "University"),
+                    model = AppTextFieldModel(title = stringResource(R.string.editprofile_university)),
                     enabled = false
                 )
                 AppTextField(
                     text = store.state.entry,
                     onTextChange = {},
-                    model = AppTextFieldModel(title = "Entry"),
+                    model = AppTextFieldModel(title = stringResource(R.string.editprofile_entry)),
                     enabled = false
                 )
                 AppTextField(
                     text = store.state.course,
                     onTextChange = {},
-                    model = AppTextFieldModel(title = "Course"),
+                    model = AppTextFieldModel(title = stringResource(R.string.editprofile_course)),
                     enabled = false
                 )
             }
@@ -168,12 +171,12 @@ fun EditProfileView(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(text = "About", style = AppTypography.HeadingMd.medium)
+                    Text(text = stringResource(R.string.profile_about), style = AppTypography.HeadingMd.medium)
                     TextView(
                         text = store.state.about,
                         onTextChange = { store.send(EditProfileAction.AboutChanged(it)) },
                         characterLimit = 150,
-                        placeholder = "About",
+                        placeholder = stringResource(R.string.profile_about),
                         modifier = Modifier.height(120.dp)
                     )
                 }
@@ -202,8 +205,8 @@ fun EditProfileView(
                     .filter { it.selected }
                     .map { it.id to it.title }
                 ChipsSelectionField(
-                    title = "Spoken languages",
-                    addTitle = "Add language",
+                    title = stringResource(R.string.editprofile_spoken_languages),
+                    addTitle = stringResource(R.string.editprofile_add_language),
                     chips = selectedLanguages,
                     onAdd = { store.send(EditProfileAction.AddLanguageTapped) },
                     onRemove = { id -> store.send(EditProfileAction.LanguageToggled(id)) }
@@ -213,9 +216,9 @@ fun EditProfileView(
                 AppTextField(
                     text = store.state.birthDateText,
                     onTextChange = {},
-                    placeHolder = "Select birthday",
+                    placeHolder = stringResource(R.string.profile_select_birthday),
                     readOnly = true,
-                    model = AppTextFieldModel(title = "Birthday"),
+                    model = AppTextFieldModel(title = stringResource(R.string.profile_birthday)),
                     trailingIcon = {
                         Icon(
                             painter = Images.Icons.calendar(),
@@ -253,7 +256,7 @@ fun EditProfileView(
         }
 
         AppButton(
-            title = "Save",
+            title = stringResource(R.string.editprofile_save),
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = { store.send(EditProfileAction.SaveTapped) },
             modifier = Modifier
@@ -292,7 +295,7 @@ fun EditProfileView(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Select languages",
+                    text = stringResource(R.string.profile_select_languages),
                     style = AppTypography.TitleMd.extraBold,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
@@ -351,7 +354,7 @@ private fun ChipsSelectionField(
                         )
                         Icon(
                             painter = Images.Icons.xmark(),
-                            contentDescription = "Remove",
+                            contentDescription = stringResource(DesignR.string.remove),
                             tint = Palette.green900,
                             modifier = Modifier.size(14.dp)
                         )
@@ -394,7 +397,7 @@ private fun GenderPicker(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Choose gender",
+            text = stringResource(R.string.editprofile_choose_gender),
             style = AppTypography.HeadingMd.medium
         )
         Row(

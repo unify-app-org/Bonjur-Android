@@ -1,5 +1,7 @@
 package com.bonjur.clubs.presentation.create.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.clubs.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -83,7 +85,7 @@ fun ClubCreateView(
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Text(
-                    text = "Fields marked with * are required.",
+                    text = stringResource(R.string.clubs_required_hint),
                     style = AppTypography.BodyTextMd.regular,
                     color = Palette.appBlue
                 )
@@ -104,7 +106,7 @@ fun ClubCreateView(
         }
 
         AppButton(
-            title = "Continue",
+            title = stringResource(R.string.clubs_continue),
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = { store.send(ClubCreateAction.ContinueTapped) },
             modifier = Modifier
@@ -172,14 +174,13 @@ private fun ClubVerifyPromptView(
             modifier = Modifier.size(40.dp)
         )
         Text(
-            text = "Club created 🎉",
+            text = stringResource(R.string.clubs_created_title),
             style = AppTypography.TitleMd.extraBold,
             color = Palette.blackHigh,
             textAlign = TextAlign.Center
         )
         Text(
-            text = "Your club isn't verified yet. Request verification to earn the verified " +
-                "badge and unlock event creation — you can't create events in an unverified club.",
+            text = stringResource(R.string.clubs_verify_prompt_body),
             style = AppTypography.BodyTextSm.regular,
             color = Palette.blackMedium,
             textAlign = TextAlign.Center,
@@ -190,13 +191,13 @@ private fun ClubVerifyPromptView(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             AppButton(
-                title = "Request verification",
+                title = stringResource(R.string.clubs_request_verification),
                 model = AppButtonModel(contentSize = ContentSize.Fill),
                 onClick = onRequestVerification,
                 modifier = Modifier.fillMaxWidth()
             )
             AppButton(
-                title = "Later",
+                title = stringResource(R.string.common_later),
                 model = AppButtonModel(type = ButtonType.Tertiary, contentSize = ContentSize.Fill),
                 onClick = onLater,
                 modifier = Modifier.fillMaxWidth()

@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 // MARK: - Feed rows
 
 /**
- * `GET api/ns/v1/notifications` content row. `note` isn't sent by the backend
- * yet (spec has it as the admin's extra remark) — optional so the UI lights up
- * as soon as it ships.
+ * `GET api/ns/v1/notifications` content row. `note` isn't sent by the backend —
+ * the live payload carries that remark inside `metadata` instead, so the mapper
+ * falls back to `metadata.rejectionReason`.
  */
 @Serializable
 data class NotificationDTO(
@@ -18,9 +18,23 @@ data class NotificationDTO(
     val note: String? = null,
     val imageUrl: String? = null,
     val isRead: Boolean? = null,
+    /** House audit stamp, `dd-MM-yyyy HH:mm:ss` (see `RelativeTime.parse`). */
     val createdAt: String? = null,
     val targetType: String? = null,
-    val targetId: String? = null
+    val targetId: String? = null,
+    val metadata: NotificationMetadataDTO? = null
+)
+
+/**
+ * Per-type extras. Arrives as `null`, `{}` or a populated object; every field is
+ * optional because which keys ride along depends on the notification type.
+ */
+@Serializable
+data class NotificationMetadataDTO(
+    /** Verification/join rejection remark — rendered as the row's note. */
+    val rejectionReason: String? = null,
+    /** Reminder lead time, e.g. `FIFTEEN_MINUTES_BEFORE` (unused by the UI). */
+    val reminderTime: String? = null
 )
 
 /** `GET api/ns/v1/notifications/unread-count` response. */
@@ -93,9 +107,14 @@ data class EventStatusRequest(
     val status: String
 )
 
-/** Body for `/clubs/status` (verification). status ∈ {ACCEPT, REJECT}. */
+/**
+ * Body for `/clubs/status` (verification). status ∈ {ACCEPT, REJECT}.
+ * [rejectionReason] is the optional admin note shown to the club; it stays null
+ * on accept and is dropped from the JSON when null.
+ */
 @Serializable
 data class ClubVerificationRequest(
     val clubId: Int,
-    val status: String
+    val status: String,
+    val rejectionReason: String? = null
 )

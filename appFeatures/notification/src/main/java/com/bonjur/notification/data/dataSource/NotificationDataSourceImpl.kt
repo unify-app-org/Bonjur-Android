@@ -31,6 +31,10 @@ class NotificationDataSourceImpl @Inject constructor(
         fetchRawData(NotificationEndpoints.ReadAll)
     }
 
+    override suspend fun markRead(id: String) {
+        fetchRawData(NotificationEndpoints.Read(id))
+    }
+
     override suspend fun fetchClubRequests(page: Int, size: Int): PageNationResponse<List<ClubJoinRequestDTO>> =
         fetch(NotificationEndpoints.ClubJoinRequests(query(page, size)))
 
@@ -66,10 +70,14 @@ class NotificationDataSourceImpl @Inject constructor(
     override suspend fun fetchPendingClubs(page: Int, size: Int): PageNationResponse<List<ClubJoinRequestDTO>> =
         fetch(NotificationEndpoints.ClubPending(query(page, size)))
 
-    override suspend fun setClubVerification(clubId: Int, accept: Boolean): ByteArray =
+    override suspend fun setClubVerification(clubId: Int, accept: Boolean, rejectionReason: String?): ByteArray =
         fetchRawData(
             NotificationEndpoints.SetClubVerification(
-                ClubVerificationRequest(clubId = clubId, status = if (accept) "ACCEPT" else "REJECT")
+                ClubVerificationRequest(
+                    clubId = clubId,
+                    status = if (accept) "ACCEPT" else "REJECT",
+                    rejectionReason = if (accept) null else rejectionReason
+                )
             )
         )
 

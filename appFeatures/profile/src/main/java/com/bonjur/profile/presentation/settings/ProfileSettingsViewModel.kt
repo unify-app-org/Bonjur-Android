@@ -1,6 +1,8 @@
 package com.bonjur.profile.presentation.settings
 
+import com.bonjur.profile.R
 import androidx.lifecycle.viewModelScope
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.navigation.AppScreens
 import com.bonjur.navigation.Navigator
@@ -54,7 +56,15 @@ class ProfileSettingsViewModel @Inject constructor(
         when (action) {
             ProfileSettingsAction.FetchData -> fetchData()
             ProfileSettingsAction.BackTapped -> navigateBack()
-            ProfileSettingsAction.LanguageTapped -> { /* navigate to language */ }
+            ProfileSettingsAction.LanguageTapped ->
+                updateState(state.copy(showLanguagePicker = true))
+            ProfileSettingsAction.DismissLanguagePicker ->
+                updateState(state.copy(showLanguagePicker = false))
+            is ProfileSettingsAction.LanguageSelected -> {
+                // Switches live — every screen re-reads its strings, no restart.
+                LanguageManager.select(action.language)
+                updateState(state.copy(showLanguagePicker = false, sections = buildSections()))
+            }
             ProfileSettingsAction.HelpCenterTapped -> { /* navigate to help center */ }
             ProfileSettingsAction.TermsTapped -> { /* navigate to terms */ }
             ProfileSettingsAction.DeleteAccountTapped -> deleteAccount()
@@ -77,28 +87,28 @@ class ProfileSettingsViewModel @Inject constructor(
             items = listOf(
                 SettingsItemModel(
                     id = "notifications",
-                    title = "Notification",
+                    title = LanguageManager.string(R.string.settings_notification),
                     isSwitch = true,
                     action = null
                 ),
                 SettingsItemModel(
                     id = "language",
-                    title = "Language",
+                    title = LanguageManager.string(R.string.settings_language),
                     action = ProfileSettingsAction.LanguageTapped
                 ),
                 SettingsItemModel(
                     id = "help",
-                    title = "Help center",
+                    title = LanguageManager.string(R.string.settings_help_center),
                     action = ProfileSettingsAction.HelpCenterTapped
                 ),
                 SettingsItemModel(
                     id = "terms",
-                    title = "Terms and conditions",
+                    title = LanguageManager.string(R.string.settings_terms),
                     action = ProfileSettingsAction.TermsTapped
                 ),
                 SettingsItemModel(
                     id = "version",
-                    title = "App version",
+                    title = LanguageManager.string(R.string.settings_app_version),
                     versionText = APP_VERSION,
                     action = null
                 )
@@ -109,13 +119,13 @@ class ProfileSettingsViewModel @Inject constructor(
             items = listOf(
                 SettingsItemModel(
                     id = "delete",
-                    title = "Delete account",
+                    title = LanguageManager.string(R.string.settings_delete_account),
                     isDestructive = false,
                     action = ProfileSettingsAction.DeleteAccountTapped
                 ),
                 SettingsItemModel(
                     id = "logout",
-                    title = "Log out",
+                    title = LanguageManager.string(R.string.settings_logout),
                     isDestructive = true,
                     action = ProfileSettingsAction.LogOutTapped
                 )

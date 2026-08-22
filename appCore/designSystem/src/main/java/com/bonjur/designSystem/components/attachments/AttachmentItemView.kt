@@ -1,5 +1,9 @@
 package com.bonjur.designSystem.components.attachments
 
+import androidx.compose.foundation.clickable
+import com.bonjur.designSystem.components.documentPreview.DocumentPreviewDialog
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,6 +13,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -21,8 +29,18 @@ import com.bonjur.designSystem.ui.theme.image.Images
 fun AttachmentItemView(
     model: AttachmentItemModel,
     modifier: Modifier = Modifier,
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    /**
+     * Overrides the built-in in-app preview. Left null, a row with a
+     * [AttachmentItemModel.url] previews the document inside the app and a row
+     * without one stays inert.
+     */
+    onOpen: (() -> Unit)? = null
 ) {
+    var showPreview by remember { mutableStateOf(false) }
+    val url = model.url
+    val onRowClick: (() -> Unit)? = onOpen ?: url?.let { { showPreview = true } }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -42,6 +60,7 @@ fun AttachmentItemView(
                 color = Palette.grayTeritary,
                 shape = RoundedCornerShape(16.dp)
             )
+            .let { if (onRowClick != null) it.clickable(onClick = onRowClick) else it }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -80,11 +99,19 @@ fun AttachmentItemView(
             ) {
                 Icon(
                     painter = Images.Icons.trash(),
-                    contentDescription = "Delete",
+                    contentDescription = LanguageManager.string(R.string.common_delete),
                     tint = Palette.blackMedium,
                     modifier = Modifier.size(20.dp)
                 )
             }
         }
+    }
+
+    if (showPreview && url != null) {
+        DocumentPreviewDialog(
+            url = url,
+            name = model.name,
+            onDismiss = { showPreview = false }
+        )
     }
 }

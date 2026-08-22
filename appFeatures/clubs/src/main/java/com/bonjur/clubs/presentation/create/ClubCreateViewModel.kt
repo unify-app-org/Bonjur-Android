@@ -1,5 +1,7 @@
 package com.bonjur.clubs.presentation.create
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.clubs.R
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
@@ -21,6 +23,8 @@ import com.bonjur.designSystem.components.fieldSchema.tags
 import com.bonjur.designSystem.components.fieldSchema.text
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.navigation.Navigator
+import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +48,7 @@ class ClubCreateViewModel @Inject constructor(
 
     data class Dependencies @Inject constructor(
         val useCase: ClubsUseCase,
+        val defaultStorage: DefaultStorage,
         @ApplicationContext val context: Context
     )
 
@@ -95,7 +100,7 @@ class ClubCreateViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { dependencies.useCase.getCategories() }
                 .onFailure {
-                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                    AppSnackBar.show(title = LanguageManager.string(R.string.clubs_categories_load_fail), style = AppSnackBar.Style.ERROR)
                 }
                 .onSuccess { sections ->
                     // Mark categories already selected by the pre-fill (edit mode).
@@ -171,12 +176,23 @@ class ClubCreateViewModel @Inject constructor(
     private suspend fun createClub() {
         postEffect(ClubCreateSideEffect.Loading(true))
         try {
-            dependencies.useCase.createClub(buildForm())
-            // New clubs start unverified; surface the verify gate before leaving
-            // (no navigateUp here — the prompt's buttons pop). Mirrors iOS.
-            updateState(state.copy(showVerifyPrompt = true))
+            val newClubId = dependencies.useCase.createClub(buildForm())
+            if (isCommunityPresident) {
+                // Community presidents own the community, so the clubs they create
+                // are trusted by definition — skip the prompt entirely. Mirrors iOS.
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.clubs_created),
+                    subtitle = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
+                    style = AppSnackBar.Style.SUCCESS
+                )
+                navigateBack()
+            } else {
+                // New clubs start unverified; surface the verify gate before leaving
+                // (no navigateUp here — the prompt's buttons pop). Mirrors iOS.
+                updateState(state.copy(showVerifyPrompt = true, createdClubId = newClubId))
+            }
         } catch (e: Exception) {
-            postEffect(ClubCreateSideEffect.Error(e.message ?: "Unknown error"))
+            postEffect(ClubCreateSideEffect.Error(e.message ?: LanguageManager.string(R.string.common_unknown_error)))
         } finally {
             postEffect(ClubCreateSideEffect.Loading(false))
         }
@@ -192,7 +208,7 @@ class ClubCreateViewModel @Inject constructor(
             call(buildForm())
             navigator.navigateUp()
         } catch (e: Exception) {
-            postEffect(ClubCreateSideEffect.Error(e.message ?: "Unknown error"))
+            postEffect(ClubCreateSideEffect.Error(e.message ?: LanguageManager.string(R.string.common_unknown_error)))
         } finally {
             postEffect(ClubCreateSideEffect.Loading(false))
         }
@@ -201,18 +217,47 @@ class ClubCreateViewModel @Inject constructor(
     // MARK: - Verification prompt
 
     /**
-     * Backend has no verify-request endpoint yet, so this is an optimistic stub:
-     * dismiss, confirm, leave. Wire the real POST once it lands (see verify-gate
-     * backend TODOs: POST verify-request + clubStatus in payloads).
+     * Community presidents own the community, so the clubs they create are trusted
+     * by definition. Role is stashed at sign-in under [DefaultStorageKey.USER_COMMUNITY_ROLE].
+     */
+    private val isCommunityPresident: Boolean
+        get() = dependencies.defaultStorage
+            .getString(DefaultStorageKey.USER_COMMUNITY_ROLE, null)
+            ?.uppercase() == "PRESIDENT"
+
+    /**
+     * Fire the real verify request for the just-created club, then leave the create
+     * flow. Falls back to a soft message if we somehow lack the new id. Mirrors iOS.
      */
     private fun requestVerification() {
         updateState(state.copy(showVerifyPrompt = false))
-        AppSnackBar.show(
-            title = "Verification requested",
-            subtitle = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
-            style = AppSnackBar.Style.SUCCESS
-        )
-        navigateBack()
+        val clubId = state.createdClubId
+        if (clubId == null) {
+            AppSnackBar.show(
+                title = LanguageManager.string(R.string.clubs_verification_requested),
+                subtitle = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
+                style = AppSnackBar.Style.SUCCESS
+            )
+            navigateBack()
+            return
+        }
+        viewModelScope.launch {
+            try {
+                dependencies.useCase.requestVerify(clubId)
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.clubs_verification_requested),
+                    subtitle = state.values.text(AppFieldSchema.FieldId.CLUB_NAME),
+                    style = AppSnackBar.Style.SUCCESS
+                )
+            } catch (e: Exception) {
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.clubs_verification_fail),
+                    subtitle = LanguageManager.string(R.string.clubs_verification_fail_sub),
+                    style = AppSnackBar.Style.ERROR
+                )
+            }
+            navigateBack()
+        }
     }
 
     private fun dismissVerifyPrompt() {

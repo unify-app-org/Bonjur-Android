@@ -1,0 +1,43 @@
+<resources>
+    <!-- Language picker (shared: profile settings + onboarding) -->
+
+    <!-- Shared actions -->
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">Ləğv et</string>
+    <string name="common_save">Yadda saxla</string>
+    <string name="common_delete">Sil</string>
+    <string name="common_continue">Davam et</string>
+    <string name="common_try_again">Yenidən cəhd edin.</string>
+    <string name="common_search">Axtar</string>
+    <string name="common_see_all">Hamısını göstər</string>
+    <string name="common_members">Üzvlər</string>
+    <string name="common_no_members_found">Üzv tapılmadı</string>
+    <string name="common_public">Açıq</string>
+    <string name="common_private">Qapalı</string>
+    <string name="common_report">Şikayət et</string>
+    <string name="common_report_submitted">Şikayət göndərildi</string>
+    <string name="common_role_updated">Rol yeniləndi</string>
+    <string name="common_role_update_failed">Rol yenilənmədi</string>
+
+    <!-- Member roles (section titles) -->
+    <string name="role_members">Üzvlər</string>
+    <string name="role_president">Prezident</string>
+    <string name="role_vice_president">Vitse-prezident</string>
+    <string name="role_event_creators">Tədbir yaradanlar</string>
+    <string name="member_assign_role">Rol təyin et</string>
+    <string name="member_change_role">Rolu dəyiş</string>
+    <string name="member_choose_role">Bu üzv üçün rol seçin</string>
+    <string name="member_report_user">İstifadəçini şikayət et</string>
+    <string name="member_confirm">Təsdiqlə</string>
+    <string name="member_no_members_yet">Hələ üzv yoxdur</string>
+    <string name="member_see_all_members">Bütün %1$d üzvə bax</string>
+    <string name="member_options">Üzvlər</string>
+    <string name="common_back">Geri</string>
+    <string name="common_share">Paylaş</string>
+    <string name="common_options">Seçimlər</string>
+    <string name="common_close">Bağla</string>
+    <string name="community_subtitle">İcma</string>
+    <string name="common_no_information">Məlumat yoxdur</string>
+    <string name="common_cover">Örtük</string>
+    <string name="common_copied_to_clipboard">Buferə kopyalandı</string>
+</resources>

@@ -1,5 +1,7 @@
 package com.bonjur.communities.presentation.list.components
 
+import com.bonjur.communities.R
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -89,7 +91,7 @@ fun CommunitiesListView(
                     AppEmptyView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
-                            text = "No communities to show yet. Check back soon."
+                            text = stringResource(R.string.comm_communities_empty)
                         )
                     )
                 }
@@ -146,7 +148,7 @@ private fun TopView(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Text(
-            text = "Communities",
+            text = stringResource(R.string.comm_communities_title),
             style = AppTypography.TitleL.extraBold,
             color = Palette.black,
             modifier = Modifier

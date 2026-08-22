@@ -7,6 +7,8 @@
 
 package com.bonjur.groups.presentation.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.groups.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -115,6 +117,9 @@ fun GroupsListView(
         TopView(
             searchText = store.state.searchText,
             selectedSegment = store.state.selectedSegment,
+            clubsCount = store.state.uiModel.clubs.size,
+            eventsCount = store.state.uiModel.events.size,
+            hangoutsCount = store.state.uiModel.hangouts.size,
             onSegmentChanged = { segment ->
                 store.send(GroupsListAction.SegmentChanged(segment))
             },
@@ -159,6 +164,9 @@ fun GroupsListView(
 private fun TopView(
     searchText: String,
     selectedSegment: SegmentType,
+    clubsCount: Int,
+    eventsCount: Int,
+    hangoutsCount: Int,
     onSegmentChanged: (SegmentType) -> Unit,
     onSearchTextChanged: (String) -> Unit
 ) {
@@ -170,7 +178,7 @@ private fun TopView(
     ) {
         // Title
         Text(
-            text = "My activities",
+            text = stringResource(R.string.groups_my_activities),
             style = AppTypography.TitleL.extraBold,
             color = Palette.black,
             modifier = Modifier
@@ -193,12 +201,11 @@ private fun TopView(
             )
 
             // Segmented Picker
-            val options = remember {
-                SegmentType.entries.map { type ->
-                    object : SegmentedPickerOption {
-                        override val title = type.title
-                        override val id = type.name
-                    }
+            // Not remembered: titles follow the app language, so they must re-read.
+            val options = SegmentType.entries.map { type ->
+                object : SegmentedPickerOption {
+                    override val title = type.title
+                    override val id = type.name
                 }
             }
 
@@ -212,6 +219,15 @@ private fun TopView(
                 onOptionSelected = { option ->
                     val segment = SegmentType.valueOf(option.id)
                     onSegmentChanged(segment)
+                },
+                // Item count per tab, always shown — "Clubs (0)" when empty.
+                titleFor = { option ->
+                    val count = when (SegmentType.valueOf(option.id)) {
+                        SegmentType.CLUBS -> clubsCount
+                        SegmentType.EVENTS -> eventsCount
+                        SegmentType.HANGOUTS -> hangoutsCount
+                    }
+                    "${option.title} ($count)"
                 },
                 modifier = Modifier
                     .fillMaxWidth()

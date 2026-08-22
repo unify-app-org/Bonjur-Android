@@ -1,5 +1,8 @@
 package com.bonjur.hangouts.presentation.detail.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.hangouts.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -34,6 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.InfoContainer.AppInfoContainer
@@ -218,6 +222,8 @@ fun HangoutDetailsView(
             onBackClick = { store.send(HangoutDetailsAction.BackTapped) },
             onMoreClick = { showOptions = true },
             onEditClick = { store.send(HangoutDetailsAction.EditTapped) },
+            // Edit is owner/VP only, matching iOS — Android showed the pencil to everyone.
+            showEdit = store.state.isEditable,
             onSegmentSelected = { segment ->
                 store.send(HangoutDetailsAction.SegmentChanged(segment))
             },
@@ -273,6 +279,7 @@ private fun HangoutNavigationOverlay(
     onBackClick: () -> Unit,
     onMoreClick: () -> Unit,
     onEditClick: () -> Unit,
+    showEdit: Boolean,
     onSegmentSelected: (HangoutDetailsViewState.SegmentTypes) -> Unit,
     onNavBarPositioned: (Dp) -> Unit,
     modifier: Modifier = Modifier
@@ -308,7 +315,7 @@ private fun HangoutNavigationOverlay(
                             isScrolled = isScrolled,
                             onClick = onMoreClick
                         )
-                        AnimatedVisibility(visible = !isScrolled) {
+                        AnimatedVisibility(visible = showEdit && !isScrolled) {
                             NavBarButton(
                                 icon = Images.Icons.penLine(),
                                 isScrolled = isScrolled,
@@ -432,7 +439,7 @@ private fun HangoutInfoView(
                 border = BorderStroke(0.5.dp, Palette.blackHigh)
             ) {
                 Text(
-                    text = if (isPrivate) "Private" else "Public",
+                    text = if (isPrivate) stringResource(R.string.hangouts_private) else stringResource(R.string.hangouts_public),
                     style = AppTypography.TextSm.medium,
                     color = if (isPrivate) Palette.blackHigh else Palette.whiteHigh,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -448,7 +455,7 @@ private fun HangoutInfoView(
 
         // Member count
         Text(
-            text = "${uiModel?.membersCount ?: 0} members",
+            text = memberCountText(uiModel?.membersCount ?: 0),
             style = AppTypography.TextMd.regular,
             color = Palette.blackHigh
         )
@@ -492,7 +499,7 @@ private fun InfoTab(infoData: List<HangoutDetails.Info>) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "No information available",
+                    text = stringResource(DesignR.string.common_no_information),
                     style = AppTypography.TextL.medium,
                     color = Palette.blackMedium
                 )

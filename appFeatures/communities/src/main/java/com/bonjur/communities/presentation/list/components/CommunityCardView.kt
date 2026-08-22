@@ -7,6 +7,8 @@
 
 package com.bonjur.communities.presentation.list.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.communities.R
 import CardBackgroundView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.bonjur.designSystem.commonModel.clubCountText
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.communities.presentation.list.model.CommunityCardMocks
 import com.bonjur.communities.presentation.list.model.CommunityCardModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -106,7 +110,7 @@ private fun TopView(model: CommunityCardModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "view all",
+                    text = stringResource(R.string.comm_view_all),
                     style = AppTypography.TextMd.medium,
                     color = model.bgType.arrowTint
                 )
@@ -186,7 +190,7 @@ private fun ClubsCountView(model: CommunityCardModel) {
             modifier = Modifier.size(16.dp)
         )
         Text(
-            text = if (model.clubsCount == 1) "1 club" else "${model.clubsCount} clubs",
+            text = clubCountText(model.clubsCount),
             style = AppTypography.TextMd.semiBold,
             color = model.bgType.foregroundColor
         )
@@ -201,7 +205,7 @@ private fun MembersView(model: CommunityCardModel) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "${model.memberCount} members",
+            text = memberCountText(model.memberCount),
             style = AppTypography.TextMd.regular,
             color = model.bgType.foregroundColor,
             textAlign = TextAlign.End

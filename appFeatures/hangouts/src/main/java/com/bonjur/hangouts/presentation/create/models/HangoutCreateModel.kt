@@ -1,5 +1,7 @@
 package com.bonjur.hangouts.presentation.create.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -42,7 +44,7 @@ data class HangoutCreateViewState(
             values.text(AppFieldSchema.FieldId.HANGOUT_NAME).isNotBlank()
 
     val topTitle: String
-        get() = if (isEdit) "Edit hangout" else "Create new hangouts"
+        get() = if (isEdit) LanguageManager.string(R.string.hangouts_edit_title) else "Create new hangouts"
 }
 
 // MARK: - Feature Action

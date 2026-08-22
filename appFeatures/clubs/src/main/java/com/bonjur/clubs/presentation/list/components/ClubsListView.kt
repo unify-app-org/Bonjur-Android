@@ -7,6 +7,8 @@
 
 package com.bonjur.clubs.presentation.list.components
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.clubs.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -96,11 +98,11 @@ fun ClubsListView(
                         model = AppEmptyModel(
                             icon = Images.Icons.twoUsers(),
                             text = if (isFiltering) {
-                                "No clubs match your search. Try another name or clear your filters."
+                                stringResource(R.string.clubs_search_empty)
                             } else {
-                                "No clubs yet. Be the pioneer and start the very first one now!"
+                                stringResource(R.string.clubs_list_empty)
                             },
-                            buttonTitle = if (isFiltering) null else "Create a club +"
+                            buttonTitle = if (isFiltering) null else stringResource(R.string.clubs_create_club)
                         ),
                         onButtonClick = { store.send(ClubsListAction.CreateTapped) }
                     )
@@ -158,7 +160,7 @@ private fun TopView(
     ) {
         // Title
         Text(
-            text = "Clubs",
+            text = stringResource(R.string.clubs_title),
             style = AppTypography.TitleL.extraBold,
             color = Palette.black,
             modifier = Modifier

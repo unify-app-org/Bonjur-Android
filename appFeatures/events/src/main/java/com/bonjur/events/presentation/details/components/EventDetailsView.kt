@@ -1,5 +1,9 @@
 package com.bonjur.events.presentation.details.components
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.events.R
 import CardBackgroundView
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -40,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.bonjur.designSystem.commonModel.memberCountText
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.events.domain.models.EventsDetails
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -148,9 +153,9 @@ fun EventDetailsView(
             item(key = "event_info") {
                 EventInfoView(
                     uiModel = store.state.uiModel,
-                    isFileUploadReachedMaxLimit = store.state.isFileUploadReachedMaxLimit,
                     onClubTap = { store.send(EventDetailsAction.ClubTapped) },
                     onAddAttachment = { store.send(EventDetailsAction.EditTapped) },
+                    onRemindTap = { store.send(EventDetailsAction.RemindTapped) },
                     onNamePositioned = { yPosition ->
                         val navBarBottom = with(density) { navBarHeight.toPx() }
                         isNameVisible = yPosition > navBarBottom
@@ -242,8 +247,9 @@ fun EventDetailsView(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(Color.White)
+                    // Edge-to-edge: clear the system navigation bar before padding.
+                    .navigationBarsPadding()
                     .padding(16.dp)
-                    .padding(bottom = 16.dp)
                     .zIndex(2f)
             ) {
                 AppButton(
@@ -327,11 +333,21 @@ private fun StretchableHeader(
 @Composable
 private fun EventInfoView(
     uiModel: EventsDetails.UIModel?,
-    isFileUploadReachedMaxLimit: Boolean,
     onClubTap: () -> Unit,
     onAddAttachment: () -> Unit,
+    onRemindTap: () -> Unit,
     onNamePositioned: (Float) -> Unit
 ) {
+    // Viewer permissions, mirroring iOS: members see attachments, only organizers
+    // (president / vice president / event creator) add docs or send reminders.
+    val viewerRole = uiModel?.userActivityType ?: AppUIEntities.UserActivityRole.NOT_JOINED
+    val isMember = viewerRole != AppUIEntities.UserActivityRole.NOT_JOINED
+    val isOrganizer = viewerRole in listOf(
+        AppUIEntities.UserActivityRole.PRESIDENT,
+        AppUIEntities.UserActivityRole.VISE_PRESIDENT,
+        AppUIEntities.UserActivityRole.EVENT_CREATOR
+    )
+    val isReminderSent = uiModel?.isReminderSent == true
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -365,7 +381,7 @@ private fun EventInfoView(
                 )
             ) {
                 Text(
-                    text = if (isPrivate) "Private" else "Public",
+                    text = if (isPrivate) stringResource(R.string.events_private) else stringResource(R.string.events_public),
                     style = AppTypography.TextSm.medium,
                     color = if (isPrivate) Palette.blackHigh else Palette.whiteHigh,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -382,7 +398,7 @@ private fun EventInfoView(
 
         // Member count
         Text(
-            text = "${uiModel?.membersCount ?: 0} members",
+            text = memberCountText(uiModel?.membersCount ?: 0),
             style = AppTypography.TextMd.regular,
             color = Palette.blackHigh
         )
@@ -411,55 +427,56 @@ private fun EventInfoView(
                 }
             }
 
-            // Reminder button
-            AppButton(
-                title = "Reminder",
-                model = AppButtonModel(
-                    contentSize = ContentSize.Fill,
-                    size = AppButtonSize.Medium
-                ),
-                onClick = { /* Handle reminder */ }
-            )
+            // Reminder button — organizers only, spent for the rest of the day
+            // once the backend reports `isReminder`.
+            if (isOrganizer) {
+                AppButton(
+                    title = stringResource(
+                        if (isReminderSent) R.string.events_reminder_unavailable
+                        else R.string.events_reminder
+                    ),
+                    model = AppButtonModel(
+                        contentSize = ContentSize.Fill,
+                        size = AppButtonSize.Medium
+                    ),
+                    enabled = !isReminderSent,
+                    onClick = onRemindTap
+                )
+            }
         }
 
-        // Attachments
-        AttachmentsView(
-            attachments = uiModel?.attachments ?: emptyList(),
-            isFileUploadReachedMaxLimit = isFileUploadReachedMaxLimit,
-            onAddAttachment = onAddAttachment
-        )
+        // Attachments are hidden from users who aren't members.
+        if (isMember) {
+            AttachmentsView(
+                attachments = uiModel?.attachments ?: emptyList(),
+                canAdd = isOrganizer,
+                onAddAttachment = onAddAttachment
+            )
+        }
     }
 }
 
 @Composable
 private fun AttachmentsView(
     attachments: List<AttachmentItemModel>,
-    isFileUploadReachedMaxLimit: Boolean,
+    canAdd: Boolean,
     onAddAttachment: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(
-                text = "Attachments",
-                style = AppTypography.HeadingXL.medium,
-                color = Palette.black
-            )
-
-            if (attachments.isNotEmpty()) {
-                Text(
-                    text = "You can upload files up to 15 MB total for this event.",
-                    style = AppTypography.BodyTextSm.regular,
-                    color = Palette.blackMedium
-                )
-            }
-        }
+        // Header only — iOS shows no size hint next to a populated list; the limit is
+        // part of the empty-state copy instead.
+        Text(
+            text = stringResource(R.string.events_attachments),
+            style = AppTypography.HeadingXL.medium,
+            color = Palette.black
+        )
 
         if (attachments.isNotEmpty()) {
-            // Attachment items
+            // Plain cells: iOS builds these with `canEdit` defaulting to false (no trash)
+            // and shows no "Add +" once attachments exist — adding goes through Edit.
             attachments.forEach { attachment ->
                 AttachmentItemView(
                     model = AttachmentItemModel(
@@ -467,22 +484,12 @@ private fun AttachmentsView(
                         name = attachment.name,
                         size = attachment.size,
                         type = attachment.type,
-                        canEdit = true
+                        canEdit = false,
+                        url = attachment.url
                     ),
-                    onDeleteClick = { /* Handle delete attachment with id: ${attachment.id} */ }
-                )
-            }
-
-            // Add button (if not reached limit)
-            if (!isFileUploadReachedMaxLimit) {
-                AppButton(
-                    title = "Add +",
-                    model = AppButtonModel(
-                        type = ButtonType.Secondary,
-                        contentSize = ContentSize.Fill,
-                        size = AppButtonSize.Small
-                    ),
-                    onClick = onAddAttachment
+                    onDeleteClick = {}
+                    // The row previews the document in-app off `url`; no hand-off
+                    // to an external browser.
                 )
             }
         } else {
@@ -490,8 +497,8 @@ private fun AttachmentsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = null,
-                    text = "No attachments yet. You can upload files up to 15 MB total for this event.",
-                    buttonTitle = "Add +"
+                    text = stringResource(R.string.events_attachments_empty),
+                    buttonTitle = if (canAdd) stringResource(R.string.events_add_plus) else null
                 ),
                 onButtonClick = onAddAttachment
             )
@@ -652,7 +659,7 @@ private fun InfoTab(infoData: List<EventsDetails.Info>) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    "No information available",
+                    stringResource(DesignR.string.common_no_information),
                     style = AppTypography.TextL.medium,
                     color = Palette.blackMedium
                 )

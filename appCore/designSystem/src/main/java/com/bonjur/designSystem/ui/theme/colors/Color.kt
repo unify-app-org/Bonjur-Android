@@ -48,6 +48,7 @@ object Palette {
     val cardBgPink = Color(0xFFFF9BF8) // #FF9BF8
 
     val cardBgRed = Color(0xFFFF5558) // #FF5558
+    val destructiveRed = Color(0xFFDD362F) // #DD362F
 
     val whiteHigh = Color(0xFFFFFFFF).copy(alpha = 0.9f) // White 90%
 

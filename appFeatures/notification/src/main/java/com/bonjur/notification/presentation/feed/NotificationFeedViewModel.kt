@@ -1,17 +1,20 @@
 package com.bonjur.notification.presentation.feed
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.notification.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.navigation.ClubDetailsNavArgs
 import com.bonjur.navigation.EventDetailsNavArgs
+import com.bonjur.navigation.HangoutDetailsNavArgs
 import com.bonjur.navigation.Navigator
 import com.bonjur.navigation.ProfileDetailNavArgs
 import com.bonjur.navigation.SharedRoutes
 import com.bonjur.network.model.ApiException
-import com.bonjur.notification.domain.models.NeedsActionSummary
 import com.bonjur.notification.domain.models.NotificationFeedItem
 import com.bonjur.notification.domain.models.NotificationFeedMapper
 import com.bonjur.notification.domain.models.NotificationTargetType
+import com.bonjur.notification.domain.models.NotificationType
 import com.bonjur.notification.domain.useCase.NotificationUseCase
 import com.bonjur.notification.navigation.NotificationScreens
 import com.bonjur.notification.presentation.feed.models.NotificationFeedAction
@@ -74,7 +77,6 @@ class NotificationFeedViewModel @Inject constructor(
                 postEffect(NotificationFeedSideEffect.Error(e.message))
             }
         }
-        refreshActionBanner()
     }
 
     private fun loadMore() {
@@ -97,28 +99,6 @@ class NotificationFeedViewModel @Inject constructor(
                 updateState(state.copy(isLoadingMore = false))
                 postEffect(NotificationFeedSideEffect.Error(e.message))
             }
-        }
-    }
-
-    // MARK: - Needs your action (banner)
-
-    /** Composes the banner client-side: join-request totals (club + hangout +
-     * event) plus the admin-only verification probe (403 → 0). Failures silent. */
-    private fun refreshActionBanner() {
-        viewModelScope.launch {
-            val requests = try {
-                useCase.fetchRequestCounts()
-            } catch (e: ApiException) {
-                0
-            }
-            val verifications = try {
-                useCase.fetchVerificationCount()
-            } catch (e: ApiException) {
-                0
-            }
-            updateState(
-                state.copy(inbox = state.inbox.copy(action = NeedsActionSummary(requests, verifications)))
-            )
         }
     }
 
@@ -146,14 +126,50 @@ class NotificationFeedViewModel @Inject constructor(
      * deferred to the sheet's "Continue" CTA. */
     private fun itemTapped(id: String) {
         val item = state.inbox.sections.flatMap { it.items }.firstOrNull { it.id == id } ?: return
+        markRead(item)
         updateState(state.copy(previewItem = item))
     }
 
-    /** Preview "Continue": dismiss the sheet, then deep-link into the target. */
+    /**
+     * Optimistically mark a single notification read, then persist it. A failure
+     * rolls the row back; the badge re-syncs on the next fetch. Mirrors iOS.
+     */
+    private fun markRead(item: NotificationFeedItem) {
+        if (item.isRead) return
+        setReadFlag(item.id, isRead = true)
+        viewModelScope.launch {
+            try {
+                useCase.markRead(item.id)
+            } catch (e: ApiException) {
+                setReadFlag(item.id, isRead = false)
+            }
+        }
+    }
+
+    private fun setReadFlag(id: String, isRead: Boolean) {
+        feedItems = feedItems.map { if (it.id == id) it.copy(isRead = isRead) else it }
+        val sections = state.inbox.sections.map { section ->
+            section.copy(
+                items = section.items.map { if (it.id == id) it.copy(isRead = isRead) else it }
+            )
+        }
+        updateState(state.copy(inbox = state.inbox.copy(sections = sections)))
+    }
+
+    /**
+     * Preview "Continue": dismiss the sheet, then route by the row's type —
+     * requests land on the NeedsAction screen, outcomes deep-link into the
+     * target, informational rows just close (mirrors iOS `tapDestination`).
+     */
     private fun previewContinue() {
         val item = state.previewItem ?: return
         updateState(state.copy(previewItem = null))
-        openTarget(item)
+        when (item.type.tapDestination) {
+            NotificationType.TapDestination.NEEDS_ACTION ->
+                viewModelScope.launch { navigator.navigateTo(NotificationScreens.NeedsAction.route) }
+            NotificationType.TapDestination.TARGET -> openTarget(item)
+            NotificationType.TapDestination.NONE -> Unit
+        }
     }
 
     private fun openTarget(item: NotificationFeedItem) {
@@ -166,9 +182,13 @@ class NotificationFeedViewModel @Inject constructor(
                     }
                 NotificationTargetType.EVENT ->
                     navigator.navigateTo(SharedRoutes.EVENT_DETAILS, EventDetailsNavArgs(targetId))
+                NotificationTargetType.HANGOUT ->
+                    navigator.navigateTo(SharedRoutes.HANGOUT_DETAILS, HangoutDetailsNavArgs(targetId))
                 NotificationTargetType.USER ->
                     navigator.navigateTo(SharedRoutes.PROFILE_DETAIL, ProfileDetailNavArgs(targetId))
-                NotificationTargetType.NONE -> Unit
+                // COMMUNITY has no detail route yet (iOS emits the identifier
+                // but registers no router either) — nothing to open.
+                NotificationTargetType.COMMUNITY, NotificationTargetType.NONE -> Unit
             }
         }
     }

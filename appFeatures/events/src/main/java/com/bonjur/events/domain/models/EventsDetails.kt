@@ -1,5 +1,7 @@
 package com.bonjur.events.domain.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.attachments.AttachmentItemModel
 import com.bonjur.events.presentation.create.models.EventCreatePrefillData
@@ -20,7 +22,12 @@ object EventsDetails {
         val infoData: List<Info>,
         val attachments: List<AttachmentItemModel>,
         val joinButton: JoinButton? = null,
-        val editPrefillData: EventCreatePrefillData? = null
+        val editPrefillData: EventCreatePrefillData? = null,
+        /**
+         * True once today's reminder has been broadcast. Purely server-derived
+         * (detail payload's `isReminder`) — the client never assumes the window.
+         */
+        val isReminderSent: Boolean = false
     )
 
     /** Bottom join/request button state. Mirrors iOS `EventsDetailsModel.JoinButton`. */
@@ -62,7 +69,7 @@ val EventsDetailsMockData = EventsDetails.UIModel(
     ),
     infoData = listOf(
         EventsDetails.Info(
-            title = "About",
+            title = LanguageManager.string(R.string.events_row_about),
             subItems = listOf(
                 EventsDetails.SubInfo(
                     title = null,
@@ -71,26 +78,26 @@ val EventsDetailsMockData = EventsDetails.UIModel(
             )
         ),
         EventsDetails.Info(
-            title = "Event info",
+            title = LanguageManager.string(R.string.events_info_section),
             subItems = listOf(
                 EventsDetails.SubInfo(
                     title = "Created/Updated Data",
                     description = "30 noyabr 2025"
                 ),
                 EventsDetails.SubInfo(
-                    title = "Owner contact",
+                    title = LanguageManager.string(R.string.events_owner_contact_label),
                     description = "+994 123 45 67"
                 ),
                 EventsDetails.SubInfo(
-                    title = "Capacity",
+                    title = LanguageManager.string(R.string.events_row_capacity),
                     description = "161/200 members"
                 ),
                 EventsDetails.SubInfo(
-                    title = "Rules",
+                    title = LanguageManager.string(R.string.events_row_rules),
                     description = "Everyone can come"
                 ),
                 EventsDetails.SubInfo(
-                    title = "Location",
+                    title = LanguageManager.string(R.string.events_row_location),
                     description = "Cafetaria, 2nd floor"
                 )
             )

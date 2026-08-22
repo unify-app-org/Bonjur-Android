@@ -1,5 +1,7 @@
 package com.bonjur.hangouts.presentation.create
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.hangouts.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -79,7 +81,7 @@ class HangoutCreateViewModel @Inject constructor(
             runCatching { dependencies.useCase.getCategories() }
                 .onSuccess { updateState(state.copy(categorySections = it)) }
                 .onFailure {
-                    AppSnackBar.show(title = "Couldn't load categories", style = AppSnackBar.Style.ERROR)
+                    AppSnackBar.show(title = LanguageManager.string(R.string.hangouts_categories_load_fail), style = AppSnackBar.Style.ERROR)
                 }
             applyPrefill()
         }
@@ -164,7 +166,7 @@ class HangoutCreateViewModel @Inject constructor(
     private suspend fun createHangout(form: HangoutFormData) {
         dependencies.useCase.createHangout(form)
         AppSnackBar.show(
-            title = "Hangout created successfully",
+            title = LanguageManager.string(R.string.hangouts_created),
             subtitle = form.name,
             style = AppSnackBar.Style.SUCCESS
         )
@@ -173,7 +175,7 @@ class HangoutCreateViewModel @Inject constructor(
     private suspend fun editHangout(hangoutId: String, form: HangoutFormData) {
         dependencies.useCase.editHangout(hangoutId, form)
         AppSnackBar.show(
-            title = "Hangout updated successfully",
+            title = LanguageManager.string(R.string.hangouts_updated),
             subtitle = form.name,
             style = AppSnackBar.Style.SUCCESS
         )

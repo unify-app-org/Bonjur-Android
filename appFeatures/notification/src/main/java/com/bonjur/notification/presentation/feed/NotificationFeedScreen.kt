@@ -1,5 +1,7 @@
 package com.bonjur.notification.presentation.feed
 
+import androidx.compose.ui.res.stringResource
+import com.bonjur.designsystem.R as DesignR
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +35,7 @@ fun NotificationFeedScreen(
         AppTopBar(
             isScrolled = true,
             showTitle = true,
-            title = "Notification",
+            title = stringResource(DesignR.string.notification),
             onBack = { scope.launch { navigator.navigateUp() } },
             trailing = {
                 Text(

@@ -1,5 +1,7 @@
 package com.bonjur.member.model
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import com.bonjur.designSystem.commonModel.AppUIEntities
 
 /**
@@ -26,7 +28,13 @@ data class MemberListSectionModel(
 /** One page of members plus whether more pages remain. Mirrors iOS `MembersPage`. */
 data class MembersPage(
     val members: List<MemberCellModel>,
-    val hasMore: Boolean
+    val hasMore: Boolean,
+    /**
+     * Total rows the query matches (`totalElements`). Comes from the same response
+     * as the page, so it also reflects an active keyword filter — unlike a total
+     * handed in by the caller from a detail payload.
+     */
+    val totalCount: Int? = null
 )
 
 /**
@@ -64,10 +72,10 @@ data class GroupedMembersData(
         }
 
         private fun AppUIEntities.UserActivityRole.sectionTitle(): String = when (this) {
-            AppUIEntities.UserActivityRole.MEMBER -> "Members"
-            AppUIEntities.UserActivityRole.PRESIDENT -> "President"
+            AppUIEntities.UserActivityRole.MEMBER -> LanguageManager.string(R.string.common_members)
+            AppUIEntities.UserActivityRole.PRESIDENT -> LanguageManager.string(R.string.role_president)
             AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "Vise president"
-            AppUIEntities.UserActivityRole.EVENT_CREATOR -> "Event creators"
+            AppUIEntities.UserActivityRole.EVENT_CREATOR -> LanguageManager.string(R.string.role_event_creators)
             AppUIEntities.UserActivityRole.NOT_JOINED -> "-"
         }
     }

@@ -38,8 +38,7 @@ class VerificationViewModel @Inject constructor(
             VerificationAction.Retry -> loadInitial()
             VerificationAction.LoadMore -> loadMore()
             is VerificationAction.Verify -> process(action.item, accept = true)
-            is VerificationAction.Reject -> postEffect(VerificationSideEffect.ConfirmReject(action.item))
-            is VerificationAction.PerformReject -> process(action.item, accept = false)
+            is VerificationAction.PerformReject -> process(action.item, accept = false, rejectionReason = action.note)
             is VerificationAction.CellTapped -> openClub(action.item)
         }
     }
@@ -86,12 +85,12 @@ class VerificationViewModel @Inject constructor(
         }
     }
 
-    private fun process(item: VerificationItem, accept: Boolean) {
+    private fun process(item: VerificationItem, accept: Boolean, rejectionReason: String? = null) {
         if (state.processingIds.contains(item.id)) return
         updateState(state.copy(processingIds = state.processingIds + item.id))
         viewModelScope.launch {
             try {
-                useCase.setStatus(item.clubId, accept)
+                useCase.setStatus(item.clubId, accept, rejectionReason)
                 updateState(
                     state.copy(
                         processingIds = state.processingIds - item.id,

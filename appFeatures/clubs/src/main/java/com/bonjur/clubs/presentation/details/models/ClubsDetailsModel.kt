@@ -1,5 +1,8 @@
 package com.bonjur.clubs.presentation.model
 
+import androidx.annotation.StringRes
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.clubs.R
 import com.bonjur.appfoundation.*
 import com.bonjur.clubs.domain.models.ClubsDetails
 import com.bonjur.designSystem.commonModel.AppUIEntities
@@ -61,12 +64,16 @@ data class ClubDetailsViewState(
         get() = uiModel?.clubStatus == AppUIEntities.ClubStatus.PENDING
 
     enum class SegmentTypes(
-        override val title: String
+        @StringRes private val titleRes: Int
     ) : SegmentedPickerOption {
 
-        ABOUT("About"),
-        EVENTS("Events"),
-        MEMBERS("Members");
+        ABOUT(R.string.clubs_about_label),
+        EVENTS(R.string.clubs_events_title),
+        MEMBERS(R.string.clubs_members_title);
+
+        // Resolved on read: enum constructors run at class load, before
+        // LanguageManager has a Context, and would never follow a language switch.
+        override val title: String get() = LanguageManager.string(titleRes)
 
         override val id: String get() = name
 

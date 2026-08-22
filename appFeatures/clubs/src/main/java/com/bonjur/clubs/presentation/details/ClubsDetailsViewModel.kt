@@ -1,5 +1,8 @@
 package com.bonjur.clubs.presentation
 
+import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.clubs.R
 import androidx.lifecycle.viewModelScope
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.clubs.domain.useCase.ClubsUseCase
@@ -71,17 +74,28 @@ class ClubDetailsViewModel @Inject constructor(
     // MARK: - Verification
 
     /**
-     * Backend has no verify-request endpoint yet, so this is an optimistic stub:
-     * show a success snackbar, no network call, no local state flip. Wire the real
-     * POST once it lands (see verify-gate backend TODOs). Mirrors iOS
+     * Ask the community admins to verify this club, then refresh so the status
+     * (and the verify CTA) reflects the pending request. Mirrors iOS
      * ClubDetailsViewModel.requestVerification().
      */
     private fun requestVerification() {
-        AppSnackBar.show(
-            title = "Verification requested",
-            subtitle = "Admins will review your club.",
-            style = AppSnackBar.Style.SUCCESS
-        )
+        viewModelScope.launch {
+            try {
+                dependencies.useCase.requestVerify(inputData.clubId)
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.clubs_verification_requested),
+                    subtitle = LanguageManager.string(R.string.clubs_verification_requested_sub),
+                    style = AppSnackBar.Style.SUCCESS
+                )
+                fetchData()
+            } catch (e: Exception) {
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.clubs_verification_fail),
+                    subtitle = LanguageManager.string(R.string.common_try_again),
+                    style = AppSnackBar.Style.ERROR
+                )
+            }
+        }
     }
 
     private fun navigateToMembersList() {
@@ -89,11 +103,12 @@ class ClubDetailsViewModel @Inject constructor(
             navigator.navigateTo(
                 MemberListScreens.MembersList.route,
                 MemberListInputData(
-                    title = "Members",
+                    title = LanguageManager.string(R.string.clubs_members_title),
                     viewerRole = state.uiModel?.userActivityType
                         ?: AppUIEntities.UserActivityRole.NOT_JOINED,
                     currentUserId = state.currentUserId,
                     activityType = AppUIEntities.ActivityType.CLUBS,
+                    totalCount = state.uiModel?.membersCount,
                     loadPage = { page, size, keyword ->
                         dependencies.useCase.fetchClubMembersPage(inputData.clubId, page, size, keyword)
                     },
@@ -142,7 +157,7 @@ class ClubDetailsViewModel @Inject constructor(
             } catch (e: Exception) {
                 AppSnackBar.show(
                     title = "Could not join",
-                    subtitle = "Please try again.",
+                    subtitle = LanguageManager.string(R.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             } finally {
@@ -156,7 +171,7 @@ class ClubDetailsViewModel @Inject constructor(
         val name = state.uiModel?.name ?: "the club"
         if (state.isPrivate) {
             AppSnackBar.show(
-                title = "Request sent",
+                title = LanguageManager.string(R.string.clubs_join_request_sent),
                 subtitle = "$name will review your request",
                 style = AppSnackBar.Style.SUCCESS
             )
@@ -171,16 +186,15 @@ class ClubDetailsViewModel @Inject constructor(
         AppAlertPresenter.present(
             AppAlert(
                 config = AppAlert.Config(
-                    title = "Exit Club?",
-                    subtitle = "Are you sure you want to leave this club? You will no longer " +
-                        "be able to participate in events or see club updates."
+                    title = LanguageManager.string(R.string.clubs_exit_title),
+                    subtitle = LanguageManager.string(R.string.clubs_exit_subtitle)
                 ),
                 actions = listOf(
                     AppAlert.Action(
-                        title = "Exit club",
+                        title = LanguageManager.string(R.string.clubs_exit_confirm),
                         style = AppAlert.Action.Style.DESTRUCTIVE
                     ) { handleExitConfirmed() },
-                    AppAlert.Action(title = "Cancel", style = AppAlert.Action.Style.PRIMARY)
+                    AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.PRIMARY)
                 )
             )
         )
@@ -213,7 +227,7 @@ class ClubDetailsViewModel @Inject constructor(
     private suspend fun performExit() {
         try {
             dependencies.useCase.exitClub(inputData.clubId)
-            AppSnackBar.show(title = "You left the club", style = AppSnackBar.Style.SUCCESS)
+            AppSnackBar.show(title = LanguageManager.string(R.string.clubs_left), style = AppSnackBar.Style.SUCCESS)
             navigator.navigateUp()
         } catch (e: Exception) {
             showExitError()
@@ -226,14 +240,13 @@ class ClubDetailsViewModel @Inject constructor(
         AppAlertPresenter.present(
             AppAlert(
                 config = AppAlert.Config(
-                    title = "Transfer Ownership Required",
-                    subtitle = "You are the owner of this club. Before leaving, you must assign " +
-                        "the vice president role to another member to keep the club active."
+                    title = LanguageManager.string(R.string.clubs_transfer_title),
+                    subtitle = LanguageManager.string(R.string.clubs_transfer_subtitle)
                 ),
                 actions = listOf(
-                    AppAlert.Action(title = "Cancel", style = AppAlert.Action.Style.SECONDARY),
+                    AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.SECONDARY),
                     AppAlert.Action(
-                        title = "Assign",
+                        title = LanguageManager.string(R.string.common_assign),
                         style = AppAlert.Action.Style.PRIMARY
                     ) {
                         // Opens the members list to assign a VP — deferred (row 5).
@@ -246,8 +259,8 @@ class ClubDetailsViewModel @Inject constructor(
 
     private fun showExitError() {
         AppSnackBar.show(
-            title = "Could not leave club",
-            subtitle = "Please try again.",
+            title = LanguageManager.string(R.string.clubs_exit_fail),
+            subtitle = LanguageManager.string(R.string.common_try_again),
             style = AppSnackBar.Style.ERROR
         )
     }
@@ -258,12 +271,12 @@ class ClubDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 dependencies.useCase.assignRole(inputData.clubId, userId, role)
-                AppSnackBar.show(title = "Role updated", style = AppSnackBar.Style.SUCCESS)
+                AppSnackBar.show(title = LanguageManager.string(R.string.clubs_role_updated), style = AppSnackBar.Style.SUCCESS)
                 fetchUIModel()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not update role",
-                    subtitle = "Please try again.",
+                    title = LanguageManager.string(R.string.clubs_role_update_fail),
+                    subtitle = LanguageManager.string(R.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
             }

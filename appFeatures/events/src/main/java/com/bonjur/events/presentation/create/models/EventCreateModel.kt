@@ -1,5 +1,7 @@
 package com.bonjur.events.presentation.create.models
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.events.R
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -85,7 +87,7 @@ data class EventCreateViewState(
             selectedClubId != null
 
     val topTitle: String
-        get() = if (isEdit) "Edit event" else "Create new event"
+        get() = if (isEdit) LanguageManager.string(R.string.events_edit_title) else LanguageManager.string(R.string.events_create_title)
 }
 
 // MARK: - Feature Action

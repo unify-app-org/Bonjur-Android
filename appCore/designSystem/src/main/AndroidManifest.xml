@@ -12,6 +12,16 @@
             android:exported="false"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.Bonjur" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.documentprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/document_preview_paths" />
+        </provider>
     </application>
 
 </manifest>

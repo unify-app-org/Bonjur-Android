@@ -1,5 +1,8 @@
 package com.bonjur.profile.presentation.studentCard.components
 
+import com.bonjur.profile.R
+import androidx.compose.ui.res.stringResource
+import com.bonjur.designsystem.R as DesignR
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -78,7 +81,7 @@ fun StudentCardView(
                 IconButton(onClick = { store.send(StudentCardAction.CloseTapped) }) {
                     Icon(
                         painter = Images.Icons.xmark(),
-                        contentDescription = "Close",
+                        contentDescription = stringResource(DesignR.string.common_close),
                         tint = Palette.blackHigh
                     )
                 }
@@ -92,7 +95,7 @@ fun StudentCardView(
             }
 
             Text(
-                text = "User Card",
+                text = stringResource(R.string.profile_user_card),
                 style = AppTypography.TitleL.extraBold,
                 modifier = Modifier.fillMaxWidth()
             )

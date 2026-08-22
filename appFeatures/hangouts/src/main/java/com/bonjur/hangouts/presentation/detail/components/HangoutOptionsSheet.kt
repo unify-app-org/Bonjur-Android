@@ -1,5 +1,8 @@
 package com.bonjur.hangouts.presentation.detail.components
 
+import com.bonjur.designsystem.R as DesignR
+import androidx.compose.ui.res.stringResource
+import com.bonjur.hangouts.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,9 +50,9 @@ fun HangoutOptionsSheet(
         ) {
             if (showReport) {
                 HangoutOptionRow(
-                    title = "Report hangout",
+                    title = stringResource(R.string.hangouts_report),
                     tint = DestructiveRed,
-                    trailing = "Coming soon",
+                    trailing = stringResource(DesignR.string.common_coming_soon),
                     enabled = false
                 ) {}
                 RowDivider()
@@ -67,9 +70,9 @@ fun HangoutOptionsSheet(
             }
 
             HangoutOptionRow(
-                title = "Share",
+                title = stringResource(DesignR.string.common_share),
                 tint = Palette.blackMedium,
-                trailing = "Coming soon",
+                trailing = stringResource(DesignR.string.common_coming_soon),
                 enabled = false
             ) {}
         }

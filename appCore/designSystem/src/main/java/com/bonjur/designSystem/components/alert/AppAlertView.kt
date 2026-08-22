@@ -1,16 +1,25 @@
 package com.bonjur.designSystem.components.alert
 
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +32,7 @@ import com.bonjur.designSystem.components.button.AppButtonSize
 import com.bonjur.designSystem.components.button.ButtonType
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
+import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.designSystem.ui.theme.colors.Palette
 
 @Composable
@@ -42,6 +52,7 @@ fun AppAlertView(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             TextSection(config = alert.config)
+            alert.config.checkbox?.let { CheckboxSection(checkbox = it) }
             ActionsSection(
                 actions = alert.actions,
                 onDismiss = onDismiss
@@ -75,6 +86,34 @@ private fun TextSection(config: AppAlert.Config) {
     }
 }
 
+/** "Don't show this again" style opt-out row; state is local, the caller is notified. */
+@Composable
+private fun CheckboxSection(checkbox: AppAlert.Checkbox) {
+    var isOn by remember { mutableStateOf(checkbox.isOn) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                isOn = !isOn
+                checkbox.onChange(isOn)
+            },
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = if (isOn) Images.Icons.selectedCheckBox() else Images.Icons.notSelectedCheckBox(),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = checkbox.title,
+            style = AppTypography.BodyTextMd.regular,
+            color = Palette.blackMedium
+        )
+    }
+}
+
 @Composable
 private fun ActionsSection(
     actions: List<AppAlert.Action>,
@@ -105,8 +144,8 @@ private fun AppAlertPreview() {
                 subtitle = "This action cannot be undone. Are you sure you want to continue?"
             ),
             actions = listOf(
-                AppAlert.Action(title = "Cancel", style = AppAlert.Action.Style.SECONDARY),
-                AppAlert.Action(title = "Delete", style = AppAlert.Action.Style.DESTRUCTIVE)
+                AppAlert.Action(title = LanguageManager.string(R.string.common_cancel), style = AppAlert.Action.Style.SECONDARY),
+                AppAlert.Action(title = LanguageManager.string(R.string.common_delete), style = AppAlert.Action.Style.DESTRUCTIVE)
             )
         ),
         onDismiss = {},
@@ -125,7 +164,7 @@ private fun AppAlertPrimaryPreview() {
             ),
             actions = listOf(
                 AppAlert.Action(title = "Discard", style = AppAlert.Action.Style.SECONDARY),
-                AppAlert.Action(title = "Save", style = AppAlert.Action.Style.PRIMARY)
+                AppAlert.Action(title = LanguageManager.string(R.string.common_save), style = AppAlert.Action.Style.PRIMARY)
             )
         ),
         onDismiss = {},

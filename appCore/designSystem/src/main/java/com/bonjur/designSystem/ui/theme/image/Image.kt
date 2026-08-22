@@ -31,6 +31,9 @@ object Images {
         fun xmark() = painterResource(R.drawable.xmark)
 
         @Composable
+        fun share() = painterResource(R.drawable.ic_share)
+
+        @Composable
         fun resume() = painterResource(R.drawable.big_people_groups)
 
         @Composable

@@ -1,0 +1,37 @@
+<resources>
+    <string name="comm_info_section">İcma məlumatı</string>
+    <string name="comm_row_owner_contact">Sahibin əlaqəsi</string>
+    <string name="comm_row_links">Linklər</string>
+    <string name="comm_add_members">Üzv əlavə et</string>
+    <string name="comm_all_member">Bütün üzvlər</string>
+    <string name="comm_assign_role">Rol təyin et</string>
+    <string name="comm_change_role">Rolu dəyiş</string>
+    <string name="comm_choose_role">Bu üzv üçün rol seçin</string>
+    <string name="comm_capacity_limit">Tutum limitinə çatıldı</string>
+    <string name="comm_confirm">Təsdiqlə</string>
+    <string name="comm_role_update_fail">Rol yenilənə bilmədi</string>
+    <string name="comm_role_updated">Rol yeniləndi</string>
+    <string name="comm_create_club">Klub yarat +</string>
+    <string name="comm_create_event">Yeni tədbir yarat +</string>
+    <string name="comm_no_faculties">Fakültə tapılmadı</string>
+    <string name="comm_no_members_found">Üzv tapılmadı</string>
+    <string name="comm_no_members_yet">Hələ üzv yoxdur</string>
+    <string name="comm_no_students_available">Tələbə yoxdur</string>
+    <string name="comm_no_students_found">Tələbə tapılmadı</string>
+    <string name="comm_owner_role">Sahib</string>
+    <string name="comm_president">Prezident</string>
+    <string name="comm_report">Şikayət et</string>
+    <string name="comm_report_user">İstifadəçini şikayət et</string>
+    <string name="comm_report_submitted">Şikayət göndərildi</string>
+    <string name="comm_skip">Keç</string>
+    <string name="comm_next">Növbəti</string>
+    <string name="comm_select_all_member">hamısını seç</string>
+    <string name="comm_select_group">qrup seç</string>
+    <string name="comm_view_all">hamısına bax</string>
+    <string name="comm_row_location">Məkan</string>
+    <string name="comm_row_rules">Qaydalar</string>
+    <string name="comm_clubs_empty">Bu icmada hələ klub yoxdur.</string>
+    <string name="comm_clubs_empty_long">Bu icmada hələ klub yoxdur. Öncül ol və ilkini indi yarat!</string>
+    <string name="comm_communities_empty">Hələ göstəriləcək icma yoxdur. Bir azdan yenidən yoxlayın.</string>
+    <string name="comm_communities_title">İcmalar</string>
+</resources>
