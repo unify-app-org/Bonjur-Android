@@ -96,6 +96,10 @@ class HangoutsUseCaseImpl @Inject constructor(
         dataSource.exitHangout(hangoutId)
     }
 
+    override suspend fun deleteHangout(hangoutId: String) {
+        dataSource.deleteHangout(hangoutId)
+    }
+
     override suspend fun fetchHangoutMembers(hangoutId: String): GroupedMembersData {
         val users = dataSource.getHangoutMembers(hangoutId, page = 0, size = 10)
             .content.map { it.toCellModel() }

@@ -85,4 +85,10 @@
     <string name="events_attachment_open_fail">Не удалось открыть этот файл</string>
     <string name="events_name_locked_hint">Название события нельзя будет изменить позже.</string>
     <string name="events_club_locked_hint">Перенести событие в другой клуб позже будет нельзя.</string>
+
+    <string name="events_delete_on_exit_title">Удалить событие?</string>
+    <string name="events_delete_on_exit_subtitle">Вы единственный участник. Если вы выйдете, это событие будет удалено. Вы уверены?</string>
+    <string name="events_delete_on_exit_confirm">Выйти и удалить</string>
+    <string name="events_deleted">Событие удалено</string>
+    <string name="events_delete_fail">Не удалось удалить событие</string>
 </resources>

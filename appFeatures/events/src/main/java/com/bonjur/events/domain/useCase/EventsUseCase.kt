@@ -55,6 +55,8 @@ interface EventsUseCase {
 
     suspend fun exitEvent(eventId: String)
 
+    suspend fun deleteEvent(eventId: String)
+
     /** Broadcasts the event reminder. No body comes back; re-fetch the detail after. */
     suspend fun sendReminder(eventId: String)
 

@@ -48,4 +48,10 @@
     <string name="hangouts_exit_subtitle">Вы уверены, что хотите покинуть эту встречу? Вы больше не сможете участвовать и видеть обновления.</string>
     <string name="hangouts_owner_contact_ph">Введите контакт владельца</string>
     <string name="hangouts_name_locked_hint">Название тусовки нельзя будет изменить позже.</string>
+
+    <string name="hangouts_delete_on_exit_title">Удалить тусовку?</string>
+    <string name="hangouts_delete_on_exit_subtitle">Вы единственный участник. Если вы выйдете, эта тусовка будет удалена. Вы уверены?</string>
+    <string name="hangouts_delete_on_exit_confirm">Выйти и удалить</string>
+    <string name="hangouts_deleted">Тусовка удалена</string>
+    <string name="hangouts_delete_fail">Не удалось удалить тусовку</string>
 </resources>

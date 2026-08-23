@@ -85,4 +85,11 @@
     <string name="events_attachment_open_fail">Could not open this file</string>
     <string name="events_name_locked_hint">You won’t be able to change the event name later.</string>
     <string name="events_club_locked_hint">You won’t be able to move the event to another club later.</string>
+
+    <!-- Last member leaving: exiting would strand an empty event, so it gets deleted. -->
+    <string name="events_delete_on_exit_title">Delete event?</string>
+    <string name="events_delete_on_exit_subtitle">You are the only member. If you leave, this event will be deleted. Are you sure?</string>
+    <string name="events_delete_on_exit_confirm">Leave and delete</string>
+    <string name="events_deleted">Event deleted</string>
+    <string name="events_delete_fail">Could not delete event</string>
 </resources>

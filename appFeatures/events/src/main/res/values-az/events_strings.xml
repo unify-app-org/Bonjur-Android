@@ -85,4 +85,10 @@
     <string name="events_attachment_open_fail">Bu faylı açmaq mümkün olmadı</string>
     <string name="events_name_locked_hint">Tədbir adını sonra dəyişmək mümkün olmayacaq.</string>
     <string name="events_club_locked_hint">Tədbiri sonra başqa kluba köçürmək mümkün olmayacaq.</string>
+
+    <string name="events_delete_on_exit_title">Tədbir silinsin?</string>
+    <string name="events_delete_on_exit_subtitle">Siz yeganə iştirakçısınız. Çıxsanız, bu tədbir silinəcək. Əminsiniz?</string>
+    <string name="events_delete_on_exit_confirm">Çıx və sil</string>
+    <string name="events_deleted">Tədbir silindi</string>
+    <string name="events_delete_fail">Tədbiri silmək mümkün olmadı</string>
 </resources>

@@ -48,4 +48,11 @@
     <string name="hangouts_exit_subtitle">Are you sure you want to leave this hangout? You will no longer be able to participate or see updates.</string>
     <string name="hangouts_owner_contact_ph">Enter owner contact</string>
     <string name="hangouts_name_locked_hint">You won’t be able to change the hangout name later.</string>
+
+    <!-- Last member leaving: exiting would strand an empty hangout, so it gets deleted. -->
+    <string name="hangouts_delete_on_exit_title">Delete hangout?</string>
+    <string name="hangouts_delete_on_exit_subtitle">You are the only member. If you leave, this hangout will be deleted. Are you sure?</string>
+    <string name="hangouts_delete_on_exit_confirm">Leave and delete</string>
+    <string name="hangouts_deleted">Hangout deleted</string>
+    <string name="hangouts_delete_fail">Could not delete hangout</string>
 </resources>

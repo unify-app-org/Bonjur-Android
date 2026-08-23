@@ -134,6 +134,10 @@ class EventsUseCaseImpl @Inject constructor(
         dataSource.exitEvent(eventId)
     }
 
+    override suspend fun deleteEvent(eventId: String) {
+        dataSource.deleteEvent(eventId)
+    }
+
     override suspend fun fetchEventMembers(eventId: String): GroupedMembersData {
         val users = dataSource.getEventMembers(eventId, mapOf("page" to "0", "size" to "10"))
             .content.map { it.toCellModel() }

@@ -48,4 +48,10 @@
     <string name="hangouts_exit_subtitle">Bu görüşdən çıxmaq istədiyinizə əminsiniz? Artıq iştirak edə və yenilikləri görə bilməyəcəksiniz.</string>
     <string name="hangouts_owner_contact_ph">Sahibin əlaqəsini daxil edin</string>
     <string name="hangouts_name_locked_hint">Görüş adını sonra dəyişmək mümkün olmayacaq.</string>
+
+    <string name="hangouts_delete_on_exit_title">Görüş silinsin?</string>
+    <string name="hangouts_delete_on_exit_subtitle">Siz yeganə iştirakçısınız. Çıxsanız, bu görüş silinəcək. Əminsiniz?</string>
+    <string name="hangouts_delete_on_exit_confirm">Çıx və sil</string>
+    <string name="hangouts_deleted">Görüş silindi</string>
+    <string name="hangouts_delete_fail">Görüşü silmək mümkün olmadı</string>
 </resources>

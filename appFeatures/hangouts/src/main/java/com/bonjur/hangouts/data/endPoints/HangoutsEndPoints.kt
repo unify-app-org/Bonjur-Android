@@ -64,4 +64,11 @@ sealed class HangoutsEndPoints : AppEndpoint {
         override val path = "api/hs/v1/hangouts/exit/$hangoutId"
         override val method = NetworkMethod.DELETE
     }
+
+    /** Removes the hangout itself, not just the caller's membership. Used when the last
+     *  member leaves — exiting would otherwise strand an empty hangout. */
+    data class DeleteHangout(val hangoutId: String) : HangoutsEndPoints() {
+        override val path = "api/hs/v1/hangouts/$hangoutId"
+        override val method = NetworkMethod.DELETE
+    }
 }

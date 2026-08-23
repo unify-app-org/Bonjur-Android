@@ -46,4 +46,7 @@ class HangoutsDataSourceImpl @Inject constructor(
 
     override suspend fun exitHangout(hangoutId: String): ByteArray =
         fetchRawData(HangoutsEndPoints.ExitHangout(hangoutId))
+
+    override suspend fun deleteHangout(hangoutId: String): ByteArray =
+        fetchRawData(HangoutsEndPoints.DeleteHangout(hangoutId))
 }

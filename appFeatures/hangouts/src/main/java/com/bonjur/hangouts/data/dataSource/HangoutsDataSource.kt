@@ -16,4 +16,5 @@ interface HangoutsDataSource {
     suspend fun editHangout(hangoutId: String, request: HangoutCreateRequest): ByteArray
     suspend fun joinHangout(request: HangoutJoinRequest): ByteArray
     suspend fun exitHangout(hangoutId: String): ByteArray
+    suspend fun deleteHangout(hangoutId: String): ByteArray
 }

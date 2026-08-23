@@ -235,7 +235,19 @@ class EventDetailsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * The last member leaving would strand an empty event, so that case warns and deletes
+     * instead of exiting. Either way the alert closes on any tap — [AppAlertPresenter]
+     * dismisses before it runs the handler.
+     */
     private fun presentExitConfirm() {
+        if (isLastMember) presentDeleteOnExitConfirm() else presentLeaveConfirm()
+    }
+
+    private val isLastMember: Boolean
+        get() = state.uiModel?.membersCount == 1
+
+    private fun presentLeaveConfirm() {
         AppAlertPresenter.present(
             AppAlert(
                 config = AppAlert.Config(
@@ -251,6 +263,43 @@ class EventDetailsViewModel @Inject constructor(
                 )
             )
         )
+    }
+
+    private fun presentDeleteOnExitConfirm() {
+        AppAlertPresenter.present(
+            AppAlert(
+                config = AppAlert.Config(
+                    title = LanguageManager.string(R.string.events_delete_on_exit_title),
+                    subtitle = LanguageManager.string(R.string.events_delete_on_exit_subtitle)
+                ),
+                actions = listOf(
+                    AppAlert.Action(
+                        title = LanguageManager.string(R.string.events_delete_on_exit_confirm),
+                        style = AppAlert.Action.Style.DESTRUCTIVE
+                    ) { performDelete() },
+                    AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.PRIMARY)
+                )
+            )
+        )
+    }
+
+    private fun performDelete() {
+        viewModelScope.launch {
+            postEffect(EventDetailsSideEffect.Loading(true))
+            try {
+                dependencies.useCase.deleteEvent(inputData.eventId)
+                AppSnackBar.show(title = LanguageManager.string(R.string.events_deleted), style = AppSnackBar.Style.SUCCESS)
+                navigator.navigateUp()
+            } catch (e: Exception) {
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.events_delete_fail),
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
+                    style = AppSnackBar.Style.ERROR
+                )
+            } finally {
+                postEffect(EventDetailsSideEffect.Loading(false))
+            }
+        }
     }
 
     private fun performExit() {

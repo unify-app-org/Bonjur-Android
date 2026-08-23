@@ -72,6 +72,14 @@ sealed class EventsEndPoints : AppEndpoint {
         override val method = NetworkMethod.DELETE
     }
 
+    /** Removes the event itself, not just the caller's membership. Used when the last
+     *  member leaves — exiting would otherwise strand an empty event. Same path as
+     *  [GetEventById], distinguished by the DELETE method. */
+    data class DeleteEvent(val eventId: String) : EventsEndPoints() {
+        override val path = "api/es/v1/events/$eventId"
+        override val method = NetworkMethod.DELETE
+    }
+
     /**
      * Broadcasts the event reminder to the group. Returns 200 with no body; the
      * spent state is read back from the detail payload's `isReminder`, so the

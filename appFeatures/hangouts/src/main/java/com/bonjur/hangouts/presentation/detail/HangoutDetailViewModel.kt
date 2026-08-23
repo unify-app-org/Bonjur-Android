@@ -141,22 +141,71 @@ class HangoutDetailsViewModel @Inject constructor(
 
     // MARK: - Exit flow (hangouts have no owner-transfer gate)
 
+    /**
+     * The last member leaving would strand an empty hangout, so that case warns and deletes
+     * instead of exiting. Either way the alert closes on any tap — [AppAlertPresenter]
+     * dismisses before it runs the handler.
+     */
     private fun presentExitConfirm() {
+        if (isLastMember) presentDeleteOnExitConfirm() else presentLeaveConfirm()
+    }
+
+    private val isLastMember: Boolean
+        get() = state.uiModel?.membersCount == 1
+
+    private fun presentLeaveConfirm() {
         AppAlertPresenter.present(
             AppAlert(
                 config = AppAlert.Config(
-                    title = "Leave hangout?",
+                    title = LanguageManager.string(R.string.hangouts_exit_title),
                     subtitle = LanguageManager.string(R.string.hangouts_exit_subtitle)
                 ),
                 actions = listOf(
                     AppAlert.Action(
-                        title = "Leave hangout",
+                        title = LanguageManager.string(R.string.hangouts_exit_confirm),
                         style = AppAlert.Action.Style.DESTRUCTIVE
                     ) { performExit() },
                     AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.PRIMARY)
                 )
             )
         )
+    }
+
+    private fun presentDeleteOnExitConfirm() {
+        AppAlertPresenter.present(
+            AppAlert(
+                config = AppAlert.Config(
+                    title = LanguageManager.string(R.string.hangouts_delete_on_exit_title),
+                    subtitle = LanguageManager.string(R.string.hangouts_delete_on_exit_subtitle)
+                ),
+                actions = listOf(
+                    AppAlert.Action(
+                        title = LanguageManager.string(R.string.hangouts_delete_on_exit_confirm),
+                        style = AppAlert.Action.Style.DESTRUCTIVE
+                    ) { performDelete() },
+                    AppAlert.Action(title = LanguageManager.string(DesignR.string.common_cancel), style = AppAlert.Action.Style.PRIMARY)
+                )
+            )
+        )
+    }
+
+    private fun performDelete() {
+        viewModelScope.launch {
+            postEffect(HangoutDetailsSideEffect.Loading(true))
+            try {
+                dependencies.useCase.deleteHangout(inputData.hangoutId)
+                AppSnackBar.show(title = LanguageManager.string(R.string.hangouts_deleted), style = AppSnackBar.Style.SUCCESS)
+                navigator.navigateUp()
+            } catch (e: Exception) {
+                AppSnackBar.show(
+                    title = LanguageManager.string(R.string.hangouts_delete_fail),
+                    subtitle = LanguageManager.string(DesignR.string.common_try_again),
+                    style = AppSnackBar.Style.ERROR
+                )
+            } finally {
+                postEffect(HangoutDetailsSideEffect.Loading(false))
+            }
+        }
     }
 
     private fun performExit() {
