@@ -15,6 +15,9 @@ interface TokenManager {
     fun saveUserId(userId: String)
     fun getUserId(): String?
 
+    fun saveUserEmail(email: String)
+    fun getUserEmail(): String?
+
     fun clearTokens()
 }
 
@@ -47,9 +50,19 @@ class TokenManagerImpl @Inject constructor(
         return securePreference.getString(SecureStorageKey.USER_ID, "")?.ifBlank { null }
     }
 
+    /** Stashed at sign-in so the create forms can prefill the owner-contact field. */
+    override fun saveUserEmail(email: String) {
+        securePreference.saveString(SecureStorageKey.USER_EMAIL, email)
+    }
+
+    override fun getUserEmail(): String? {
+        return securePreference.getString(SecureStorageKey.USER_EMAIL, "")?.ifBlank { null }
+    }
+
     override fun clearTokens() {
         securePreference.remove(SecureStorageKey.REFRESH_TOKEN)
         securePreference.remove(SecureStorageKey.AUTH_TOKEN)
         securePreference.remove(SecureStorageKey.USER_ID)
+        securePreference.remove(SecureStorageKey.USER_EMAIL)
     }
 }

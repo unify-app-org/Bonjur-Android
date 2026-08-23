@@ -1,6 +1,5 @@
 package com.bonjur.clubs.presentation.components
 
-import androidx.compose.foundation.layout.navigationBarsPadding
 import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designSystem.commonModel.clubCountText
 import com.bonjur.designSystem.commonModel.eventCountText
@@ -273,8 +272,6 @@ fun ClubDetailsView(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(Color.White)
-                    // Edge-to-edge: clear the system navigation bar before padding.
-                    .navigationBarsPadding()
                     .padding(16.dp)
                     .zIndex(2f)
             ) {

@@ -20,6 +20,7 @@ import com.bonjur.hangouts.presentation.create.models.HangoutCreateInputData
 import com.bonjur.hangouts.presentation.create.models.HangoutCreateSideEffect
 import com.bonjur.hangouts.presentation.create.models.HangoutCreateViewState
 import com.bonjur.navigation.Navigator
+import com.bonjur.network.manager.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -45,7 +46,8 @@ class HangoutCreateViewModel @Inject constructor(
 ) {
 
     data class Dependencies @Inject constructor(
-        val useCase: HangoutsUseCase
+        val useCase: HangoutsUseCase,
+        val tokenManager: TokenManager
     )
 
     private lateinit var inputData: HangoutCreateInputData
@@ -58,8 +60,27 @@ class HangoutCreateViewModel @Inject constructor(
         this.navigator = navigator
         if (inputData.hangoutId != null) {
             updateState(state.copy(isEdit = true))
+        } else {
+            prefillOwnerContact()
         }
         fetchData()
+    }
+
+    /**
+     * Create-only convenience: seed owner contact with the email the user signed in
+     * with. Edit mode is skipped — the stored contact wins there and the prefill would
+     * overwrite this anyway. The field stays editable so an activity can point at a
+     * shared inbox instead. Mirrors iOS `prefillOwnerContact`.
+     */
+    private fun prefillOwnerContact() {
+        if (state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT).isNotEmpty()) return
+        val email = dependencies.tokenManager.getUserEmail() ?: return
+        updateState(
+            state.copy(
+                values = state.values +
+                    (AppFieldSchema.FieldId.OWNER_CONTACT to AppFieldSchema.FieldValue.TextValue(email))
+            )
+        )
     }
 
     override fun handle(action: HangoutCreateAction) {

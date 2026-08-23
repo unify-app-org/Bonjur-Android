@@ -83,4 +83,6 @@
     <string name="events_leave_subtitle">Вы уверены, что хотите покинуть это событие? Вы больше не сможете участвовать и видеть обновления.</string>
     <string name="events_no_clubs_to_post">Нет клубов для публикации. Чтобы создать событие, нужно быть президентом, вице-президентом или организатором в проверенном клубе.</string>
     <string name="events_attachment_open_fail">Не удалось открыть этот файл</string>
+    <string name="events_name_locked_hint">Название события нельзя будет изменить позже.</string>
+    <string name="events_club_locked_hint">Перенести событие в другой клуб позже будет нельзя.</string>
 </resources>

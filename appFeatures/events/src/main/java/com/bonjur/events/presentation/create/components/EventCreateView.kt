@@ -35,6 +35,7 @@ import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.emptyView.AppEmptyModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
+import com.bonjur.designSystem.components.fieldSchema.FieldHint
 import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
 import com.bonjur.designSystem.components.topBar.AppTopBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
@@ -171,6 +172,9 @@ private fun BoxScope.FormBody(
                     FieldSchemaRouter(
                         field = field,
                         values = state.values,
+                        // Without this the field still takes focus and opens the keyboard —
+                        // it only *looks* locked while quietly dropping every keystroke.
+                        disabled = isLocked,
                         onChange = { id, value ->
                             if (!isLocked) store.send(EventCreateAction.FieldChanged(id, value))
                         },
@@ -322,6 +326,10 @@ private fun ClubSelector(
                 tint = Palette.blackHigh
             )
         }
+        FieldHint(
+            text = stringResource(R.string.events_club_locked_hint),
+            disabled = isDisabled
+        )
     }
 }
 

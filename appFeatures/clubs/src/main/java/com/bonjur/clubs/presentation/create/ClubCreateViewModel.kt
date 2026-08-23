@@ -23,6 +23,7 @@ import com.bonjur.designSystem.components.fieldSchema.tags
 import com.bonjur.designSystem.components.fieldSchema.text
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.navigation.Navigator
+import com.bonjur.network.manager.TokenManager
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -50,6 +51,7 @@ class ClubCreateViewModel @Inject constructor(
     data class Dependencies @Inject constructor(
         val useCase: ClubsUseCase,
         val defaultStorage: DefaultStorage,
+        val tokenManager: TokenManager,
         @ApplicationContext val context: Context
     )
 
@@ -62,9 +64,28 @@ class ClubCreateViewModel @Inject constructor(
         this.navigator = navigator
         if (inputData.clubId != null) {
             updateState(state.copy(isEdit = true))
+        } else {
+            prefillOwnerContact()
         }
         inputData.prefill?.let { applyPrefill(it) }
         fetchData()
+    }
+
+    /**
+     * Create-only convenience: seed owner contact with the email the user signed in
+     * with. Edit mode is skipped — the stored contact wins there and the prefill would
+     * overwrite this anyway. The field stays editable so an activity can point at a
+     * shared inbox instead. Mirrors iOS `prefillOwnerContact`.
+     */
+    private fun prefillOwnerContact() {
+        if (state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT).isNotEmpty()) return
+        val email = dependencies.tokenManager.getUserEmail() ?: return
+        updateState(
+            state.copy(
+                values = state.values +
+                    (AppFieldSchema.FieldId.OWNER_CONTACT to AppFieldSchema.FieldValue.TextValue(email))
+            )
+        )
     }
 
     /** Pre-fills the form from existing club data on edit. Mirrors iOS `applyPrefillData`. */

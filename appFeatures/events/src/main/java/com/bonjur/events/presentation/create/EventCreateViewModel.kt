@@ -27,6 +27,7 @@ import com.bonjur.events.presentation.create.models.EventSelectableClub
 import com.bonjur.events.presentation.create.models.EventCreateSideEffect
 import com.bonjur.events.presentation.create.models.EventCreateViewState
 import com.bonjur.navigation.Navigator
+import com.bonjur.network.manager.TokenManager
 import com.bonjur.navigation.SharedRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,6 +54,7 @@ class EventCreateViewModel @Inject constructor(
 
     data class Dependencies @Inject constructor(
         val useCase: EventsUseCase,
+        val tokenManager: TokenManager,
         @ApplicationContext val context: Context
     )
 
@@ -67,8 +69,27 @@ class EventCreateViewModel @Inject constructor(
         if (inputData.eventId != null) {
             // Edit is never gated — the club is fixed, so the form renders immediately.
             updateState(state.copy(isEdit = true, clubsPhase = EventCreateClubsPhase.Loaded))
+        } else {
+            prefillOwnerContact()
         }
         fetchData()
+    }
+
+    /**
+     * Create-only convenience: seed owner contact with the email the user signed in
+     * with. Edit mode is skipped — the stored contact wins there and the prefill would
+     * overwrite this anyway. The field stays editable so an activity can point at a
+     * shared inbox instead. Mirrors iOS `prefillOwnerContact`.
+     */
+    private fun prefillOwnerContact() {
+        if (state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT).isNotEmpty()) return
+        val email = dependencies.tokenManager.getUserEmail() ?: return
+        updateState(
+            state.copy(
+                values = state.values +
+                    (AppFieldSchema.FieldId.OWNER_CONTACT to AppFieldSchema.FieldValue.TextValue(email))
+            )
+        )
     }
 
     override fun handle(action: EventCreateAction) {

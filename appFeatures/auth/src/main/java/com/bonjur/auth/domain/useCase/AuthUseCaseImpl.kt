@@ -45,6 +45,7 @@ class AuthUseCaseImpl @Inject constructor(
         tokenManager.saveAccessToken(response.accessToken)
         tokenManager.saveRefreshToken(response.refreshToken)
         tokenManager.saveUserId(response.userId)
+        tokenManager.saveUserEmail(email)
         defaultStorage.saveInt(DefaultStorageKey.COMMUNITY_ID, communityId)
         defaultStorage.saveString(
             DefaultStorageKey.USER_COMMUNITY_ROLE,

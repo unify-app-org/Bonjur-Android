@@ -1,7 +1,12 @@
 package com.bonjur.app.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -50,12 +55,32 @@ fun AppNavigation(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        NavHost(
-            navController = navController,
-            startDestination = if (isAuthenticated) AppScreens.Main else AppScreens.Auth
+        // Global bottom safe area, the equivalent of iOS's safe-area inset. The app
+        // is edge-to-edge (mandatory from Android 15), so without this every screen
+        // has to remember `navigationBarsPadding()` on its own bottom content — and
+        // the ones that forgot ran under the system bar (worst with 3-button nav,
+        // ~48dp, where a fixed 16dp only clears a gesture pill).
+        //
+        // Only the bottom edge is consumed: hero covers still bleed under the status
+        // bar, matching iOS. `windowInsetsPadding` consumes what it applies, so a
+        // nested `navigationBarsPadding()` resolves to zero instead of double-padding.
+        //
+        // The overlays stay outside it — they are full-screen surfaces that do their
+        // own inset handling.
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(
+                    WindowInsets.navigationBars.only(WindowInsetsSides.Bottom)
+                )
         ) {
-            authNavGraph()
-            mainNavGraph(navigator)
+            NavHost(
+                navController = navController,
+                startDestination = if (isAuthenticated) AppScreens.Main else AppScreens.Auth
+            ) {
+                authNavGraph()
+                mainNavGraph(navigator)
+            }
         }
 
         AppAlertOverlay()

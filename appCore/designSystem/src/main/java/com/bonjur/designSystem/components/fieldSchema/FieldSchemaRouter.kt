@@ -96,6 +96,7 @@ fun FieldSchemaRouter(
                 enabled = !disabled,
                 model = AppTextFieldModel(keyboardType = type.keyboardType)
             )
+            FieldHint(text = field.hint, disabled = disabled)
         }
 
         is AppFieldSchema.FieldType.TextArea -> Column(
@@ -145,6 +146,7 @@ fun FieldSchemaRouter(
         is AppFieldSchema.FieldType.ChipInput -> CategorySelectionField(
             title = field.label,
             addTitle = type.placeholder,
+            isRequired = field.required,
             categories = values.tags(field.id),
             onAdd = onAddCategory,
             onRemove = onRemoveCategory,
@@ -154,6 +156,7 @@ fun FieldSchemaRouter(
         is AppFieldSchema.FieldType.LinkInput -> AppLinksField(
             title = field.label,
             addTitle = type.placeholder,
+            isRequired = field.required,
             links = values.links(field.id),
             onChange = { onChange(field.id, AppFieldSchema.FieldValue.Links(it)) },
             modifier = modifier
@@ -244,6 +247,8 @@ private fun formatBytes(bytes: Long): String = when {
 private fun CategorySelectionField(
     title: String,
     addTitle: String,
+    /** `null` keeps the plain title. Non-null draws the required `*` / `(optional)` marker. */
+    isRequired: Boolean? = null,
     categories: List<AppFieldSchema.TagItem>,
     onAdd: () -> Unit,
     onRemove: (Int) -> Unit,
@@ -253,7 +258,11 @@ private fun CategorySelectionField(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(text = title, style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
+        if (isRequired != null) {
+            AppFieldLabel(text = title, isRequired = isRequired)
+        } else {
+            Text(text = title, style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
+        }
 
         if (categories.isNotEmpty()) {
             FlowLayout(items = categories, spacing = 12) { tag ->
@@ -389,11 +398,18 @@ private fun RadioGroupField(
     }
 }
 
+/**
+ * Form-field title with the required `*` / `(optional)` marker.
+ *
+ * Public so the chip and link fields — which draw their own title instead of going
+ * through [FieldLabel] — can show the same marker. Without it a required chip field
+ * (e.g. category) renders with no `*` and reads as optional. Mirrors iOS `AppFieldLabel`.
+ */
 @Composable
-private fun FieldLabel(field: AppFieldSchema.Field) {
+fun AppFieldLabel(text: String, isRequired: Boolean) {
     Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(text = field.label, style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
-        if (field.required) {
+        Text(text = text, style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
+        if (isRequired) {
             Text(text = "*", style = AppTypography.HeadingMd.medium, color = Palette.green900)
         } else {
             Text(
@@ -403,6 +419,26 @@ private fun FieldLabel(field: AppFieldSchema.Field) {
             )
         }
     }
+}
+
+@Composable
+private fun FieldLabel(field: AppFieldSchema.Field) {
+    AppFieldLabel(text = field.label, isRequired = field.required)
+}
+
+/**
+ * Muted note under an input. Hidden once the field is disabled: every hint we show is a
+ * heads-up that the field will lock, which stops being useful the moment it has.
+ * Mirrors iOS `FieldHint`.
+ */
+@Composable
+fun FieldHint(text: String?, disabled: Boolean) {
+    if (text.isNullOrEmpty() || disabled) return
+    Text(
+        text = text,
+        style = AppTypography.BodyTextSm.regular,
+        color = Palette.blackMedium
+    )
 }
 
 /** Read-only capsule that shows [text] (or [placeholder]) and a trailing icon, tappable. */

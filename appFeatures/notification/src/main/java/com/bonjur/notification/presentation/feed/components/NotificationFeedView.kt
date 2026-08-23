@@ -1,8 +1,5 @@
 package com.bonjur.notification.presentation.feed.components
 
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.ui.res.stringResource
 import com.bonjur.notification.R
 import androidx.compose.foundation.background
@@ -118,13 +115,13 @@ private fun FeedList(
         modifier = Modifier
             .fillMaxSize()
             .background(Palette.grayQuaternary.copy(alpha = 0.4f)),
-        // The fixed bottom inset assumed a gesture-nav bar; with 3-button navigation the
-        // last row scrolled underneath it.
+        // Clearance for the tab dock only — the system navigation bar is handled
+        // once, globally, in AppNavigation.
         contentPadding = PaddingValues(
             start = 16.dp,
             end = 16.dp,
             top = 8.dp,
-            bottom = 55.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            bottom = 55.dp
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {

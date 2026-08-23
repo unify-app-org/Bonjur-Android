@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
+import com.bonjur.designSystem.components.fieldSchema.AppFieldLabel
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 
@@ -30,6 +31,8 @@ fun AppLinksField(
     modifier: Modifier = Modifier,
     title: String = "Add link",
     addTitle: String = "Add link",
+    /** `null` keeps the plain title. Non-null draws the required `*` / `(optional)` marker. */
+    isRequired: Boolean? = null,
     maxCount: Int = 4
 ) {
     var sheetOpen by remember { mutableStateOf(false) }
@@ -38,7 +41,11 @@ fun AppLinksField(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(text = title, style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
+        if (isRequired != null) {
+            AppFieldLabel(text = title, isRequired = isRequired)
+        } else {
+            Text(text = title, style = AppTypography.HeadingMd.medium, color = Palette.blackHigh)
+        }
 
         links.forEach { link ->
             LinkCell(

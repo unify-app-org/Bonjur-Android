@@ -79,4 +79,5 @@
     <string name="clubs_cover_color_desc">Выберите цвет фона для карточки клуба.</string>
     <string name="clubs_join">Вступить</string>
     <string name="clubs_request">Отправить запрос</string>
+    <string name="clubs_name_locked_hint">Название клуба нельзя будет изменить позже.</string>
 </resources>

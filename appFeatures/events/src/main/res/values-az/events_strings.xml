@@ -83,4 +83,6 @@
     <string name="events_leave_subtitle">Bu tədbirdən çıxmaq istədiyinizə əminsiniz? Artıq iştirak edə və yenilikləri görə bilməyəcəksiniz.</string>
     <string name="events_no_clubs_to_post">Paylaşmaq üçün klub yoxdur. Tədbir yaratmaq üçün təsdiqlənmiş klubda prezident, vitse-prezident və ya tədbir yaradan olmalısınız.</string>
     <string name="events_attachment_open_fail">Bu faylı açmaq mümkün olmadı</string>
+    <string name="events_name_locked_hint">Tədbir adını sonra dəyişmək mümkün olmayacaq.</string>
+    <string name="events_club_locked_hint">Tədbiri sonra başqa kluba köçürmək mümkün olmayacaq.</string>
 </resources>

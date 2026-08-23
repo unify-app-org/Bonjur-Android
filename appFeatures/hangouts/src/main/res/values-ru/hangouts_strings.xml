@@ -46,4 +46,6 @@
     <string name="hangouts_owner_role">Владелец</string>
     <string name="hangouts_members_title">Участники</string>
     <string name="hangouts_exit_subtitle">Вы уверены, что хотите покинуть эту встречу? Вы больше не сможете участвовать и видеть обновления.</string>
+    <string name="hangouts_owner_contact_ph">Введите контакт владельца</string>
+    <string name="hangouts_name_locked_hint">Название тусовки нельзя будет изменить позже.</string>
 </resources>

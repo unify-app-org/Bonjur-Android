@@ -1,6 +1,5 @@
 package com.bonjur.events.presentation.details.components
 
-import androidx.compose.foundation.layout.navigationBarsPadding
 import com.bonjur.designsystem.R as DesignR
 import androidx.compose.ui.res.stringResource
 import com.bonjur.events.R
@@ -247,8 +246,6 @@ fun EventDetailsView(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(Color.White)
-                    // Edge-to-edge: clear the system navigation bar before padding.
-                    .navigationBarsPadding()
                     .padding(16.dp)
                     .zIndex(2f)
             ) {

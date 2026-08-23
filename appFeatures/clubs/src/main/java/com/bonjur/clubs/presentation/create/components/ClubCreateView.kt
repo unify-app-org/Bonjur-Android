@@ -34,6 +34,8 @@ import com.bonjur.designSystem.components.button.ButtonType
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
 import com.bonjur.designSystem.components.topBar.AppTopBar
+import androidx.compose.ui.draw.alpha
+import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
@@ -91,15 +93,23 @@ fun ClubCreateView(
                 )
 
                 state.schema.forEach { field ->
+                    // Club name is immutable once the club exists (mirrors iOS
+                    // `ClubCreateViewModel.disabledFieldIDs`). `disabled` is what actually
+                    // stops the field taking focus — dimming and dropping the change alone
+                    // still opens the keyboard and swallows keystrokes.
+                    val isLocked = state.isEdit && field.id == AppFieldSchema.FieldId.CLUB_NAME
                     FieldSchemaRouter(
                         field = field,
                         values = state.values,
+                        disabled = isLocked,
                         onChange = { id, value ->
-                            store.send(ClubCreateAction.FieldChanged(id, value))
+                            if (!isLocked) store.send(ClubCreateAction.FieldChanged(id, value))
                         },
                         onAddCategory = { store.send(ClubCreateAction.AddCategoryTapped) },
                         onRemoveCategory = { id -> store.send(ClubCreateAction.RemoveCategory(id)) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(if (isLocked) 0.5f else 1f)
                     )
                 }
             }

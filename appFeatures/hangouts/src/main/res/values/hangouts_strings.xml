@@ -46,4 +46,6 @@
     <string name="hangouts_owner_role">Owner</string>
     <string name="hangouts_members_title">Members</string>
     <string name="hangouts_exit_subtitle">Are you sure you want to leave this hangout? You will no longer be able to participate or see updates.</string>
+    <string name="hangouts_owner_contact_ph">Enter owner contact</string>
+    <string name="hangouts_name_locked_hint">You won’t be able to change the hangout name later.</string>
 </resources>

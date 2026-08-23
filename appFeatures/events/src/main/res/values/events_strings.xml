@@ -83,4 +83,6 @@
     <string name="events_leave_subtitle">Are you sure you want to leave this event? You will no longer be able to participate or see updates.</string>
     <string name="events_no_clubs_to_post">No clubs to post to. To create an event you must be a president, vice president or event creator in a verified club.</string>
     <string name="events_attachment_open_fail">Could not open this file</string>
+    <string name="events_name_locked_hint">You won’t be able to change the event name later.</string>
+    <string name="events_club_locked_hint">You won’t be able to move the event to another club later.</string>
 </resources>

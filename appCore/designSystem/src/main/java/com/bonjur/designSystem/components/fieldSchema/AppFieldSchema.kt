@@ -89,7 +89,16 @@ object AppFieldSchema {
         val id: FieldId,
         val label: String,
         val type: FieldType,
-        val required: Boolean = true
+        val required: Boolean = true,
+        /**
+         * Note shown under the input, e.g. "you won't be able to change this later".
+         *
+         * Rendered **only while the field is still editable** (see `FieldHint` in
+         * `FieldSchemaRouter`). A warning that something will lock is pointless once it
+         * has locked, so on the edit screen — where the field arrives disabled — it
+         * disappears on its own. Mirrors iOS `AppFieldSchema.Field.hint`.
+         */
+        val hint: String? = null
     )
 
     sealed class FieldValue {

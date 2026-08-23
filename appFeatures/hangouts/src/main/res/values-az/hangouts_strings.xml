@@ -46,4 +46,6 @@
     <string name="hangouts_owner_role">Sahib</string>
     <string name="hangouts_members_title">Üzvlər</string>
     <string name="hangouts_exit_subtitle">Bu görüşdən çıxmaq istədiyinizə əminsiniz? Artıq iştirak edə və yenilikləri görə bilməyəcəksiniz.</string>
+    <string name="hangouts_owner_contact_ph">Sahibin əlaqəsini daxil edin</string>
+    <string name="hangouts_name_locked_hint">Görüş adını sonra dəyişmək mümkün olmayacaq.</string>
 </resources>

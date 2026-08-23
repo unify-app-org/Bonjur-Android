@@ -79,4 +79,5 @@
     <string name="clubs_cover_color_desc">Klub kartınız üçün fon rəngi seçin.</string>
     <string name="clubs_join">Qoşul</string>
     <string name="clubs_request">Sorğu göndər</string>
+    <string name="clubs_name_locked_hint">Klub adını sonra dəyişmək mümkün olmayacaq.</string>
 </resources>
