@@ -35,12 +35,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GroupsListViewModel @Inject constructor(
-    private val navigator: Navigator,
     private val useCase: GroupsUseCase
 ) : FeatureViewModel<GroupsListViewState, GroupsListAction, GroupsListSideEffect>(
     GroupsListViewState()
 ) {
     private lateinit var inputData: GroupsListInputData
+
+    // Each tab owns its own Navigator instance (see AppTabBar); the Hilt-injected
+    // singleton drives the ROOT NavHost, which has no club/event/hangout details
+    // destination — navigating with it crashed with "destination ... cannot be found
+    // in the navigation graph". The tab's navigator is handed in from the screen.
+    private lateinit var navigator: Navigator
 
     private val paginationStep = 10
     private val searchDebounceMs = 300L
@@ -52,7 +57,8 @@ class GroupsListViewModel @Inject constructor(
     private var hasMoreHangouts = true
     private var searchJob: Job? = null
 
-    fun init(inputData: GroupsListInputData) {
+    fun init(inputData: GroupsListInputData, navigator: Navigator) {
+        this.navigator = navigator
         if (::inputData.isInitialized) return
         this.inputData = inputData
     }

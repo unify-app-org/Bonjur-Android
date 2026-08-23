@@ -16,8 +16,10 @@ public final class MemberOptionsPolicy {
     
     /**
      * Roles a viewer may grant to another member.
-     * - President: all assignable roles.
-     * - Vice president: only Member and Event creator.
+     * - President: Member, Vice president and Event creator — a president
+     *  cannot hand the presidency to someone else.
+     * - Vice president: only Member and Event creator — a vice president
+     *  cannot create peers (vice president) or superiors (president).
      * - Anyone else: none.
      */
     @org.jetbrains.annotations.NotNull()

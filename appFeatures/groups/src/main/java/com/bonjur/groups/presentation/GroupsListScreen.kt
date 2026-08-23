@@ -9,22 +9,22 @@ package com.bonjur.groups.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
 import com.bonjur.groups.presentation.components.GroupsListView
 import com.bonjur.groups.presentation.models.GroupsListInputData
 import com.bonjur.groups.presentation.models.GroupsListSideEffect
+import com.bonjur.navigation.Navigator
 import com.bonjur.network.model.userMessage
 
-@Preview(showBackground = true)
 @Composable
 fun GroupsListScreen(
     inputData: GroupsListInputData = GroupsListInputData(),
+    navigator: Navigator,
     viewModel: GroupsListViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
-        viewModel.init(inputData)
+        viewModel.init(inputData, navigator)
     }
 
     FeatureScreen(

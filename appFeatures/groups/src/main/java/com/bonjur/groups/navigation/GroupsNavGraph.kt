@@ -12,6 +12,6 @@ fun NavGraphBuilder.groupsNavGraph(
     navigator: Navigator
 ) {
     composable<GroupsScreens.List> {
-        GroupsListScreen()
+        GroupsListScreen(navigator = navigator)
     }
 }

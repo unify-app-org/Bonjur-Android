@@ -16,6 +16,7 @@ import com.bonjur.app.MainActivity
 import com.bonjur.app.R
 import com.bonjur.app.fcm.data.DeviceDataSource
 import com.bonjur.apputils.DeviceManager
+import com.bonjur.storage.notification.NotificationPreferences
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,6 +32,7 @@ class UnifyMessagingService : FirebaseMessagingService() {
 
     @Inject lateinit var deviceDataSource: DeviceDataSource
     @Inject lateinit var deviceManager: DeviceManager
+    @Inject lateinit var notificationPreferences: NotificationPreferences
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -53,6 +55,9 @@ class UnifyMessagingService : FirebaseMessagingService() {
      *  or for data-only messages in any state. */
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        // Settings → Notifications is off: drop it. The OS-level grant is checked
+        // separately in showNotification; this is the in-app mute.
+        if (!notificationPreferences.isEnabledInApp) return
         val title = message.notification?.title ?: message.data["title"] ?: LanguageManager.string(R.string.app_name)
         val body = message.notification?.body ?: message.data["body"] ?: ""
         showNotification(title, body)

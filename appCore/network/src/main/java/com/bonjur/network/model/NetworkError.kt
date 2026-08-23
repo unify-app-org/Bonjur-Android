@@ -10,6 +10,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
+import kotlin.collections.flatten
 
 /**
  * `status` comes back as a **number** (`"status": 400`) from most services but as
@@ -42,7 +43,13 @@ data class NetworkError(
      */
     val message: String? = null,
     val detail: String? = null,
-    val errors: Map<String, List<String>>? = null
+    val errors: List<Error>? = null
+)
+
+@Serializable
+data class Error(
+    val field: String? = null,
+    val message: String? = null
 )
 
 /**
@@ -51,10 +58,7 @@ data class NetworkError(
  */
 fun NetworkError.userMessages(): List<String> =
     errors.orEmpty()
-        .toSortedMap()
-        .values
-        .flatten()
-        .map { it.trim() }
+        .map { it.message ?: "" }
         .filter { it.isNotEmpty() }
 
 /**

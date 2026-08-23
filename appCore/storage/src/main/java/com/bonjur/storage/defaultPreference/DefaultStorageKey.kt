@@ -11,5 +11,8 @@ enum class DefaultStorageKey(val key: String) {
 
     /** User ticked "Don't show this again" on the event-reminder warning alert. */
     HIDE_EVENT_REMINDER_WARNING("hide_event_reminder_warning"),
+
+    /** Settings → Notifications switch. In-app mute, independent of the OS grant. */
+    NOTIFICATIONS_ENABLED("notifications_enabled"),
 }
 

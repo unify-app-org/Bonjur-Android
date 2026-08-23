@@ -40,4 +40,32 @@
     <string name="common_no_information">Məlumat yoxdur</string>
     <string name="common_cover">Örtük</string>
     <string name="common_copied_to_clipboard">Buferə kopyalandı</string>
+
+    <!-- Report reasons (member) -->
+    <string name="report_reason_fake_profile">Saxta profil</string>
+    <string name="report_reason_inappropriate_profile_picture">Uyğunsuz profil şəkli</string>
+    <string name="report_reason_inappropriate_profile_text">Uyğunsuz profil mətni</string>
+    <string name="report_reason_inappropriate_offers">Uyğunsuz təkliflər</string>
+    <string name="report_reason_offensive">Təhqiredici sözlər, hədələr, təhqirlər</string>
+    <string name="report_reason_underage">Yaş həddinə uyğun deyil</string>
+    <string name="report_reason_scam_and_commercial">Fırıldaq və reklam</string>
+    <string name="report_reason_other">Digər</string>
+
+    <!-- Report reasons (activity: club / event / hangout) -->
+    <string name="activity_report_reason_inappropriate_content">Uyğunsuz məzmun</string>
+    <string name="activity_report_reason_spam">Spam</string>
+    <string name="activity_report_reason_scam_and_commercial">Fırıldaq və reklam</string>
+    <string name="activity_report_reason_harassment">Təqib və ya nifrət nitqi</string>
+    <string name="activity_report_reason_misleading_info">Yanıldıcı məlumat</string>
+    <string name="activity_report_reason_other">Digər</string>
+
+    <!-- Assign-role picker -->
+    <string name="role_assign_title_member">Üzv</string>
+    <string name="role_assign_title_president">Prezident</string>
+    <string name="role_assign_title_vice_president">Vitse-prezident</string>
+    <string name="role_assign_title_event_creator">Tədbir təşkilatçısı</string>
+    <string name="role_assign_subtitle_member">Yalnız məzmuna baxa bilər</string>
+    <string name="role_assign_subtitle_president">Klubu idarə edə bilər</string>
+    <string name="role_assign_subtitle_vice_president">Klubu idarə edə bilər, rol təyin edə bilməz</string>
+    <string name="role_assign_subtitle_event_creator">Yalnız klubda tədbir yarada bilər</string>
 </resources>

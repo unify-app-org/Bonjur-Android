@@ -1,5 +1,6 @@
 package com.bonjur.profile.presentation.settings.models
 
+import androidx.annotation.DrawableRes
 import com.bonjur.appfoundation.FeatureAction
 import com.bonjur.appfoundation.FeatureState
 import com.bonjur.appfoundation.SideEffect
@@ -19,7 +20,10 @@ sealed class ProfileSettingsSideEffect : SideEffect {
 data class SettingsItemModel(
     val id: String,
     val title: String,
-    val iconRes: Int? = null,
+    /** Leading icon, mirroring iOS `SettingsModel.icon`. The row renders whatever it is
+     *  handed — it used to `when (item.id)` its way to a painter, which meant adding a row
+     *  meant editing the view too. */
+    @DrawableRes val iconRes: Int,
     val isDestructive: Boolean = false,
     val isSwitch: Boolean = false,
     val versionText: String? = null,
