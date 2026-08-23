@@ -55,7 +55,6 @@ import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsAction
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsSideEffect
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsViewState
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 @Composable
 fun HangoutDetailsView(
@@ -121,12 +120,11 @@ fun HangoutDetailsView(
                 state = listState,
                 modifier = Modifier.weight(1f)
             ) {
+                // Clears the nav overlay. Hangouts have no cover image (unlike club/event
+                // details), so there is nothing to stretch here — this used to be a
+                // pull-to-stretch header drawing white on white.
                 item(key = "header") {
-                    StretchableHeader(
-                        scrollOffset = if (listState.firstVisibleItemIndex == 0)
-                            listState.firstVisibleItemScrollOffset else Int.MAX_VALUE,
-                        baseHeight = navBarHeight
-                    )
+                    Spacer(modifier = Modifier.height(navBarHeight + 8.dp))
                 }
 
                 // Hangout info
@@ -243,28 +241,6 @@ fun HangoutDetailsView(
 }
 
 // ---------------------------------------------------------------------------
-// Stretchable Header
-// ---------------------------------------------------------------------------
-
-@Composable
-private fun StretchableHeader(
-    scrollOffset: Int,
-    baseHeight: Dp
-) {
-    val density = LocalDensity.current
-    val baseHeight = baseHeight
-    val pullDown = max(-scrollOffset, 0)
-    val extraHeight = with(density) { pullDown.toDp() }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(baseHeight + extraHeight)
-            .background(Color.White)
-    )
-}
-
-// ---------------------------------------------------------------------------
 // Navigation Overlay
 // ---------------------------------------------------------------------------
 
@@ -286,8 +262,12 @@ private fun HangoutNavigationOverlay(
     val density = LocalDensity.current
 
     Column(modifier = modifier.fillMaxWidth()) {
+        // Always solid. The transparent state only makes sense over a cover photo, which
+        // this screen doesn't have — left transparent it rendered `whiteMedium` pills onto
+        // a white page, so the buttons showed as bare floating icons. Only the shadow is
+        // scroll-driven, so the bar reads flat at rest and lifts once content slides under it.
         Surface(
-            color = if (isScrolled) Color.White else Color.Transparent,
+            color = Palette.white,
             shadowElevation = if (isScrolled) 4.dp else 0.dp,
             modifier = Modifier.onGloballyPositioned { coordinates ->
                 onNavBarPositioned(with(density) { coordinates.size.height.toDp() })
@@ -304,20 +284,19 @@ private fun HangoutNavigationOverlay(
                 ) {
                     NavBarButton(
                         icon = Images.Icons.arrowLeft01(),
-                        isScrolled = isScrolled,
                         onClick = onBackClick
                     )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         NavBarButton(
                             icon = Images.Icons.ellipsis02(),
-                            isScrolled = isScrolled,
                             onClick = onMoreClick
                         )
-                        AnimatedVisibility(visible = showEdit && !isScrolled) {
+                        // Edit used to vanish on scroll — a leftover from the cover-photo
+                        // screens. iOS keeps it in the toolbar the whole time.
+                        AnimatedVisibility(visible = showEdit) {
                             NavBarButton(
                                 icon = Images.Icons.penLine(),
-                                isScrolled = isScrolled,
                                 onClick = onEditClick
                             )
                         }
@@ -334,7 +313,9 @@ private fun HangoutNavigationOverlay(
                         modifier = Modifier
                             .fillMaxWidth()
                             .statusBarsPadding()
-                            .padding(horizontal = 80.dp, vertical = 16.dp),
+                            // Two trailing pills (44 + 12 + 44) now stay put while scrolled,
+                            // so 80.dp would let a long name run under them.
+                            .padding(horizontal = 112.dp, vertical = 16.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -371,7 +352,6 @@ private fun HangoutNavigationOverlay(
 @Composable
 private fun NavBarButton(
     icon: Painter,
-    isScrolled: Boolean,
     onClick: () -> Unit
 ) {
     IconButton(
@@ -379,7 +359,7 @@ private fun NavBarButton(
         modifier = Modifier
             .size(44.dp)
             .background(
-                color = if (isScrolled) Palette.grayQuaternary else Palette.whiteMedium,
+                color = Palette.grayQuaternary,
                 shape = RoundedCornerShape(12.dp)
             )
     ) {
