@@ -31,8 +31,8 @@ class DiscoverDataSourceImpl @Inject constructor(
     override suspend fun getCategories(): List<DiscoverCategorySection> =
         fetch(DiscoverEndPoints.GetCategories)
 
-    override suspend fun getUserById(userId: String): DiscoverUserResponse =
-        fetch(DiscoverEndPoints.GetUserById(userId))
+    override suspend fun getUserById(userId: String, clubId: Int): DiscoverUserResponse =
+        fetch(DiscoverEndPoints.GetUserById(userId, clubId))
 
     override suspend fun joinHangout(request: JoinHangoutRequest): ByteArray =
         fetchRawData(DiscoverEndPoints.JoinHangout(request))

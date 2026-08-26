@@ -114,7 +114,9 @@ class CommunityDetailViewModel @Inject constructor(
         viewModelScope.launch {
             navigator.navigateTo(
                 ProfileScreens.ProfileDetail.route,
-                ProfileDetailInputData(userId = userId)
+                // Inside a community, the profile is scoped to THAT community, not the one
+                // stored at login (which is what every other context uses).
+                ProfileDetailInputData(userId = userId, communityId = inputData.communityId)
             )
         }
     }

@@ -24,7 +24,10 @@ data class ProfileDetailInputData(
     val userId: String? = null,
     /** True when this screen was pushed (e.g. from a members list) rather than shown as the root
      * Profile tab. Drives the back button and tab-bar hiding, independent of [userId]. */
-    val isPushed: Boolean = false
+    val isPushed: Boolean = false,
+    /** Community the profile is being viewed inside; null falls back to the stored one.
+     *  Only a community detail sets this — see [ProfileUseCase.fetchProfileData]. */
+    val communityId: Int? = null
 )
 
 // MARK: - Side Effects

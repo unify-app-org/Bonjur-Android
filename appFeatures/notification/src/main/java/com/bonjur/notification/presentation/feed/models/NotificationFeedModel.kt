@@ -16,7 +16,9 @@ data class NotificationFeedViewState(
     val isLoadingMore: Boolean = false,
     val canLoadMore: Boolean = false,
     /** Row currently shown in the modal preview sheet; null = sheet hidden. */
-    val previewItem: NotificationFeedItem? = null
+    val previewItem: NotificationFeedItem? = null,
+    /** Pending join requests behind the "Needs your action" banner. Drives its red dot. */
+    val pendingActionCount: Int = 0
 ) : FeatureState
 
 sealed class NotificationFeedSideEffect : SideEffect {

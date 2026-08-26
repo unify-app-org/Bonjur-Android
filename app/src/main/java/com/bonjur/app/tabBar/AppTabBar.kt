@@ -258,6 +258,11 @@ fun ClubsTabContent(
         startDestination = ClubsScreens.List
     ) {
         clubsNavGraph(navigator)
+        // Club detail opens member profiles and event details/create in THIS tab's stack, so
+        // their graphs have to be registered here too — without them the destination "cannot
+        // be found in the navigation graph" and the app crashes. Same fix as Discover/MyPlans.
+        profileNavGraph(navigator)
+        eventsNavGraph(navigator)
         memberNavGraph(navigator)
     }
 }

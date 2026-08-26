@@ -1,9 +1,9 @@
 
-
-emulator-5556primary´	
+
+emulator-5554primary´	
 ©
-NeedsActionBannerVisibleTest)com.bonjur.notification.presentation.feed(bannerStaysOnScreenAfterScrollingTheFeed2èı¶‘Äé‡ê:íı¶‘¿˛ÖB
-emulator-5556primary"…
+NeedsActionBannerVisibleTest)com.bonjur.notification.presentation.feed(bannerStaysOnScreenAfterScrollingTheFeed2◊∂º‘¿¨Ê◊:⁄∂º‘Äú•≥B
+emulator-5554primary"…
 
 logcatandroid≥
 ∞/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/logcat-com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest-bannerStaysOnScreenAfterScrollingTheFeed.txt"‚
@@ -17,8 +17,8 @@
 device-info.cpuinfoandroid¿
 Ω/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/cpuinfoï	
 û
-NeedsActionBannerVisibleTest)com.bonjur.notification.presentation.feedbannerIsOnScreenWithAFullFeed2íı¶‘ÄÍÓí:îı¶‘¿˘ÅÅB
-emulator-5556primary"æ
+NeedsActionBannerVisibleTest)com.bonjur.notification.presentation.feedbannerIsOnScreenWithAFullFeed2⁄∂º‘¿ﬂ∏∫:‹∂º‘Äª¬ïB
+emulator-5554primary"æ
 
 logcatandroid®
 •/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/logcat-com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest-bannerIsOnScreenWithAFullFeed.txt"‚
@@ -32,8 +32,8 @@
 device-info.cpuinfoandroid¿
 Ω/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/cpuinfoô	
 †
-NeedsActionBannerVisibleTest)com.bonjur.notification.presentation.feedbannerIsOnScreenWithAnEmptyFeed2îı¶‘Äê≥É:ñı¶‘ÄÇÓ‡B
-emulator-5556primary"¿
+NeedsActionBannerVisibleTest)com.bonjur.notification.presentation.feedbannerIsOnScreenWithAnEmptyFeed2‹∂º‘ÄÕ∂ó:ﬁ∂º‘¿ÈÈÎB
+emulator-5554primary"¿
 
 logcatandroid™
 ß/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/logcat-com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest-bannerIsOnScreenWithAnEmptyFeed.txt"‚
@@ -45,13 +45,28 @@
 Ω/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/meminfo"„
 
 device-info.cpuinfoandroid¿
-Ω/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/cpuinfoö	
-†
-NotificationFeedEntryCallsTest)com.bonjur.notification.presentation.feedopeningTheFeedOnlyLoadsTheFeed2ñı¶‘Äî‚‚:òı¶‘¿Î™jB
-emulator-5556primary"¡
+Ω/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/cpuinfo¬	
+¥
+NotificationFeedEntryCallsTest)com.bonjur.notification.presentation.feed2openingTheFeedNeverProbesTheAdminVerificationQueue2ﬁ∂º‘Ä˜†Ì:‡∂º‘ÄÓîxB
+emulator-5554primary"’
 
-logcatandroid´
-®/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/logcat-com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest-openingTheFeedOnlyLoadsTheFeed.txt"‚
+logcatandroidø
+º/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/logcat-com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest-openingTheFeedNeverProbesTheAdminVerificationQueue.txt"‚
+
+device-infoandroid«
+ƒ/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/device-info.pb"„
+
+device-info.meminfoandroid¿
+Ω/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/meminfo"„
+
+device-info.cpuinfoandroid¿
+Ω/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/cpuinfoº	
+±
+NotificationFeedEntryCallsTest)com.bonjur.notification.presentation.feed/openingTheFeedLoadsTheFeedAndTheBannerCountOnly2‡∂º‘¿˚Ày:·∂º‘¿ñÃB
+emulator-5554primary"“
+
+logcatandroidº
+π/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/logcat-com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest-openingTheFeedLoadsTheFeedAndTheBannerCountOnly.txt"‚
 
 device-infoandroid«
 ƒ/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/androidTest-results/connected/debug/Pixel_9a(AVD) - 17/device-info.pb"„

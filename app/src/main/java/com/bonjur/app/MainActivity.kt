@@ -21,6 +21,7 @@ import com.bonjur.apputils.DeviceManager
 import com.bonjur.app.fcm.data.DeviceDataSource
 import com.bonjur.app.navigation.AppNavigation
 import com.bonjur.designSystem.localization.AppLocalizationProvider
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designSystem.ui.theme.colors.BonjurTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -47,7 +48,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         askNotificationPermission()
-        fetchFcmToken()
+        registerDevice()
+        observeLanguageChanges()
 
         var keepSplashOnScreen = true
         splashScreen.setKeepOnScreenCondition { keepSplashOnScreen }
@@ -79,7 +81,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun fetchFcmToken() {
+    /**
+     * PUT api/as/v1/device/{id} with the current FCM token.
+     *
+     * Also how the backend learns the user's **language**: it reads that off the
+     * `Accept-Language` header, so the payload stays token-only and any call re-registers
+     * the language as a side effect. That's why [observeLanguageChanges] just calls this.
+     */
+    private fun registerDevice() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("FCM", "Fetching FCM token failed", task.exception)
@@ -90,6 +99,16 @@ class MainActivity : ComponentActivity() {
             lifecycleScope.launch {
                 runCatching { deviceDataSource.updateFcmToken(deviceManager.deviceId, token) }
                     .onFailure { Log.w("FCM", "updateFcmToken failed (unauthenticated?)", it) }
+            }
+        }
+    }
+
+    /** Re-register on every in-app language switch so the backend stores the new language. */
+    private fun observeLanguageChanges() {
+        lifecycleScope.launch {
+            LanguageManager.languageChanges.collect { language ->
+                Log.d("FCM", "language changed to ${language.code}, re-registering device")
+                registerDevice()
             }
         }
     }

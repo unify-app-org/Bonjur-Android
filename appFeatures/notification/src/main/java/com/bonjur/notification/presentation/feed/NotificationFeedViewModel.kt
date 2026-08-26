@@ -20,6 +20,7 @@ import com.bonjur.notification.navigation.NotificationScreens
 import com.bonjur.notification.presentation.feed.models.NotificationFeedAction
 import com.bonjur.notification.presentation.feed.models.NotificationFeedSideEffect
 import com.bonjur.notification.presentation.feed.models.NotificationFeedViewState
+import com.bonjur.notification.domain.useCase.NeedsActionUseCase
 import com.bonjur.notification.presentation.needsAction.models.RequestsPhase
 import com.bonjur.navigation.route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,8 @@ import com.bonjur.network.model.userMessage
 
 @HiltViewModel
 class NotificationFeedViewModel @Inject constructor(
-    private val useCase: NotificationUseCase
+    private val useCase: NotificationUseCase,
+    private val needsActionUseCase: NeedsActionUseCase
 ) : FeatureViewModel<NotificationFeedViewState, NotificationFeedAction, NotificationFeedSideEffect>(
     NotificationFeedViewState()
 ) {
@@ -61,6 +63,7 @@ class NotificationFeedViewModel @Inject constructor(
 
     private fun fetchData() {
         if (state.inbox.sections.isEmpty()) updateState(state.copy(phase = RequestsPhase.LOADING))
+        fetchPendingActionCount()
         viewModelScope.launch {
             try {
                 val result = useCase.fetchFeedPage(page = 0, size = pageSize)
@@ -77,6 +80,17 @@ class NotificationFeedViewModel @Inject constructor(
                 if (state.inbox.sections.isEmpty()) updateState(state.copy(phase = RequestsPhase.FAILED))
                 postEffect(NotificationFeedSideEffect.Error(e.userMessage()))
             }
+        }
+    }
+
+    /**
+     * Badge on the "Needs your action" banner. Runs alongside the feed rather than inside it:
+     * it is three extra calls and must not delay (or fail) the feed itself.
+     */
+    private fun fetchPendingActionCount() {
+        viewModelScope.launch {
+            val count = runCatching { needsActionUseCase.fetchPendingActionCount() }.getOrDefault(0)
+            updateState(state.copy(pendingActionCount = count))
         }
     }
 

@@ -26,4 +26,11 @@
         <item quantity="many">%1$d клубов ожидают вашего одобрения</item>
         <item quantity="other">%1$d клуба ожидают вашего одобрения</item>
     </plurals>
+
+    <plurals name="requests_waiting">
+        <item quantity="one">%1$d запрос ожидает вас</item>
+        <item quantity="few">%1$d запроса ожидают вас</item>
+        <item quantity="many">%1$d запросов ожидают вас</item>
+        <item quantity="other">%1$d запроса ожидают вас</item>
+    </plurals>
 </resources>

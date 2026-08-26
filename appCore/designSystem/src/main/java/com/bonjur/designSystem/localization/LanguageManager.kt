@@ -11,6 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.bonjur.storage.language.AppLanguageStore
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import java.util.Locale
 
 /**
@@ -49,6 +52,15 @@ object LanguageManager {
     val languageCode: String get() = language.code
 
     /**
+     * Emits after [select] has already applied the new language (so `Accept-Language`
+     * on the next request carries it). The app module listens and re-registers the
+     * device, which is how the backend learns the user's language — it reads it off
+     * the header, the device payload itself is unchanged.
+     */
+    private val _languageChanges = MutableSharedFlow<AppLanguage>(extraBufferCapacity = 1)
+    val languageChanges: SharedFlow<AppLanguage> = _languageChanges.asSharedFlow()
+
+    /**
      * Locale for **display** formatting (month names, relative dates), mirroring iOS's
      * `Locale.current` in `Extension+Date`. Parsing keeps a fixed locale: wire formats
      * like `dd-MM-yyyy HH:mm:ss` must not be localized.
@@ -66,8 +78,11 @@ object LanguageManager {
     fun select(newLanguage: AppLanguage) {
         if (newLanguage == language) return
         language = newLanguage
+        // Store first: AppLanguageStore.code is what the network layer reads for
+        // Accept-Language, and the listener below fires a request straight away.
         appContext?.let { AppLanguageStore.save(it, newLanguage.code) }
         applyDefaultLocale()
+        _languageChanges.tryEmit(newLanguage)
     }
 
     /**

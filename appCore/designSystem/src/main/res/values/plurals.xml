@@ -23,4 +23,9 @@
         <item quantity="one">%1$d club awaiting your approval</item>
         <item quantity="other">%1$d clubs awaiting your approval</item>
     </plurals>
+
+    <plurals name="requests_waiting">
+        <item quantity="one">%1$d request waiting for you</item>
+        <item quantity="other">%1$d requests waiting for you</item>
+    </plurals>
 </resources>

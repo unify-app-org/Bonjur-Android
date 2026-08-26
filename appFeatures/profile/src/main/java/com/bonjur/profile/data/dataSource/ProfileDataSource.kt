@@ -11,7 +11,7 @@ import com.bonjur.profile.data.DTOs.UserProfileResponse
 
 interface ProfileDataSource {
     suspend fun getMyProfile(): UserProfileResponse
-    suspend fun getUserById(userId: String): UserProfileResponse
+    suspend fun getUserById(userId: String, clubId: Int): UserProfileResponse
     suspend fun updateProfile(fields: Map<String, String>, imageFile: MultipartFile?): ByteArray
     suspend fun deleteAccount(): ByteArray
     suspend fun getCategories(): List<CategorySectionResponse>

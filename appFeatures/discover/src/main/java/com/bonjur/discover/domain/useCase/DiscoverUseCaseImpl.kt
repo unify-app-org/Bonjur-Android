@@ -51,7 +51,7 @@ class DiscoverUseCaseImpl @Inject constructor(
         val userId = tokenManager.getUserId() ?: return UserModel(
             id = 0, name = "", profileImage = null, greeting = ""
         )
-        val data = dataSource.getUserById(userId)
+        val data = dataSource.getUserById(userId, defaultStorage.getInt(DefaultStorageKey.COMMUNITY_ID, 0))
         return UserModel(
             id = 0,
             name = data.fullName ?: "-",

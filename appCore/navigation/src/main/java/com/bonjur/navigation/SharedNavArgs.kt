@@ -69,4 +69,9 @@ data class EventDetailsNavArgs(val eventId: String)
 data class HangoutDetailsNavArgs(val hangoutId: String)
 
 /** Neutral profile-details payload (member tap → profile) usable across feature modules. */
-data class ProfileDetailNavArgs(val userId: String?)
+data class ProfileDetailNavArgs(
+    val userId: String?,
+    /** Community the profile is being viewed inside. Null => the community stored at login,
+     *  which is what club/event/hangout/notification contexts want. */
+    val communityId: Int? = null
+)

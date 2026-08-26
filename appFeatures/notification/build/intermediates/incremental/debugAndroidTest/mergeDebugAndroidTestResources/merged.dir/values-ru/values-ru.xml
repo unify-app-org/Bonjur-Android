@@ -30,6 +30,12 @@
     <item quantity="many">%d новых уведомлений</item>
     <item quantity="other">%d нового уведомления</item>
   </plurals>
+    <plurals name="requests_waiting">
+        <item quantity="one">%1$d запрос ожидает вас</item>
+        <item quantity="few">%1$d запроса ожидают вас</item>
+        <item quantity="many">%1$d запросов ожидают вас</item>
+        <item quantity="other">%1$d запроса ожидают вас</item>
+    </plurals>
     <string msgid="5976598919945601918" name="abc_action_bar_home_description">"Перейти на главный экран"</string>
     <string msgid="8388173803310557296" name="abc_action_bar_up_description">"Перейти вверх"</string>
     <string msgid="3937310113216875497" name="abc_action_menu_overflow_description">"Ещё"</string>
@@ -58,6 +64,12 @@
     <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Поделиться с помощью <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
     <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Свернуть"</string>
     <string name="about">Описание</string>
+    <string name="activity_report_reason_harassment">Травля или разжигание ненависти</string>
+    <string name="activity_report_reason_inappropriate_content">Неприемлемый контент</string>
+    <string name="activity_report_reason_misleading_info">Вводящая в заблуждение информация</string>
+    <string name="activity_report_reason_other">Другое</string>
+    <string name="activity_report_reason_scam_and_commercial">Мошенничество и реклама</string>
+    <string name="activity_report_reason_spam">Спам</string>
     <string name="all">Все</string>
     <string name="apply">Применить</string>
     <string msgid="389117264260014992" name="autofill">"Заполнить автоматически"</string>
@@ -124,6 +136,8 @@
     <string name="document_preview_share">Поделиться</string>
     <string name="document_preview_unsupported">Этот тип файла нельзя показать здесь</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"Раскрывающееся меню"</string>
+    <string name="error_generic_subtitle">Пожалуйста, попробуйте снова.</string>
+    <string name="error_generic_title">Что-то пошло не так</string>
     <string name="error_icon_content_description">Ошибка</string>
     <string name="event_creators">Создатели событий</string>
     <string name="events">События</string>
@@ -303,6 +317,22 @@
     <string msgid="5941395253238309765" name="range_end">"Конец диапазона"</string>
     <string msgid="7097486360902471446" name="range_start">"Начало диапазона"</string>
     <string name="remove">Убрать</string>
+    <string name="report_reason_fake_profile">Поддельный профиль</string>
+    <string name="report_reason_inappropriate_offers">Неприемлемые предложения</string>
+    <string name="report_reason_inappropriate_profile_picture">Неприемлемое фото профиля</string>
+    <string name="report_reason_inappropriate_profile_text">Неприемлемый текст профиля</string>
+    <string name="report_reason_offensive">Оскорбления, угрозы, брань</string>
+    <string name="report_reason_other">Другое</string>
+    <string name="report_reason_scam_and_commercial">Мошенничество и реклама</string>
+    <string name="report_reason_underage">Несовершеннолетний</string>
+    <string name="role_assign_subtitle_event_creator">Может только создавать мероприятия в клубе</string>
+    <string name="role_assign_subtitle_member">Может только просматривать контент</string>
+    <string name="role_assign_subtitle_president">Может управлять клубом</string>
+    <string name="role_assign_subtitle_vice_president">Может управлять клубом, но не назначать роли</string>
+    <string name="role_assign_title_event_creator">Организатор мероприятий</string>
+    <string name="role_assign_title_member">Участник</string>
+    <string name="role_assign_title_president">Президент</string>
+    <string name="role_assign_title_vice_president">Вице-президент</string>
     <string name="role_event_creators">Организаторы</string>
     <string name="role_members">Участники</string>
     <string name="role_president">Президент</string>

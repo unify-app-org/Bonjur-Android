@@ -19,19 +19,27 @@ import com.bonjur.profile.presentation.editProfile.models.Gender
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import javax.inject.Inject
 
 class ProfileUseCaseImpl @Inject constructor(
     val dataSource: ProfileDataSource,
-    val tokenManager: TokenManager
+    val tokenManager: TokenManager,
+    val defaultStorage: DefaultStorage
 ) : ProfileUseCase {
 
     // ── Profile (always by id; own id from token for self — mirrors iOS) ───────
 
-    override suspend fun fetchProfileData(userId: String?): ProfileDetail.UIModel {
+    override suspend fun fetchProfileData(userId: String?, communityId: Int?): ProfileDetail.UIModel {
         val id = userId ?: tokenManager.getUserId().orEmpty()
-        return dataSource.getUserById(id).toUIModel()
+        return dataSource.getUserById(id, communityId ?: storedCommunityId()).toUIModel()
     }
+
+    /** The community picked at login. Used for every context except a community detail,
+     *  which knows which community the profile is being viewed inside. */
+    private fun storedCommunityId(): Int =
+        defaultStorage.getInt(DefaultStorageKey.COMMUNITY_ID, 0)
 
     /** Maps the user response to the detail UI model. Field choices mirror iOS ProfileRepo. */
     private fun UserProfileResponse.toUIModel(): ProfileDetail.UIModel =

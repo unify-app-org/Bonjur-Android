@@ -14,6 +14,8 @@ import com.bonjur.notification.domain.models.NotificationFeedItem
 import com.bonjur.notification.domain.models.NotificationFeedPage
 import com.bonjur.notification.domain.models.NotificationTargetType
 import com.bonjur.notification.domain.models.NotificationType
+import com.bonjur.notification.domain.models.RequestPageResult
+import com.bonjur.notification.domain.useCase.NeedsActionUseCase
 import com.bonjur.notification.domain.useCase.NotificationUseCase
 import com.bonjur.notification.presentation.feed.components.NotificationFeedView
 import org.junit.Rule
@@ -54,8 +56,21 @@ class NeedsActionBannerVisibleTest {
         override suspend fun fetchUnreadCount() = 0
     }
 
+    /** The banner's count comes from here; this screen only cares that the banner renders. */
+    private class FakeNeedsActionUseCase : NeedsActionUseCase {
+        private val empty = RequestPageResult(items = emptyList(), hasMore = false)
+        override suspend fun fetchClubRequests(page: Int, size: Int) = empty
+        override suspend fun fetchHangoutRequests(page: Int, size: Int) = empty
+        override suspend fun fetchEventRequests(page: Int, size: Int) = empty
+        override suspend fun setClubStatus(clubId: Int, userId: String, accept: Boolean) {}
+        override suspend fun setHangoutStatus(hangoutId: String, userId: String, accept: Boolean) {}
+        override suspend fun setEventStatus(eventId: String, userId: String, accept: Boolean) {}
+        override suspend fun fetchVerificationCount() = 0
+        override suspend fun fetchPendingActionCount() = 0
+    }
+
     private fun showFeed(rows: Int) {
-        val viewModel = NotificationFeedViewModel(FakeUseCase(rows))
+        val viewModel = NotificationFeedViewModel(FakeUseCase(rows), FakeNeedsActionUseCase())
         compose.setContent {
             // Mirrors NotificationFeedScreen's layout without the Hilt/navigator wiring.
             Column(modifier = Modifier.fillMaxSize()) {

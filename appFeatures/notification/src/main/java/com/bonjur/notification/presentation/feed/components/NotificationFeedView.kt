@@ -46,6 +46,7 @@ import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designsystem.R as DesignR
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.notification.domain.models.NotificationFeedItem
 import com.bonjur.notification.domain.models.NotificationTargetType
 import com.bonjur.notification.domain.models.RelativeTime
@@ -87,7 +88,7 @@ private fun NotificationFeedContent(
         // off-screen whenever LazyColumn restored a previous scroll position on
         // re-entry, so the entry point was only reachable by scrolling back up.
         Box(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 4.dp)) {
-            ActionBanner { store.send(NotificationFeedAction.ActionBannerTapped) }
+            ActionBanner(state.pendingActionCount) { store.send(NotificationFeedAction.ActionBannerTapped) }
         }
 
         if (state.inbox.sections.isEmpty()) {
@@ -152,7 +153,7 @@ private fun FeedList(
 }
 
 @Composable
-private fun ActionBanner(onClick: () -> Unit) {
+private fun ActionBanner(pendingCount: Int, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,9 +174,22 @@ private fun ActionBanner(onClick: () -> Unit) {
         Column(modifier = Modifier.weight(1f)) {
             Text(stringResource(R.string.notif_needs_action), style = AppTypography.BodyTextMd.semiBold, color = Palette.black)
             Text(
-                stringResource(R.string.notif_action_subtitle_idle),
+                // Falls back to the generic prompt at zero, so the row never reads "0 requests".
+                if (pendingCount > 0) {
+                    LanguageManager.plural(DesignR.plurals.requests_waiting, pendingCount)
+                } else {
+                    stringResource(R.string.notif_action_subtitle_idle)
+                },
                 style = AppTypography.TextSm.regular,
                 color = Palette.graySecondary
+            )
+        }
+        if (pendingCount > 0) {
+            Box(
+                modifier = Modifier
+                    .size(10.dp)
+                    .clip(CircleShape)
+                    .background(Palette.cardBgRed)
             )
         }
     }

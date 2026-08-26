@@ -23,7 +23,11 @@ fun NavGraphBuilder.profileNavGraph(navigator: Navigator) {
         val inputData = remember {
             NavArgs.get<ProfileDetailInputData>()?.copy(isPushed = true)
                 ?: NavArgs.get<ProfileDetailNavArgs>()?.let {
-                    ProfileDetailInputData(userId = it.userId, isPushed = true)
+                    ProfileDetailInputData(
+                        userId = it.userId,
+                        isPushed = true,
+                        communityId = it.communityId
+                    )
                 }
                 ?: ProfileDetailInputData()
         }

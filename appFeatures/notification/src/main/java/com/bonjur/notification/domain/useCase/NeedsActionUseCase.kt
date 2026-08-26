@@ -15,6 +15,15 @@ interface NeedsActionUseCase {
     suspend fun setEventStatus(eventId: String, userId: String, accept: Boolean)
     /** Admin-only pending-verification total. Throws (e.g. 403) when not an admin. */
     suspend fun fetchVerificationCount(): Int
+
+    /**
+     * Total pending join requests across clubs + hangouts + events, for the feed banner's
+     * badge. Each source is fetched at page 0 / size 1 and read off `totalElements` (same
+     * trick as [fetchVerificationCount]) and guarded on its own, so one failing source
+     * doesn't zero the other two. Verification is deliberately excluded — it is admin-only
+     * (403 for everyone else) and already has its own banner inside Needs Action.
+     */
+    suspend fun fetchPendingActionCount(): Int
 }
 
 class NeedsActionUseCaseImpl @Inject constructor(
@@ -59,6 +68,15 @@ class NeedsActionUseCaseImpl @Inject constructor(
 
     override suspend fun fetchVerificationCount(): Int =
         dataSource.fetchPendingClubs(page = 0, size = 1).totalElements ?: 0
+
+    override suspend fun fetchPendingActionCount(): Int {
+        suspend fun total(fetch: suspend () -> PageNationResponse<*>): Int =
+            runCatching { fetch().totalElements ?: 0 }.getOrDefault(0)
+
+        return total { dataSource.fetchClubRequests(page = 0, size = 1) } +
+            total { dataSource.fetchHangoutRequests(page = 0, size = 1) } +
+            total { dataSource.fetchEventRequests(page = 0, size = 1) }
+    }
 }
 
 /** True when there are pages after `page`. */

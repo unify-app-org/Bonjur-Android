@@ -13,9 +13,14 @@ sealed class ProfileEndpoints : AppEndpoint {
         override val method = NetworkMethod.GET
     }
 
-    // GET /api/us/v1/users/{id}  — any user by id
-    data class GetUserById(val userId: String) : ProfileEndpoints() {
-        override val path = "api/us/v1/users/$userId"
+    /**
+     * GET /api/us/v1/users/{userId}/{clubId} — any user by id, scoped to a community.
+     * The path segment is named clubId server-side but carries the **community** id: the
+     * stored one from login for club/event/hangout contexts, or the community being viewed
+     * when the profile was opened from a community detail.
+     */
+    data class GetUserById(val userId: String, val clubId: Int) : ProfileEndpoints() {
+        override val path = "api/us/v1/users/$userId/$clubId"
         override val method = NetworkMethod.GET
     }
 

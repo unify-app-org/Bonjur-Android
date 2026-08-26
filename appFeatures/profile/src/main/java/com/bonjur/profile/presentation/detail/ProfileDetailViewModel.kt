@@ -141,7 +141,7 @@ class ProfileDetailViewModel @Inject constructor(
             val userId = inputData.userId
 
             val results = coroutineScope {
-                val user = async { runCatching { dependencies.useCase.fetchProfileData(userId) } }
+                val user = async { runCatching { dependencies.useCase.fetchProfileData(userId, inputData.communityId) } }
                 val clubs = async { runCatching { dependencies.useCase.getMyClubs(userId) } }
                 // events/my is self-only — fetch only for own profile, hide for another user.
                 val events = async {

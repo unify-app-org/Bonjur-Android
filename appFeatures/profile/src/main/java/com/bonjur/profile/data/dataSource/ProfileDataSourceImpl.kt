@@ -11,8 +11,8 @@ class ProfileDataSourceImpl @Inject constructor(
     override suspend fun getMyProfile(): com.bonjur.profile.data.DTOs.UserProfileResponse =
         fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.GetMyProfile)
 
-    override suspend fun getUserById(userId: String): com.bonjur.profile.data.DTOs.UserProfileResponse =
-        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.GetUserById(userId))
+    override suspend fun getUserById(userId: String, clubId: Int): com.bonjur.profile.data.DTOs.UserProfileResponse =
+        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.GetUserById(userId, clubId))
 
     override suspend fun updateProfile(
         fields: Map<String, String>,

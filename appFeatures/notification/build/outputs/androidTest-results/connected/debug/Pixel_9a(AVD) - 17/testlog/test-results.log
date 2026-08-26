@@ -1,7 +1,7 @@
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest
 INSTRUMENTATION_STATUS: current=1
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=
 com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest:
 INSTRUMENTATION_STATUS: test=bannerStaysOnScreenAfterScrollingTheFeed
@@ -9,58 +9,72 @@ INSTRUMENTATION_STATUS_CODE: 1
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest
 INSTRUMENTATION_STATUS: current=1
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=.
 INSTRUMENTATION_STATUS: test=bannerStaysOnScreenAfterScrollingTheFeed
 INSTRUMENTATION_STATUS_CODE: 0
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest
 INSTRUMENTATION_STATUS: current=2
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=
 INSTRUMENTATION_STATUS: test=bannerIsOnScreenWithAFullFeed
 INSTRUMENTATION_STATUS_CODE: 1
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest
 INSTRUMENTATION_STATUS: current=2
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=.
 INSTRUMENTATION_STATUS: test=bannerIsOnScreenWithAFullFeed
 INSTRUMENTATION_STATUS_CODE: 0
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest
 INSTRUMENTATION_STATUS: current=3
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=
 INSTRUMENTATION_STATUS: test=bannerIsOnScreenWithAnEmptyFeed
 INSTRUMENTATION_STATUS_CODE: 1
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest
 INSTRUMENTATION_STATUS: current=3
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=.
 INSTRUMENTATION_STATUS: test=bannerIsOnScreenWithAnEmptyFeed
 INSTRUMENTATION_STATUS_CODE: 0
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest
 INSTRUMENTATION_STATUS: current=4
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=
 com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest:
-INSTRUMENTATION_STATUS: test=openingTheFeedOnlyLoadsTheFeed
+INSTRUMENTATION_STATUS: test=openingTheFeedNeverProbesTheAdminVerificationQueue
 INSTRUMENTATION_STATUS_CODE: 1
 INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest
 INSTRUMENTATION_STATUS: current=4
 INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
-INSTRUMENTATION_STATUS: numtests=4
+INSTRUMENTATION_STATUS: numtests=5
 INSTRUMENTATION_STATUS: stream=.
-INSTRUMENTATION_STATUS: test=openingTheFeedOnlyLoadsTheFeed
+INSTRUMENTATION_STATUS: test=openingTheFeedNeverProbesTheAdminVerificationQueue
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=5
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=openingTheFeedLoadsTheFeedAndTheBannerCountOnly
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=5
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=openingTheFeedLoadsTheFeedAndTheBannerCountOnly
 INSTRUMENTATION_STATUS_CODE: 0
 INSTRUMENTATION_RESULT: stream=
 
-Time: 8.685
+Time: 10.053
 
-OK (4 tests)
+OK (5 tests)
 
 
 INSTRUMENTATION_CODE: -1

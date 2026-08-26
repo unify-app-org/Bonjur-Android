@@ -35,8 +35,9 @@ sealed class DiscoverEndPoints : AppEndpoint {
         override val method = NetworkMethod.GET
     }
 
-    data class GetUserById(val userId: String) : DiscoverEndPoints() {
-        override val path = "api/us/v1/users/$userId"
+    /** See `ProfileEndpoints.GetUserById` — the trailing segment is the community id. */
+    data class GetUserById(val userId: String, val clubId: Int) : DiscoverEndPoints() {
+        override val path = "api/us/v1/users/$userId/$clubId"
         override val method = NetworkMethod.GET
     }
 

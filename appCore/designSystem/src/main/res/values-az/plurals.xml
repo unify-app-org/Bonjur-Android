@@ -18,4 +18,9 @@
         <item quantity="one">%1$d klub təsdiqinizi gözləyir</item>
         <item quantity="other">%1$d klub təsdiqinizi gözləyir</item>
     </plurals>
+
+    <plurals name="requests_waiting">
+        <item quantity="one">%1$d sorğu sizi gözləyir</item>
+        <item quantity="other">%1$d sorğu sizi gözləyir</item>
+    </plurals>
 </resources>

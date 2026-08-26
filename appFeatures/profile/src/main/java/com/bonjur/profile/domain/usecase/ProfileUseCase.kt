@@ -11,7 +11,12 @@ import com.bonjur.profile.presentation.detail.models.ProfileDetail
 interface ProfileUseCase {
     // Profile is always fetched by id (own id from token for self), mirroring iOS.
     // `userId == null` → the logged-in user.
-    suspend fun fetchProfileData(userId: String?): ProfileDetail.UIModel
+    /**
+     * [communityId] scopes the lookup. Pass the community being viewed when the profile was
+     * opened from a community detail; leave it null everywhere else (club/event/hangout, own
+     * profile) to fall back to the community stored at login.
+     */
+    suspend fun fetchProfileData(userId: String?, communityId: Int? = null): ProfileDetail.UIModel
 
     // My clubs (`GET api/cs/v1/clubs/{userId}/myclubs`)
     suspend fun getMyClubs(userId: String?): List<ClubCardModel>
