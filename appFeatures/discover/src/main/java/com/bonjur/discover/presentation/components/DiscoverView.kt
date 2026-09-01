@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import com.bonjur.discover.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -293,21 +294,17 @@ private fun ProfileView(
                     )
                 }
                 if (unreadCount > 0) {
+                    // A dot, not a count pill: "unread notifications exist" is the whole
+                    // signal, and it matches the red attention dot used inside the feed
+                    // (unread row / needs-action / verification). Mirrors iOS `unreadBadge`.
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .defaultMinSize(minWidth = 18.dp, minHeight = 18.dp)
-                            .background(Palette.cardBgRed, CircleShape)
-                            .padding(horizontal = 4.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = if (unreadCount > 99) "99+" else unreadCount.toString(),
-                            style = AppTypography.TextSm.bold,
-                            color = Palette.white,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                            .offset(y = 2.dp)
+                            .size(12.dp)
+                            .background(Palette.destructiveRed, CircleShape)
+                            .border(1.5.dp, Palette.white, CircleShape)
+                    )
                 }
             }
         }

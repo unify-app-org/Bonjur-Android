@@ -56,6 +56,7 @@ import com.bonjur.designSystem.components.button.AppButtonSize
 import com.bonjur.designSystem.components.button.ButtonType
 import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.cashedImage.CachedAsyncImage
+import com.bonjur.designSystem.components.imagePreview.ImagePreviewable
 import com.bonjur.designSystem.components.emptyView.AppEmptyModel
 import com.bonjur.designSystem.components.emptyView.AppEmptyView
 import com.bonjur.designSystem.components.segmentView.CapsuleSegmentedPicker
@@ -286,7 +287,9 @@ private fun StretchableHeader(
     val totalHeight = baseHeight + extraHeight
     val scale = 1f + (pullDown / 3500f)
 
-    Box(
+    // Long-press the cover to see it full screen (mirrors iOS).
+    ImagePreviewable(
+        url = imageUrl,
         modifier = Modifier
             .fillMaxWidth()
             .height(totalHeight)

@@ -1,5 +1,6 @@
 package com.bonjur.profile.presentation.detail.components
 
+import com.bonjur.designSystem.components.imagePreview.ImagePreviewable
 import com.bonjur.designsystem.R as DesignR
 import androidx.compose.ui.res.stringResource
 import com.bonjur.profile.R
@@ -398,37 +399,40 @@ private fun CompactHeaderView(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        com.bonjur.designSystem.components.cashedImage.CachedAsyncImage(
-            url = card.imageUrl,
-            modifier = Modifier
-                .size(88.dp)
-                .clip(CircleShape)
-                .border(3.dp, Palette.grayTeritary.copy(alpha = 0.3f), CircleShape)
-                .background(Palette.grayQuaternary),
-            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
-            placeholder = {
-                Icon(
-                    painter = Images.Icons.user(),
-                    contentDescription = null,
-                    tint = Palette.blackMedium,
-                    modifier = Modifier
-                        .size(88.dp)
-                        .background(Palette.grayQuaternary, CircleShape)
-                        .padding(22.dp)
-                )
-            },
-            error = {
-                Icon(
-                    painter = Images.Icons.user(),
-                    contentDescription = null,
-                    tint = Palette.blackMedium,
-                    modifier = Modifier
-                        .size(88.dp)
-                        .background(Palette.grayQuaternary, CircleShape)
-                        .padding(22.dp)
-                )
-            }
-        )
+        // Long-press the avatar to see the photo full screen (mirrors iOS).
+        ImagePreviewable(url = card.imageUrl) {
+            com.bonjur.designSystem.components.cashedImage.CachedAsyncImage(
+                url = card.imageUrl,
+                modifier = Modifier
+                    .size(88.dp)
+                    .clip(CircleShape)
+                    .border(3.dp, Palette.grayTeritary.copy(alpha = 0.3f), CircleShape)
+                    .background(Palette.grayQuaternary),
+                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                placeholder = {
+                    Icon(
+                        painter = Images.Icons.user(),
+                        contentDescription = null,
+                        tint = Palette.blackMedium,
+                        modifier = Modifier
+                            .size(88.dp)
+                            .background(Palette.grayQuaternary, CircleShape)
+                            .padding(22.dp)
+                    )
+                },
+                error = {
+                    Icon(
+                        painter = Images.Icons.user(),
+                        contentDescription = null,
+                        tint = Palette.blackMedium,
+                        modifier = Modifier
+                            .size(88.dp)
+                            .background(Palette.grayQuaternary, CircleShape)
+                            .padding(22.dp)
+                    )
+                }
+            )
+        }
 
         Text(
             text = card.nameSurname,

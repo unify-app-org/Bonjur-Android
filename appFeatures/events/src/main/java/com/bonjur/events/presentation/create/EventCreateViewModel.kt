@@ -46,8 +46,12 @@ class EventCreateViewModel @Inject constructor(
         values = mapOf(
             AppFieldSchema.FieldId.VISIBILITY to
                 AppFieldSchema.FieldValue.Radio(AppUIEntities.AccessType.PUBLIC),
+            // Reminders default to AT_EVENT_TIME and are sent as such unless the user
+            // deselects it in the reminder sheet. Mirrors iOS EventCreateViewState.
             AppFieldSchema.FieldId.REMINDER to
-                AppFieldSchema.FieldValue.Reminders(emptyList())
+                AppFieldSchema.FieldValue.Reminders(
+                    listOf(AppFieldSchema.ReminderOption.AT_EVENT_TIME)
+                )
         )
     )
 ) {
