@@ -138,7 +138,7 @@ private fun VerificationBanner(count: Int, onClick: () -> Unit) {
                 modifier = Modifier
                     .size(10.dp)
                     .clip(CircleShape)
-                    .background(Palette.cardBgRed)
+                    .background(Palette.destructiveRed)
             )
         }
     }

@@ -189,7 +189,7 @@ private fun ActionBanner(pendingCount: Int, onClick: () -> Unit) {
                 modifier = Modifier
                     .size(10.dp)
                     .clip(CircleShape)
-                    .background(Palette.cardBgRed)
+                    .background(Palette.destructiveRed)
             )
         }
     }
@@ -236,7 +236,10 @@ private fun FeedRow(item: NotificationFeedItem, onClick: () -> Unit) {
             }
         }
         if (!item.isRead) {
-            Box(modifier = Modifier.size(9.dp).clip(CircleShape).background(Palette.secondary))
+            // Same attention dot as the "Needs your action" banner and the
+            // verification row below it — unread used to be a pale green that read
+            // as decoration next to those.
+            Box(modifier = Modifier.size(10.dp).clip(CircleShape).background(Palette.destructiveRed))
         }
     }
 }
