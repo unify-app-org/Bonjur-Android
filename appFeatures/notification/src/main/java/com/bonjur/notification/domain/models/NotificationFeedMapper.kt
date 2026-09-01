@@ -27,6 +27,7 @@ object NotificationFeedMapper {
         val type = NotificationType.from(dto.type ?: "")
         return NotificationFeedItem(
             id = id.toString(),
+            notificationId = dto.notificationId,
             type = type,
             title = dto.title ?: "",
             subtitle = dto.body ?: "",

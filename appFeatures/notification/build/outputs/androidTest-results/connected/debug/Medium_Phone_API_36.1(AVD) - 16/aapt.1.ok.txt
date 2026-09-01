@@ -1,7 +1,7 @@
 EXECUTING: /Users/huseynhasanov/Library/Android/sdk/build-tools/35.0.0/aapt dump badging /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/apk/androidTest/debug/notification-debug-androidTest.apk
 CURRENT_WORKING_DIRECTORY: /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android
-START_TIME: 2026-08-26 20:59:14.001
-START_TIME-NANOS: 2026-08-26 20:59:14.001388000
+START_TIME: 2026-09-01 21:48:38.427
+START_TIME-NANOS: 2026-09-01 21:48:38.427932000
 ENVIRONMENT:
 
 *****************************************
@@ -28,7 +28,7 @@ locales: '--_--' 'af' 'am' 'ar' 'as' 'az' 'be' 'bg' 'bn' 'bs' 'ca' 'cs' 'da' 'de
 densities: '160' '240' '320' '480' '640' '65534'
 native-code: 'arm64-v8a' 'armeabi-v7a' 'x86' 'x86_64'
 ===================
-END_TIME: 2026-08-26 20:59:14.041
-END_TIME-NANOS: 2026-08-26 20:59:14.041832000
-DURATION: 40ms
+END_TIME: 2026-09-01 21:48:38.549
+END_TIME-NANOS: 2026-09-01 21:48:38.549394000
+DURATION: 121ms
 EXIT CODE: 0

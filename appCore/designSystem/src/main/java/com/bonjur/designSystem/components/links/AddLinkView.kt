@@ -1,6 +1,5 @@
 package com.bonjur.designSystem.components.links
 
-import android.util.Patterns
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
@@ -47,9 +46,10 @@ fun AddLinkView(
     var url by remember { mutableStateOf("") }
 
     val isCustomType = selectedType?.id == CUSTOM_TYPE_ID
-    val isValidUrl = Patterns.WEB_URL.matcher(url.trim()).matches()
+    // No URL shape validation: members paste handles, deep links and intranet
+    // addresses that no web-URL regex accepts. Whatever they type is stored as-is.
     val canAdd = selectedType != null &&
-        isValidUrl &&
+        url.trim().isNotEmpty() &&
         (!isCustomType || linkName.trim().isNotEmpty())
 
     Column(

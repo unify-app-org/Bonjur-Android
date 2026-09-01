@@ -72,7 +72,7 @@ INSTRUMENTATION_STATUS: test=openingTheFeedLoadsTheFeedAndTheBannerCountOnly
 INSTRUMENTATION_STATUS_CODE: 0
 INSTRUMENTATION_RESULT: stream=
 
-Time: 10.053
+Time: 13.789
 
 OK (5 tests)
 

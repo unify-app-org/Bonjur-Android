@@ -79,7 +79,11 @@ fun AppTextField(
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 disabledTextColor = Palette.blackHigh,
-                disabledPlaceholderColor = Palette.blackMedium,
+                // Without these the M3 default (onSurfaceVariant) renders the hint
+                // almost as dark as real input. Matches iOS `.placeholderText`.
+                focusedPlaceholderColor = Palette.graySecondary,
+                unfocusedPlaceholderColor = Palette.graySecondary,
+                disabledPlaceholderColor = Palette.graySecondary,
                 disabledTrailingIconColor = Palette.blackMedium
             ),
             modifier = Modifier

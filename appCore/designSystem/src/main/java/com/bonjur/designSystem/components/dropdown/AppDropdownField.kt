@@ -58,7 +58,7 @@ fun AppDropdownField(
             Text(
                 text = selection?.title ?: placeholder,
                 style = AppTypography.BodyTextMd.regular,
-                color = if (selection == null) Palette.grayPrimary else Palette.blackHigh,
+                color = if (selection == null) Palette.graySecondary else Palette.blackHigh,
                 modifier = Modifier.weight(1f)
             )
             Icon(

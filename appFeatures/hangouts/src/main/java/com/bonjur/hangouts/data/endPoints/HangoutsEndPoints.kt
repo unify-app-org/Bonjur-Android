@@ -40,7 +40,7 @@ sealed class HangoutsEndPoints : AppEndpoint {
 
     data class EditHangout(
         val hangoutId: String,
-        val request: com.bonjur.hangouts.data.DTOs.HangoutCreateRequest
+        val request: com.bonjur.hangouts.data.DTOs.HangoutUpdateRequest
     ) : HangoutsEndPoints() {
         override val path = "api/hs/v1/hangouts/$hangoutId"
         override val method = NetworkMethod.PUT

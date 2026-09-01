@@ -37,8 +37,15 @@ fun NavGraphBuilder.eventsNavGraph(navigator: Navigator) {
         }
 
         composable<EventsScreens.Create> {
+            // Create used to hardcode empty input, so a club id put by the caller (club
+            // detail's "Create event") was dropped and the picker always opened on the
+            // first eligible club. `NavArgs.get` consumes the entry, so entering Create
+            // from the global "+" still gets a blank form.
+            val inputData = remember {
+                NavArgs.get<EventCreateInputData>() ?: EventCreateInputData()
+            }
             EventCreateScreen(
-                inputData = EventCreateInputData(),
+                inputData = inputData,
                 navigator = navigator
             )
         }

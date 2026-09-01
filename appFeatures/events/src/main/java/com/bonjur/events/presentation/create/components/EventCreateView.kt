@@ -317,7 +317,7 @@ private fun ClubSelector(
             Text(
                 text = selectedName ?: stringResource(R.string.events_select_club),
                 style = AppTypography.BodyTextMd.regular,
-                color = if (selectedName == null) Palette.grayPrimary else Palette.blackHigh,
+                color = if (selectedName == null) Palette.graySecondary else Palette.blackHigh,
                 modifier = Modifier.weight(1f)
             )
             Icon(

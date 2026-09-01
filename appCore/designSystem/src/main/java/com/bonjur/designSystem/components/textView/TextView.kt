@@ -84,7 +84,7 @@ fun TextView(
                                 text = placeholder,
                                 style = TextStyle(
                                     fontSize = 16.sp,
-                                    color = Color.Gray
+                                    color = Palette.graySecondary
                                 )
                             )
                         }

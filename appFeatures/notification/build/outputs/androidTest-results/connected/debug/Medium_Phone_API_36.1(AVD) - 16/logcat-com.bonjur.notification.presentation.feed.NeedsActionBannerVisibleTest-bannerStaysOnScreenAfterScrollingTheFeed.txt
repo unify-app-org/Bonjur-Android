@@ -1,0 +1,125 @@
+09-01 21:48:24.413  8847  8870 I TestRunner: started: bannerStaysOnScreenAfterScrollingTheFeed(com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest)
+09-01 21:48:24.429  8847  8870 I Tracing : Tracer added: class androidx.test.platform.tracing.AndroidXTracer
+09-01 21:48:24.440  8847  8870 D IdlingRegistry: Registering idling resources: [androidx.compose.ui.test.EspressoLink@ca4008c]
+09-01 21:48:24.446  8847  8870 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+09-01 21:48:24.449  8847  8870 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+09-01 21:48:24.456   675  1607 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@fb7f02af does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+09-01 21:48:24.465   539   621 I libbinder.BpBinder: onLastStrongRef automatically unlinking death recipients for descriptor: '(not cached)'
+09-01 21:48:24.524  1100  1100 D RecentsView: onTaskDisplayChanged: 57, new displayId = 0
+09-01 21:48:24.558  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:24.563   961  1164 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@8fd5f54
+09-01 21:48:24.633   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:24.634   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:24.653   675   727 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.app.Dialog$$ExternalSyntheticLambda2@9ee6178
+09-01 21:48:24.674  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@d4ebf9a in: PRE_ON_CREATE
+09-01 21:48:24.676  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+09-01 21:48:24.681  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:24.771  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:24.803  8847  8847 D DesktopExperienceFlags: Toggle override initialized to: false
+09-01 21:48:24.803  8847  8847 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+09-01 21:48:24.805  1874  1874 D BoundBrokerSvc: onBind: Intent { act=com.google.android.gms.measurement.START xflg=0x4 pkg=com.google.android.gms }
+09-01 21:48:24.805  1874  1874 D BoundBrokerSvc: Loading bound service for intent: Intent { act=com.google.android.gms.measurement.START xflg=0x4 pkg=com.google.android.gms }
+09-01 21:48:24.869  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@d4ebf9a in: CREATED
+09-01 21:48:24.875  8847  8847 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=androidx.activity.ComponentActivity@d4ebf9a
+09-01 21:48:24.879  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@d4ebf9a in: STARTED
+09-01 21:48:24.880  8847  8847 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=androidx.activity.ComponentActivity@d4ebf9a
+09-01 21:48:24.921  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@d4ebf9a in: RESUMED
+09-01 21:48:24.943  8847  8847 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=androidx.activity.ComponentActivity@d4ebf9a
+09-01 21:48:24.951  8847  8877 I GFXSTREAM: [eglDisplay.cpp(297)] Opening libGLESv1_CM_emulation.so
+09-01 21:48:24.978  8847  8877 I GFXSTREAM: [eglDisplay.cpp(297)] Opening libGLESv2_emulation.so
+09-01 21:48:24.982  8847  8847 W HWUI    : Unknown dataspace 0
+09-01 21:48:25.137  8847  8877 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+09-01 21:48:25.138  8847  8877 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-01 21:48:25.171  1874  8889 D AdvertisingIdClient: AdvertisingIdClient already created.
+09-01 21:48:25.204  1874  8889 D AdvertisingIdClient: AdvertisingIdClient is not bounded. Starting to bind it...
+09-01 21:48:25.238   675  8882 I GFXSTREAM: [eglDisplay.cpp(297)] Opening libGLESv1_CM_emulation.so
+09-01 21:48:25.368  8542  8542 D VRI[MainActivity]: visibilityChanged oldVisibility=true newVisibility=false
+09-01 21:48:25.372  8847  8847 D VRI[ComponentActivity]: WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84]
+09-01 21:48:25.385  1093  1225 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+09-01 21:48:25.386  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@a5c5e49
+09-01 21:48:25.432   539   644 W libbinder.ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10217 pid=0
+09-01 21:48:25.432   539   644 D libbinder.PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10217 => denied (454 us)
+09-01 21:48:25.432   539   595 W libbinder.ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10217 pid=8847
+09-01 21:48:25.433   539   595 D libbinder.PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10217 => denied (122 us)
+09-01 21:48:25.433   539   595 W libbinder.ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10217 pid=8847
+09-01 21:48:25.433   539   595 D libbinder.PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10217 => denied (529 us)
+09-01 21:48:25.434   539   644 W libbinder.ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10217 pid=0
+09-01 21:48:25.434   539   644 D libbinder.PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10217 => denied (2560 us)
+09-01 21:48:25.437  1093  1225 D SatelliteController: getCarrierRoamingNtnConnectType: Falling back to global carrier config connect type: 0
+09-01 21:48:25.500   675  8882 I GFXSTREAM: [eglDisplay.cpp(297)] Opening libGLESv2_emulation.so
+09-01 21:48:25.509  1874  8889 D AdvertisingIdClient: AdvertisingIdClient is bounded
+09-01 21:48:25.523   675   943 W ImageReader_JNI: Unable to acquire a buffer item, very likely client tried to acquire more than maxImages buffers
+09-01 21:48:25.529   675  8882 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+09-01 21:48:25.536   675  8882 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+09-01 21:48:25.540  1874  8889 I AdvertisingIdClient: shouldSendLog 3785440
+09-01 21:48:25.541  1874  8889 I AdvertisingIdClient: GetInfoInternal elapse 336ms
+09-01 21:48:25.603   675  1607 W libbinder.ServiceManagerCppClient: Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10217 pid=0
+09-01 21:48:25.604   675  1607 D libbinder.PermissionCache: checking android.permission.ACCESS_SURFACE_FLINGER for uid=10217 => denied (1005 us)
+09-01 21:48:25.605   675  1607 W libbinder.ServiceManagerCppClient: Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10217 pid=0
+09-01 21:48:25.606   675  1607 D libbinder.PermissionCache: checking android.permission.ROTATE_SURFACE_FLINGER for uid=10217 => denied (1207 us)
+09-01 21:48:25.606   675  1607 W libbinder.ServiceManagerCppClient: Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10217 pid=0
+09-01 21:48:25.606   675  1607 D libbinder.PermissionCache: checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10217 => denied (33 us)
+09-01 21:48:25.621  8542  8542 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.app.Activity$$ExternalSyntheticLambda0@a142f51
+09-01 21:48:25.638   675   726 I ActivityTaskManager: Displayed com.bonjur.notification.test/androidx.activity.ComponentActivity for user 0: +1s158ms
+09-01 21:48:25.651   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+09-01 21:48:25.652   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+09-01 21:48:25.652   675   874 D InetDiagMessage: Destroyed live tcp sockets for uids={10162} in 6ms
+09-01 21:48:25.653   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+09-01 21:48:25.653   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+09-01 21:48:25.653   675   874 D InetDiagMessage: Destroyed live tcp sockets for uids={20162} in 1ms
+09-01 21:48:25.746  1269  1279 I FontLog : (REDACTED) Received query %s, URI %s
+09-01 21:48:25.747  1269  1279 I FontLog : (REDACTED) Query [%s] resolved to %s
+09-01 21:48:25.789  1269  1279 I FontLog : (REDACTED) Fetch %s end status %s
+09-01 21:48:25.798  1269  1279 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+09-01 21:48:25.825  8847  8894 I HWUI    : Using FreeType backend (prop=Auto)
+09-01 21:48:25.864  1269  1279 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+09-01 21:48:25.908   675  8884 E SurfaceSyncGroup: Failed to receive transaction ready in 1000ms. Marking SurfaceSyncGroup(wmsSync-VRI[DeprecatedTargetSdkVersionDialog]#0) as ready
+09-01 21:48:25.908   675  8884 E SurfaceSyncGroup: Failed to receive transaction ready in 1000ms. Marking SurfaceSyncGroup(VRI[DeprecatedTargetSdkVersionDialog]#1) as ready
+09-01 21:48:25.987   961  1164 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:26.364  8847  8847 I tification.test: hiddenapi: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/compose/ui/platform/AndroidComposeView$Companion; (domain=app, TargetSdkVersion=26) using reflection: allowed
+09-01 21:48:26.598   675   727 I Choreographer: Skipped 116 frames!  The application may be doing too much work on its main thread.
+09-01 21:48:26.605   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:26.605   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:26.616   675  1054 I HWUI    : Davey! duration=1953ms; Flags=1, FrameTimelineVsyncId=255140, IntendedVsync=4755200901049, Vsync=4755200901049, InputEventId=0, HandleInputStart=4755214368767, AnimationStart=4755214368892, PerformTraversalsStart=4755214368975, DrawStart=4756148235809, FrameDeadline=4755217567715, FrameStartTime=4755214368058, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=4756153993100, SyncStart=4756154748475, IssueDrawCommandsStart=4756158310017, SwapBuffers=4757145773226, FrameCompleted=4757155242268, DequeueBufferDuration=7125, QueueBufferDuration=7651375, GpuCompleted=4757155170059, SwapBuffersCompleted=4757155242268, DisplayPresentTime=8746941997994749552, CommandSubmissionCompleted=4757145773226,
+09-01 21:48:26.887  8542  8876 I FA      : Application backgrounded at: timestamp_millis: 1788284904882
+09-01 21:48:26.918   675   868 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+09-01 21:48:27.109  8847  8851 I tification.test: Compiler allocated 5145KB to compile void android.view.ViewRootImpl.performTraversals()
+09-01 21:48:27.528   675  1607 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@fb7f02af does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+09-01 21:48:27.535   539   644 I libbinder.BpBinder: onLastStrongRef automatically unlinking death recipients for descriptor: '(not cached)'
+09-01 21:48:27.537  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@d4ebf9a in: PAUSED
+09-01 21:48:27.538  8847  8847 V ActivityScenario: Update currentActivityStage to PAUSED, currentActivity=androidx.activity.ComponentActivity@d4ebf9a
+09-01 21:48:27.564   675   727 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:27.571  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89 in: PRE_ON_CREATE
+09-01 21:48:27.572  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89
+09-01 21:48:27.603  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89 in: CREATED
+09-01 21:48:27.603  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89
+09-01 21:48:27.604  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89 in: STARTED
+09-01 21:48:27.604  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89
+09-01 21:48:27.606  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89 in: RESUMED
+09-01 21:48:27.606  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89
+09-01 21:48:27.635   675   727 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.app.Dialog$$ExternalSyntheticLambda2@2210228
+09-01 21:48:27.668  8847  8847 D VRI[InstrumentationActivityInvoker$EmptyActivity]: WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84]
+09-01 21:48:27.668  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@35cea43
+09-01 21:48:27.669  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:27.788  8847  8899 D ProfileInstaller: Installing profile for com.bonjur.notification.test
+09-01 21:48:27.789  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:27.803  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89 in: PAUSED
+09-01 21:48:27.804  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89
+09-01 21:48:27.852  8542  8542 D ViewRootImpl: Skipping stats log for color mode
+09-01 21:48:27.853  8542  8542 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): androidx.activity.OnBackPressedDispatcher$Api34Impl$createOnBackAnimationCallback$1@42c32ba
+09-01 21:48:27.983  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:28.455   946   946 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS
+09-01 21:48:28.545  8847  8847 D VRI[ComponentActivity]: visibilityChanged oldVisibility=true newVisibility=false
+09-01 21:48:28.549   675   943 W ImageReader_JNI: Unable to acquire a buffer item, very likely client tried to acquire more than maxImages buffers
+09-01 21:48:28.572  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@d4ebf9a in: STOPPED
+09-01 21:48:28.573  8847  8847 V ActivityScenario: Update currentActivityStage to STOPPED, currentActivity=androidx.activity.ComponentActivity@d4ebf9a
+09-01 21:48:28.599  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@d4ebf9a in: DESTROYED
+09-01 21:48:28.599  8847  8847 V ActivityScenario: Update currentActivityStage to DESTROYED, currentActivity=null
+09-01 21:48:28.601  8847  8870 D IdlingRegistry: Unregistering idling resources: [androidx.compose.ui.test.EspressoLink@ca4008c]
+09-01 21:48:28.601  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:28.603  8847  8847 D ViewRootImpl: Skipping stats log for color mode
+09-01 21:48:28.619  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89 in: STOPPED
+09-01 21:48:28.620  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@58e5c89 in: DESTROYED
+09-01 21:48:28.620  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:28.621  8847  8847 D ViewRootImpl: Skipping stats log for color mode
+09-01 21:48:28.623  8847  8870 I TestRunner: finished: bannerStaysOnScreenAfterScrollingTheFeed(com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest)

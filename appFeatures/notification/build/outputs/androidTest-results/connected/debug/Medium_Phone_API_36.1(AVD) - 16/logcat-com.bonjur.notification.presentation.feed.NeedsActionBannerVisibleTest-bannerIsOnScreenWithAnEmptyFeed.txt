@@ -1,0 +1,114 @@
+09-01 21:48:32.039  8847  8870 I TestRunner: started: bannerIsOnScreenWithAnEmptyFeed(com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest)
+09-01 21:48:32.040  8847  8870 D IdlingRegistry: Registering idling resources: [androidx.compose.ui.test.EspressoLink@f3234fa]
+09-01 21:48:32.041  8847  8870 W Settings: Setting always_finish_activities has moved from android.provider.Settings.System to android.provider.Settings.Global, returning read-only value.
+09-01 21:48:32.043   675  1850 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@fb7f02af does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+09-01 21:48:32.045   539   597 I libbinder.BpBinder: onLastStrongRef automatically unlinking death recipients for descriptor: '(not cached)'
+09-01 21:48:32.052   675   727 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:32.072  1100  1100 D RecentsView: onTaskDisplayChanged: 59, new displayId = 0
+09-01 21:48:32.086  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@4b31f77 in: PRE_ON_CREATE
+09-01 21:48:32.086  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the reported transition was not ON_CREATE while the last known transition was PRE_ON_CREATE
+09-01 21:48:32.088  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:32.088  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:32.090   961  1164 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@3eff3d1
+09-01 21:48:32.094  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@4b31f77 in: CREATED
+09-01 21:48:32.094  8847  8847 V ActivityScenario: Update currentActivityStage to CREATED, currentActivity=androidx.activity.ComponentActivity@4b31f77
+09-01 21:48:32.099  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@4b31f77 in: STARTED
+09-01 21:48:32.099  8847  8847 V ActivityScenario: Update currentActivityStage to STARTED, currentActivity=androidx.activity.ComponentActivity@4b31f77
+09-01 21:48:32.101  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@4b31f77 in: RESUMED
+09-01 21:48:32.101  8847  8847 V ActivityScenario: Update currentActivityStage to RESUMED, currentActivity=androidx.activity.ComponentActivity@4b31f77
+09-01 21:48:32.187  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:32.236  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:32.255  8847  8847 D VRI[ComponentActivity]: WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84]
+09-01 21:48:32.256  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@2052b80
+09-01 21:48:32.323   675   727 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.app.Dialog$$ExternalSyntheticLambda2@f1fc015
+09-01 21:48:32.421   675   726 I ActivityTaskManager: Displayed com.bonjur.notification.test/androidx.activity.ComponentActivity for user 0: +363ms
+09-01 21:48:32.513   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:32.513   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:32.784  8542  8542 D VRI[MainActivity]: visibilityChanged oldVisibility=true newVisibility=false
+09-01 21:48:32.785   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:32.785   568  8482 W libbinder.IPCThreadState: Sending oneway calls to frozen process.
+09-01 21:48:32.809   961  1164 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:32.822  8542  8542 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.app.Activity$$ExternalSyntheticLambda0@a142f51
+09-01 21:48:32.977   675   868 I HalDevMgr: bestIfaceCreationProposal is null, requestIface=STA, existingIface=[name=wlan0 type=STA]
+09-01 21:48:33.067   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+09-01 21:48:33.070   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+09-01 21:48:33.070   675   874 D InetDiagMessage: Destroyed live tcp sockets for uids={10105} in 3ms
+09-01 21:48:33.234   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+09-01 21:48:33.236   675   874 D InetDiagMessage: Destroyed 1 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+09-01 21:48:33.237   675   874 D InetDiagMessage: Destroyed live tcp sockets for uids={10145} in 2ms
+09-01 21:48:33.477   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+09-01 21:48:33.478   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+09-01 21:48:33.479   675   874 D InetDiagMessage: Destroyed live tcp sockets for uids={10151} in 2ms
+09-01 21:48:33.480   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET, states=14
+09-01 21:48:33.480   675   874 D InetDiagMessage: Destroyed 0 sockets, proto=IPPROTO_TCP, family=AF_INET6, states=14
+09-01 21:48:33.481   675   874 D InetDiagMessage: Destroyed live tcp sockets for uids={20151} in 2ms
+09-01 21:48:33.484   675   943 W ImageReader_JNI: Unable to acquire a buffer item, very likely client tried to acquire more than maxImages buffers
+09-01 21:48:34.015   675  1848 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@fb7f02af does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+09-01 21:48:34.053   539   597 I libbinder.BpBinder: onLastStrongRef automatically unlinking death recipients for descriptor: '(not cached)'
+09-01 21:48:34.086  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@4b31f77 in: PAUSED
+09-01 21:48:34.086  8847  8847 V ActivityScenario: Update currentActivityStage to PAUSED, currentActivity=androidx.activity.ComponentActivity@4b31f77
+09-01 21:48:34.094  8542  8876 I FA      : Application backgrounded at: timestamp_millis: 1788284912093
+09-01 21:48:34.102  8913  8913 W libbinder.BackendUnifiedServiceManager: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: package
+09-01 21:48:34.106  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360 in: PRE_ON_CREATE
+09-01 21:48:34.106  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360
+09-01 21:48:34.139  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360 in: CREATED
+09-01 21:48:34.139  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360
+09-01 21:48:34.140  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360 in: STARTED
+09-01 21:48:34.140  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360
+09-01 21:48:34.145  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360 in: RESUMED
+09-01 21:48:34.145  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360
+09-01 21:48:34.146   675   727 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:34.170  8847  8847 D VRI[InstrumentationActivityInvoker$EmptyActivity]: WindowInsets changed: 1080x2400 statusBars:[0,63,0,0] navigationBars:[0,0,0,63] mandatorySystemGestures:[0,63,0,84]
+09-01 21:48:34.170  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.view.ViewRootImpl$$ExternalSyntheticLambda12@a028742
+09-01 21:48:34.219  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:34.306   675   727 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): android.app.Dialog$$ExternalSyntheticLambda2@bba5157
+09-01 21:48:34.323  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360 in: PAUSED
+09-01 21:48:34.323  8847  8847 V ActivityScenario: Activity lifecycle changed event received but ignored because the intent does not match. startActivityIntent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10008000 cmp=com.bonjur.notification.test/androidx.activity.ComponentActivity }, activity.getIntent()=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.bonjur.notification.test/androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity }, activity=androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360
+09-01 21:48:34.339  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:34.351  8542  8542 D ViewRootImpl: Skipping stats log for color mode
+09-01 21:48:34.352  8542  8542 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): androidx.activity.OnBackPressedDispatcher$Api34Impl$createOnBackAnimationCallback$1@42c32ba
+09-01 21:48:34.367  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+09-01 21:48:34.372  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_AdsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+09-01 21:48:34.383  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_CronetDynamite_installtime.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+09-01 21:48:34.387  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_DynamiteLoader_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+09-01 21:48:34.389  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_DynamiteModulesA_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+09-01 21:48:34.401  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_DynamiteModulesC_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+09-01 21:48:34.408  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_GoogleCertificates_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+09-01 21:48:34.418  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_MapsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+09-01 21:48:34.435  2122  6598 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~H84egvGeVhm0N6-M_yHnCg==/com.google.android.gms-Uy5TbPmbG8q2He4HWRBfhA==/oat/arm64/split_MeasurementDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+09-01 21:48:34.448  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk has no usable artifacts
+09-01 21:48:34.451  2122  6598 I artd    : GetBestInfo: vdex next to the dex file (/data/user/0/com.google.android.gms/app_dg_cache/F43216EC192C66BFB5A30C3CDD57E8C5C9005730/oat/arm64/the.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-01 21:48:34.455  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.apk has no usable artifacts
+09-01 21:48:34.458  2122  6598 I artd    : GetBestInfo: vdex next to the dex file (/data/user/0/com.google.android.gms/app_dg_cache/AEB5BC832EBF3852F39BA4BE495DD40566104436/oat/arm64/the.vdex) is kOatUpToDate with filter 'verify' executable 'false'
+09-01 21:48:34.464  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000a/dl-Appsearch.optional_253434100400.apk has no usable artifacts
+09-01 21:48:34.471  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk has no usable artifacts
+09-01 21:48:34.472  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000009/dl-TfliteDynamiteDynamite.integ_260580502100400.apk has no usable artifacts
+09-01 21:48:34.484  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000015/dl-Appsearch.optional_263234100400.apk has no usable artifacts
+09-01 21:48:34.485  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000010/dl-MlkitBarcodeUi.optional_263234100400.apk has no usable artifacts
+09-01 21:48:34.487  1100  1100 D b/417220811: invalidateLoadedTasks - previous requestLoadId: -1
+09-01 21:48:34.488  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000c/dl-VisionOcr.optional_253434100000.apk has no usable artifacts
+09-01 21:48:34.499  2122  6598 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000012/dl-PlayCloudSearch.optional_263234100000.apk has no usable artifacts
+09-01 21:48:34.502  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000d/dl-MlkitOcrCommon.optional_253434100400.apk has no usable artifacts
+09-01 21:48:34.519  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000011/dl-VisionOcr.optional_263234100000.apk has no usable artifacts
+09-01 21:48:34.521  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000013/dl-MlkitOcrCommon.optional_263234100400.apk has no usable artifacts
+09-01 21:48:34.522  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.apk has no usable artifacts
+09-01 21:48:34.532  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000017/dl-IdentityCredentialsPlatform.optional_263234100400.apk has no usable artifacts
+09-01 21:48:34.554  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000e/dl-PlayCloudSearch.optional_253434100000.apk has no usable artifacts
+09-01 21:48:34.556  2122  2123 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000b/dl-MlkitBarcodeUi.optional_253434100400.apk has no usable artifacts
+09-01 21:48:34.972   675   717 I system_server: Background young concurrent mark compact GC freed 16MB AllocSpace bytes, 8(188KB) LOS objects, 39% free, 35MB/58MB, paused 477us,1.459ms total 649.818ms
+09-01 21:48:35.138  8847  8847 D VRI[ComponentActivity]: visibilityChanged oldVisibility=true newVisibility=false
+09-01 21:48:35.170  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@4b31f77 in: STOPPED
+09-01 21:48:35.170  8847  8847 V ActivityScenario: Update currentActivityStage to STOPPED, currentActivity=androidx.activity.ComponentActivity@4b31f77
+09-01 21:48:35.173  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.activity.ComponentActivity@4b31f77 in: DESTROYED
+09-01 21:48:35.173  8847  8847 V ActivityScenario: Update currentActivityStage to DESTROYED, currentActivity=null
+09-01 21:48:35.174  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:35.176  8847  8870 D IdlingRegistry: Unregistering idling resources: [androidx.compose.ui.test.EspressoLink@f3234fa]
+09-01 21:48:35.177  8847  8847 D ViewRootImpl: Skipping stats log for color mode
+09-01 21:48:35.180  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360 in: STOPPED
+09-01 21:48:35.181  8847  8847 D LifecycleMonitor: Lifecycle status change: androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity@e2c4360 in: DESTROYED
+09-01 21:48:35.181  8847  8847 D WindowOnBackDispatcher: setTopOnBackInvokedCallback (unwrapped): null
+09-01 21:48:35.182  8847  8847 D ViewRootImpl: Skipping stats log for color mode
+09-01 21:48:35.182   675   943 W ImageReader_JNI: Unable to acquire a buffer item, very likely client tried to acquire more than maxImages buffers
+09-01 21:48:35.185  1100  1100 D RecentsView: onTaskRemoved: 59, not handling task stack changes
+09-01 21:48:35.185  1100  1100 D RecentsView: onTaskRemoved: 59, not handling task stack changes
+09-01 21:48:35.186  8847  8870 I TestRunner: finished: bannerIsOnScreenWithAnEmptyFeed(com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest)

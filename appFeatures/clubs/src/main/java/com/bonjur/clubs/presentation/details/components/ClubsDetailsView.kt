@@ -70,6 +70,7 @@ import com.bonjur.events.presentation.list.components.EventsCardView
 import com.bonjur.events.presentation.list.models.EventsCardModel
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import com.bonjur.designSystem.utils.asBrowsableUri
 
 @Composable
 fun ClubDetailsView(
@@ -754,7 +755,7 @@ private fun InfoSubItem(subItem: ClubsDetails.SubInfo) {
                 )
             }
             subItem.isLink -> runCatching {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(subItem.description)))
+                context.startActivity(Intent(Intent.ACTION_VIEW, subItem.description.asBrowsableUri()))
             }
         }
     }

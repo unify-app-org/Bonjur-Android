@@ -2,6 +2,7 @@ package com.bonjur.hangouts.data.dataSource
 
 import com.bonjur.hangouts.data.DTOs.HangoutCategorySectionResponse
 import com.bonjur.hangouts.data.DTOs.HangoutCreateRequest
+import com.bonjur.hangouts.data.DTOs.HangoutUpdateRequest
 import com.bonjur.hangouts.data.DTOs.HangoutDetailResponse
 import com.bonjur.hangouts.data.DTOs.HangoutJoinRequest
 import com.bonjur.hangouts.data.DTOs.HangoutListResponse
@@ -13,7 +14,7 @@ interface HangoutsDataSource {
     suspend fun getHangoutMembers(hangoutId: String, page: Int = 0, size: Int = 100, keyword: String? = null): HangoutMembersResponse
     suspend fun getCategories(): List<HangoutCategorySectionResponse>
     suspend fun createHangout(request: HangoutCreateRequest): ByteArray
-    suspend fun editHangout(hangoutId: String, request: HangoutCreateRequest): ByteArray
+    suspend fun editHangout(hangoutId: String, request: HangoutUpdateRequest): ByteArray
     suspend fun joinHangout(request: HangoutJoinRequest): ByteArray
     suspend fun exitHangout(hangoutId: String): ByteArray
     suspend fun deleteHangout(hangoutId: String): ByteArray

@@ -121,8 +121,11 @@ class EventCreateViewModel @Inject constructor(
                     updateState(
                         state.copy(
                             clubs = clubs,
-                            // Mirror iOS: default to the first club when nothing is selected.
-                            selectedClubId = state.selectedClubId ?: clubs.firstOrNull()?.clubId,
+                            // Entered from a club → open on that club; otherwise fall back to
+                            // the first eligible one.
+                            selectedClubId = state.selectedClubId
+                                ?: inputData.preselectedClubId?.takeIf { id -> clubs.any { it.clubId == id } }
+                                ?: clubs.firstOrNull()?.clubId,
                             // Empty list ≠ error: in create mode an empty result means
                             // "no eligible clubs" and gets its own funnel state. Edit mode
                             // was already forced to Loaded in init() and is left untouched.

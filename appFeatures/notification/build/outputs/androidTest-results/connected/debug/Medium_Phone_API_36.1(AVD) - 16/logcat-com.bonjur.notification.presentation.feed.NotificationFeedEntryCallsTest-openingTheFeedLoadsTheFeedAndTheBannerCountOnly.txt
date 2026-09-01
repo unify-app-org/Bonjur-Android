@@ -1,0 +1,2 @@
+09-01 21:48:36.694  8847  8870 I TestRunner: started: openingTheFeedLoadsTheFeedAndTheBannerCountOnly(com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest)
+09-01 21:48:38.199  8847  8870 I TestRunner: finished: openingTheFeedLoadsTheFeedAndTheBannerCountOnly(com.bonjur.notification.presentation.feed.NotificationFeedEntryCallsTest)

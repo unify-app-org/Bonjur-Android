@@ -26,6 +26,7 @@ import com.bonjur.network.manager.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bonjur.events.presentation.create.models.EventCreateInputData
 
 @HiltViewModel
 class ClubDetailsViewModel @Inject constructor(
@@ -47,7 +48,8 @@ class ClubDetailsViewModel @Inject constructor(
         this.inputData = inputData
         this.navigator = navigator
         updateState(state.copy(currentUserId = dependencies.tokenManager.getUserId()))
-        fetchData()
+        // No fetch here — the screen sends `FetchData` on every entry so returning from
+        // Edit reloads. See the comment in the screen composable.
     }
 
     override fun handle(action: ClubDetailsAction) {
@@ -310,7 +312,10 @@ class ClubDetailsViewModel @Inject constructor(
 
     private fun navigateToCreateEvent() {
         viewModelScope.launch {
-            navigator.navigateTo(EventsScreens.Create.route)
+            navigator.navigateTo(
+                EventsScreens.Create.route,
+                EventCreateInputData(preselectedClubId = inputData.clubId)
+            )
         }
     }
 

@@ -54,14 +54,19 @@ fun ClubCardView(
         cardType = AppUIEntities.ActivityType.CLUBS,
         bgColorType = model.bgType
     ) {
+        // SpaceBetween, not spacedBy: cards in a row are stretched to a shared height
+        // (see `equalHeightItem`), and the members/arrow row belongs at the bottom of
+        // that height rather than floating under the last line of text.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             TopLeftView(model = model)
-            BottomView(model = model)
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                BottomView(model = model)
+            }
         }
     }
 }

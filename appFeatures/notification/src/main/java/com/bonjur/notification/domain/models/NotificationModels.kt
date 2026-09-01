@@ -141,6 +141,12 @@ enum class NotificationTargetType {
 /** Mirrors iOS `NotificationFeedItem`. */
 data class NotificationFeedItem(
     val id: String,
+    /**
+     * Server UUID used by the single-row read call. Kept separate from [id],
+     * which stays the numeric row id the list uses as its key. Null when the
+     * backend omits it — then the row is marked read locally only.
+     */
+    val notificationId: String? = null,
     val type: NotificationType,
     val title: String,
     val subtitle: String,

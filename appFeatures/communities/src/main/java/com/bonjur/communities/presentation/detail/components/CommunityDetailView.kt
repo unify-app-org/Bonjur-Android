@@ -90,6 +90,7 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import com.bonjur.designSystem.utils.asBrowsableUri
 
 @Composable
 fun CommunityDetailView(
@@ -615,7 +616,7 @@ private fun InfoSubItem(subItem: CommunityDetails.SubInfo) {
                 AppSnackBar.show(title = "Copied to clipboard", style = AppSnackBar.Style.SUCCESS)
             }
             subItem.isLink -> runCatching {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(subItem.description)))
+                context.startActivity(Intent(Intent.ACTION_VIEW, subItem.description.asBrowsableUri()))
             }
         }
     }

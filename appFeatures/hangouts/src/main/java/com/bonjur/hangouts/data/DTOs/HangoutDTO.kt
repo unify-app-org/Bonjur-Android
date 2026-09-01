@@ -16,6 +16,26 @@ data class HangoutCreateRequest(
     val hangoutDate: String = ""
 )
 
+/**
+ * Update payload. NOT the same shape as [HangoutCreateRequest]: `hangout-service`'s
+ * `HangoutUpdateRequest` names the category list **`interestId`** (create calls it
+ * `categoriesId`) and has no `name` at all — the name is immutable once the hangout
+ * exists. Sending `categoriesId` here parses fine and is silently ignored, which is
+ * why edited categories never changed.
+ */
+@Serializable
+data class HangoutUpdateRequest(
+    val visibility: String = "PUBLIC",
+    val ownerContact: String = "",
+    val interestId: List<Int> = emptyList(),
+    val capacity: Int = 0,
+    val links: List<HangoutLinkDTO> = emptyList(),
+    val rules: String = "",
+    val location: String = "",
+    val about: String = "",
+    val hangoutDate: String = ""
+)
+
 @Serializable
 data class HangoutLinkDTO(
     val type: String = "",

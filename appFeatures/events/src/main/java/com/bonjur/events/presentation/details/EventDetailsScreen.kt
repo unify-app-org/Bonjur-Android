@@ -7,6 +7,7 @@ import com.bonjur.events.presentation.details.components.EventDetailsView
 import com.bonjur.events.presentation.details.model.EventDetailsInputData
 import com.bonjur.events.presentation.details.model.EventDetailsSideEffect
 import com.bonjur.navigation.Navigator
+import com.bonjur.events.presentation.details.model.EventDetailsAction
 
 @Composable
 fun EventDetailsScreen(
@@ -16,6 +17,15 @@ fun EventDetailsScreen(
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
+    }
+
+    // Refetch on every entry, not just the first. Compose disposes this screen when Edit
+    // is pushed and recomposes it on the way back, but `init` is guarded by
+    // `if (::inputData.isInitialized) return`, so nothing reloaded and a saved edit looked
+    // like it hadn't been applied. `init` now only wires up input/navigator; the fetch lives
+    // here, mirroring iOS `.onAppear { store.send(.fetchData) }`.
+    LaunchedEffect(Unit) {
+        viewModel.store.send(EventDetailsAction.FetchData)
     }
 
     FeatureScreen(

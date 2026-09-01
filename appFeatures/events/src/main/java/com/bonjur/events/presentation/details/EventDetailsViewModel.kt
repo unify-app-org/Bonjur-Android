@@ -51,7 +51,8 @@ class EventDetailsViewModel @Inject constructor(
         this.inputData = inputData
         this.navigator = navigator
         updateState(state.copy(currentUserId = dependencies.tokenManager.getUserId()))
-        fetchData()
+        // No fetch here — the screen sends `FetchData` on every entry so returning from
+        // Edit reloads. See the comment in the screen composable.
     }
 
     override fun handle(action: EventDetailsAction) {

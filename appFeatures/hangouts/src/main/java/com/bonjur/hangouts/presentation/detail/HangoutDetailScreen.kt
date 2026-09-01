@@ -9,6 +9,7 @@ import com.bonjur.hangouts.presentation.detail.components.HangoutDetailsView
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsInputData
 import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsSideEffect
 import com.bonjur.navigation.Navigator
+import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsAction
 
 @Composable
 fun HangoutDetailsScreen(
@@ -18,6 +19,15 @@ fun HangoutDetailsScreen(
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
+    }
+
+    // Refetch on every entry, not just the first. Compose disposes this screen when Edit
+    // is pushed and recomposes it on the way back, but `init` is guarded by
+    // `if (::inputData.isInitialized) return`, so nothing reloaded and a saved edit looked
+    // like it hadn't been applied. `init` now only wires up input/navigator; the fetch lives
+    // here, mirroring iOS `.onAppear { store.send(.fetchData) }`.
+    LaunchedEffect(Unit) {
+        viewModel.store.send(HangoutDetailsAction.FetchData)
     }
 
     FeatureScreen(

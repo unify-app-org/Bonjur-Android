@@ -2,6 +2,7 @@ package com.bonjur.hangouts.data.dataSource
 
 import com.bonjur.hangouts.data.DTOs.HangoutCategorySectionResponse
 import com.bonjur.hangouts.data.DTOs.HangoutCreateRequest
+import com.bonjur.hangouts.data.DTOs.HangoutUpdateRequest
 import com.bonjur.hangouts.data.DTOs.HangoutDetailResponse
 import com.bonjur.hangouts.data.DTOs.HangoutJoinRequest
 import com.bonjur.hangouts.data.DTOs.HangoutListResponse
@@ -38,7 +39,7 @@ class HangoutsDataSourceImpl @Inject constructor(
     override suspend fun createHangout(request: HangoutCreateRequest): ByteArray =
         fetchRawData(HangoutsEndPoints.CreateHangout(request))
 
-    override suspend fun editHangout(hangoutId: String, request: HangoutCreateRequest): ByteArray =
+    override suspend fun editHangout(hangoutId: String, request: HangoutUpdateRequest): ByteArray =
         fetchRawData(HangoutsEndPoints.EditHangout(hangoutId, request))
 
     override suspend fun joinHangout(request: HangoutJoinRequest): ByteArray =

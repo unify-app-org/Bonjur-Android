@@ -26,7 +26,7 @@ INFO: No installables found in test fixture. Nothing to install.
 INFO: Installing [/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/apk/androidTest/debug/notification-debug-androidTest.apk] on device emulator-5554.
 INFO: Start logcat streaming.
 INFO: Running Android Instrumentation driver.
-INFO: Copying files from device to host: /sdcard/Android/media/com.bonjur.notification.test/additional_test_output to /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected/Pixel_9a(AVD) - 17
+INFO: Copying files from device to host: /sdcard/Android/media/com.bonjur.notification.test/additional_test_output to /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appFeatures/notification/build/outputs/connected_android_test_additional_output/debugAndroidTest/connected/Medium_Phone_API_36.1(AVD) - 16
 INFO: Stop logcat streaming.
 INFO: Uninstalling com.bonjur.notification.test for device emulator-5554.
 INFO: Execute com.bonjur.notification.presentation.feed.NeedsActionBannerVisibleTest.bannerStaysOnScreenAfterScrollingTheFeed: PASSED

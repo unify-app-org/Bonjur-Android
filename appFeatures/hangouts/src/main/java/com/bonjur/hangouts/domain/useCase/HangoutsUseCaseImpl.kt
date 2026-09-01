@@ -16,6 +16,7 @@ import com.bonjur.hangouts.data.DTOs.HangoutJoinRequest
 import com.bonjur.hangouts.data.DTOs.HangoutLinkDTO
 import com.bonjur.hangouts.data.DTOs.HangoutListResponse
 import com.bonjur.hangouts.data.DTOs.HangoutMemberResponse
+import com.bonjur.hangouts.data.DTOs.HangoutUpdateRequest
 import com.bonjur.hangouts.data.dataSource.HangoutsDataSource
 import com.bonjur.member.model.GroupedMembersData
 import com.bonjur.member.model.MemberCellModel
@@ -85,7 +86,7 @@ class HangoutsUseCaseImpl @Inject constructor(
     }
 
     override suspend fun editHangout(hangoutId: String, form: HangoutFormData) {
-        dataSource.editHangout(hangoutId, form.toRequest())
+        dataSource.editHangout(hangoutId, form.toUpdateRequest())
     }
 
     override suspend fun joinHangout(hangoutId: String) {
@@ -130,6 +131,22 @@ class HangoutsUseCaseImpl @Inject constructor(
         name = name,
         ownerContact = ownerContact,
         categoriesId = categoryIds,
+        capacity = capacity ?: 0,
+        links = links.map { HangoutLinkDTO(type = it.type, name = it.name, url = it.url) },
+        rules = rules,
+        location = location,
+        about = about,
+        hangoutDate = hangoutDate.toIsoDate()
+    )
+
+    /**
+     * Update payload. `hangout-service` calls the category list `interestId` on PUT
+     * (`categoriesId` is create-only) and takes no `name` — the name is immutable.
+     */
+    private fun HangoutFormData.toUpdateRequest() = HangoutUpdateRequest(
+        visibility = if (isPublic) "PUBLIC" else "PRIVATE",
+        ownerContact = ownerContact,
+        interestId = categoryIds,
         capacity = capacity ?: 0,
         links = links.map { HangoutLinkDTO(type = it.type, name = it.name, url = it.url) },
         rules = rules,

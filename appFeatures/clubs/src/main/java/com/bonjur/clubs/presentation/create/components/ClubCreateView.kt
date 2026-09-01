@@ -40,6 +40,7 @@ import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
+import com.bonjur.designSystem.components.fieldSchema.AppFieldLabel
 
 @Composable
 fun ClubCreateView(
@@ -251,6 +252,7 @@ private fun LogoRow(
             .fillMaxWidth()
             .offset(y = (-44).dp)
             .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.Bottom
     ) {
         Box(contentAlignment = Alignment.BottomEnd) {
@@ -282,6 +284,14 @@ private fun LogoRow(
 
             CameraBadge(onTap = onTap)
         }
+
+        // The logo gates Continue (`hasProfilePhoto`) but drew no label at all, so a
+        // form with every visible field filled sat on a disabled button with nothing
+        // marked as missing. Label it like any other required field.
+        AppFieldLabel(
+            text = stringResource(R.string.clubs_logo_label),
+            isRequired = true
+        )
     }
 }
 

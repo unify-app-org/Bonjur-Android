@@ -8,6 +8,7 @@ import com.bonjur.communities.presentation.detail.components.CommunityDetailView
 import com.bonjur.communities.presentation.detail.model.CommunityDetailInputData
 import com.bonjur.communities.presentation.detail.model.CommunityDetailSideEffect
 import com.bonjur.navigation.Navigator
+import com.bonjur.communities.presentation.detail.model.CommunityDetailAction
 
 @Composable
 fun CommunityDetailScreen(
@@ -17,6 +18,15 @@ fun CommunityDetailScreen(
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
+    }
+
+    // Refetch on every entry, not just the first. Compose disposes this screen when Edit
+    // is pushed and recomposes it on the way back, but `init` is guarded by
+    // `if (::inputData.isInitialized) return`, so nothing reloaded and a saved edit looked
+    // like it hadn't been applied. `init` now only wires up input/navigator; the fetch lives
+    // here, mirroring iOS `.onAppear { store.send(.fetchData) }`.
+    LaunchedEffect(Unit) {
+        viewModel.store.send(CommunityDetailAction.FetchData)
     }
 
     FeatureScreen(

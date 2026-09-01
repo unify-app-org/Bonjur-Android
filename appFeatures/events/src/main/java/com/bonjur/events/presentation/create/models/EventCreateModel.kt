@@ -39,7 +39,15 @@ data class EventCreatePrefillData(
 // MARK: - EventCreate input
 data class EventCreateInputData(
     val eventId: String? = null,
-    val prefill: EventCreatePrefillData? = null
+    val prefill: EventCreatePrefillData? = null,
+    /**
+     * Club to open the picker on, when create was entered from a club (its detail screen's
+     * "Create event" button). Honoured only if that club comes back in `forEvents` —
+     * the server decides eligibility (organizer role + verified club), so an ineligible
+     * club falls back to the usual first-club default rather than pre-selecting something
+     * the create call would reject.
+     */
+    val preselectedClubId: Int? = null
 )
 
 /**

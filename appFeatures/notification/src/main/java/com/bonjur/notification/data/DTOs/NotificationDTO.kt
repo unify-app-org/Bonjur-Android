@@ -12,6 +12,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NotificationDTO(
     val id: Int? = null,
+    /**
+     * Server-side UUID. This — not the numeric [id] — is what
+     * `POST api/ns/v1/notifications/read/{notificationId}` expects.
+     */
+    val notificationId: String? = null,
     val type: String? = null,
     val title: String? = null,
     val body: String? = null,

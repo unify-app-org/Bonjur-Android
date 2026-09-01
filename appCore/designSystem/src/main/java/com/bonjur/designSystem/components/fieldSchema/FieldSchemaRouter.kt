@@ -462,7 +462,7 @@ private fun CapsuleField(
         Text(
             text = text.ifEmpty { placeholder },
             style = AppTypography.BodyTextMd.regular,
-            color = if (text.isEmpty()) Palette.grayPrimary else Palette.blackHigh,
+            color = if (text.isEmpty()) Palette.graySecondary else Palette.blackHigh,
             modifier = Modifier.weight(1f)
         )
         Icon(painter = icon, contentDescription = null, tint = Palette.blackHigh)

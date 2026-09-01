@@ -64,6 +64,8 @@ import com.bonjur.events.presentation.list.components.EventsCardView
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
 import kotlin.collections.isNotEmpty
+import com.bonjur.designSystem.components.layout.equalHeightItem
+import com.bonjur.designSystem.components.layout.rememberEqualHeightRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -382,6 +384,8 @@ private fun ClubsView(
     onLoadMore: () -> Unit,
     onCreate: () -> Unit
 ) {
+    val cardHeights = rememberEqualHeightRow()
+
     Column {
         SectionHeader(
             title = stringResource(R.string.discover_clubs),
@@ -396,7 +400,12 @@ private fun ClubsView(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 itemsIndexed(clubs) { index, club ->
-                    Box(modifier = Modifier.width(screenWidth - 60.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .width(screenWidth - 60.dp)
+                            .equalHeightItem(cardHeights),
+                        propagateMinConstraints = true
+                    ) {
                         ClubCardView(
                             model = club,
                             onTap = { onClubTap(club) }
@@ -431,6 +440,7 @@ private fun EventsView(
     onCreate: () -> Unit
 ) {
     val isEmpty = events.isEmpty() || clubs.isEmpty()
+    val cardHeights = rememberEqualHeightRow()
 
     Column {
         SectionHeader(
@@ -446,7 +456,12 @@ private fun EventsView(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 itemsIndexed(events) { index, event ->
-                    Box(modifier = Modifier.width(screenWidth - 90.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .width(screenWidth - 90.dp)
+                            .equalHeightItem(cardHeights),
+                        propagateMinConstraints = true
+                    ) {
                         EventsCardView(
                             model = event,
                             onButtonTap = { onButtonTap(event) },
@@ -480,6 +495,8 @@ private fun HangoutsView(
     onLoadMore: () -> Unit,
     onCreate: () -> Unit
 ) {
+    val cardHeights = rememberEqualHeightRow()
+
     Column {
         SectionHeader(
             title = stringResource(R.string.discover_hangouts),
@@ -494,7 +511,12 @@ private fun HangoutsView(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 itemsIndexed(hangouts) { index, hangout ->
-                    Box(modifier = Modifier.width(screenWidth - 90.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .width(screenWidth - 90.dp)
+                            .equalHeightItem(cardHeights),
+                        propagateMinConstraints = true
+                    ) {
                         HangoutsCardView(
                             model = hangout,
                             onButtonTap = { onButtonTap(hangout) },

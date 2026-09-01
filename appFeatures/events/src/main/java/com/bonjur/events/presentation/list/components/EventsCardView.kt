@@ -60,17 +60,22 @@ fun EventsCardView(
                 color = Palette.grayTeritary,
                 shape = RoundedCornerShape(20.dp)
             ),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        // SpaceBetween, not spacedBy: cards in a row are stretched to a shared height
+        // (see `equalHeightItem`), and the members/join row belongs at the bottom of
+        // that height rather than floating under the last line of text.
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         TopView(
             model = model,
             showCover = showCover,
             onClubTap = onClubTap
         )
-        BottomView(
-            model = model,
-            onButtonTap = onButtonTap
-        )
+        Box(modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
+            BottomView(
+                model = model,
+                onButtonTap = onButtonTap
+            )
+        }
     }
 }
 

@@ -70,6 +70,7 @@ import com.bonjur.events.presentation.details.model.EventDetailsViewState
 import kotlinx.coroutines.launch
 import kotlin.collections.isNotEmpty
 import kotlin.math.max
+import com.bonjur.designSystem.utils.asBrowsableUri
 
 @Composable
 fun EventDetailsView(
@@ -694,7 +695,7 @@ private fun InfoSubItem(subItem: EventsDetails.SubInfo) {
                 AppSnackBar.show(title = "Copied to clipboard", style = AppSnackBar.Style.SUCCESS)
             }
             subItem.isLink -> runCatching {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(subItem.description)))
+                context.startActivity(Intent(Intent.ACTION_VIEW, subItem.description.asBrowsableUri()))
             }
         }
     }

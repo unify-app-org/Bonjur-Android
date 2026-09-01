@@ -152,9 +152,14 @@ class NotificationFeedViewModel @Inject constructor(
     private fun markRead(item: NotificationFeedItem) {
         if (item.isRead) return
         setReadFlag(item.id, isRead = true)
+        // The endpoint is keyed by the server UUID, not the numeric row id —
+        // sending `id` marks the wrong row (or nothing). With no UUID there is
+        // nothing valid to send, so the row stays read locally and the badge
+        // re-syncs on the next fetch.
+        val notificationId = item.notificationId ?: return
         viewModelScope.launch {
             try {
-                useCase.markRead(item.id)
+                useCase.markRead(notificationId)
             } catch (e: ApiException) {
                 setReadFlag(item.id, isRead = false)
             }
