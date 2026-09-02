@@ -1,5 +1,7 @@
 package com.bonjur.clubs.presentation.create.components
 
+import CardBackgroundView
+
 import androidx.compose.ui.res.stringResource
 import com.bonjur.clubs.R
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,7 +37,9 @@ import com.bonjur.designSystem.components.button.ContentSize
 import com.bonjur.designSystem.components.categorieChips.SelectCategoryView
 import com.bonjur.designSystem.components.topBar.AppTopBar
 import androidx.compose.ui.draw.alpha
+import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
+import com.bonjur.designSystem.components.fieldSchema.cover
 import com.bonjur.designSystem.components.fieldSchema.FieldSchemaRouter
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
@@ -71,6 +75,7 @@ fun ClubCreateView(
             ) {
                 CoverHeader(
                     coverUri = state.coverUri ?: state.existingCoverUrl,
+                    background = state.values.cover(AppFieldSchema.FieldId.COVER),
                     height = coverHeight,
                     onTap = { coverPicker.launch(imagesOnly) }
                 )
@@ -178,8 +183,13 @@ private fun ClubVerifyPromptView(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // `selectedCheckBox` is a filled square whose tick is a *white* sub-path, so
+        // `Icon`'s tint flattened the whole asset to one blue block and the sheet looked
+        // like it had no icon at all. `verifiedSeal` is a single tintable path — the same
+        // badge the club card and detail header already draw, and the iOS counterpart of
+        // `checkmark.seal.fill`.
         Icon(
-            painter = Images.Icons.selectedCheckBox(),
+            painter = Images.Icons.verifiedSeal(),
             contentDescription = null,
             tint = Palette.appBlue,
             modifier = Modifier.size(40.dp)
@@ -220,15 +230,21 @@ private fun ClubVerifyPromptView(
 @Composable
 private fun CoverHeader(
     coverUri: String?,
+    background: AppUIEntities.BackgroundType,
     height: androidx.compose.ui.unit.Dp,
     onTap: () -> Unit
 ) {
     // Back button now lives in the overlaid AppTopBar (matches details).
-    Box(
+    // The colour comes from the cover picker below: a hardcoded `Palette.primary`
+    // here made the picker look inert — the swatch border moved but the header
+    // stayed green. Mirrors iOS `headerContent.backgroundType(values.cover(.cover))`.
+    CardBackgroundView(
+        cardType = AppUIEntities.ActivityType.CLUBS,
+        bgColorType = background,
+        cornerRadius = 0.dp,
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
-            .background(Palette.primary)
             .clickable { onTap() }
     ) {
         if (coverUri != null) {

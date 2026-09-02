@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_user_card_course">course</string>
+    <string name="widget_user_card_degree">degree</string>
+    <string name="widget_user_card_description">Your student card, one tap from the home screen.</string>
+    <string name="widget_user_card_entry">entry</string>
+    <string name="widget_user_card_label">Unify card</string>
+</resources>

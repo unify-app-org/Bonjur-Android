@@ -60,6 +60,8 @@ dependencies {
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:appFoundation"))
     implementation(project(":appCore:network"))
+    // Profile is the only writer of the home-screen card snapshot
+    implementation(project(":appCore:appWidget"))
 
     // Async images
     implementation("io.coil-kt:coil-compose:2.6.0")

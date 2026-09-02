@@ -1,0 +1,11 @@
+R_DEF: Internal format may change without notice
+local
+drawable ic_widget_mail
+drawable widget_badge_primary
+drawable widget_badge_translucent
+string widget_user_card_course
+string widget_user_card_degree
+string widget_user_card_description
+string widget_user_card_entry
+string widget_user_card_label
+xml user_card_widget_info

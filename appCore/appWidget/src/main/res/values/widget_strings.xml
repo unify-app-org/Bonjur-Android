@@ -1,0 +1,9 @@
+<resources>
+    <!-- Shown in the launcher's widget picker, which uses the *system* locale —
+         LanguageManager's in-app language does not reach this process. -->
+    <string name="widget_user_card_label">Unify card</string>
+    <string name="widget_user_card_description">Your student card, one tap from the home screen.</string>
+    <string name="widget_user_card_course">course</string>
+    <string name="widget_user_card_degree">degree</string>
+    <string name="widget_user_card_entry">entry</string>
+</resources>

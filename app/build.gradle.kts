@@ -76,6 +76,8 @@ dependencies {
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:designSystem"))
     implementation(project(":appCore:network"))
+    // Home-screen user-card widget (receiver is declared in that module's manifest)
+    implementation(project(":appCore:appWidget"))
 
     // Firebase (BOM 33.x = Kotlin 2.0-compatible metadata; 34.x needs Kotlin 2.2+)
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))

@@ -23,6 +23,7 @@ import com.bonjur.profile.presentation.detail.models.ProfileDetailAction
 import com.bonjur.profile.presentation.detail.models.ProfileDetailInputData
 import com.bonjur.profile.presentation.detail.models.ProfileDetailSideEffect
 import com.bonjur.profile.presentation.detail.models.ProfileDetailViewState
+import com.bonjur.profile.presentation.detail.widget.UserCardWidgetPublisher
 import com.bonjur.profile.presentation.editProfile.models.EditProfileInputData
 import com.bonjur.profile.presentation.editProfile.models.Gender
 import com.bonjur.profile.presentation.studentCard.models.StudentCardInputData
@@ -42,7 +43,8 @@ class ProfileDetailViewModel @Inject constructor(
 
     data class Dependencies @Inject constructor(
         val useCase: ProfileUseCase,
-        val tokenManager: TokenManager
+        val tokenManager: TokenManager,
+        val widgetPublisher: UserCardWidgetPublisher
     )
 
     private lateinit var inputData: ProfileDetailInputData
@@ -183,6 +185,11 @@ class ProfileDetailViewModel @Inject constructor(
                     navigationTitle = if (isOther) LanguageManager.string(R.string.profile_about_user) else LanguageManager.string(R.string.profile_title)
                 )
             )
+            // Only the signed-in user's own card belongs on the home screen; opening
+            // someone else's profile must not repaint the widget with their details.
+            if (!isOther) {
+                dependencies.widgetPublisher.publish(base.userCardModel, myId)
+            }
         }
         return listOf(results.user, results.clubs, results.events, results.hangouts)
             .firstNotNullOfOrNull { it.exceptionOrNull() }
@@ -211,6 +218,13 @@ class ProfileDetailViewModel @Inject constructor(
             )
             runCatching { dependencies.useCase.editProfile(request, null) }
                 .onSuccess {
+                    // Only now, not optimistically: a rejected PUT would otherwise leave
+                    // the home screen wearing a cover the server never accepted, with no
+                    // in-app screen showing it.
+                    dependencies.widgetPublisher.publish(
+                        ui.userCardModel.copy(backgroundCover = backgroundType),
+                        dependencies.tokenManager.getUserId()
+                    )
                     AppSnackBar.show(
                         title = LanguageManager.string(R.string.profile_cover_updated),
                         subtitle = LanguageManager.string(R.string.profile_changes_saved),

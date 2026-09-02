@@ -1,0 +1,7 @@
+<resources>
+    <string name="widget_user_card_label">Unify kartı</string>
+    <string name="widget_user_card_description">Tələbə kartınız — ana ekrandan bir toxunuşla.</string>
+    <string name="widget_user_card_course">kurs</string>
+    <string name="widget_user_card_degree">dərəcə</string>
+    <string name="widget_user_card_entry">qəbul ili</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="widget_user_card_label">Карта Unify</string>
+    <string name="widget_user_card_description">Ваша студенческая карта — в одно касание с главного экрана.</string>
+    <string name="widget_user_card_course">курс</string>
+    <string name="widget_user_card_degree">степень</string>
+    <string name="widget_user_card_entry">год поступления</string>
+</resources>

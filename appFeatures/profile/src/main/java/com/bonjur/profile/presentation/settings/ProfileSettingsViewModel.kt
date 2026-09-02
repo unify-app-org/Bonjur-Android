@@ -15,6 +15,7 @@ import com.bonjur.profile.domain.usecase.ProfileUseCase
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import com.bonjur.storage.notification.NotificationPreferences
+import com.bonjur.profile.presentation.detail.widget.UserCardWidgetPublisher
 import com.bonjur.profile.presentation.settings.models.ProfileSettingsAction
 import com.bonjur.profile.presentation.settings.models.ProfileSettingsInputData
 import com.bonjur.profile.presentation.settings.models.ProfileSettingsSideEffect
@@ -45,7 +46,8 @@ class ProfileSettingsViewModel @Inject constructor(
          * can't reach, so dispatching it there crashes ("destination ... cannot
          * be found"). App-level nav must go through the root navigator.
          */
-        val rootNavigator: Navigator
+        val rootNavigator: Navigator,
+        val widgetPublisher: UserCardWidgetPublisher
     )
 
     private lateinit var inputData: ProfileSettingsInputData
@@ -237,6 +239,10 @@ class ProfileSettingsViewModel @Inject constructor(
      */
     private suspend fun finishSession() {
         dependencies.tokenManager.clearTokens()
+        // The home-screen card outlives the app process, so it has to be wiped
+        // explicitly — otherwise a signed-out (or deleted) user's details stay on
+        // the launcher for anyone holding the phone.
+        dependencies.widgetPublisher.clear()
         dependencies.defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, false)
         // Root navigator, not the per-tab one — Auth lives in the root graph.
         dependencies.rootNavigator.navigateAndClearStack(AppScreens.Auth.route)

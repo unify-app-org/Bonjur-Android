@@ -27,7 +27,7 @@ import com.bonjur.events.presentation.create.models.EventSelectableClub
 import com.bonjur.events.presentation.create.models.EventCreateSideEffect
 import com.bonjur.events.presentation.create.models.EventCreateViewState
 import com.bonjur.navigation.Navigator
-import com.bonjur.network.manager.TokenManager
+import com.bonjur.network.manager.CurrentUserProvider
 import com.bonjur.navigation.SharedRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -58,7 +58,7 @@ class EventCreateViewModel @Inject constructor(
 
     data class Dependencies @Inject constructor(
         val useCase: EventsUseCase,
-        val tokenManager: TokenManager,
+        val currentUserProvider: CurrentUserProvider,
         @ApplicationContext val context: Context
     )
 
@@ -87,13 +87,18 @@ class EventCreateViewModel @Inject constructor(
      */
     private fun prefillOwnerContact() {
         if (state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT).isNotEmpty()) return
-        val email = dependencies.tokenManager.getUserEmail() ?: return
-        updateState(
-            state.copy(
-                values = state.values +
-                    (AppFieldSchema.FieldId.OWNER_CONTACT to AppFieldSchema.FieldValue.TextValue(email))
+        viewModelScope.launch {
+            val email = dependencies.currentUserProvider.email() ?: return@launch
+            // The lookup can go to the network, so re-check: the user may have typed
+            // their own contact (or a prefill may have landed) while it was in flight.
+            if (state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT).isNotEmpty()) return@launch
+            updateState(
+                state.copy(
+                    values = state.values +
+                        (AppFieldSchema.FieldId.OWNER_CONTACT to AppFieldSchema.FieldValue.TextValue(email))
+                )
             )
-        )
+        }
     }
 
     override fun handle(action: EventCreateAction) {

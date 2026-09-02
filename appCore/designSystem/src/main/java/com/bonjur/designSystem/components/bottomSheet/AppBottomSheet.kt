@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.bonjur.designSystem.localization.AppLocalizationProvider
 import com.bonjur.designSystem.ui.theme.colors.Palette
 
 /**
@@ -33,6 +34,15 @@ fun AppBottomSheet(
             { androidx.compose.material3.BottomSheetDefaults.DragHandle() }
         } else null
     ) {
-        Column(modifier = modifier, content = content)
+        // `ModalBottomSheet` renders in its own dialog window, whose ComposeView
+        // re-provides `LocalContext` from that window — which throws away the
+        // localized context `AppLocalizationProvider` installed at the app root, so
+        // every `stringResource` inside a sheet fell back to the device language
+        // (the club verify sheet came up English under a Russian app). Re-provide it
+        // here so sheet content localizes like everything else; call sites keep using
+        // plain `stringResource`.
+        AppLocalizationProvider {
+            Column(modifier = modifier, content = content)
+        }
     }
 }

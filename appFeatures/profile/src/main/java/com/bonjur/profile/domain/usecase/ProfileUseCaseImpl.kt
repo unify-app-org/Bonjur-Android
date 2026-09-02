@@ -45,7 +45,10 @@ class ProfileUseCaseImpl @Inject constructor(
     private fun UserProfileResponse.toUIModel(): ProfileDetail.UIModel =
         ProfileDetail.UIModel(
             userCardModel = UserCardModel(
-                backgroundCover = background.toBackgroundType(),
+                // Nullable on purpose: the user can pick "Default" (the plain white
+                // card), and `fromApi` folds an unknown/absent value into Primary.
+                // Club/hangout covers below are non-null by contract and keep it.
+                backgroundCover = background?.let { AppUIEntities.BackgroundType.fromApi(it) },
                 nameSurname = username ?: fullName ?: "-",
                 speciality = specialization ?: "-",
                 course = faculty ?: "-",

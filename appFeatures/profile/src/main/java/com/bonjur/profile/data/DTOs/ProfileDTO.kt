@@ -19,7 +19,7 @@ data class ProfileUpdateRequest(
 
 // Mirrors iOS `AppPresentationModel.UserResponse` (GET api/us/v1/users/{id}).
 // Display name comes from `username`, course from `faculty`, email from `mail`,
-// avatar from `fileUrl`, cover from `background` — matching the iOS profile mapping.
+// avatar from `fileUrl`, cover from `backgroundColour` — matching the iOS profile mapping.
 @Serializable
 data class UserProfileResponse(
     val userId: String? = null,
@@ -37,7 +37,10 @@ data class UserProfileResponse(
     val birthDate: String? = null,
     val about: String? = null,
     val greeting: String? = null,
-    val background: String? = null,
+    // The card cover. The wire key is `backgroundColour`, NOT `background` — the
+    // latter never bound, so every reload fell back to the default cover and the
+    // colour the user had saved was invisible from the next load onward.
+    @SerialName("backgroundColour") val background: String? = null,
     val communityName: String? = null,
     val categories: List<ProfileCategoryResponse> = emptyList(),
     val languages: List<ProfileLanguageResponse> = emptyList()

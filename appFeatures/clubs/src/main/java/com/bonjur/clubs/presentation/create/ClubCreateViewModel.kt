@@ -23,7 +23,7 @@ import com.bonjur.designSystem.components.fieldSchema.tags
 import com.bonjur.designSystem.components.fieldSchema.text
 import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.navigation.Navigator
-import com.bonjur.network.manager.TokenManager
+import com.bonjur.network.manager.CurrentUserProvider
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,7 +51,7 @@ class ClubCreateViewModel @Inject constructor(
     data class Dependencies @Inject constructor(
         val useCase: ClubsUseCase,
         val defaultStorage: DefaultStorage,
-        val tokenManager: TokenManager,
+        val currentUserProvider: CurrentUserProvider,
         @ApplicationContext val context: Context
     )
 
@@ -79,13 +79,18 @@ class ClubCreateViewModel @Inject constructor(
      */
     private fun prefillOwnerContact() {
         if (state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT).isNotEmpty()) return
-        val email = dependencies.tokenManager.getUserEmail() ?: return
-        updateState(
-            state.copy(
-                values = state.values +
-                    (AppFieldSchema.FieldId.OWNER_CONTACT to AppFieldSchema.FieldValue.TextValue(email))
+        viewModelScope.launch {
+            val email = dependencies.currentUserProvider.email() ?: return@launch
+            // The lookup can go to the network, so re-check: the user may have typed
+            // their own contact (or a prefill may have landed) while it was in flight.
+            if (state.values.text(AppFieldSchema.FieldId.OWNER_CONTACT).isNotEmpty()) return@launch
+            updateState(
+                state.copy(
+                    values = state.values +
+                        (AppFieldSchema.FieldId.OWNER_CONTACT to AppFieldSchema.FieldValue.TextValue(email))
+                )
             )
-        )
+        }
     }
 
     /** Pre-fills the form from existing club data on edit. Mirrors iOS `applyPrefillData`. */

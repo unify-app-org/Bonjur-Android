@@ -1,5 +1,7 @@
 package com.bonjur.designSystem.components.fieldSchema
 
+import CardBackgroundView
+
 import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designsystem.R
 import androidx.compose.foundation.Image
@@ -323,18 +325,22 @@ private fun CoverPickerField(
         ) {
             item.covers.forEach { cover ->
                 val isSelected = cover == selected
-                Box(
+                // A real card preview, not a flat colour chip: the swatch has to look
+                // like the header it sets (mirrors iOS `CardBackgroundView(cardType:.club)`).
+                CardBackgroundView(
+                    cardType = AppUIEntities.ActivityType.CLUBS,
+                    bgColorType = cover,
+                    cornerRadius = 12.dp,
                     modifier = Modifier
                         .size(width = 114.dp, height = 66.dp)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(cover.bgColor)
                         .border(
                             width = if (isSelected) 2.5.dp else 0.dp,
                             color = if (isSelected) Palette.blackHigh else Color.Transparent,
                             shape = RoundedCornerShape(12.dp)
                         )
                         .clickable { onChange(cover) }
-                )
+                ) {}
             }
         }
     }

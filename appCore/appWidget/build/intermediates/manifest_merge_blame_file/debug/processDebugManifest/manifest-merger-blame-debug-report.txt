@@ -1,0 +1,33 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.bonjur.appwidget" >
+4
+5    <uses-sdk android:minSdkVersion="26" />
+6
+7    <application>
+7-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:4:5-16:19
+8        <receiver
+8-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:5:9-15:20
+9            android:name="com.bonjur.appwidget.UserCardWidgetReceiver"
+9-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:6:13-71
+10            android:exported="true"
+10-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:8:13-36
+11            android:label="@string/widget_user_card_label" >
+11-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:7:13-59
+12            <intent-filter>
+12-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:9:13-11:29
+13                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+13-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:10:17-84
+13-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:10:25-81
+14            </intent-filter>
+15
+16            <meta-data
+16-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:12:13-14:65
+17                android:name="android.appwidget.provider"
+17-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:13:17-58
+18                android:resource="@xml/user_card_widget_info" />
+18-->/Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:14:17-62
+19        </receiver>
+20    </application>
+21
+22</manifest>
