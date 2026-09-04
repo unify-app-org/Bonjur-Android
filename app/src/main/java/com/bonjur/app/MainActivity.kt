@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.bonjur.appwidget.reloadUserCardWidget
 import com.bonjur.apputils.DeviceManager
 import com.bonjur.app.fcm.data.DeviceDataSource
 import com.bonjur.app.navigation.AppNavigation
@@ -103,12 +104,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /** Re-register on every in-app language switch so the backend stores the new language. */
+    /**
+     * Re-register on every in-app language switch so the backend stores the new
+     * language — and redraw the home-screen card, which renders its labels through
+     * `LanguageManager` and would otherwise keep the old language until the next
+     * profile load.
+     */
     private fun observeLanguageChanges() {
         lifecycleScope.launch {
             LanguageManager.languageChanges.collect { language ->
                 Log.d("FCM", "language changed to ${language.code}, re-registering device")
                 registerDevice()
+                reloadUserCardWidget(this@MainActivity)
             }
         }
     }

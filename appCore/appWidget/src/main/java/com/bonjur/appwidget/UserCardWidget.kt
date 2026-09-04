@@ -37,6 +37,7 @@ import androidx.glance.unit.ColorProvider
 import androidx.compose.ui.unit.sp
 import kotlin.math.min
 import com.bonjur.designSystem.commonModel.AppUIEntities
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designSystem.ui.theme.colors.Palette
 
 /**
@@ -64,6 +65,10 @@ class UserCardWidget : GlanceAppWidget() {
             // first snapshot, and the card stayed one publish behind the store.
             val stored = UserCardWidgetStore.load(context)
             val avatar = UserCardWidgetStore.loadAvatar(context)
+            // The widget process gets the *system* locale; the language the user
+            // picked in Settings lives in LanguageManager. Re-base the Context on it
+            // or the card stays in the device language while the app is in another.
+            val strings = LanguageManager.localizedContext(context)
 
             // Three states. A missing snapshot is NOT the same as signed out: the
             // card is published on the first own-profile load, so a user who just
@@ -72,13 +77,13 @@ class UserCardWidget : GlanceAppWidget() {
                 stored != null -> UserCardWidgetContent(snapshot = stored, avatar = avatar)
 
                 UserCardWidgetStore.isSignedIn(context) -> MessageContent(
-                    title = context.getString(R.string.widget_card_pending_title),
-                    subtitle = context.getString(R.string.widget_card_pending_subtitle)
+                    title = strings.getString(R.string.widget_card_pending_title),
+                    subtitle = strings.getString(R.string.widget_card_pending_subtitle)
                 )
 
                 else -> MessageContent(
-                    title = context.getString(R.string.widget_sign_in_title),
-                    subtitle = context.getString(R.string.widget_sign_in_subtitle)
+                    title = strings.getString(R.string.widget_sign_in_title),
+                    subtitle = strings.getString(R.string.widget_sign_in_subtitle)
                 )
             }
         }
@@ -97,6 +102,8 @@ private fun UserCardWidgetContent(
     avatar: android.graphics.Bitmap?
 ) {
     val context = LocalContext.current
+    // Same re-basing as `provideGlance`: labels must follow the in-app language.
+    val strings = LanguageManager.localizedContext(context)
     val size = LocalSize.current
     val density = context.resources.displayMetrics.density
     // The course/degree/entry row is the first thing to go: it needs both width to
@@ -209,15 +216,15 @@ private fun UserCardWidgetContent(
                         .padding(bottom = (10 * scale).dp)
                 ) {
                     InfoItem(
-                        context.getString(R.string.widget_user_card_course),
+                        strings.getString(R.string.widget_user_card_course),
                         snapshot.course, foreground, scale, GlanceModifier.defaultWeight()
                     )
                     InfoItem(
-                        context.getString(R.string.widget_user_card_degree),
+                        strings.getString(R.string.widget_user_card_degree),
                         snapshot.degree, foreground, scale, GlanceModifier.defaultWeight()
                     )
                     InfoItem(
-                        context.getString(R.string.widget_user_card_entry),
+                        strings.getString(R.string.widget_user_card_entry),
                         snapshot.entryYear, foreground, scale, GlanceModifier.defaultWeight()
                     )
                 }
