@@ -27,6 +27,7 @@ data class ClubDetailsViewState(
     val selectedSegment: SegmentTypes = SegmentTypes.ABOUT,
     val membersData: GroupedMembersData? = null,
     val eventsData: List<EventsCardModel> = emptyList(),
+    val eventsHasMore: Boolean = false,
     val currentUserId: String? = null
 ) : FeatureState {
 
@@ -101,6 +102,7 @@ data class ClubDetailsViewState(
 // MARK: - Feature Action
 sealed class ClubDetailsAction : FeatureAction {
     object FetchData : ClubDetailsAction()
+    object LoadMoreEvents : ClubDetailsAction()
     object BackTapped : ClubDetailsAction()
     data class SegmentChanged(val segment: ClubDetailsViewState.SegmentTypes) : ClubDetailsAction()
     object EditTapped : ClubDetailsAction()

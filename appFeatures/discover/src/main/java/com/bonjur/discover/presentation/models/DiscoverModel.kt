@@ -36,6 +36,13 @@ sealed class DiscoverSideEffect : SideEffect {
 data class DiscoverViewState(
     val uiModel: UIModel = UIModel(),
     val isRefreshing: Boolean = false,
+    /**
+     * First load and filter-apply: the dashboard renders its shimmer skeleton instead
+     * of a blocking spinner. Starts true so the screen never flashes empty states in
+     * the frame before `FetchData` lands. Pull-to-refresh uses [isRefreshing], and the
+     * reappear refresh stays silent.
+     */
+    val isContentLoading: Boolean = true,
     /** Unread notification total for the bell badge (0 hides it). */
     val unreadCount: Int = 0
 ) : FeatureState {

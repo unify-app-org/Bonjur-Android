@@ -14,24 +14,26 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
+import com.bonjur.network.model.Page
+import com.bonjur.network.model.toPage
 
 class GroupsUseCaseImpl @Inject constructor(
     val dataSource: GroupsDataSource
 ) : GroupsUseCase {
 
-    override suspend fun fetchClubs(query: GroupsPaginationQuery): List<ClubCardModel> {
-        return dataSource.fetchJoinedClubs(query.toMap()).map { it.toCardModel() }
+    override suspend fun fetchClubs(query: GroupsPaginationQuery): Page<ClubCardModel> {
+        val response = dataSource.fetchJoinedClubs(query.toMap())
+        return response.toPage(query.page, query.size, response.content.map { it.toCardModel() })
     }
 
-    // Mirrors iOS: joined events are fetched once at a fixed page/size (no pagination),
-    // with the optional search keyword forwarded to the server.
-    override suspend fun fetchEvents(keyword: String?): List<EventsCardModel> {
-        val query = GroupsPaginationQuery(page = 0, size = 50, keyword = keyword)
-        return dataSource.fetchJoinedEvents(query.toMap()).map { it.toCardModel() }
+    override suspend fun fetchEvents(query: GroupsPaginationQuery): Page<EventsCardModel> {
+        val response = dataSource.fetchJoinedEvents(query.toMap())
+        return response.toPage(query.page, query.size, response.content.map { it.toCardModel() })
     }
 
-    override suspend fun fetchHangouts(query: GroupsPaginationQuery): List<HangoutsCardModel> {
-        return dataSource.fetchJoinedHangouts(query.toMap()).map { it.toCardModel() }
+    override suspend fun fetchHangouts(query: GroupsPaginationQuery): Page<HangoutsCardModel> {
+        val response = dataSource.fetchJoinedHangouts(query.toMap())
+        return response.toPage(query.page, query.size, response.content.map { it.toCardModel() })
     }
 
     private fun GroupsClubResponse.toCardModel() = ClubCardModel(

@@ -72,6 +72,8 @@ import com.bonjur.events.presentation.list.models.EventsCardModel
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import com.bonjur.designSystem.utils.asBrowsableUri
+import com.bonjur.designSystem.components.paging.LoadMoreOnScrollToEnd
+import com.bonjur.designSystem.components.paging.PagingFooter
 
 @Composable
 fun ClubDetailsView(
@@ -120,6 +122,18 @@ fun ClubDetailsView(
     }
 
     // Scroll tracking
+    // The Events tab's cards live in an eager Column inside the single "tabs" lazy item,
+    // so a per-row callback would fire on entry and pull every page at once. Drive paging
+    // off the outer list's scroll position instead.
+    val eventsPagingEnabled = store.state.selectedSegment ==
+        ClubDetailsViewState.SegmentTypes.EVENTS && store.state.eventsHasMore
+    LoadMoreOnScrollToEnd(
+        listState = listState,
+        enabled = eventsPagingEnabled
+    ) {
+        store.send(ClubDetailsAction.LoadMoreEvents)
+    }
+
     LaunchedEffect(listState) {
         snapshotFlow {
             listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
@@ -242,6 +256,10 @@ fun ClubDetailsView(
             }
 
             // Bottom spacing for join button
+            item(key = "paging_footer") {
+                PagingFooter(hasMore = eventsPagingEnabled)
+            }
+
             item(key = "bottom_spacer") {
                 Spacer(modifier = Modifier.height(100.dp))
             }

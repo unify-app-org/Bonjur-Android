@@ -42,7 +42,11 @@ data class ProfileDetailViewState(
     val isOwnProfile: Boolean = true,
     val isPushed: Boolean = false,
     val navigationTitle: String? = null,
-    val selectedSegment: SegmentTypes = SegmentTypes.CLUBS
+    val selectedSegment: SegmentTypes = SegmentTypes.CLUBS,
+    /** Per-tab paging flags; drive the end-of-list loader in the activity tabs. */
+    val clubsHasMore: Boolean = false,
+    val eventsHasMore: Boolean = false,
+    val hangoutsHasMore: Boolean = false
 ) : FeatureState {
 
     enum class SegmentTypes(
@@ -113,6 +117,9 @@ fun ProfileDetail.UIModel.Companion.mock(): ProfileDetail.UIModel = ProfileDetai
 // MARK: - Actions
 sealed class ProfileDetailAction : FeatureAction {
     object FetchData : ProfileDetailAction()
+    object LoadMoreClubs : ProfileDetailAction()
+    object LoadMoreEvents : ProfileDetailAction()
+    object LoadMoreHangouts : ProfileDetailAction()
     object BackTapped : ProfileDetailAction()
     data class ClubsItemTapped(val id: Int) : ProfileDetailAction()
     data class SegmentTapped(val segment: ProfileDetailViewState.SegmentTypes) : ProfileDetailAction()

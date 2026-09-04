@@ -62,6 +62,12 @@ private fun UserInfoContent(
     model: UserCardModel,
     modifier: Modifier = Modifier
 ) {
+    // The cover decides the text/icon colour, exactly like iOS
+    // (`model.backgroundCover?.foregroundColor ?? blackHigh`). Hardcoding blackHigh
+    // left the name, the info row and the email unreadable on the darker covers —
+    // blue and red both pair with whiteHigh.
+    val foreground = model.backgroundCover?.foregroundColor ?: Palette.blackHigh
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -82,13 +88,13 @@ private fun UserInfoContent(
                     Text(
                         text = model.nameSurname,
                         style = AppTypography.HeadingXL.bold,
-                        color = Palette.blackHigh,
+                        color = foreground,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Text(
                         text = model.speciality,
                         style = AppTypography.TextMd.medium,
-                        color = Palette.blackHigh,
+                        color = foreground,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -116,16 +122,28 @@ private fun UserInfoContent(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            AdditionalInfoItem(title = stringResource(R.string.profile_card_course), subtitle = model.course)
-            AdditionalInfoItem(title = stringResource(R.string.profile_card_degree), subtitle = model.degree)
-            AdditionalInfoItem(title = stringResource(R.string.profile_card_entry), subtitle = model.entryYear)
+            AdditionalInfoItem(
+                title = stringResource(R.string.profile_card_course),
+                subtitle = model.course,
+                foregroundColor = foreground
+            )
+            AdditionalInfoItem(
+                title = stringResource(R.string.profile_card_degree),
+                subtitle = model.degree,
+                foregroundColor = foreground
+            )
+            AdditionalInfoItem(
+                title = stringResource(R.string.profile_card_entry),
+                subtitle = model.entryYear,
+                foregroundColor = foreground
+            )
         }
 
         // Email footer
         EmailView(
             email = model.email,
             bgType = model.backgroundCover,
-            foregroundColor = Palette.blackHigh
+            foregroundColor = foreground
         )
     }
 }
@@ -168,17 +186,21 @@ private fun UserAvatarImage(imageUrl: String?) {
 }
 
 @Composable
-private fun AdditionalInfoItem(title: String, subtitle: String) {
+private fun AdditionalInfoItem(
+    title: String,
+    subtitle: String,
+    foregroundColor: Color
+) {
     Column {
         Text(
             text = title,
             style = AppTypography.TextSm.regular,
-            color = Palette.blackHigh
+            color = foregroundColor
         )
         Text(
             text = subtitle,
             style = AppTypography.TextMd.medium,
-            color = Palette.blackHigh
+            color = foregroundColor
         )
     }
 }
@@ -191,7 +213,10 @@ private fun EmailView(
 ) {
     Column(
         modifier = Modifier
-            .background(if (bgType == null) Palette.primary else Color.Transparent)
+            // iOS paints the strip with the cover's own colour and falls back to green
+            // on the plain white card. Leaving it transparent let the card's decorative
+            // rings run through the strip, which the iOS card never shows.
+            .background(bgType?.bgColor ?: Palette.primary)
             .fillMaxWidth()
     ) {
         Divider(color = foregroundColor.copy(alpha = 0.3f))
@@ -203,6 +228,9 @@ private fun EmailView(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            // FIXME: iOS draws `UIImage.Icons.email` here; the design system has no
+            // mail glyph yet (only `appWidget`'s ic_widget_mail), so this shows the
+            // person icon.
             Icon(
                 painter = Images.Icons.user(),
                 contentDescription = null,

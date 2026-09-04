@@ -48,4 +48,7 @@
     <string name="auth_language_russian">Russian</string>
     <string name="auth_language_french">French</string>
     <string name="auth_selected_photo">Selected photo</string>
+    <string name="auth_communities_empty">No communities are available yet.</string>
+    <string name="auth_communities_error">Something went wrong. We couldn\'t load the communities.</string>
+    <string name="auth_try_again">Try again</string>
 </resources>

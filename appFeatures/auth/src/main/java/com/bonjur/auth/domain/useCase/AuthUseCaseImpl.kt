@@ -84,24 +84,20 @@ class AuthUseCaseImpl @Inject constructor(
         image = { Images.Icons.resume() }
     )
 
-    override suspend fun chooseUniversity(): List<SelectableListItemModel> {
-        return try {
-            dataSource.getCommunities().map { community ->
-                SelectableListItemModel(
-                    id = community.id,
-                    title = community.name,
-                    selected = false
-                )
-            }
-        } catch (e: Exception) {
-            print(e)
-            listOf(
-                SelectableListItemModel(id = 1, title = "UFAZ", selected = false),
-                SelectableListItemModel(id = 2, title = "BHOS", selected = false),
-                SelectableListItemModel(id = 3, title = "ADNSU", selected = false)
+    /**
+     * Communities the user can sign in to. Failures propagate: the sign-in gate is
+     * picked by community NAME (see `ChooseUniversityViewModel`), so a hardcoded
+     * fallback list would route a real user into the wrong auth flow. The screen
+     * renders an error state instead.
+     */
+    override suspend fun chooseUniversity(): List<SelectableListItemModel> =
+        dataSource.getCommunities().map { community ->
+            SelectableListItemModel(
+                id = community.id,
+                title = community.name,
+                selected = false
             )
         }
-    }
 
     override suspend fun genders(): List<SelectableListItemModel> = listOf(
         SelectableListItemModel(

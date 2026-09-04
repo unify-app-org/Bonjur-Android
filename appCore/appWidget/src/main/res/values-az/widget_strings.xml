@@ -4,4 +4,8 @@
     <string name="widget_user_card_course">kurs</string>
     <string name="widget_user_card_degree">dərəcə</string>
     <string name="widget_user_card_entry">qəbul ili</string>
+    <string name="widget_sign_in_title">Unify-a daxil olun</string>
+    <string name="widget_sign_in_subtitle">Tələbə kartınızı görmək üçün toxunun.</string>
+    <string name="widget_card_pending_title">Kartınız hazırlanır</string>
+    <string name="widget_card_pending_subtitle">Tələbə kartınızı yükləmək üçün Unify-ı açın.</string>
 </resources>

@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.bonjur.designSystem.commonModel.AppUIEntities
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -53,6 +54,8 @@ import com.bonjur.profile.presentation.detail.models.ProfileDetailAction
 import com.bonjur.profile.presentation.detail.models.ProfileDetailSideEffect
 import com.bonjur.profile.presentation.detail.models.ProfileDetailViewState
 import kotlinx.coroutines.launch
+import com.bonjur.designSystem.components.paging.LoadMoreOnScrollToEnd
+import com.bonjur.designSystem.components.paging.PagingFooter
 
 @Composable
 fun ProfileDetailView(
@@ -106,6 +109,27 @@ fun ProfileDetailView(
                 isUpdatingFromPager = false
             }
         }
+    }
+
+    // Each tab's rows live in an eager Column inside the single "tabs" lazy item, so
+    // a per-row callback would fire on entry and pull every page at once. Drive paging
+    // off the outer list's scroll position instead.
+    val selectedSegmentHasMore = when (store.state.selectedSegment) {
+        ProfileDetailViewState.SegmentTypes.CLUBS -> store.state.clubsHasMore
+        ProfileDetailViewState.SegmentTypes.EVENTS -> store.state.eventsHasMore
+        ProfileDetailViewState.SegmentTypes.HANGOUTS -> store.state.hangoutsHasMore
+    }
+    LoadMoreOnScrollToEnd(
+        listState = listState,
+        enabled = selectedSegmentHasMore
+    ) {
+        store.send(
+            when (store.state.selectedSegment) {
+                ProfileDetailViewState.SegmentTypes.CLUBS -> ProfileDetailAction.LoadMoreClubs
+                ProfileDetailViewState.SegmentTypes.EVENTS -> ProfileDetailAction.LoadMoreEvents
+                ProfileDetailViewState.SegmentTypes.HANGOUTS -> ProfileDetailAction.LoadMoreHangouts
+            }
+        )
     }
 
     Box(
@@ -234,6 +258,10 @@ fun ProfileDetailView(
                         }
                     }
                 }
+            }
+
+            item(key = "paging_footer") {
+                PagingFooter(hasMore = selectedSegmentHasMore)
             }
 
             // Bottom spacing
@@ -455,11 +483,25 @@ private fun CompactHeaderView(
         }
 
         if (isOwnProfile) {
+            // Tint from the selected card cover; fall back to the original green.
+            // `Primary` is a pale green that is unreadable as text, so it reuses the
+            // dark green pair like the null case. Mirrors iOS `ProfileDetailViewV2`.
+            val cover = card.backgroundCover
+            val chipForeground: Color
+            val chipBackground: Color
+            if (cover == null || cover is AppUIEntities.BackgroundType.Primary) {
+                chipForeground = Palette.green900
+                chipBackground = Palette.greenLight
+            } else {
+                chipForeground = cover.bgColor
+                chipBackground = cover.bgColor.copy(alpha = 0.18f)
+            }
+
             Surface(
                 onClick = onCardTap,
                 shape = CircleShape,
-                color = Palette.greenLight,
-                border = BorderStroke(1.dp, Palette.secondary),
+                color = chipBackground,
+                border = BorderStroke(1.dp, chipForeground.copy(alpha = 0.5f)),
                 modifier = Modifier.padding(top = 14.dp)
             ) {
                 Row(
@@ -470,12 +512,12 @@ private fun CompactHeaderView(
                     Text(
                         text = "🪪  User Card ID",
                         style = AppTypography.TextMd.bold,
-                        color = Palette.green900
+                        color = chipForeground
                     )
                     Icon(
                         painter = Images.Icons.chevronRight(),
                         contentDescription = null,
-                        tint = Palette.green900,
+                        tint = chipForeground,
                         modifier = Modifier.size(16.dp)
                     )
                 }

@@ -4,4 +4,8 @@
     <string name="widget_user_card_course">курс</string>
     <string name="widget_user_card_degree">степень</string>
     <string name="widget_user_card_entry">год поступления</string>
+    <string name="widget_sign_in_title">Войдите в Unify</string>
+    <string name="widget_sign_in_subtitle">Нажмите, чтобы войти и увидеть студенческую карту.</string>
+    <string name="widget_card_pending_title">Карта скоро появится</string>
+    <string name="widget_card_pending_subtitle">Откройте Unify, чтобы загрузить студенческую карту.</string>
 </resources>

@@ -2,6 +2,10 @@ com.bonjur.appwidget
 drawable ic_widget_mail
 drawable widget_badge_primary
 drawable widget_badge_translucent
+string widget_card_pending_subtitle
+string widget_card_pending_title
+string widget_sign_in_subtitle
+string widget_sign_in_title
 string widget_user_card_course
 string widget_user_card_degree
 string widget_user_card_description

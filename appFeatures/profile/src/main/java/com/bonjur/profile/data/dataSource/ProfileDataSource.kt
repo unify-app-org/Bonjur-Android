@@ -16,7 +16,7 @@ interface ProfileDataSource {
     suspend fun deleteAccount(): ByteArray
     suspend fun getCategories(): List<CategorySectionResponse>
     suspend fun getLanguages(): List<LanguageResponse>
-    suspend fun getMyClubs(userId: String): PageNationResponse<List<MyClubResponse>>
-    suspend fun getMyEvents(): PageNationResponse<List<MyEventResponse>>
-    suspend fun getMyHangouts(userId: String): PageNationResponse<List<MyHangoutResponse>>
+    suspend fun getMyClubs(userId: String, page: Int, size: Int): PageNationResponse<List<MyClubResponse>>
+    suspend fun getMyEvents(page: Int, size: Int): PageNationResponse<List<MyEventResponse>>
+    suspend fun getMyHangouts(userId: String, page: Int, size: Int): PageNationResponse<List<MyHangoutResponse>>
 }

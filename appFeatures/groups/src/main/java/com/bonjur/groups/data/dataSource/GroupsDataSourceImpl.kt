@@ -13,14 +13,14 @@ class GroupsDataSourceImpl @Inject constructor(
     apiClient: ApiClientProtocol
 ) : NetworkService(apiClient), GroupsDataSource {
 
-    // The /joined endpoints return a paginated wrapper ({ "content": [...] }), so decode
-    // PageNationResponse<List<T>> and hand back the content (matches ProfileDataSourceImpl).
-    override suspend fun fetchJoinedClubs(query: Map<String, String>): List<GroupsClubResponse> =
-        fetch<PageNationResponse<List<GroupsClubResponse>>>(GroupsEndPoints.JoinedClubs(query)).content
+    // The /joined endpoints return a paginated wrapper ({ "content": [...] }). Hand the
+    // whole envelope back — the use case needs `totalPages` to know when to stop paging.
+    override suspend fun fetchJoinedClubs(query: Map<String, String>): PageNationResponse<List<GroupsClubResponse>> =
+        fetch(GroupsEndPoints.JoinedClubs(query))
 
-    override suspend fun fetchJoinedHangouts(query: Map<String, String>): List<GroupsHangoutResponse> =
-        fetch<PageNationResponse<List<GroupsHangoutResponse>>>(GroupsEndPoints.JoinedHangouts(query)).content
+    override suspend fun fetchJoinedHangouts(query: Map<String, String>): PageNationResponse<List<GroupsHangoutResponse>> =
+        fetch(GroupsEndPoints.JoinedHangouts(query))
 
-    override suspend fun fetchJoinedEvents(query: Map<String, String>): List<EventListResponse> =
-        fetch<PageNationResponse<List<EventListResponse>>>(GroupsEndPoints.JoinedEvents(query)).content
+    override suspend fun fetchJoinedEvents(query: Map<String, String>): PageNationResponse<List<EventListResponse>> =
+        fetch(GroupsEndPoints.JoinedEvents(query))
 }

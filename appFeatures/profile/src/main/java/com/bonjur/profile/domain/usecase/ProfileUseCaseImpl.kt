@@ -22,6 +22,8 @@ import java.util.TimeZone
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import javax.inject.Inject
+import com.bonjur.network.model.Page
+import com.bonjur.network.model.toPage
 
 class ProfileUseCaseImpl @Inject constructor(
     val dataSource: ProfileDataSource,
@@ -71,9 +73,10 @@ class ProfileUseCaseImpl @Inject constructor(
 
     // ── My clubs / events / activities (parallel-fetched by ProfileDetail VM) ──
 
-    override suspend fun getMyClubs(userId: String?): List<ClubCardModel> {
-        val id = userId ?: tokenManager.getUserId() ?: return emptyList()
-        return dataSource.getMyClubs(id).content.map { it.toCardModel() }
+    override suspend fun getMyClubs(userId: String?, page: Int, size: Int): Page<ClubCardModel> {
+        val id = userId ?: tokenManager.getUserId() ?: return Page.empty()
+        val response = dataSource.getMyClubs(id, page, size)
+        return response.toPage(page, size, response.content.map { it.toCardModel() })
     }
 
     private fun MyClubResponse.toCardModel(): ClubCardModel = ClubCardModel(
@@ -96,8 +99,9 @@ class ProfileUseCaseImpl @Inject constructor(
         isVerified = AppUIEntities.ClubStatus.from(clubStatus)?.isVerified == true
     )
 
-    override suspend fun getMyEvents(): List<EventsCardModel> =
-        dataSource.getMyEvents().content.map { item ->
+    override suspend fun getMyEvents(page: Int, size: Int): Page<EventsCardModel> {
+        val response = dataSource.getMyEvents(page, size)
+        val items = response.content.map { item ->
             val parts = item.eventDate.toDateParts()
             EventsCardModel(
                 id = item.id ?: "-",
@@ -121,10 +125,13 @@ class ProfileUseCaseImpl @Inject constructor(
                 dateMonth = parts.month
             )
         }
+        return response.toPage(page, size, items)
+    }
 
-    override suspend fun getMyHangouts(userId: String?): List<HangoutsCardModel> {
-        val id = userId ?: tokenManager.getUserId() ?: return emptyList()
-        return dataSource.getMyHangouts(id).content.map { item ->
+    override suspend fun getMyHangouts(userId: String?, page: Int, size: Int): Page<HangoutsCardModel> {
+        val id = userId ?: tokenManager.getUserId() ?: return Page.empty()
+        val response = dataSource.getMyHangouts(id, page, size)
+        val items = response.content.map { item ->
             val parts = item.hangoutDate.toDateParts()
             HangoutsCardModel(
                 id = item.id ?: "-",
@@ -143,6 +150,7 @@ class ProfileUseCaseImpl @Inject constructor(
                 location = item.location
             )
         }
+        return response.toPage(page, size, items)
     }
 
     // ── Date display helpers (device-local; mirrors EventsUseCaseImpl) ─────────

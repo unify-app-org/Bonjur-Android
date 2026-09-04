@@ -22,6 +22,9 @@ sealed class CommunityDetailSideEffect : SideEffect {
 data class CommunityDetailViewState(
     val uiModel: CommunityDetails.UIModel? = null,
     val clubsData: List<ClubCardModel> = emptyList(),
+    /** Sub-club paging. `api/ds/v1/clubs` sends no page envelope, so "more exists"
+     *  means only "the last page came back full". */
+    val clubsHasMore: Boolean = false,
     val membersData: GroupedMembersData? = null,
     val currentUserId: String? = null,
     val selectedSegment: SegmentTypes = SegmentTypes.ABOUT
@@ -71,6 +74,7 @@ data class CommunityDetailViewState(
 
 sealed class CommunityDetailAction : FeatureAction {
     object FetchData : CommunityDetailAction()
+    object LoadMoreClubs : CommunityDetailAction()
     object BackTapped : CommunityDetailAction()
     object EditTapped : CommunityDetailAction()
     object SeeAllMembersTapped : CommunityDetailAction()

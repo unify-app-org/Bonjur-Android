@@ -27,6 +27,7 @@ import com.bonjur.designSystem.components.filter.FilterViewMocks
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
+import com.bonjur.network.model.Page
 
 class CommunitiesUseCaseImpl @Inject constructor(
     val dataSource: CommunitiesDataSource
@@ -40,8 +41,15 @@ class CommunitiesUseCaseImpl @Inject constructor(
     override suspend fun fetchCommunityDetails(communityId: Int): CommunityDetails.UIModel =
         dataSource.fetchCommunityDetail(communityId).toUIModel()
 
-    override suspend fun fetchClubs(communityId: Int): List<ClubCardModel> =
-        dataSource.getClubs(clubsQuery(communityId)).map { it.toCardModel() }
+    override suspend fun fetchClubs(communityId: Int, page: Int, size: Int): Page<ClubCardModel> {
+        val items = dataSource.getClubs(clubsQuery(communityId, page, size))
+            .map { it.toCardModel() }
+        return Page(
+            items = items,
+            page = page,
+            hasMore = size > 0 && items.size >= size
+        )
+    }
 
     override suspend fun fetchCommunityMembers(communityId: Int): GroupedMembersData {
         val users = dataSource.fetchCommunityMembers(communityId, page = 0, size = 10)
@@ -277,10 +285,10 @@ class CommunitiesUseCaseImpl @Inject constructor(
 
     // MARK: - Mappers
 
-    private fun clubsQuery(communityId: Int): Map<String, String> = mapOf(
+    private fun clubsQuery(communityId: Int, page: Int, size: Int): Map<String, String> = mapOf(
         "parentId" to communityId.toString(),
-        "page" to "0",
-        "size" to "10"
+        "page" to page.toString(),
+        "size" to size.toString()
     )
 
     private fun AppUIEntities.UserActivityRole.toApiString(): String = when (this) {

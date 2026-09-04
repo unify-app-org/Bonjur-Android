@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
+import com.bonjur.network.model.Page
+import com.bonjur.network.model.toPage
 
 class EventsUseCaseImpl @Inject constructor(
     val dataSource: EventsDataSource
@@ -43,11 +45,13 @@ class EventsUseCaseImpl @Inject constructor(
         dataSource.getEvents(buildEventsQuery(categoryIds, keyword, page, size))
             .map { it.toCardModel() }
 
-    override suspend fun fetchClubEvents(clubId: Int, page: Int, size: Int): List<EventsCardModel> =
-        dataSource.getClubEvents(
+    override suspend fun fetchClubEvents(clubId: Int, page: Int, size: Int): Page<EventsCardModel> {
+        val response = dataSource.getClubEvents(
             clubId,
             mapOf("page" to page.toString(), "size" to size.toString())
-        ).content.map { it.toCardModel() }
+        )
+        return response.toPage(page, size, response.content.map { it.toCardModel() })
+    }
 
     /**
      * Discover events query (GET api/ds/v1/events). Mirrors iOS `EventsRepo.fetchEvents`:

@@ -91,6 +91,8 @@ import com.bonjur.designSystem.ui.theme.image.Images
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import com.bonjur.designSystem.utils.asBrowsableUri
+import com.bonjur.designSystem.components.paging.LoadMoreOnScrollToEnd
+import com.bonjur.designSystem.components.paging.PagingFooter
 
 @Composable
 fun CommunityDetailView(
@@ -131,6 +133,18 @@ fun CommunityDetailView(
                 isUpdatingFromPager = false
             }
         }
+    }
+
+    // The Clubs tab's cards live in an eager Column inside the single "tabs" lazy item,
+    // so a per-row callback would fire on entry and pull every page at once. Drive paging
+    // off the outer list's scroll position instead.
+    val clubsPagingEnabled = store.state.selectedSegment ==
+        CommunityDetailViewState.SegmentTypes.CLUBS && store.state.clubsHasMore
+    LoadMoreOnScrollToEnd(
+        listState = listState,
+        enabled = clubsPagingEnabled
+    ) {
+        store.send(CommunityDetailAction.LoadMoreClubs)
     }
 
     LaunchedEffect(listState) {
@@ -239,6 +253,10 @@ fun CommunityDetailView(
                         }
                     }
                 }
+            }
+
+            item(key = "paging_footer") {
+                PagingFooter(hasMore = clubsPagingEnabled)
             }
 
             item(key = "bottom_spacer") {

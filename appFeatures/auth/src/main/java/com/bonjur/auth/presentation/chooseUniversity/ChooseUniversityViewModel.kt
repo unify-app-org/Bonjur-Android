@@ -7,11 +7,13 @@ import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.appfoundation.FeatureViewModel
 import com.bonjur.auth.domain.useCase.AuthUseCase
 import com.bonjur.auth.helper.MicrosoftAuthManager
+import com.bonjur.auth.helper.MsalSignInCancelled
 import com.bonjur.auth.navigation.AuthScreens
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityAction
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityInputData
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversitySideEffect
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityViewState
+import com.bonjur.auth.presentation.chooseUniversity.model.CommunitiesPhase
 import com.bonjur.auth.presentation.signIn.model.SignInInputData
 import com.bonjur.auth.presentation.welcome.model.AuthWelcomeInputData
 import com.bonjur.navigation.AppScreens
@@ -35,8 +37,13 @@ class ChooseUniversityViewModel @Inject constructor(
         val microsoftAuthManager: MicrosoftAuthManager
     )
 
-    /** Community ids that authenticate via Microsoft SSO instead of credentials. Mirrors iOS. */
-    private val msalCommunityIds: Set<Int> = setOf(1)
+    /**
+     * Communities that authenticate via Microsoft SSO instead of credentials, keyed by
+     * community NAME — the ids are assigned by the backend and are not stable across
+     * environments, so matching on them routed the wrong community into the MSAL flow.
+     * Mirrors iOS `SignInFlowCoordinator.msalCommunityIds`.
+     */
+    private val msalCommunityNames: Set<String> = setOf("UFAZ")
     private var selectedCommunityId: Int = 0
 
     private lateinit var inputData: ChooseUniversityInputData
@@ -58,35 +65,55 @@ class ChooseUniversityViewModel @Inject constructor(
 
     private fun nextTapped() {
         viewModelScope.launch {
-            val selectedUniversity = state.uiModel.first { item -> item.selected }
+            val selectedUniversity = state.uiModel.firstOrNull { item -> item.selected } ?: return@launch
             selectedCommunityId = selectedUniversity.id
-            if (msalCommunityIds.contains(selectedUniversity.id)) {
+            if (usesMicrosoftSignIn(selectedUniversity.title)) {
                 postEffect(ChooseUniversitySideEffect.LaunchMicrosoftSignIn)
             } else {
                 navigator.navigateTo(
                     AuthScreens.SignIn.route,
-                    SignInInputData(communityId = selectedUniversity.id)
+                    SignInInputData(
+                        communityId = selectedUniversity.id,
+                        communityName = selectedUniversity.title
+                    )
                 )
             }
         }
     }
 
+    private fun usesMicrosoftSignIn(communityName: String): Boolean =
+        msalCommunityNames.any { it.equals(communityName.trim(), ignoreCase = true) }
+
     fun signInWithMicrosoft(activity: Activity) {
         viewModelScope.launch {
+            // Held only until the Microsoft UI takes over the screen — the overlay is
+            // invisible behind it and a count that spans another activity can be left
+            // stranded. The return leg re-shows it below.
+            postEffect(ChooseUniversitySideEffect.Loading(true))
+            val result = try {
+                dependencies.microsoftAuthManager.signIn(activity)
+            } finally {
+                postEffect(ChooseUniversitySideEffect.Loading(false))
+            }
+
+            if (result.error is MsalSignInCancelled) return@launch
+
+            val email = result.email
+            if (result.error != null || email.isNullOrBlank()) {
+                postEffect(ChooseUniversitySideEffect.Error(LanguageManager.string(R.string.auth_microsoft_failed)))
+                return@launch
+            }
+
+            // Microsoft has redirected back into Unify and the token exchange starts
+            // now: keep the app under a loading overlay the whole way to the dashboard
+            // instead of flashing the community list.
             postEffect(ChooseUniversitySideEffect.Loading(true))
             try {
-                val result = dependencies.microsoftAuthManager.signIn(activity)
-                val email = result.email
-                val idToken = result.idToken
-                if (result.error != null || email.isNullOrBlank()) {
-                    postEffect(ChooseUniversitySideEffect.Error(LanguageManager.string(R.string.auth_microsoft_failed)))
-                    return@launch
-                }
                 val isFirstLogin = dependencies.useCase.login(
                     communityId = selectedCommunityId,
                     email = email,
                     password = null,
-                    idToken = idToken
+                    idToken = result.idToken
                 )
                 if (isFirstLogin) {
                     navigator.navigateTo(
@@ -112,11 +139,16 @@ class ChooseUniversityViewModel @Inject constructor(
 
     private fun fetchData() {
         viewModelScope.launch {
+            updateState(state.copy(phase = CommunitiesPhase.LOADING))
             try {
                 val universities = dependencies.useCase.chooseUniversity()
-                updateState ( state.copy(uiModel = universities) )
+                updateState(
+                    state.copy(uiModel = universities, phase = CommunitiesPhase.LOADED)
+                )
             } catch (e: Exception) {
-
+                // No hardcoded fallback list — an empty screen with a retry beats
+                // signing the user into a community that isn't theirs.
+                updateState(state.copy(uiModel = emptyList(), phase = CommunitiesPhase.FAILED))
             }
         }
     }

@@ -7,6 +7,8 @@ import com.bonjur.appfoundation.SideEffect
 // -------- Input Data --------
 data class SignInInputData(
     val communityId: Int = 0,
+    /** Display name of the chosen community. Mirrors iOS `SignInInputData.communityName`. */
+    val communityName: String = "",
     val initialValue: String = ""
 )
 

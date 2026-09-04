@@ -31,12 +31,12 @@ class ProfileDataSourceImpl @Inject constructor(
     override suspend fun getLanguages(): List<com.bonjur.profile.data.DTOs.LanguageResponse> =
         fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.GetLanguages)
 
-    override suspend fun getMyClubs(userId: String): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyClubResponse>> =
-        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyClubs(userId))
+    override suspend fun getMyClubs(userId: String, page: Int, size: Int): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyClubResponse>> =
+        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyClubs(userId, page, size))
 
-    override suspend fun getMyEvents(): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyEventResponse>> =
-        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyEvents)
+    override suspend fun getMyEvents(page: Int, size: Int): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyEventResponse>> =
+        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyEvents(page, size))
 
-    override suspend fun getMyHangouts(userId: String): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyHangoutResponse>> =
-        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyHangouts(userId))
+    override suspend fun getMyHangouts(userId: String, page: Int, size: Int): com.bonjur.network.model.PageNationResponse<List<com.bonjur.profile.data.DTOs.MyHangoutResponse>> =
+        fetch(com.bonjur.profile.data.endPoint.ProfileEndpoints.MyHangouts(userId, page, size))
 }

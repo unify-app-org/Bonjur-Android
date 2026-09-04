@@ -47,14 +47,16 @@ class GroupsListViewModel @Inject constructor(
     // in the navigation graph". The tab's navigator is handed in from the screen.
     private lateinit var navigator: Navigator
 
-    private val paginationStep = 10
     private val searchDebounceMs = 300L
-    private var clubsSize = 10
-    private var hangoutsSize = 10
+    /** Last page index fetched per tab. Pages are appended; the previous version grew
+     *  `size` and refetched page 0 every time, which re-downloaded the whole list on
+     *  every scroll and reset the scroll position. */
+    private var clubsPage = 0
+    private var eventsPage = 0
+    private var hangoutsPage = 0
     private var isLoadingMoreClubs = false
+    private var isLoadingMoreEvents = false
     private var isLoadingMoreHangouts = false
-    private var hasMoreClubs = true
-    private var hasMoreHangouts = true
     private var searchJob: Job? = null
 
     fun init(inputData: GroupsListInputData, navigator: Navigator) {
@@ -67,6 +69,8 @@ class GroupsListViewModel @Inject constructor(
         when (action) {
             GroupsListAction.FetchData -> fetchData()
             GroupsListAction.LoadMoreClubs -> loadMoreClubs()
+            GroupsListAction.LoadMoreEvents -> loadMoreEvents()
+
             GroupsListAction.LoadMoreHangouts -> loadMoreHangouts()
             is GroupsListAction.SegmentChanged -> handleSegmentChanged(action.segment)
             is GroupsListAction.SearchTextChanged -> searchChanged(action.text)
@@ -89,9 +93,14 @@ class GroupsListViewModel @Inject constructor(
 
     private suspend fun getClubs() {
         try {
-            val clubs = useCase.fetchClubs(makeQuery(clubsSize))
-            hasMoreClubs = clubs.size >= clubsSize
-            updateState(state.copy(uiModel = state.uiModel.copy(clubs = clubs)))
+            val result = useCase.fetchClubs(makeQuery(page = 0))
+            clubsPage = result.page
+            updateState(
+                state.copy(
+                    uiModel = state.uiModel.copy(clubs = result.items),
+                    clubsHasMore = result.hasMore
+                )
+            )
         } catch (e: ApiException) {
             postEffect(GroupsListSideEffect.Error(e))
         }
@@ -99,8 +108,14 @@ class GroupsListViewModel @Inject constructor(
 
     private suspend fun getEvents() {
         try {
-            val events = useCase.fetchEvents(currentKeyword())
-            updateState(state.copy(uiModel = state.uiModel.copy(events = events)))
+            val result = useCase.fetchEvents(makeQuery(page = 0))
+            eventsPage = result.page
+            updateState(
+                state.copy(
+                    uiModel = state.uiModel.copy(events = result.items),
+                    eventsHasMore = result.hasMore
+                )
+            )
         } catch (e: ApiException) {
             postEffect(GroupsListSideEffect.Error(e))
         }
@@ -108,27 +123,38 @@ class GroupsListViewModel @Inject constructor(
 
     private suspend fun getHangouts() {
         try {
-            val hangouts = useCase.fetchHangouts(makeQuery(hangoutsSize))
-            hasMoreHangouts = hangouts.size >= hangoutsSize
-            updateState(state.copy(uiModel = state.uiModel.copy(hangouts = hangouts)))
+            val result = useCase.fetchHangouts(makeQuery(page = 0))
+            hangoutsPage = result.page
+            updateState(
+                state.copy(
+                    uiModel = state.uiModel.copy(hangouts = result.items),
+                    hangoutsHasMore = result.hasMore
+                )
+            )
         } catch (e: ApiException) {
             postEffect(GroupsListSideEffect.Error(e))
         }
     }
 
     private fun loadMoreClubs() {
-        if (isLoadingMoreClubs || !hasMoreClubs) return
+        if (isLoadingMoreClubs || !state.clubsHasMore) return
         isLoadingMoreClubs = true
-        val previousSize = clubsSize
-        clubsSize += paginationStep
+        val nextPage = clubsPage + 1
         viewModelScope.launch {
             try {
-                val previousCount = state.uiModel.clubs.size
-                val clubs = useCase.fetchClubs(makeQuery(clubsSize))
-                hasMoreClubs = clubs.size > previousCount
-                updateState(state.copy(uiModel = state.uiModel.copy(clubs = clubs)))
+                val result = useCase.fetchClubs(makeQuery(nextPage))
+                clubsPage = result.page
+                updateState(
+                    state.copy(
+                        uiModel = state.uiModel.copy(
+                            clubs = appendPage(state.uiModel.clubs, result.items) { it.id }
+                        ),
+                        clubsHasMore = result.hasMore
+                    )
+                )
             } catch (e: ApiException) {
-                clubsSize = previousSize
+                // Stop paging rather than retry-looping the loader on every scroll.
+                updateState(state.copy(clubsHasMore = false))
                 postEffect(GroupsListSideEffect.Error(e))
             } finally {
                 isLoadingMoreClubs = false
@@ -136,19 +162,49 @@ class GroupsListViewModel @Inject constructor(
         }
     }
 
-    private fun loadMoreHangouts() {
-        if (isLoadingMoreHangouts || !hasMoreHangouts) return
-        isLoadingMoreHangouts = true
-        val previousSize = hangoutsSize
-        hangoutsSize += paginationStep
+    private fun loadMoreEvents() {
+        if (isLoadingMoreEvents || !state.eventsHasMore) return
+        isLoadingMoreEvents = true
+        val nextPage = eventsPage + 1
         viewModelScope.launch {
             try {
-                val previousCount = state.uiModel.hangouts.size
-                val hangouts = useCase.fetchHangouts(makeQuery(hangoutsSize))
-                hasMoreHangouts = hangouts.size > previousCount
-                updateState(state.copy(uiModel = state.uiModel.copy(hangouts = hangouts)))
+                val result = useCase.fetchEvents(makeQuery(nextPage))
+                eventsPage = result.page
+                updateState(
+                    state.copy(
+                        uiModel = state.uiModel.copy(
+                            events = appendPage(state.uiModel.events, result.items) { it.id }
+                        ),
+                        eventsHasMore = result.hasMore
+                    )
+                )
             } catch (e: ApiException) {
-                hangoutsSize = previousSize
+                updateState(state.copy(eventsHasMore = false))
+                postEffect(GroupsListSideEffect.Error(e))
+            } finally {
+                isLoadingMoreEvents = false
+            }
+        }
+    }
+
+    private fun loadMoreHangouts() {
+        if (isLoadingMoreHangouts || !state.hangoutsHasMore) return
+        isLoadingMoreHangouts = true
+        val nextPage = hangoutsPage + 1
+        viewModelScope.launch {
+            try {
+                val result = useCase.fetchHangouts(makeQuery(nextPage))
+                hangoutsPage = result.page
+                updateState(
+                    state.copy(
+                        uiModel = state.uiModel.copy(
+                            hangouts = appendPage(state.uiModel.hangouts, result.items) { it.id }
+                        ),
+                        hangoutsHasMore = result.hasMore
+                    )
+                )
+            } catch (e: ApiException) {
+                updateState(state.copy(hangoutsHasMore = false))
                 postEffect(GroupsListSideEffect.Error(e))
             } finally {
                 isLoadingMoreHangouts = false
@@ -156,12 +212,25 @@ class GroupsListViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Appends a page, dropping rows already on screen. The server re-sorts by
+     * `modifiedAt`, so a row can shift across the page boundary and arrive twice —
+     * and a duplicate key crashes LazyColumn.
+     */
+    private fun <T, ID> appendPage(
+        existing: List<T>,
+        newItems: List<T>,
+        id: (T) -> ID
+    ): List<T> {
+        val seen = existing.mapTo(mutableSetOf(), id)
+        return existing + newItems.filter { seen.add(id(it)) }
+    }
+
     private fun searchChanged(text: String) {
         updateState(state.copy(searchText = text))
-        clubsSize = paginationStep
-        hangoutsSize = paginationStep
-        hasMoreClubs = true
-        hasMoreHangouts = true
+        clubsPage = 0
+        eventsPage = 0
+        hangoutsPage = 0
 
         // Pure server-side search, mirroring iOS: debounce, then refetch all three
         // activity lists with the keyword. No local filtering.
@@ -174,10 +243,10 @@ class GroupsListViewModel @Inject constructor(
         }
     }
 
-    private fun makeQuery(size: Int): GroupsPaginationQuery {
+    private fun makeQuery(page: Int): GroupsPaginationQuery {
         return GroupsPaginationQuery(
-            page = 0,
-            size = size,
+            page = page,
+            size = PAGE_SIZE,
             keyword = currentKeyword()
         )
     }
@@ -217,5 +286,9 @@ class GroupsListViewModel @Inject constructor(
         viewModelScope.launch {
             navigator.navigateTo(HangoutsScreens.Details.route, HangoutDetailsInputData(hangoutId = id))
         }
+    }
+
+    private companion object {
+        const val PAGE_SIZE = 10
     }
 }

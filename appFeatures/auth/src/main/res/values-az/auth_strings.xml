@@ -48,4 +48,7 @@
     <string name="auth_language_russian">Rus</string>
     <string name="auth_language_french">Fransız</string>
     <string name="auth_selected_photo">Seçilmiş şəkil</string>
+    <string name="auth_communities_empty">Hələ heç bir icma mövcud deyil.</string>
+    <string name="auth_communities_error">Nəsə səhv oldu. İcmaları yükləmək mümkün olmadı.</string>
+    <string name="auth_try_again">Yenidən cəhd edin</string>
 </resources>

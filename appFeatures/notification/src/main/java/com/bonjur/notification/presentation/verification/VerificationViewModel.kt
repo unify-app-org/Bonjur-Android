@@ -52,7 +52,7 @@ class VerificationViewModel @Inject constructor(
                 val result = useCase.fetchPending(0, pageSize)
                 updateState(
                     state.copy(
-                        items = result.items,
+                        items = dedupedById(result.items),
                         canLoadMore = result.hasMore,
                         phase = RequestsPhase.LOADED
                     )
@@ -74,7 +74,11 @@ class VerificationViewModel @Inject constructor(
                 page = next
                 updateState(
                     state.copy(
-                        items = state.items + result.items,
+                        // De-dupe before storing: `/clubs/pending` repeats a club across
+                        // pages (and returns one row per pending submission), and the id is
+                        // derived from the club id alone — `items(key = { it.id })` throws
+                        // "Key was already used" on the duplicate and takes the screen down.
+                        items = dedupedById(state.items + result.items),
                         canLoadMore = result.hasMore,
                         isLoadingMore = false
                     )
@@ -104,6 +108,10 @@ class VerificationViewModel @Inject constructor(
             }
         }
     }
+
+    /** Keeps the first occurrence of each id; duplicates crash the keyed LazyColumn. */
+    private fun dedupedById(items: List<VerificationItem>): List<VerificationItem> =
+        items.distinctBy { it.id }
 
     private fun openClub(item: VerificationItem) {
         viewModelScope.launch {

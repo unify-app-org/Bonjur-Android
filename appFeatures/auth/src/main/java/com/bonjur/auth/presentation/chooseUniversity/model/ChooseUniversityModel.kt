@@ -7,9 +7,13 @@ data class ChooseUniversityInputData(
     val example: String = ""
 )
 
+/** Load state of the community list. Mirrors iOS `ChooseUniversityViewState.phase`. */
+enum class CommunitiesPhase { LOADING, LOADED, FAILED }
+
 data class ChooseUniversityViewState(
     val uiModel: List<SelectableListItemModel> = emptyList(),
-    val enabled: Boolean = false
+    val enabled: Boolean = false,
+    val phase: CommunitiesPhase = CommunitiesPhase.LOADING
 ) : FeatureState
 
 sealed class ChooseUniversityAction : FeatureAction {

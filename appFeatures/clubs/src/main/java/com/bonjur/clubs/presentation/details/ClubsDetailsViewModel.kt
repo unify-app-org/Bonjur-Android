@@ -43,6 +43,9 @@ class ClubDetailsViewModel @Inject constructor(
 
     private lateinit var inputData: ClubDetailsInputData
     private lateinit var navigator: Navigator
+
+    private var eventsPage = 0
+    private var isLoadingMoreEvents = false
     fun init(inputData: ClubDetailsInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
@@ -55,6 +58,8 @@ class ClubDetailsViewModel @Inject constructor(
     override fun handle(action: ClubDetailsAction) {
         when (action) {
             ClubDetailsAction.FetchData -> fetchData()
+
+            ClubDetailsAction.LoadMoreEvents -> loadMoreEvents()
             ClubDetailsAction.BackTapped -> navigateBack()
             is ClubDetailsAction.SegmentChanged -> {
                 updateState(
@@ -296,16 +301,48 @@ class ClubDetailsViewModel @Inject constructor(
 
     /** Club's active events for the Events tab (first page). Mirrors iOS ClubDetailsViewModel. */
     private fun fetchEvents() {
+        eventsPage = 0
         viewModelScope.launch {
             try {
                 val events = dependencies.eventsUseCase.fetchClubEvents(
                     clubId = inputData.clubId,
                     page = 0,
-                    size = 10
+                    size = EVENTS_PAGE_SIZE
                 )
-                updateState(state.copy(eventsData = events))
+                eventsPage = events.page
+                updateState(state.copy(eventsData = events.items, eventsHasMore = events.hasMore))
             } catch (e: Exception) {
                 // Events tab is best-effort; keep detail visible without them.
+            }
+        }
+    }
+
+    private fun loadMoreEvents() {
+        if (isLoadingMoreEvents || !state.eventsHasMore) return
+        isLoadingMoreEvents = true
+        val nextPage = eventsPage + 1
+        viewModelScope.launch {
+            try {
+                val result = dependencies.eventsUseCase.fetchClubEvents(
+                    clubId = inputData.clubId,
+                    page = nextPage,
+                    size = EVENTS_PAGE_SIZE
+                )
+                eventsPage = result.page
+                // Server re-sorts by `modified_at`, so an event can straddle the page
+                // boundary and arrive twice — a duplicate key crashes LazyColumn.
+                val seen = state.eventsData.mapTo(mutableSetOf()) { it.id }
+                updateState(
+                    state.copy(
+                        eventsData = state.eventsData + result.items.filter { seen.add(it.id) },
+                        eventsHasMore = result.hasMore
+                    )
+                )
+            } catch (e: Exception) {
+                // Stop paging rather than retry-looping on every scroll tick.
+                updateState(state.copy(eventsHasMore = false))
+            } finally {
+                isLoadingMoreEvents = false
             }
         }
     }
@@ -344,5 +381,9 @@ class ClubDetailsViewModel @Inject constructor(
         } catch (e: Exception) {
             // Members are best-effort; keep detail visible without them.
         }
+    }
+
+    private companion object {
+        const val EVENTS_PAGE_SIZE = 10
     }
 }

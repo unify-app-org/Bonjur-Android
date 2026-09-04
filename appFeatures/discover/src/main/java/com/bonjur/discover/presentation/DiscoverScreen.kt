@@ -33,8 +33,9 @@ fun DiscoverScreen(
         handleEffect = { effect ->
             when (effect) {
                 is DiscoverSideEffect.Loading -> {
-                    // Posted by the first load and the filter-apply path. Pull-to-refresh
-                    // and the reappear refresh stay inline (no overlay).
+                    // Only user-initiated actions that must be waited out (join) reach
+                    // here. Loading the dashboard itself draws the shimmer skeleton
+                    // instead; pull-to-refresh and the reappear refresh stay silent.
                     if (effect.isLoading) com.bonjur.designSystem.components.loading.AppLoadingUI.show()
                     else com.bonjur.designSystem.components.loading.AppLoadingUI.dismiss()
                 }

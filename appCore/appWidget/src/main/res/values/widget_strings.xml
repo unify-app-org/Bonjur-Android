@@ -6,4 +6,8 @@
     <string name="widget_user_card_course">course</string>
     <string name="widget_user_card_degree">degree</string>
     <string name="widget_user_card_entry">entry</string>
+    <string name="widget_sign_in_title">Sign in to Unify</string>
+    <string name="widget_sign_in_subtitle">Tap to log in and see your student card.</string>
+    <string name="widget_card_pending_title">Your card is on the way</string>
+    <string name="widget_card_pending_subtitle">Open Unify to load your student card.</string>
 </resources>

@@ -47,6 +47,7 @@ import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
 import kotlinx.coroutines.launch
 import kotlin.collections.isNotEmpty
+import com.bonjur.designSystem.components.paging.pagingFooterItem
 
 @Composable
 fun GroupsListView(
@@ -134,6 +135,7 @@ fun GroupsListView(
             when (page) {
                 0 -> ClubsScrollView(
                     clubs = store.state.uiModel.clubs,
+                    hasMore = store.state.clubsHasMore,
                     onItemTap = { id -> store.send(GroupsListAction.ClubItemTapped(id)) },
                     onLoadMore = { store.send(GroupsListAction.LoadMoreClubs) },
                     onEmptyAction = {
@@ -142,13 +144,16 @@ fun GroupsListView(
                 )
                 1 -> EventsScrollView(
                     events = store.state.uiModel.events,
+                    hasMore = store.state.eventsHasMore,
                     onItemTap = { id -> store.send(GroupsListAction.EventItemTapped(id)) },
+                    onLoadMore = { store.send(GroupsListAction.LoadMoreEvents) },
                     onEmptyAction = {
                         store.send(GroupsListAction.EmptyStateActionTapped(SegmentType.EVENTS))
                     }
                 )
                 2 -> HangoutsScrollView(
                     hangouts = store.state.uiModel.hangouts,
+                    hasMore = store.state.hangoutsHasMore,
                     onItemTap = { id -> store.send(GroupsListAction.HangoutItemTapped(id)) },
                     onLoadMore = { store.send(GroupsListAction.LoadMoreHangouts) },
                     onEmptyAction = {
@@ -242,6 +247,7 @@ private fun TopView(
 @Composable
 private fun ClubsScrollView(
     clubs: List<ClubCardModel>,
+    hasMore: Boolean,
     onItemTap: (Int) -> Unit,
     onLoadMore: () -> Unit,
     onEmptyAction: () -> Unit
@@ -253,13 +259,13 @@ private fun ClubsScrollView(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item { TabCaption(SegmentType.CLUBS) }
-            itemsIndexed(clubs, key = { _, it -> it.uuid }) { index, club ->
+            items(clubs, key = { it.uuid }) { club ->
                 ClubCardView(
                     model = club,
                     onTap = { onItemTap(club.id) }
                 )
-                LoadMoreTrigger(index = index, lastIndex = clubs.lastIndex, onLoadMore = onLoadMore)
             }
+            pagingFooterItem(hasMore = hasMore, loadedCount = clubs.size, onLoadMore = onLoadMore)
         }
     } else {
         EmptyStateView(type = SegmentType.CLUBS, onAction = onEmptyAction)
@@ -269,7 +275,9 @@ private fun ClubsScrollView(
 @Composable
 private fun EventsScrollView(
     events: List<EventsCardModel>,
+    hasMore: Boolean,
     onItemTap: (String) -> Unit,
+    onLoadMore: () -> Unit,
     onEmptyAction: () -> Unit
 ) {
     if (events.isNotEmpty()) {
@@ -286,6 +294,7 @@ private fun EventsScrollView(
                     onTap = { onItemTap(event.id) }
                 )
             }
+            pagingFooterItem(hasMore = hasMore, loadedCount = events.size, onLoadMore = onLoadMore)
         }
     } else {
         EmptyStateView(type = SegmentType.EVENTS, onAction = onEmptyAction)
@@ -295,6 +304,7 @@ private fun EventsScrollView(
 @Composable
 private fun HangoutsScrollView(
     hangouts: List<HangoutsCardModel>,
+    hasMore: Boolean,
     onItemTap: (String) -> Unit,
     onLoadMore: () -> Unit,
     onEmptyAction: () -> Unit
@@ -306,14 +316,14 @@ private fun HangoutsScrollView(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item { TabCaption(SegmentType.HANGOUTS) }
-            itemsIndexed(hangouts, key = { _, it -> it.uuid }) { index, hangout ->
+            items(hangouts, key = { it.uuid }) { hangout ->
                 HangoutsCardView(
                     model = hangout,
                     onButtonTap = { /* iOS card button is a no-op in Groups */ },
                     onTap = { onItemTap(hangout.id) }
                 )
-                LoadMoreTrigger(index = index, lastIndex = hangouts.lastIndex, onLoadMore = onLoadMore)
             }
+            pagingFooterItem(hasMore = hasMore, loadedCount = hangouts.size, onLoadMore = onLoadMore)
         }
     } else {
         EmptyStateView(type = SegmentType.HANGOUTS, onAction = onEmptyAction)
@@ -330,21 +340,6 @@ private fun TabCaption(segment: SegmentType) {
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Start
     )
-}
-
-/// Compose equivalent of iOS `loadMoreXIfNeeded(index == count - 1)`: fires once
-/// when the last item enters composition, re-fires after the list grows.
-@Composable
-private fun LoadMoreTrigger(
-    index: Int,
-    lastIndex: Int,
-    onLoadMore: () -> Unit
-) {
-    if (index == lastIndex && lastIndex >= 0) {
-        LaunchedEffect(lastIndex) {
-            onLoadMore()
-        }
-    }
 }
 
 @Composable

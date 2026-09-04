@@ -57,21 +57,39 @@ sealed class ProfileEndpoints : AppEndpoint {
         override val method = NetworkMethod.GET
     }
 
-    // GET /api/es/v1/events/my  — logged-in user's events (paginated)
-    data object MyEvents : ProfileEndpoints() {
+    // GET /api/es/v1/events/my  — logged-in user's events (paginated).
+    // Without page/size the server falls back to page=0&size=10 and the tab is
+    // silently capped at ten rows.
+    data class MyEvents(val page: Int, val size: Int) : ProfileEndpoints() {
         override val path = "api/es/v1/events/my"
         override val method = NetworkMethod.GET
+        override val queryParameters = pageQuery(page, size)
     }
 
     // GET /api/hs/v1/hangouts/{userId}/myhangouts  — user's activities (paginated)
-    data class MyHangouts(val userId: String) : ProfileEndpoints() {
+    data class MyHangouts(
+        val userId: String,
+        val page: Int,
+        val size: Int
+    ) : ProfileEndpoints() {
         override val path = "api/hs/v1/hangouts/$userId/myhangouts"
         override val method = NetworkMethod.GET
+        override val queryParameters = pageQuery(page, size)
     }
 
     // GET /api/cs/v1/clubs/{userId}/myclubs  — user's clubs (paginated)
-    data class MyClubs(val userId: String) : ProfileEndpoints() {
+    data class MyClubs(
+        val userId: String,
+        val page: Int,
+        val size: Int
+    ) : ProfileEndpoints() {
         override val path = "api/cs/v1/clubs/$userId/myclubs"
         override val method = NetworkMethod.GET
+        override val queryParameters = pageQuery(page, size)
+    }
+
+    companion object {
+        private fun pageQuery(page: Int, size: Int): Map<String, String> =
+            mapOf("page" to page.toString(), "size" to size.toString())
     }
 }

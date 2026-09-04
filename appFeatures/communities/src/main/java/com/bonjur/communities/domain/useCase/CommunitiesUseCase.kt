@@ -9,13 +9,19 @@ import com.bonjur.member.model.GroupedMembersData
 import com.bonjur.member.model.MembersPage
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.filter.FilterView
+import com.bonjur.network.model.Page
 
 interface CommunitiesUseCase {
     suspend fun fetchCommunitiesData(): List<CommunityCardModel>
     suspend fun fetchCommunityDetails(communityId: Int): CommunityDetails.UIModel
 
-    /** Sub-clubs of a community, fetched separately. Mirrors iOS `fetchClubs`. */
-    suspend fun fetchClubs(communityId: Int): List<ClubCardModel>
+    /**
+     * One page of a community's sub-clubs. Mirrors iOS `fetchClubs`.
+     *
+     * `api/ds/v1/clubs` answers with a bare array — discover-service has no page
+     * envelope — so `hasMore` can only be "this page came back full".
+     */
+    suspend fun fetchClubs(communityId: Int, page: Int, size: Int): Page<ClubCardModel>
 
     suspend fun fetchFilterData(): List<FilterView.Model>
 

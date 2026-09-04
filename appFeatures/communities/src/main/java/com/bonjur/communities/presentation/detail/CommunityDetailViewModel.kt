@@ -42,6 +42,9 @@ class CommunityDetailViewModel @Inject constructor(
     private lateinit var inputData: CommunityDetailInputData
     private lateinit var navigator: Navigator
 
+    private var clubsPage = 0
+    private var isLoadingMoreClubs = false
+
     fun init(inputData: CommunityDetailInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
@@ -54,6 +57,8 @@ class CommunityDetailViewModel @Inject constructor(
     override fun handle(action: CommunityDetailAction) {
         when (action) {
             CommunityDetailAction.FetchData -> fetchData()
+
+            CommunityDetailAction.LoadMoreClubs -> loadMoreClubs()
             CommunityDetailAction.BackTapped -> navigateBack()
             CommunityDetailAction.EditTapped -> navigateToEdit()
             CommunityDetailAction.SeeAllMembersTapped -> navigateToMembersList()
@@ -188,9 +193,12 @@ class CommunityDetailViewModel @Inject constructor(
         }
         try {
             val clubs = dependencies.useCase.fetchClubs(
-                communityId = inputData.communityId
+                communityId = inputData.communityId,
+                page = 0,
+                size = CLUBS_PAGE_SIZE
             )
-            updateState(state.copy(clubsData = clubs))
+            clubsPage = clubs.page
+            updateState(state.copy(clubsData = clubs.items, clubsHasMore = clubs.hasMore))
         } catch (e: Exception) {
             // Clubs are best-effort; keep detail visible without them.
         }
@@ -203,5 +211,39 @@ class CommunityDetailViewModel @Inject constructor(
             // Members are best-effort; keep detail visible without them.
             android.util.Log.e("CommunityDetail", "fetchCommunityMembers failed", e)
         }
+    }
+
+    private fun loadMoreClubs() {
+        if (isLoadingMoreClubs || !state.clubsHasMore) return
+        isLoadingMoreClubs = true
+        val nextPage = clubsPage + 1
+        viewModelScope.launch {
+            try {
+                val result = dependencies.useCase.fetchClubs(
+                    communityId = inputData.communityId,
+                    page = nextPage,
+                    size = CLUBS_PAGE_SIZE
+                )
+                clubsPage = result.page
+                // The list is re-sorted server-side, so a club can straddle the page
+                // boundary and arrive twice — a duplicate key crashes LazyColumn.
+                val seen = state.clubsData.mapTo(mutableSetOf()) { it.id }
+                updateState(
+                    state.copy(
+                        clubsData = state.clubsData + result.items.filter { seen.add(it.id) },
+                        clubsHasMore = result.hasMore
+                    )
+                )
+            } catch (e: Exception) {
+                // Stop paging rather than retry-looping on every scroll tick.
+                updateState(state.copy(clubsHasMore = false))
+            } finally {
+                isLoadingMoreClubs = false
+            }
+        }
+    }
+
+    private companion object {
+        const val CLUBS_PAGE_SIZE = 10
     }
 }

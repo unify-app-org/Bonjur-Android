@@ -65,13 +65,22 @@ class UserCardWidget : GlanceAppWidget() {
             val stored = UserCardWidgetStore.load(context)
             val avatar = UserCardWidgetStore.loadAvatar(context)
 
-            UserCardWidgetContent(
-                snapshot = stored ?: UserCardWidgetSnapshot.placeholder,
-                avatar = avatar,
-                // Until the app has written a real snapshot the widget shows sample
-                // data, veiled, exactly like iOS's `isSignedIn == false` state.
-                isSignedIn = stored != null
-            )
+            // Three states. A missing snapshot is NOT the same as signed out: the
+            // card is published on the first own-profile load, so a user who just
+            // signed in has none yet and must not be told to sign in again.
+            when {
+                stored != null -> UserCardWidgetContent(snapshot = stored, avatar = avatar)
+
+                UserCardWidgetStore.isSignedIn(context) -> MessageContent(
+                    title = context.getString(R.string.widget_card_pending_title),
+                    subtitle = context.getString(R.string.widget_card_pending_subtitle)
+                )
+
+                else -> MessageContent(
+                    title = context.getString(R.string.widget_sign_in_title),
+                    subtitle = context.getString(R.string.widget_sign_in_subtitle)
+                )
+            }
         }
     }
 
@@ -85,8 +94,7 @@ class UserCardWidget : GlanceAppWidget() {
 @Composable
 private fun UserCardWidgetContent(
     snapshot: UserCardWidgetSnapshot,
-    avatar: android.graphics.Bitmap?,
-    isSignedIn: Boolean
+    avatar: android.graphics.Bitmap?
 ) {
     val context = LocalContext.current
     val size = LocalSize.current
@@ -223,15 +231,56 @@ private fun UserCardWidgetContent(
                 sidePadding = sidePadding
             )
         }
+    }
+}
 
-        // Glance has no opacity modifier, so the "not signed in yet" state is a
-        // white veil over the sample card rather than iOS's `.opacity(0.55)`.
-        if (!isSignedIn) {
-            Box(
-                modifier = GlanceModifier
-                    .fillMaxSize()
-                    .background(ColorProvider(Palette.white.copy(alpha = 0.45f)))
-            ) {}
+/**
+ * Tile for the states with no card to draw — signed out, or signed in before the
+ * app has published one. Opens the app on tap instead of rendering placeholder
+ * identity data.
+ */
+@Composable
+private fun MessageContent(title: String, subtitle: String) {
+    val context = LocalContext.current
+    val launchIntent = context.packageManager
+        .getLaunchIntentForPackage(context.packageName)
+        ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    var root = GlanceModifier.fillMaxSize().background(Palette.white)
+    if (launchIntent != null) {
+        root = root.clickable(actionStartActivity(launchIntent))
+    }
+
+    Box(modifier = root, contentAlignment = Alignment.Center) {
+        Column(
+            modifier = GlanceModifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                provider = ImageProvider(com.bonjur.designsystem.R.drawable.ic_user),
+                contentDescription = null,
+                colorFilter = androidx.glance.ColorFilter.tint(ColorProvider(Palette.blackMedium)),
+                modifier = GlanceModifier.size(28.dp)
+            )
+            Spacer(modifier = GlanceModifier.height(8.dp))
+            Text(
+                text = title,
+                maxLines = 1,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColorProvider(Palette.blackHigh)
+                )
+            )
+            Spacer(modifier = GlanceModifier.height(4.dp))
+            Text(
+                text = subtitle,
+                maxLines = 2,
+                style = TextStyle(
+                    fontSize = 11.sp,
+                    color = ColorProvider(Palette.blackMedium)
+                )
+            )
         }
     }
 }

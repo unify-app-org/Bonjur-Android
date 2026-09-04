@@ -139,41 +139,51 @@ fun DiscoverView(
                         .nestedScroll(nestedScrollConnection)
                         .verticalScroll(rememberScrollState())
                 ) {
-                    CommunitiesView(
-                        communities = state.uiModel.communities,
-                        onCommunityTap = { item -> store.send(DiscoverAction.CommunityItemTapped(item.id)) },
-                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.COMMUNITY)) }
-                    )
+                    if (state.isContentLoading) {
+                        // Shimmer, not a blocking overlay: the dashboard keeps its shape
+                        // and the content lands in place. Sections are skipped entirely
+                        // meanwhile, so no empty states flash before the data arrives.
+                        DiscoverSkeleton(
+                            screenWidth = screenWidth,
+                            showFilterChips = state.uiModel.filters.isEmpty()
+                        )
+                    } else {
+                        CommunitiesView(
+                            communities = state.uiModel.communities,
+                            onCommunityTap = { item -> store.send(DiscoverAction.CommunityItemTapped(item.id)) },
+                            onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.COMMUNITY)) }
+                        )
 
-                    ClubsView(
-                        screenWidth = screenWidth,
-                        clubs = state.uiModel.clubs,
-                        onClubTap = { item -> store.send(DiscoverAction.CLubItemTapped(item.id)) },
-                        onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.CLUBS)) },
-                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.CLUBS)) },
-                        onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.CLUBS)) }
-                    )
+                        ClubsView(
+                            screenWidth = screenWidth,
+                            clubs = state.uiModel.clubs,
+                            onClubTap = { item -> store.send(DiscoverAction.CLubItemTapped(item.id)) },
+                            onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.CLUBS)) },
+                            onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.CLUBS)) },
+                            onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.CLUBS)) }
+                        )
 
-                    EventsView(
-                        screenWidth = screenWidth,
-                        events = state.uiModel.events,
-                        clubs = state.uiModel.clubs,
-                        onEventTap = { item -> store.send(DiscoverAction.EventItemTapped(item.id)) },
-                        onButtonTap = { /* iOS events card button is a no-op here */ },
-                        onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.EVENTS)) },
-                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.EVENTS)) },
-                        onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.EVENTS)) }
-                    )
+                        EventsView(
+                            screenWidth = screenWidth,
+                            events = state.uiModel.events,
+                            clubs = state.uiModel.clubs,
+                            onEventTap = { item -> store.send(DiscoverAction.EventItemTapped(item.id)) },
+                            onButtonTap = { /* iOS events card button is a no-op here */ },
+                            onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.EVENTS)) },
+                            onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.EVENTS)) },
+                            onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.EVENTS)) }
+                        )
 
-                    HangoutsView(
-                        screenWidth = screenWidth,
-                        hangouts = state.uiModel.hangouts,
-                        onHangoutTap = { item -> store.send(DiscoverAction.HangoutItemTapped(item.id)) },
-                        onButtonTap = { item -> store.send(DiscoverAction.JoinHangout(item.id)) },
-                        onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.HANG_OUTS)) },
-                        onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.HANG_OUTS)) },
-                        onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.HANG_OUTS)) }
-                    )
+                        HangoutsView(
+                            screenWidth = screenWidth,
+                            hangouts = state.uiModel.hangouts,
+                            onHangoutTap = { item -> store.send(DiscoverAction.HangoutItemTapped(item.id)) },
+                            onButtonTap = { item -> store.send(DiscoverAction.JoinHangout(item.id)) },
+                            onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.HANG_OUTS)) },
+                            onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.HANG_OUTS)) },
+                            onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.HANG_OUTS)) }
+                        )
+                    }
                 }
             }
         }

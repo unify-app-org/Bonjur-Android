@@ -84,18 +84,19 @@ class DiscoverViewModel @Inject constructor(
         }
     }
 
-    /** First load: nothing is on screen yet, so the whole screen shows the
-     * loading overlay rather than flashing empty states section by section. */
+    /** First load: nothing is on screen yet, so the dashboard shows its shimmer
+     * skeleton rather than a blocking overlay or empty states flashing section by
+     * section. */
     private fun fetchData() {
         viewModelScope.launch {
-            postEffect(DiscoverSideEffect.Loading(true))
+            updateState(state.copy(isContentLoading = true))
             fetchUserData()
             fetchFilterData()
             fetchCommunitiesData()
             fetchClubsData()
             fetchEventsData()
             fetchHangoutsData()
-            postEffect(DiscoverSideEffect.Loading(false))
+            updateState(state.copy(isContentLoading = false))
         }
         refreshUnreadCount()
     }
@@ -144,12 +145,14 @@ class DiscoverViewModel @Inject constructor(
         applySelectedCategoryIdsToFilters()
         resetPagination()
         viewModelScope.launch {
-            postEffect(DiscoverSideEffect.Loading(true))
+            // Re-filtering replaces every section, so the skeleton stands in for the
+            // outgoing content — same as the first load, no blocking overlay.
+            updateState(state.copy(isContentLoading = true))
             fetchCommunitiesData()
             fetchClubsData()
             fetchEventsData()
             fetchHangoutsData()
-            postEffect(DiscoverSideEffect.Loading(false))
+            updateState(state.copy(isContentLoading = false))
         }
     }
 

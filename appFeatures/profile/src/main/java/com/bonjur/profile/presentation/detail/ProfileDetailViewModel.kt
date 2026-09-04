@@ -33,6 +33,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.bonjur.network.model.userMessage
+import com.bonjur.network.model.Page
 
 @HiltViewModel
 class ProfileDetailViewModel @Inject constructor(
@@ -50,6 +51,15 @@ class ProfileDetailViewModel @Inject constructor(
     private lateinit var inputData: ProfileDetailInputData
     private lateinit var navigator: Navigator
 
+    /** Last page index fetched per tab, plus the in-flight guard that keeps the
+     *  end-of-list loader from asking for the same page twice while it scrolls past. */
+    private var clubsPage = 0
+    private var eventsPage = 0
+    private var hangoutsPage = 0
+    private var isLoadingMoreClubs = false
+    private var isLoadingMoreEvents = false
+    private var isLoadingMoreHangouts = false
+
     fun init(inputData: ProfileDetailInputData, navigator: Navigator) {
         if (::inputData.isInitialized) return
         this.inputData = inputData
@@ -66,6 +76,12 @@ class ProfileDetailViewModel @Inject constructor(
     override fun handle(action: ProfileDetailAction) {
         when (action) {
             ProfileDetailAction.FetchData -> fetchData()
+
+            ProfileDetailAction.LoadMoreClubs -> loadMoreClubs()
+
+            ProfileDetailAction.LoadMoreEvents -> loadMoreEvents()
+
+            ProfileDetailAction.LoadMoreHangouts -> loadMoreHangouts()
 
             ProfileDetailAction.BackTapped -> viewModelScope.launch { navigator.navigateUp() }
 
@@ -138,19 +154,29 @@ class ProfileDetailViewModel @Inject constructor(
 
     /** Fetches profile + clubs + events + activities in parallel (mirrors iOS ProfileDetailViewModel). */
     private fun fetchData() {
+        clubsPage = 0
+        eventsPage = 0
+        hangoutsPage = 0
         viewModelScope.launch {
             postEffect(ProfileDetailSideEffect.Loading(true))
             val userId = inputData.userId
 
             val results = coroutineScope {
                 val user = async { runCatching { dependencies.useCase.fetchProfileData(userId, inputData.communityId) } }
-                val clubs = async { runCatching { dependencies.useCase.getMyClubs(userId) } }
+                val clubs = async {
+                    runCatching { dependencies.useCase.getMyClubs(userId, 0, PAGE_SIZE) }
+                }
                 // events/my is self-only — fetch only for own profile, hide for another user.
                 val events = async {
-                    if (userId.isNullOrEmpty()) runCatching { dependencies.useCase.getMyEvents() }
-                    else Result.success(emptyList())
+                    if (userId.isNullOrEmpty()) {
+                        runCatching { dependencies.useCase.getMyEvents(0, PAGE_SIZE) }
+                    } else {
+                        Result.success(Page.empty())
+                    }
                 }
-                val hangouts = async { runCatching { dependencies.useCase.getMyHangouts(userId) } }
+                val hangouts = async {
+                    runCatching { dependencies.useCase.getMyHangouts(userId, 0, PAGE_SIZE) }
+                }
                 FetchResults(user.await(), clubs.await(), events.await(), hangouts.await())
             }
 
@@ -164,9 +190,9 @@ class ProfileDetailViewModel @Inject constructor(
 
     private data class FetchResults(
         val user: Result<com.bonjur.profile.presentation.detail.models.ProfileDetail.UIModel>,
-        val clubs: Result<List<com.bonjur.clubs.presentation.list.models.ClubCardModel>>,
-        val events: Result<List<com.bonjur.events.presentation.list.models.EventsCardModel>>,
-        val hangouts: Result<List<com.bonjur.hangouts.presentation.list.model.HangoutsCardModel>>
+        val clubs: Result<Page<com.bonjur.clubs.presentation.list.models.ClubCardModel>>,
+        val events: Result<Page<com.bonjur.events.presentation.list.models.EventsCardModel>>,
+        val hangouts: Result<Page<com.bonjur.hangouts.presentation.list.model.HangoutsCardModel>>
     )
 
     private suspend fun applyResults(results: FetchResults): Throwable? {
@@ -174,13 +200,22 @@ class ProfileDetailViewModel @Inject constructor(
         if (base != null) {
             val myId = dependencies.tokenManager.getUserId()
             val isOther = !inputData.userId.isNullOrEmpty() && inputData.userId != myId
+            val clubsPageResult = results.clubs.getOrNull() ?: Page.empty()
+            val eventsPageResult = results.events.getOrNull() ?: Page.empty()
+            val hangoutsPageResult = results.hangouts.getOrNull() ?: Page.empty()
+            clubsPage = clubsPageResult.page
+            eventsPage = eventsPageResult.page
+            hangoutsPage = hangoutsPageResult.page
             updateState(
                 state.copy(
                     uiModel = base.copy(
-                        clubs = results.clubs.getOrDefault(emptyList()),
-                        events = results.events.getOrDefault(emptyList()),
-                        hangouts = results.hangouts.getOrDefault(emptyList())
+                        clubs = clubsPageResult.items,
+                        events = eventsPageResult.items,
+                        hangouts = hangoutsPageResult.items
                     ),
+                    clubsHasMore = clubsPageResult.hasMore,
+                    eventsHasMore = eventsPageResult.hasMore,
+                    hangoutsHasMore = hangoutsPageResult.hasMore,
                     isOwnProfile = !isOther,
                     navigationTitle = if (isOther) LanguageManager.string(R.string.profile_about_user) else LanguageManager.string(R.string.profile_title)
                 )
@@ -193,6 +228,95 @@ class ProfileDetailViewModel @Inject constructor(
         }
         return listOf(results.user, results.clubs, results.events, results.hangouts)
             .firstNotNullOfOrNull { it.exceptionOrNull() }
+    }
+
+    // ── Paging ────────────────────────────────────────────────────────────────
+
+    private fun loadMoreClubs() {
+        if (isLoadingMoreClubs || !state.clubsHasMore) return
+        isLoadingMoreClubs = true
+        val nextPage = clubsPage + 1
+        viewModelScope.launch {
+            try {
+                val result = dependencies.useCase.getMyClubs(inputData.userId, nextPage, PAGE_SIZE)
+                clubsPage = result.page
+                val ui = state.uiModel ?: return@launch
+                updateState(
+                    state.copy(
+                        uiModel = ui.copy(clubs = appendPage(ui.clubs, result.items) { it.id }),
+                        clubsHasMore = result.hasMore
+                    )
+                )
+            } catch (e: Throwable) {
+                // Stop paging rather than retry-looping the loader on every scroll.
+                updateState(state.copy(clubsHasMore = false))
+                postEffect(ProfileDetailSideEffect.Error(e.userMessage()))
+            } finally {
+                isLoadingMoreClubs = false
+            }
+        }
+    }
+
+    private fun loadMoreEvents() {
+        if (isLoadingMoreEvents || !state.eventsHasMore) return
+        isLoadingMoreEvents = true
+        val nextPage = eventsPage + 1
+        viewModelScope.launch {
+            try {
+                val result = dependencies.useCase.getMyEvents(nextPage, PAGE_SIZE)
+                eventsPage = result.page
+                val ui = state.uiModel ?: return@launch
+                updateState(
+                    state.copy(
+                        uiModel = ui.copy(events = appendPage(ui.events, result.items) { it.id }),
+                        eventsHasMore = result.hasMore
+                    )
+                )
+            } catch (e: Throwable) {
+                updateState(state.copy(eventsHasMore = false))
+                postEffect(ProfileDetailSideEffect.Error(e.userMessage()))
+            } finally {
+                isLoadingMoreEvents = false
+            }
+        }
+    }
+
+    private fun loadMoreHangouts() {
+        if (isLoadingMoreHangouts || !state.hangoutsHasMore) return
+        isLoadingMoreHangouts = true
+        val nextPage = hangoutsPage + 1
+        viewModelScope.launch {
+            try {
+                val result = dependencies.useCase.getMyHangouts(inputData.userId, nextPage, PAGE_SIZE)
+                hangoutsPage = result.page
+                val ui = state.uiModel ?: return@launch
+                updateState(
+                    state.copy(
+                        uiModel = ui.copy(hangouts = appendPage(ui.hangouts, result.items) { it.id }),
+                        hangoutsHasMore = result.hasMore
+                    )
+                )
+            } catch (e: Throwable) {
+                updateState(state.copy(hangoutsHasMore = false))
+                postEffect(ProfileDetailSideEffect.Error(e.userMessage()))
+            } finally {
+                isLoadingMoreHangouts = false
+            }
+        }
+    }
+
+    /**
+     * Appends a page, dropping rows already on screen. The server re-sorts by
+     * `modifiedAt`, so a row can shift across the page boundary and arrive twice —
+     * and a duplicate key crashes LazyColumn.
+     */
+    private fun <T, ID> appendPage(
+        existing: List<T>,
+        newItems: List<T>,
+        id: (T) -> ID
+    ): List<T> {
+        val seen = existing.mapTo(mutableSetOf(), id)
+        return existing + newItems.filter { seen.add(id(it)) }
     }
 
     /** Optimistically updates the cover, then persists it (PUT /users) and confirms via snackbar. */
@@ -243,4 +367,8 @@ class ProfileDetailViewModel @Inject constructor(
 
     // Backend enum = colour names (iOS BackgroundType raw values), not Primary/Secondary.
     private fun AppUIEntities.BackgroundType.toRequestString(): String = apiValue
+
+    private companion object {
+        const val PAGE_SIZE = 10
+    }
 }

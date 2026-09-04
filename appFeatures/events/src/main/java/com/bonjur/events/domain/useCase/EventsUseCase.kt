@@ -9,6 +9,7 @@ import com.bonjur.events.presentation.create.models.EventSelectableClub
 import com.bonjur.events.presentation.list.models.EventsCardModel
 import com.bonjur.member.model.GroupedMembersData
 import com.bonjur.member.model.MembersPage
+import com.bonjur.network.model.Page
 
 /** Fully-assembled create payload built by the view model. */
 data class EventFormData(
@@ -36,8 +37,8 @@ interface EventsUseCase {
         size: Int
     ): List<EventsCardModel>
 
-    /** Active events for a club (first page used by the club-detail Events tab). */
-    suspend fun fetchClubEvents(clubId: Int, page: Int, size: Int): List<EventsCardModel>
+    /** One page of a club's active events, used by the club-detail Events tab. */
+    suspend fun fetchClubEvents(clubId: Int, page: Int, size: Int): Page<EventsCardModel>
 
     suspend fun fetchFilterData(): List<FilterView.Model>
 

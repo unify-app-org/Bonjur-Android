@@ -36,6 +36,14 @@ fun AppNavigation(
         DefaultStorageKey.IS_AUTHENTICATED, default = false
     )
 
+    // The widget's card is normally written when the user opens their own profile.
+    // A widget added right after signing in would otherwise sit there telling an
+    // already-signed-in user to sign in.
+    val appViewModel = hiltViewModel<AppNavigationViewModel>()
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) appViewModel.publishWidgetCardIfNeeded()
+    }
+
     LaunchedEffect(Unit) {
 //        defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, false)
     }

@@ -34,7 +34,11 @@ sealed class GroupsListSideEffect : SideEffect {
 data class GroupsListViewState(
     val uiModel: UIModel = UIModel(),
     val selectedSegment: SegmentType = SegmentType.CLUBS,
-    val searchText: String = ""
+    val searchText: String = "",
+    /** Per-tab paging flags; drive the end-of-list loader in each activity list. */
+    val clubsHasMore: Boolean = false,
+    val eventsHasMore: Boolean = false,
+    val hangoutsHasMore: Boolean = false
 ) : FeatureState {
     data class UIModel(
         val events: List<EventsCardModel> = emptyList(),
@@ -99,6 +103,7 @@ data class GroupsListViewState(
 sealed class GroupsListAction : FeatureAction {
     object FetchData : GroupsListAction()
     object LoadMoreClubs : GroupsListAction()
+    object LoadMoreEvents : GroupsListAction()
     object LoadMoreHangouts : GroupsListAction()
     data class SegmentChanged(val segment: GroupsListViewState.SegmentType) : GroupsListAction()
     data class SearchTextChanged(val text: String) : GroupsListAction()
