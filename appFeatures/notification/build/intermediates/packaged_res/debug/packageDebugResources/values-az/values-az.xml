@@ -15,6 +15,9 @@
     <string name="notif_mark_all_title">Hamısı oxunmuş kimi işarələnsin?</string>
     <string name="notif_needs_action">Sizin əməliyyatınız lazımdır</string>
     <string name="notif_no_notifications">Hələ bildiriş yoxdur</string>
+    <string name="notif_no_pending_clubs">Hazırda gözləyən klub sorğusu yoxdur.</string>
+    <string name="notif_no_pending_events">Hazırda gözləyən tədbir sorğusu yoxdur.</string>
+    <string name="notif_no_pending_hangouts">Hazırda gözləyən görüş sorğusu yoxdur.</string>
     <string name="notif_note">Qeyd</string>
     <string name="notif_nothing_to_verify">Təsdiqlənəcək bir şey yoxdur</string>
     <string name="notif_reject">Rədd et</string>

@@ -53,4 +53,11 @@
     <string name="profile_card_default">Standart</string>
     <string name="profile_card_choose_cover">Örtük seçin</string>
     <string name="profile_user_card">İstifadəçi kartı</string>
+
+    <!-- Edit profile: category chips + gender values -->
+    <string name="editprofile_category_label">Kateqoriya</string>
+    <string name="editprofile_add_category">Kateqoriya əlavə et</string>
+    <string name="profile_gender_male">Kişi</string>
+    <string name="profile_gender_female">Qadın</string>
+    <string name="profile_gender_other">Digər</string>
 </resources>

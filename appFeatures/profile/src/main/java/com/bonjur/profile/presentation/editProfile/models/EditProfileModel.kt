@@ -7,6 +7,8 @@ import com.bonjur.appfoundation.SideEffect
 import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.categorieChips.CategorySection
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.profile.R
 import com.bonjur.profile.presentation.detail.models.ProfileDetail
 
 // MARK: - EditProfile input
@@ -23,10 +25,14 @@ sealed class EditProfileSideEffect : SideEffect {
     data class Error(val message: String?) : EditProfileSideEffect()
 }
 
-enum class Gender(val displayName: String) {
-    MALE("Male"),
-    FEMALE("Female"),
-    OTHER("Other");
+enum class Gender(private val titleRes: Int) {
+    MALE(R.string.profile_gender_male),
+    FEMALE(R.string.profile_gender_female),
+    OTHER(R.string.profile_gender_other);
+
+    /** Resolved per read, never in the constructor: enum constants are built once at
+     *  class load, so a title captured there would keep the language the app started in. */
+    val displayName: String get() = LanguageManager.string(titleRes)
 
     companion object {
         fun from(raw: String?): Gender? = when (raw?.uppercase()) {
@@ -55,6 +61,11 @@ data class EditProfileViewState(
     // Category / language option lists carry their own selection (mirrors iOS).
     val categorySections: List<CategorySection> = emptyList(),
     val languageOptions: List<SelectableListItemModel> = emptyList(),
+    // False while the option lists are loading, and after a failed load. The save
+    // sends an empty list as "clear them all", so an empty list that only means
+    // "the options never arrived" must not be sent — it would wipe the profile.
+    val categoriesLoaded: Boolean = false,
+    val languagesLoaded: Boolean = false,
     val background: AppUIEntities.BackgroundType? = null,
     val draftBackground: AppUIEntities.BackgroundType? = null,
     val showCategoryPicker: Boolean = false,

@@ -117,7 +117,12 @@ class MemberListViewModel @Inject constructor() :
                 nextPage = requestedPage + 1
                 updateState(
                     state.copy(
-                        sections = GroupedMembersData.from(loadedMembers).sections,
+                        // Same override the hangout detail tab applies, so the
+                        // "see all members" screen doesn't relabel the owner.
+                        sections = GroupedMembersData.from(
+                            loadedMembers,
+                            GroupedMembersData.titleOverrides(state.activityType)
+                        ).sections,
                         hasMore = page.hasMore,
                         totalCount = page.totalCount ?: state.totalCount
                     )

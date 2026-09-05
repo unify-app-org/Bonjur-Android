@@ -53,4 +53,11 @@
     <string name="profile_card_default">По умолчанию</string>
     <string name="profile_card_choose_cover">Выберите обложку</string>
     <string name="profile_user_card">Карта пользователя</string>
+
+    <!-- Edit profile: category chips + gender values -->
+    <string name="editprofile_category_label">Категория</string>
+    <string name="editprofile_add_category">Добавить категорию</string>
+    <string name="profile_gender_male">Мужской</string>
+    <string name="profile_gender_female">Женский</string>
+    <string name="profile_gender_other">Другое</string>
 </resources>

@@ -45,7 +45,6 @@ import com.bonjur.groups.presentation.models.GroupsListViewState
 import com.bonjur.groups.presentation.models.GroupsListViewState.SegmentType
 import com.bonjur.hangouts.presentation.list.components.HangoutsCardView
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
-import kotlinx.coroutines.launch
 import kotlin.collections.isNotEmpty
 import com.bonjur.designSystem.components.paging.pagingFooterItem
 
@@ -58,8 +57,8 @@ fun GroupsListView(
         initialPage = store.state.selectedSegment.toIndex(),
         pageCount = { 3 }
     )
-    val coroutineScope = rememberCoroutineScope()
     var isUpdatingFromPager by remember { mutableStateOf(false) }
+    var hasSyncedPagerOnce by remember { mutableStateOf(false) }
 
     // First load fires on composition (guaranteed; the bottom-tab host doesn't reliably
     // reach RESUMED, so ON_RESUME alone can miss the first load). Mirrors iOS
@@ -67,6 +66,7 @@ fun GroupsListView(
     // *return* (e.g. back from a detail screen) so join/exit changes show. A skip-first
     // guard avoids a double fetch when composition and the initial resume coincide.
     LaunchedEffect(Unit) {
+        store.send(GroupsListAction.OnAppear)
         store.send(GroupsListAction.FetchData)
     }
 
@@ -89,7 +89,11 @@ fun GroupsListView(
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }
             .collect { currentPage ->
-                if (!isUpdatingFromPager) {
+                // `hasSyncedPagerOnce` gates the very first emission, which fires as soon
+                // as this collector starts and still carries the page the pager was built
+                // from — the stale segment. Without the gate it races `OnAppear` and puts
+                // the old tab straight back.
+                if (!isUpdatingFromPager && hasSyncedPagerOnce) {
                     val segment = SegmentType.fromIndex(currentPage)
                     if (store.state.selectedSegment != segment) {
                         store.send(GroupsListAction.SegmentChanged(segment))
@@ -103,11 +107,18 @@ fun GroupsListView(
         val targetPage = store.state.selectedSegment.toIndex()
         if (pagerState.currentPage != targetPage) {
             isUpdatingFromPager = true
-            coroutineScope.launch {
+            // The first sync is the reset back to Clubs after re-entering the tab
+            // (`OnAppear`): the pager was already built from the stale segment, so
+            // animating it would scroll the screen sideways on entry. Later syncs are
+            // real picker taps and keep the animation.
+            if (hasSyncedPagerOnce) {
                 pagerState.animateScrollToPage(targetPage)
-                isUpdatingFromPager = false
+            } else {
+                pagerState.scrollToPage(targetPage)
             }
+            isUpdatingFromPager = false
         }
+        hasSyncedPagerOnce = true
     }
 
     Column(

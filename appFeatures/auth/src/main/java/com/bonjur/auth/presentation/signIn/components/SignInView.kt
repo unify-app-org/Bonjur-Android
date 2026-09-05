@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.bonjur.auth.R
 import com.bonjur.appfoundation.FeatureStore
@@ -39,14 +40,28 @@ fun SignInView(
         TopView()
 
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            AppTextField(
-                text = state.email,
-                onTextChange = { store.send(SignInAction.EmailChanged(it)) },
-                placeHolder = stringResource(R.string.auth_email_placeholder),
-                model = AppTextFieldModel(
-                    title = stringResource(R.string.auth_email)
+            // Field + its message share one slot so the message sits under the field
+            // rather than a full 16dp away from it.
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                AppTextField(
+                    text = state.email,
+                    onTextChange = { store.send(SignInAction.EmailChanged(it)) },
+                    placeHolder = stringResource(R.string.auth_email_placeholder),
+                    model = AppTextFieldModel(
+                        title = stringResource(R.string.auth_email),
+                        keyboardType = KeyboardType.Email
+                    )
                 )
-            )
+
+                // Without this the button just never enables and nothing says why.
+                if (state.showEmailError) {
+                    Text(
+                        text = stringResource(R.string.auth_email_invalid),
+                        style = AppTypography.TextSm.regular,
+                        color = Palette.destructiveRed
+                    )
+                }
+            }
 
             AppTextField(
                 text = state.password,
@@ -64,7 +79,8 @@ fun SignInView(
         AppButton(
             title = stringResource(R.string.auth_sign_in_button),
             model = AppButtonModel(contentSize = ContentSize.Fill),
-            onClick = { store.send(SignInAction.SignIn) }
+            onClick = { store.send(SignInAction.SignIn) },
+            enabled = state.isValid
         )
     }
 }

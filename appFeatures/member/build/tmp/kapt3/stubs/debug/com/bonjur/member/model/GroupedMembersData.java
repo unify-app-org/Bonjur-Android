@@ -49,17 +49,40 @@ public final class GroupedMembersData {
         return null;
     }
     
-    @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u00002\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010 \n\u0002\u0018\u0002\n\u0000\n\u0002\u0010$\n\u0002\u0018\u0002\n\u0002\u0010\u000e\n\u0002\b\u0002\n\u0002\u0010\b\n\u0000\b\u0086\u0003\u0018\u00002\u00020\u0001B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002J*\u0010\u0003\u001a\u00020\u00042\f\u0010\u0005\u001a\b\u0012\u0004\u0012\u00020\u00070\u00062\u0014\b\u0002\u0010\b\u001a\u000e\u0012\u0004\u0012\u00020\n\u0012\u0004\u0012\u00020\u000b0\tJ\f\u0010\f\u001a\u00020\u000b*\u00020\nH\u0002J\f\u0010\r\u001a\u00020\u000e*\u00020\nH\u0002\u00a8\u0006\u000f"}, d2 = {"Lcom/bonjur/member/model/GroupedMembersData$Companion;", "", "()V", "from", "Lcom/bonjur/member/model/GroupedMembersData;", "users", "", "Lcom/bonjur/member/model/MemberCellModel;", "titleOverrides", "", "Lcom/bonjur/designSystem/commonModel/AppUIEntities$UserActivityRole;", "", "sectionTitle", "sortPriority", "", "member_debug"})
+    @kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u00008\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010 \n\u0002\u0018\u0002\n\u0000\n\u0002\u0010$\n\u0002\u0018\u0002\n\u0002\u0010\u000e\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0010\b\n\u0000\b\u0086\u0003\u0018\u00002\u00020\u0001B\u0007\b\u0002\u00a2\u0006\u0002\u0010\u0002J*\u0010\u0003\u001a\u00020\u00042\f\u0010\u0005\u001a\b\u0012\u0004\u0012\u00020\u00070\u00062\u0014\b\u0002\u0010\b\u001a\u000e\u0012\u0004\u0012\u00020\n\u0012\u0004\u0012\u00020\u000b0\tJ\u001a\u0010\b\u001a\u000e\u0012\u0004\u0012\u00020\n\u0012\u0004\u0012\u00020\u000b0\t2\u0006\u0010\f\u001a\u00020\rJ\f\u0010\u000e\u001a\u00020\n*\u00020\nH\u0002J\f\u0010\u000f\u001a\u00020\u000b*\u00020\nH\u0002J\f\u0010\u0010\u001a\u00020\u0011*\u00020\nH\u0002\u00a8\u0006\u0012"}, d2 = {"Lcom/bonjur/member/model/GroupedMembersData$Companion;", "", "()V", "from", "Lcom/bonjur/member/model/GroupedMembersData;", "users", "", "Lcom/bonjur/member/model/MemberCellModel;", "titleOverrides", "", "Lcom/bonjur/designSystem/commonModel/AppUIEntities$UserActivityRole;", "", "activityType", "Lcom/bonjur/designSystem/commonModel/AppUIEntities$ActivityType;", "orMember", "sectionTitle", "sortPriority", "", "member_debug"})
     public static final class Companion {
         
         private Companion() {
             super();
         }
         
+        /**
+         * Section headings that differ by activity. A hangout's or an event's PRESIDENT
+         * is shown as **Owner**, not "President" — the role is the same on the wire,
+         * only the word changes. Clubs and communities keep "President". Mirrors iOS,
+         * which passes `localizedTitles(overriding: [.president: ..._owner_role])` from
+         * the hangout and event repos, and again when either opens its members list.
+         *
+         * Lives here so the detail tab and the "see all members" screen (which only
+         * knows its [AppUIEntities.ActivityType]) cannot drift apart.
+         */
+        @org.jetbrains.annotations.NotNull()
+        public final java.util.Map<com.bonjur.designSystem.commonModel.AppUIEntities.UserActivityRole, java.lang.String> titleOverrides(@org.jetbrains.annotations.NotNull()
+        com.bonjur.designSystem.commonModel.AppUIEntities.ActivityType activityType) {
+            return null;
+        }
+        
         @org.jetbrains.annotations.NotNull()
         public final com.bonjur.member.model.GroupedMembersData from(@org.jetbrains.annotations.NotNull()
         java.util.List<com.bonjur.member.model.MemberCellModel> users, @org.jetbrains.annotations.NotNull()
         java.util.Map<com.bonjur.designSystem.commonModel.AppUIEntities.UserActivityRole, java.lang.String> titleOverrides) {
+            return null;
+        }
+        
+        /**
+         * NOT_JOINED cannot describe someone already in a members list.
+         */
+        private final com.bonjur.designSystem.commonModel.AppUIEntities.UserActivityRole orMember(com.bonjur.designSystem.commonModel.AppUIEntities.UserActivityRole $this$orMember) {
             return null;
         }
         

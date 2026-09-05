@@ -1,5 +1,7 @@
 package com.bonjur.profile.presentation.editProfile.components
 
+import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
+import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designsystem.R as DesignR
 import androidx.compose.ui.res.stringResource
 import com.bonjur.profile.R
@@ -58,8 +60,11 @@ fun EditProfileView(
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
+        // Always solid, not scroll-driven. `AppTopBar`'s transparent state exists for
+        // screens with a cover image behind the bar; this one is a plain form, so the
+        // bar carries its white background and shadow from the first frame.
         AppTopBar(
-            isScrolled = false,
+            isScrolled = true,
             showTitle = true,
             title = stringResource(R.string.editprofile_title),
             onBack = { store.send(EditProfileAction.BackTapped) }
@@ -181,35 +186,12 @@ fun EditProfileView(
                     )
                 }
 
+                // Field order is iOS's `dynamicTextFields`: about → gender → birthday →
+                // category → languages. Android had birthday last, after languages.
                 // Gender picker
                 GenderPicker(
                     selectedGender = store.state.selectedGender,
                     onGenderSelected = { store.send(EditProfileAction.GenderSelected(it)) }
-                )
-
-                // Categories (chips + Add)
-                val selectedCategories = store.state.categorySections
-                    .flatMap { it.categories }
-                    .filter { it.selected }
-                    .map { it.id to it.title }
-                ChipsSelectionField(
-                    title = "Category",
-                    addTitle = "Add category",
-                    chips = selectedCategories,
-                    onAdd = { store.send(EditProfileAction.AddCategoryTapped) },
-                    onRemove = { id -> store.send(EditProfileAction.CategoryToggled(id)) }
-                )
-
-                // Languages (chips + Add)
-                val selectedLanguages = store.state.languageOptions
-                    .filter { it.selected }
-                    .map { it.id to it.title }
-                ChipsSelectionField(
-                    title = stringResource(R.string.editprofile_spoken_languages),
-                    addTitle = stringResource(R.string.editprofile_add_language),
-                    chips = selectedLanguages,
-                    onAdd = { store.send(EditProfileAction.AddLanguageTapped) },
-                    onRemove = { id -> store.send(EditProfileAction.LanguageToggled(id)) }
                 )
 
                 // Birthday
@@ -235,7 +217,10 @@ fun EditProfileView(
                         onDismissRequest = { store.send(EditProfileAction.CloseDatePicker) },
                         confirmButton = {
                             TextButton(onClick = { store.send(EditProfileAction.CloseDatePicker) }) {
-                                Text("OK")
+                                // LanguageManager, not stringResource: a Dialog renders in
+                                // its own window, which re-provides LocalContext and throws
+                                // away the AppLocalizationProvider wrapper from the app root.
+                                Text(LanguageManager.string(DesignR.string.common_ok))
                             }
                         }
                     ) {
@@ -250,6 +235,31 @@ fun EditProfileView(
                         }
                     }
                 }
+
+                // Categories (chips + Add)
+                val selectedCategories = store.state.categorySections
+                    .flatMap { it.categories }
+                    .filter { it.selected }
+                    .map { it.id to it.title }
+                ChipsSelectionField(
+                    title = stringResource(R.string.editprofile_category_label),
+                    addTitle = stringResource(R.string.editprofile_add_category),
+                    chips = selectedCategories,
+                    onAdd = { store.send(EditProfileAction.AddCategoryTapped) },
+                    onRemove = { id -> store.send(EditProfileAction.CategoryToggled(id)) }
+                )
+
+                // Languages (chips + Add)
+                val selectedLanguages = store.state.languageOptions
+                    .filter { it.selected }
+                    .map { it.id to it.title }
+                ChipsSelectionField(
+                    title = stringResource(R.string.editprofile_spoken_languages),
+                    addTitle = stringResource(R.string.editprofile_add_language),
+                    chips = selectedLanguages,
+                    onAdd = { store.send(EditProfileAction.AddLanguageTapped) },
+                    onRemove = { id -> store.send(EditProfileAction.LanguageToggled(id)) }
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -267,14 +277,17 @@ fun EditProfileView(
 
     // Category picker sheet
     if (store.state.showCategoryPicker) {
-        ModalBottomSheet(
-            onDismissRequest = { store.send(EditProfileAction.DismissCategoryPicker) },
-            containerColor = Palette.white
-        ) {
+        // AppBottomSheet, not a raw ModalBottomSheet: a sheet renders in its own window,
+        // which re-provides LocalContext and drops the AppLocalizationProvider wrapper —
+        // every `stringResource` inside a raw sheet falls back to the device language.
+        AppBottomSheet(onDismiss = { store.send(EditProfileAction.DismissCategoryPicker) }) {
             SelectCategoryView(
                 sections = store.state.categorySections,
                 onToggle = { store.send(EditProfileAction.CategoryToggled(it)) },
                 onDone = { store.send(EditProfileAction.CategoryPickerDone) },
+                // iOS passes `editprofile_select` ("Select") for both pickers; the
+                // component default is the plain "Ok".
+                doneTitle = stringResource(R.string.editprofile_select),
                 onClose = { store.send(EditProfileAction.DismissCategoryPicker) }
             )
         }
@@ -282,10 +295,7 @@ fun EditProfileView(
 
     // Language picker sheet
     if (store.state.showLanguagePicker) {
-        ModalBottomSheet(
-            onDismissRequest = { store.send(EditProfileAction.DismissLanguagePicker) },
-            containerColor = Palette.white
-        ) {
+        AppBottomSheet(onDismiss = { store.send(EditProfileAction.DismissLanguagePicker) }) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -306,7 +316,7 @@ fun EditProfileView(
                     )
                 }
                 AppButton(
-                    title = "Done",
+                    title = stringResource(R.string.editprofile_select),
                     model = AppButtonModel(contentSize = ContentSize.Fill),
                     onClick = { store.send(EditProfileAction.LanguagePickerDone) },
                     modifier = Modifier.fillMaxWidth()

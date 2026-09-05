@@ -16,4 +16,5 @@ interface DiscoverDataSource {
     suspend fun getCategories(): List<DiscoverCategorySection>
     suspend fun getUserById(userId: String, clubId: Int): DiscoverUserResponse
     suspend fun joinHangout(request: JoinHangoutRequest): ByteArray
+    suspend fun joinEvent(eventId: String): ByteArray
 }

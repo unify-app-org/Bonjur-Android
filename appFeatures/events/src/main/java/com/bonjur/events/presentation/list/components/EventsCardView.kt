@@ -41,6 +41,8 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.events.presentation.list.models.EventsCardMocks
 import com.bonjur.events.presentation.list.models.EventsCardModel
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 
 @Composable
 fun EventsCardView(
@@ -341,10 +343,13 @@ private fun BottomView(
             .padding(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Tags
+        // Tags — horizontally scrollable, mirroring iOS's ScrollView(.horizontal):
+        // tags past the card width were clipped and unreachable.
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
         ) {
             model.tags.forEach { tag ->
                 Surface(
@@ -366,7 +371,7 @@ private fun BottomView(
         // Action: status label for settled states, button for actionable ones
         when (model.requestType) {
             AppUIEntities.RequestType.JOINED -> StatusLabel(
-                text = "✓ Participating",
+                text = "✓ " + stringResource(R.string.events_going),
                 foreground = Palette.green900,
                 background = Palette.greenLight,
                 borderColor = Palette.secondary

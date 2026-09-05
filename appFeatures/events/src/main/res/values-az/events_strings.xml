@@ -58,7 +58,6 @@
     <string name="events_going">İştirak edirəm</string>
     <string name="events_join">Qoşul</string>
     <string name="events_request">Sorğu göndər</string>
-    <string name="events_owner_role">Sahib</string>
     <string name="events_continue">Davam et</string>
     <string name="events_required_hint">* ilə işarələnmiş sahələr məcburidir.</string>
     <string name="events_about_label">Haqqında</string>

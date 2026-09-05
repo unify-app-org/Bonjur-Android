@@ -109,22 +109,31 @@ class EditProfileViewModel @Inject constructor(
             val catIds = profile.tags.map { it.id }.toSet()
             val langIds = (profile.languages?.map { it.id } ?: emptyList()).toSet()
 
-            val categories = runCatching { dependencies.useCase.getCategories() }
+            val categoriesResult = runCatching { dependencies.useCase.getCategories() }
                 .onFailure {
                     AppSnackBar.show(title = LanguageManager.string(R.string.editprofile_categories_fail), style = AppSnackBar.Style.ERROR)
                 }
+            val categories = categoriesResult
                 .getOrDefault(emptyList())
                 .map { section ->
                     section.copy(categories = section.categories.map { it.copy(selected = it.id in catIds) })
                 }
-            val languages = runCatching { dependencies.useCase.getLanguages() }
+            val languagesResult = runCatching { dependencies.useCase.getLanguages() }
                 .onFailure {
                     AppSnackBar.show(title = LanguageManager.string(R.string.editprofile_languages_fail), style = AppSnackBar.Style.ERROR)
                 }
+            val languages = languagesResult
                 .getOrDefault(emptyList())
                 .map { it.copy(selected = it.id in langIds) }
 
-            updateState(state.copy(categorySections = categories, languageOptions = languages))
+            updateState(
+                state.copy(
+                    categorySections = categories,
+                    languageOptions = languages,
+                    categoriesLoaded = categoriesResult.isSuccess,
+                    languagesLoaded = languagesResult.isSuccess
+                )
+            )
         }
     }
 
@@ -160,8 +169,9 @@ class EditProfileViewModel @Inject constructor(
                     birthDate = displayToIso(state.birthDateText),
                     gender = state.selectedGender.name,
                     about = state.about.ifBlank { null },
-                    categoriesId = state.selectedCategoryIds,
-                    languagesId = state.selectedLanguageIds,
+                    // Only when the options actually loaded — see `categoriesLoaded`.
+                    categoriesId = state.selectedCategoryIds.takeIf { state.categoriesLoaded },
+                    languagesId = state.selectedLanguageIds.takeIf { state.languagesLoaded },
                     backgroundColour = state.background?.toRequestString()
                 )
                 dependencies.useCase.editProfile(request, readImageBytes())

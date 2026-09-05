@@ -8,6 +8,8 @@
 package com.bonjur.discover.presentation.components
 
 import androidx.compose.ui.res.stringResource
+import com.bonjur.designSystem.components.shimmer.rememberShimmerBrush
+import com.bonjur.designSystem.components.shimmer.ShimmerBox
 import com.bonjur.discover.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -168,7 +170,7 @@ fun DiscoverView(
                             events = state.uiModel.events,
                             clubs = state.uiModel.clubs,
                             onEventTap = { item -> store.send(DiscoverAction.EventItemTapped(item.id)) },
-                            onButtonTap = { /* iOS events card button is a no-op here */ },
+                            onButtonTap = { item -> store.send(DiscoverAction.JoinEvent(item.id)) },
                             onViewAll = { store.send(DiscoverAction.ViewAllTapped(AppUIEntities.ActivityType.EVENTS)) },
                             onLoadMore = { store.send(DiscoverAction.LoadMore(AppUIEntities.ActivityType.EVENTS)) },
                             onCreate = { store.send(DiscoverAction.CreateTapped(AppUIEntities.ActivityType.EVENTS)) }
@@ -200,6 +202,7 @@ fun DiscoverView(
         ) {
             ProfileView(
                 user = state.uiModel.user,
+                isLoading = state.isContentLoading,
                 unreadCount = state.unreadCount,
                 onProfileTap = { store.send(DiscoverAction.ProfileTapped) },
                 onNotification = { store.send(DiscoverAction.NotificationTapped) }
@@ -229,6 +232,9 @@ fun DiscoverView(
 @Composable
 private fun ProfileView(
     user: UserModel,
+    /** Greeting + name arrive with the rest of the dashboard; until then they shimmer
+     *  instead of rendering as two empty lines that pop in. */
+    isLoading: Boolean,
     unreadCount: Int,
     onProfileTap: () -> Unit,
     onNotification: () -> Unit
@@ -265,20 +271,34 @@ private fun ProfileView(
 
         Column(
             modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(if (isLoading) 6.dp else 0.dp)
         ) {
-            Text(
-                text = user.greeting,
-                style = AppTypography.TextMd.regular,
-                color = Palette.grayPrimary,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = user.name,
-                style = AppTypography.BodyTextMd.bold,
-                color = Palette.black,
-                textAlign = TextAlign.Center
-            )
+            if (isLoading) {
+                // One brush for both bars so they pulse in phase (see `Shimmer.kt`).
+                val brush = rememberShimmerBrush()
+                ShimmerBox(
+                    modifier = Modifier.size(width = 120.dp, height = 12.dp),
+                    brush = brush
+                )
+                ShimmerBox(
+                    modifier = Modifier.size(width = 160.dp, height = 16.dp),
+                    brush = brush
+                )
+            } else {
+                Text(
+                    text = user.greeting,
+                    style = AppTypography.TextMd.regular,
+                    color = Palette.grayPrimary,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = user.name,
+                    style = AppTypography.BodyTextMd.bold,
+                    color = Palette.black,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         IconButton(

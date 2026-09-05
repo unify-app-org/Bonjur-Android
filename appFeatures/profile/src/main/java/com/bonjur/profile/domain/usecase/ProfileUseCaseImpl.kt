@@ -15,7 +15,6 @@ import com.bonjur.profile.data.DTOs.UserProfileResponse
 import com.bonjur.profile.data.dataSource.ProfileDataSource
 import com.bonjur.profile.presentation.detail.models.ProfileDetail
 import com.bonjur.profile.presentation.detail.models.UserCardModel
-import com.bonjur.profile.presentation.editProfile.models.Gender
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -38,6 +37,19 @@ class ProfileUseCaseImpl @Inject constructor(
         return dataSource.getUserById(id, communityId ?: storedCommunityId()).toUIModel()
     }
 
+    /** Academic year of study → "4th year"; `null`/0 → "-". Mirrors iOS `ProfileRepo.yearText`.
+     *  ⚠️ English ordinals on both platforms — iOS does not localize this either. */
+    private fun yearText(year: Int?): String {
+        if (year == null || year <= 0) return "-"
+        val suffix = when (year) {
+            1 -> "st"
+            2 -> "nd"
+            3 -> "rd"
+            else -> "th"
+        }
+        return "$year$suffix year"
+    }
+
     /** The community picked at login. Used for every context except a community detail,
      *  which knows which community the profile is being viewed inside. */
     private fun storedCommunityId(): Int =
@@ -51,9 +63,15 @@ class ProfileUseCaseImpl @Inject constructor(
                 // card), and `fromApi` folds an unknown/absent value into Primary.
                 // Club/hangout covers below are non-null by contract and keep it.
                 backgroundCover = background?.let { AppUIEntities.BackgroundType.fromApi(it) },
-                nameSurname = username ?: fullName ?: "-",
+                // iOS reads the display name off `fullName`; Android preferred `username`,
+                // so the header showed the handle ("qahire") where iOS shows the person
+                // ("Qahire Akhmedofaa").
+                nameSurname = fullName ?: "-",
                 speciality = specialization ?: "-",
-                course = faculty ?: "-",
+                // Academic year, not faculty — the card slot is labelled "course" and the
+                // mocks always said "1st year". Binding `faculty` here also cost the
+                // header its middle segment.
+                course = yearText(year),
                 community = communityName ?: "-",
                 degree = degree ?: "-",
                 entryYear = entryYear?.toString() ?: "-",
@@ -61,7 +79,10 @@ class ProfileUseCaseImpl @Inject constructor(
                 imageUrl = fileUrl
             ),
             about = about,
-            gender = gender?.let { Gender.from(it)?.displayName ?: it },
+            // Raw wire value ("MALE"), not a display string: the edit form and the
+            // cover-save both feed it back through `Gender.from`, and the detail row
+            // localizes it at render time. Storing the localized title here broke both.
+            gender = gender,
             birthday = birthDate,
             languages = languages.map {
                 SelectableListItemModel(id = it.id, title = it.name ?: "-", selected = false)
@@ -213,17 +234,16 @@ class ProfileUseCaseImpl @Inject constructor(
 
     override suspend fun editProfile(request: ProfileUpdateRequest, imageBytes: ByteArray?) {
         // iOS sends the update fields as query params (ProfileDTOModel.UpdateRequest.toDictionary).
-        // ⚠️ Array encoding (categoriesId/languagesId) as CSV is unverified against the backend.
+        // categoriesId/languagesId are CSV and are ALWAYS sent, empty string included: the
+        // form posts the full current selection, so an omitted param would read as "leave
+        // them alone" server-side and the user could never remove the last chip — the call
+        // came back 200 while the profile kept the old list.
         val fields = buildMap {
             request.birthDate?.let { put("birthDate", it) }
             request.gender?.let { put("gender", it) }
             request.about?.let { put("about", it) }
-            if (request.categoriesId.isNotEmpty()) {
-                put("categoriesId", request.categoriesId.joinToString(","))
-            }
-            if (request.languagesId.isNotEmpty()) {
-                put("languagesId", request.languagesId.joinToString(","))
-            }
+            request.categoriesId?.let { put("categoriesId", it.joinToString(",")) }
+            request.languagesId?.let { put("languagesId", it.joinToString(",")) }
             request.backgroundColour?.let { put("backgroundColour", it) }
         }
         // ⚠️ Avatar multipart part name ("file") unverified — confirm against backend.

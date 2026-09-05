@@ -6,6 +6,8 @@
     <!-- Shared actions -->
     <string name="common_ok">OK</string>
     <string name="common_cancel">Cancel</string>
+    <string name="common_next">Next</string>
+    <string name="common_done">Done</string>
     <string name="common_save">Save</string>
     <string name="common_delete">Delete</string>
     <string name="common_continue">Continue</string>
@@ -24,6 +26,7 @@
     <!-- Member roles (section titles) -->
     <string name="role_members">Members</string>
     <string name="role_president">President</string>
+    <string name="role_owner">Owner</string>
     <string name="role_vice_president">Vice president</string>
     <string name="role_event_creators">Event creators</string>
     <string name="member_assign_role">Assign role</string>

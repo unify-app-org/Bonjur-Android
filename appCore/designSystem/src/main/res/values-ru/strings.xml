@@ -4,6 +4,8 @@
     <!-- Shared actions -->
     <string name="common_ok">ОК</string>
     <string name="common_cancel">Отмена</string>
+    <string name="common_next">Далее</string>
+    <string name="common_done">Готово</string>
     <string name="common_save">Сохранить</string>
     <string name="common_delete">Удалить</string>
     <string name="common_continue">Продолжить</string>
@@ -22,6 +24,7 @@
     <!-- Member roles (section titles) -->
     <string name="role_members">Участники</string>
     <string name="role_president">Президент</string>
+    <string name="role_owner">Владелец</string>
     <string name="role_vice_president">Вице-президент</string>
     <string name="role_event_creators">Организаторы</string>
     <string name="member_assign_role">Назначить роль</string>

@@ -43,7 +43,6 @@
     <string name="hangouts_private_desc">Əlaqə məlumatları və qrup linkləri yalnız üzvlərə görünür. Bu məlumatı görmək üçün görüşə qoşulun.</string>
     <string name="hangouts_create_title">Yeni görüş yarat</string>
     <string name="hangouts_edit_title">Görüşü redaktə et</string>
-    <string name="hangouts_owner_role">Sahib</string>
     <string name="hangouts_members_title">Üzvlər</string>
     <string name="hangouts_exit_subtitle">Bu görüşdən çıxmaq istədiyinizə əminsiniz? Artıq iştirak edə və yenilikləri görə bilməyəcəksiniz.</string>
     <string name="hangouts_owner_contact_ph">Sahibin əlaqəsini daxil edin</string>

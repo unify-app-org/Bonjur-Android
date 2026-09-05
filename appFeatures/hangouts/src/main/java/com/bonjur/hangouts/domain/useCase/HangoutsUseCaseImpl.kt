@@ -1,6 +1,8 @@
 package com.bonjur.hangouts.domain.useCase
 
-import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.commonModel.capacityOfMembersText
+import com.bonjur.designSystem.utils.parseIsoDate
+import com.bonjur.designSystem.utils.asActivityDateTime
 import com.bonjur.designSystem.commonModel.dialablePhone
 import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.hangouts.R
@@ -104,7 +106,12 @@ class HangoutsUseCaseImpl @Inject constructor(
     override suspend fun fetchHangoutMembers(hangoutId: String): GroupedMembersData {
         val users = dataSource.getHangoutMembers(hangoutId, page = 0, size = 10)
             .content.map { it.toCellModel() }
-        return GroupedMembersData.from(users)
+        // A hangout's PRESIDENT reads "Owner" — the section header said "President"
+        // where iOS said "Owner".
+        return GroupedMembersData.from(
+            users,
+            GroupedMembersData.titleOverrides(AppUIEntities.ActivityType.HANG_OUTS)
+        )
     }
 
     override suspend fun fetchHangoutMembersPage(hangoutId: String, page: Int, size: Int, keyword: String?): MembersPage {
@@ -240,7 +247,7 @@ class HangoutsUseCaseImpl @Inject constructor(
         appendSection(
             "Hangout info",
             listOf(
-                infoRow(title = LanguageManager.string(R.string.hangouts_row_date), value = detail.hangoutDate.meetupDate()),
+                infoRow(title = LanguageManager.string(R.string.hangouts_row_date), value = detail.hangoutDate.asActivityDateTime()),
                 infoRow(
                     title = LanguageManager.string(R.string.hangouts_row_owner_contact),
                     value = cleaned(detail.ownerContact),
@@ -283,7 +290,9 @@ class HangoutsUseCaseImpl @Inject constructor(
 
     private fun capacityText(members: Int?, capacity: Int?): String? {
         if (capacity == null || capacity <= 0) return null
-        return memberOfCapacityText(members ?: 0, capacity)
+        // Detail rows use the slash shape ("1/2000 members"); the cards keep
+        // "1 of 2000 members". Same split as iOS.
+        return capacityOfMembersText(members ?: 0, capacity)
     }
 
 
@@ -298,14 +307,6 @@ class HangoutsUseCaseImpl @Inject constructor(
             SimpleDateFormat(fmt, Locale.US).apply { timeZone = TimeZone.getDefault() }.format(date)
         }
         return DateParts(day = local("d"), month = local("MMM").uppercase(), time = local("HH:mm"))
-    }
-
-    /** Meetup date+time in device-local time, e.g. "14 June 2026 18:00". */
-    private fun String?.meetupDate(): String? {
-        val date = parseIso(this) ?: return null
-        return SimpleDateFormat("d MMMM yyyy HH:mm", LanguageManager.locale).apply {
-            timeZone = TimeZone.getDefault()
-        }.format(date)
     }
 
     /** ISO hangout date → the create date picker's stored `yyyy-MM-dd HH:mm` (UTC) format. */
@@ -330,24 +331,9 @@ class HangoutsUseCaseImpl @Inject constructor(
         }.getOrDefault(this)
     }
 
-    private fun parseIso(value: String?): java.util.Date? {
-        val v = value?.trim().orEmpty()
-        if (v.isEmpty()) return null
-        val patterns = listOf(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
-            "yyyy-MM-dd'T'HH:mm:ss"
-        )
-        for (p in patterns) {
-            runCatching {
-                SimpleDateFormat(p, Locale.US).apply {
-                    timeZone = TimeZone.getTimeZone("UTC")
-                }.parse(v)
-            }.getOrNull()?.let { return it }
-        }
-        return null
-    }
+    /** Still used by the card/picker helpers below; the pattern list itself lives in
+     *  `designSystem`'s `parseIsoDate` so there is one definition of the wire shapes. */
+    private fun parseIso(value: String?): java.util.Date? = parseIsoDate(value)
 
     private fun String?.toAccessType(): AppUIEntities.AccessType =
         AppUIEntities.AccessType.fromApi(this)

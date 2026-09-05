@@ -1,6 +1,7 @@
 package com.bonjur.communities.domain.useCase
 
-import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.commonModel.capacityOfMembersText
+import com.bonjur.designSystem.utils.asActivityAuditDate
 import com.bonjur.designsystem.R as DesignR
 import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.communities.R
@@ -24,8 +25,6 @@ import com.bonjur.designSystem.commonModel.toUserActivityRole
 import com.bonjur.designSystem.components.fieldSchema.AppFieldSchema
 import com.bonjur.designSystem.components.filter.FilterView
 import com.bonjur.designSystem.components.filter.FilterViewMocks
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 import com.bonjur.network.model.Page
 
@@ -137,7 +136,7 @@ class CommunitiesUseCaseImpl @Inject constructor(
 
         appendSection(
             this, LanguageManager.string(R.string.comm_info_section), listOf(
-                row(title = LanguageManager.string(DesignR.string.created_updated_date), value = modifiedDate(detail.modifiedAt)),
+                row(title = LanguageManager.string(DesignR.string.created_updated_date), value = detail.modifiedAt.asActivityAuditDate()),
                 row(
                     title = LanguageManager.string(R.string.comm_row_owner_contact),
                     value = cleaned(detail.ownerContact),
@@ -188,16 +187,9 @@ class CommunitiesUseCaseImpl @Inject constructor(
 
     private fun capacityText(members: Int?, capacity: Int?): String? {
         if (capacity == null || capacity <= 0) return null
-        return memberOfCapacityText(members ?: 0, capacity)
-    }
-
-    /** `dd-MM-yyyy HH:mm:ss` audit stamp → date-only display; falls back to raw on parse failure. */
-    private fun modifiedDate(value: String?): String? {
-        val v = cleaned(value) ?: return null
-        return runCatching {
-            val parsed = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(v)
-            parsed?.let { SimpleDateFormat("d MMMM yyyy", LanguageManager.locale).format(it) }
-        }.getOrNull()?.takeIf { it.isNotBlank() } ?: v
+        // Detail rows use the slash shape ("1/2000 members"); the cards keep
+        // "1 of 2000 members". Same split as iOS.
+        return capacityOfMembersText(members ?: 0, capacity)
     }
 
     /** Returns the contact only when it looks like a dialable phone number. */

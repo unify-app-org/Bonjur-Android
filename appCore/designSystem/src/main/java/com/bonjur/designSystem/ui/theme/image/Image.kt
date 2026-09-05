@@ -102,6 +102,10 @@ object Images {
         @Composable
         fun globe() = painterResource(R.drawable.ic_globe)
 
+        /** Birthday. Ported from iOS `UIImage.Icons.cakeBirthday`. */
+        @Composable
+        fun cakeBirthday() = painterResource(R.drawable.ic_cake_birthday)
+
         @Composable
         fun helpCircle() = painterResource(R.drawable.ic_help_circle)
 

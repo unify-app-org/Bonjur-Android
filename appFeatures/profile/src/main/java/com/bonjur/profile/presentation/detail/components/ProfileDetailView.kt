@@ -53,6 +53,7 @@ import com.bonjur.profile.presentation.detail.models.ProfileDetail
 import com.bonjur.profile.presentation.detail.models.ProfileDetailAction
 import com.bonjur.profile.presentation.detail.models.ProfileDetailSideEffect
 import com.bonjur.profile.presentation.detail.models.ProfileDetailViewState
+import com.bonjur.profile.presentation.editProfile.models.Gender
 import kotlinx.coroutines.launch
 import com.bonjur.designSystem.components.paging.LoadMoreOnScrollToEnd
 import com.bonjur.designSystem.components.paging.PagingFooter
@@ -469,8 +470,11 @@ private fun CompactHeaderView(
             modifier = Modifier.padding(top = 14.dp)
         )
 
-        val subtitle = listOf(card.speciality, card.community)
-            .filter { it.isNotEmpty() }
+        // speciality · course · community — Android was dropping `course` and kept the
+        // literal "-" placeholder, so the row read "TEST · TEST2" against iOS's
+        // "TEST · 2nd year · TEST2". Mirrors iOS `headerSubtitle(for:)`.
+        val subtitle = listOf(card.speciality, card.course, card.community)
+            .filter { it.isNotEmpty() && it != "-" }
             .joinToString(" · ")
         if (subtitle.isNotEmpty()) {
             Text(
@@ -596,16 +600,14 @@ private fun UserInfoView(
             UserInfoCell(
                 icon = Images.Icons.user(),
                 title = stringResource(R.string.profile_gender),
-                subtitle = uiModel?.gender ?: "-"
+                subtitle = uiModel?.gender?.let { Gender.from(it)?.displayName } ?: "-"
             )
             UserInfoCell(
-                icon = Images.Icons.user(),
+                icon = Images.Icons.cakeBirthday(),
                 title = stringResource(R.string.profile_birthday),
                 subtitle = uiModel?.birthday ?: "-"
             )
             UserInfoCell(
-                // iOS uses a globe here; gender/birthday still fall back to the
-                // person icon because this module has no gender/cake drawable yet.
                 icon = Images.Icons.globe(),
                 title = stringResource(R.string.profile_languages),
                 subtitle = uiModel?.languages?.joinToString(", ") { it.title } ?: "-"

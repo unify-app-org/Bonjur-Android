@@ -51,4 +51,5 @@
     <string name="auth_communities_empty">No communities are available yet.</string>
     <string name="auth_communities_error">Something went wrong. We couldn\'t load the communities.</string>
     <string name="auth_try_again">Try again</string>
+    <string name="auth_email_invalid">Enter a valid email address</string>
 </resources>

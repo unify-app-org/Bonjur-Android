@@ -45,12 +45,37 @@ data class GroupedMembersData(
     val sections: List<MemberListSectionModel>
 ) {
     companion object {
+        /**
+         * Section headings that differ by activity. A hangout's or an event's PRESIDENT
+         * is shown as **Owner**, not "President" — the role is the same on the wire,
+         * only the word changes. Clubs and communities keep "President". Mirrors iOS,
+         * which passes `localizedTitles(overriding: [.president: ..._owner_role])` from
+         * the hangout and event repos, and again when either opens its members list.
+         *
+         * Lives here so the detail tab and the "see all members" screen (which only
+         * knows its [AppUIEntities.ActivityType]) cannot drift apart.
+         */
+        fun titleOverrides(
+            activityType: AppUIEntities.ActivityType
+        ): Map<AppUIEntities.UserActivityRole, String> = when (activityType) {
+            AppUIEntities.ActivityType.HANG_OUTS,
+            AppUIEntities.ActivityType.EVENTS -> mapOf(
+                AppUIEntities.UserActivityRole.PRESIDENT to LanguageManager.string(R.string.role_owner)
+            )
+            AppUIEntities.ActivityType.CLUBS,
+            AppUIEntities.ActivityType.COMMUNITY -> emptyMap()
+        }
+
         fun from(
             users: List<MemberCellModel>,
             titleOverrides: Map<AppUIEntities.UserActivityRole, String> = emptyMap()
         ): GroupedMembersData {
             val sections = users
-                .groupBy { it.role }
+                // Every row here is an accepted member, so a role the client doesn't
+                // recognise means "rank unknown", not "not joined" — and NOT_JOINED's
+                // section title is the literal "-", which is what reached the screen on
+                // an event whose second member carried an unmapped role.
+                .groupBy { it.role.orMember() }
                 .toList()
                 .sortedBy { (role, _) -> role.sortPriority() }
                 .map { (role, members) ->
@@ -63,6 +88,14 @@ data class GroupedMembersData(
             return GroupedMembersData(sections)
         }
 
+        /** NOT_JOINED cannot describe someone already in a members list. */
+        private fun AppUIEntities.UserActivityRole.orMember(): AppUIEntities.UserActivityRole =
+            if (this == AppUIEntities.UserActivityRole.NOT_JOINED) {
+                AppUIEntities.UserActivityRole.MEMBER
+            } else {
+                this
+            }
+
         private fun AppUIEntities.UserActivityRole.sortPriority(): Int = when (this) {
             AppUIEntities.UserActivityRole.PRESIDENT -> 0
             AppUIEntities.UserActivityRole.VISE_PRESIDENT -> 1
@@ -74,9 +107,11 @@ data class GroupedMembersData(
         private fun AppUIEntities.UserActivityRole.sectionTitle(): String = when (this) {
             AppUIEntities.UserActivityRole.MEMBER -> LanguageManager.string(R.string.common_members)
             AppUIEntities.UserActivityRole.PRESIDENT -> LanguageManager.string(R.string.role_president)
-            AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "Vise president"
+            AppUIEntities.UserActivityRole.VISE_PRESIDENT ->
+                LanguageManager.string(R.string.role_vice_president)
             AppUIEntities.UserActivityRole.EVENT_CREATOR -> LanguageManager.string(R.string.role_event_creators)
-            AppUIEntities.UserActivityRole.NOT_JOINED -> "-"
+            // Unreachable via `from` (see `orMember`); kept so the `when` stays exhaustive.
+            AppUIEntities.UserActivityRole.NOT_JOINED -> LanguageManager.string(R.string.common_members)
         }
     }
 }

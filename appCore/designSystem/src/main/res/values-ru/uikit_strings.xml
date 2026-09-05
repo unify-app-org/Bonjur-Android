@@ -26,6 +26,7 @@
     <string name="count_members">%1$d участников</string>
     <string name="count_of_members">%1$d из %2$d участников</string>
     <string name="count_of">%1$d из %2$d</string>
+    <string name="capacity_of_members">%1$d/%2$d участников</string>
     <string name="count_clubs">%1$d клубов</string>
     <string name="field_optional">(необязательно)</string>
     <string name="field_write_something">Напишите что-нибудь</string>

@@ -15,6 +15,9 @@
     <string name="notif_mark_all_title">Mark all as read?</string>
     <string name="notif_needs_action">Needs your action</string>
     <string name="notif_no_notifications">No notifications yet</string>
+    <string name="notif_no_pending_clubs">No pending club requests right now.</string>
+    <string name="notif_no_pending_events">No pending event requests right now.</string>
+    <string name="notif_no_pending_hangouts">No pending hangout requests right now.</string>
     <string name="notif_note">Note</string>
     <string name="notif_nothing_to_verify">Nothing to verify</string>
     <string name="notif_reject">Reject</string>

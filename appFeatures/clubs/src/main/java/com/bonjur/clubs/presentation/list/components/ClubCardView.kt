@@ -42,6 +42,8 @@ import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designSystem.ui.theme.image.Images
 import kotlin.collections.take
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 
 @Composable
 fun ClubCardView(
@@ -167,9 +169,12 @@ private fun roleBadgeText(role: AppUIEntities.UserActivityRole): String =
 
 @Composable
 private fun CategoriesRow(model: ClubCardModel) {
+    // Scrolls horizontally (iOS wraps the same row in a horizontal ScrollView): a card
+    // with four categories clipped the last one at the card edge with no way to reach it.
     Row(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.horizontalScroll(rememberScrollState())
     ) {
         model.categories.forEach { category ->
             Surface(

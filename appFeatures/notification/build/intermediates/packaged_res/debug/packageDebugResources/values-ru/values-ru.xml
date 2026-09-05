@@ -15,6 +15,9 @@
     <string name="notif_mark_all_title">Отметить все как прочитанные?</string>
     <string name="notif_needs_action">Требует действия</string>
     <string name="notif_no_notifications">Пока нет уведомлений</string>
+    <string name="notif_no_pending_clubs">Сейчас нет ожидающих заявок на клубы.</string>
+    <string name="notif_no_pending_events">Сейчас нет ожидающих заявок на события.</string>
+    <string name="notif_no_pending_hangouts">Сейчас нет ожидающих заявок на тусовки.</string>
     <string name="notif_note">Заметка</string>
     <string name="notif_nothing_to_verify">Нечего верифицировать</string>
     <string name="notif_reject">Отклонить</string>

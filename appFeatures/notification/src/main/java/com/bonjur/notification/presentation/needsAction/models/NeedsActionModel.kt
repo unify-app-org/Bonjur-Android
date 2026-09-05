@@ -12,12 +12,17 @@ import com.bonjur.notification.domain.models.ActionRequestItem
 
 /** Top segmented control. Declaration order = display order (Events, Hangouts, Clubs). */
 enum class ActionTab(
-    override val title: String,
+    private val titleRes: Int,
     override val id: String
 ) : SegmentedPickerOption {
-    EVENTS(LanguageManager.string(DesignR.string.events), "events"),
-    HANGOUTS(LanguageManager.string(DesignR.string.hangouts), "hangouts"),
-    CLUBS(LanguageManager.string(DesignR.string.clubs), "clubs")
+    EVENTS(DesignR.string.events, "events"),
+    HANGOUTS(DesignR.string.hangouts, "hangouts"),
+    CLUBS(DesignR.string.clubs, "clubs");
+
+    /** Resolved per read, not in the constructor: enum constants are built once at class
+     *  load, so a title captured there keeps the language the app was launched in and the
+     *  tabs stop following a language switch. */
+    override val title: String get() = LanguageManager.string(titleRes)
 }
 
 // MARK: - Load phase

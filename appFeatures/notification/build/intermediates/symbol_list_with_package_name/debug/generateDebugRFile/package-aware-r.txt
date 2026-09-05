@@ -14,6 +14,9 @@ string notif_mark_all_read
 string notif_mark_all_title
 string notif_needs_action
 string notif_no_notifications
+string notif_no_pending_clubs
+string notif_no_pending_events
+string notif_no_pending_hangouts
 string notif_note
 string notif_nothing_to_verify
 string notif_reject

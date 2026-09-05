@@ -36,4 +36,7 @@ class DiscoverDataSourceImpl @Inject constructor(
 
     override suspend fun joinHangout(request: JoinHangoutRequest): ByteArray =
         fetchRawData(DiscoverEndPoints.JoinHangout(request))
+
+    override suspend fun joinEvent(eventId: String): ByteArray =
+        fetchRawData(DiscoverEndPoints.JoinEvent(eventId))
 }

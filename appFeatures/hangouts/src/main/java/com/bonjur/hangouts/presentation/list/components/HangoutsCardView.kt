@@ -35,6 +35,8 @@ import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardMocks
 import com.bonjur.hangouts.presentation.list.model.HangoutsCardModel
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.horizontalScroll
 
 @Composable
 fun HangoutsCardView(
@@ -184,9 +186,11 @@ private fun BottomView(
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Tags
+        // Tags — horizontally scrollable, mirroring iOS's ScrollView(.horizontal):
+        // tags past the card width were clipped and unreachable.
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.horizontalScroll(rememberScrollState())
         ) {
             model.tags.forEach { tag ->
                 Surface(

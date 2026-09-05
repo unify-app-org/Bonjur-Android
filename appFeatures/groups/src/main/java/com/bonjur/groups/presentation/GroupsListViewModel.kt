@@ -59,6 +59,10 @@ class GroupsListViewModel @Inject constructor(
     private var isLoadingMoreHangouts = false
     private var searchJob: Job? = null
 
+    /** Set when this screen pushes another one, so the return trip is not mistaken for
+     *  a fresh entry into the tab. See [onAppear]. */
+    private var isReturningFromDetail = false
+
     fun init(inputData: GroupsListInputData, navigator: Navigator) {
         this.navigator = navigator
         if (::inputData.isInitialized) return
@@ -67,6 +71,7 @@ class GroupsListViewModel @Inject constructor(
 
     override fun handle(action: GroupsListAction) {
         when (action) {
+            GroupsListAction.OnAppear -> onAppear()
             GroupsListAction.FetchData -> fetchData()
             GroupsListAction.LoadMoreClubs -> loadMoreClubs()
             GroupsListAction.LoadMoreEvents -> loadMoreEvents()
@@ -253,17 +258,39 @@ class GroupsListViewModel @Inject constructor(
 
     private fun currentKeyword(): String? = state.searchText.trim().ifEmpty { null }
 
+    /**
+     * iOS builds a brand-new Groups screen on every My-Activities tap
+     * (`AppTabBarHostController.handleActivitiesTap` pushes a fresh controller), so it
+     * always opens on Clubs. Android keeps one view model per tab back-stack entry, so
+     * the screen reopened wherever the user had left it — Hangouts, in the report.
+     *
+     * Resetting on every composition would be wrong the other way: pushing a hangout
+     * detail and coming back re-enters composition too, and iOS keeps Hangouts selected
+     * there (same instance). [isReturningFromDetail] separates the two.
+     */
+    private fun onAppear() {
+        if (isReturningFromDetail) {
+            isReturningFromDetail = false
+            return
+        }
+        if (state.selectedSegment != GroupsListViewState.SegmentType.CLUBS) {
+            updateState(state.copy(selectedSegment = GroupsListViewState.SegmentType.CLUBS))
+        }
+    }
+
     private fun handleSegmentChanged(segment: GroupsListViewState.SegmentType) {
         updateState(state.copy(selectedSegment = segment))
     }
 
     private fun clubItemTapped(id: Int) {
+        isReturningFromDetail = true
         viewModelScope.launch {
             navigator.navigateTo(ClubsScreens.Details.route, ClubDetailsInputData(clubId = id))
         }
     }
 
     private fun eventItemTapped(id: String) {
+        isReturningFromDetail = true
         viewModelScope.launch {
             navigator.navigateTo(EventsScreens.Details.route, EventDetailsInputData(eventId = id))
         }
@@ -277,12 +304,14 @@ class GroupsListViewModel @Inject constructor(
             GroupsListViewState.SegmentType.EVENTS -> EventsScreens.List.route
             GroupsListViewState.SegmentType.HANGOUTS -> HangoutsScreens.Create.route
         }
+        isReturningFromDetail = true
         viewModelScope.launch {
             navigator.navigateTo(route)
         }
     }
 
     private fun hangoutItemTapped(id: String) {
+        isReturningFromDetail = true
         viewModelScope.launch {
             navigator.navigateTo(HangoutsScreens.Details.route, HangoutDetailsInputData(hangoutId = id))
         }

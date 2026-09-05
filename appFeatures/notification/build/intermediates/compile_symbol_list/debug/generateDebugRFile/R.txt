@@ -13,6 +13,9 @@ int string notif_mark_all_read 0x0
 int string notif_mark_all_title 0x0
 int string notif_needs_action 0x0
 int string notif_no_notifications 0x0
+int string notif_no_pending_clubs 0x0
+int string notif_no_pending_events 0x0
+int string notif_no_pending_hangouts 0x0
 int string notif_note 0x0
 int string notif_nothing_to_verify 0x0
 int string notif_reject 0x0

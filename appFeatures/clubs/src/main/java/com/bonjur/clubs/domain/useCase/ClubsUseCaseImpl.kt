@@ -1,6 +1,7 @@
 package com.bonjur.clubs.domain.useCase
 
-import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.utils.asActivityAuditDate
+import com.bonjur.designSystem.commonModel.capacityOfMembersText
 import com.bonjur.designSystem.commonModel.dialablePhone
 import com.bonjur.designsystem.R as DesignR
 import com.bonjur.designSystem.localization.LanguageManager
@@ -285,7 +286,7 @@ class ClubsUseCaseImpl @Inject constructor(
             // This is a club, not an event — iOS relabelled these 2026-08-17.
             title = LanguageManager.string(R.string.clubs_info_section),
             subItems = buildList {
-                detail.modifiedAt?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(DesignR.string.created_updated_date), description = it)) }
+                detail.modifiedAt.asActivityAuditDate()?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(DesignR.string.created_updated_date), description = it)) }
                 detail.ownerContact?.let {
                     add(
                         ClubsDetails.SubInfo(
@@ -295,7 +296,7 @@ class ClubsUseCaseImpl @Inject constructor(
                         )
                     )
                 }
-                detail.capacity?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(R.string.clubs_capacity_label), description = memberOfCapacityText(detail.membersCount ?: 0, it))) }
+                detail.capacity?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(R.string.clubs_capacity_label), description = capacityOfMembersText(detail.membersCount ?: 0, it))) }
                 detail.rule?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(R.string.clubs_rules_label), description = it)) }
                 detail.location?.let { add(ClubsDetails.SubInfo(title = LanguageManager.string(R.string.clubs_location_label), description = it)) }
             }

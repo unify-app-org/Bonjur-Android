@@ -58,7 +58,6 @@
     <string name="events_going">Участвую</string>
     <string name="events_join">Присоединиться</string>
     <string name="events_request">Запросить</string>
-    <string name="events_owner_role">Владелец</string>
     <string name="events_continue">Продолжить</string>
     <string name="events_required_hint">Поля, отмеченные *, обязательны.</string>
     <string name="events_about_label">Описание</string>

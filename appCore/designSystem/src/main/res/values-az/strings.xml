@@ -4,6 +4,8 @@
     <!-- Shared actions -->
     <string name="common_ok">OK</string>
     <string name="common_cancel">Ləğv et</string>
+    <string name="common_next">Növbəti</string>
+    <string name="common_done">Hazırdır</string>
     <string name="common_save">Yadda saxla</string>
     <string name="common_delete">Sil</string>
     <string name="common_continue">Davam et</string>
@@ -22,6 +24,7 @@
     <!-- Member roles (section titles) -->
     <string name="role_members">Üzvlər</string>
     <string name="role_president">Prezident</string>
+    <string name="role_owner">Sahib</string>
     <string name="role_vice_president">Vitse-prezident</string>
     <string name="role_event_creators">Tədbir yaradanlar</string>
     <string name="member_assign_role">Rol təyin et</string>

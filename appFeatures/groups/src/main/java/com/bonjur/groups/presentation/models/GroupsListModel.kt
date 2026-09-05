@@ -101,6 +101,10 @@ data class GroupsListViewState(
 
 // MARK: - Actions
 sealed class GroupsListAction : FeatureAction {
+    /** Screen entered composition. Distinct from [FetchData] because entering the tab
+     *  and popping back from a detail both refetch, but only the former resets the tab. */
+    object OnAppear : GroupsListAction()
+
     object FetchData : GroupsListAction()
     object LoadMoreClubs : GroupsListAction()
     object LoadMoreEvents : GroupsListAction()

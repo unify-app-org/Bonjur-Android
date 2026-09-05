@@ -51,4 +51,5 @@
     <string name="auth_communities_empty">Сообщества пока недоступны.</string>
     <string name="auth_communities_error">Что-то пошло не так. Не удалось загрузить сообщества.</string>
     <string name="auth_try_again">Попробовать снова</string>
+    <string name="auth_email_invalid">Введите корректный адрес электронной почты</string>
 </resources>

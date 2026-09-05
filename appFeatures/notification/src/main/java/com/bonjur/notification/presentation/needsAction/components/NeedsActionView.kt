@@ -94,9 +94,12 @@ fun NeedsActionView(store: FeatureStore<NeedsActionViewState, NeedsActionAction,
             showIndicator = false
         ) { page ->
             when (tabs[page]) {
-                ActionTab.EVENTS -> RequestsTab(store, ActionTab.EVENTS, state.events, "No pending event requests right now.")
-                ActionTab.HANGOUTS -> RequestsTab(store, ActionTab.HANGOUTS, state.hangouts, "No pending hangout requests right now.")
-                ActionTab.CLUBS -> RequestsTab(store, ActionTab.CLUBS, state.clubs, "No pending club requests right now.")
+                ActionTab.EVENTS ->
+                    RequestsTab(store, ActionTab.EVENTS, state.events, stringResource(R.string.notif_no_pending_events))
+                ActionTab.HANGOUTS ->
+                    RequestsTab(store, ActionTab.HANGOUTS, state.hangouts, stringResource(R.string.notif_no_pending_hangouts))
+                ActionTab.CLUBS ->
+                    RequestsTab(store, ActionTab.CLUBS, state.clubs, stringResource(R.string.notif_no_pending_clubs))
             }
         }
     }

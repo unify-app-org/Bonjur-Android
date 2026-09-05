@@ -43,7 +43,6 @@
     <string name="hangouts_private_desc">Contact details and group links are only visible to members. Join the hangout to access this information.</string>
     <string name="hangouts_create_title">Create new hangout</string>
     <string name="hangouts_edit_title">Edit hangout</string>
-    <string name="hangouts_owner_role">Owner</string>
     <string name="hangouts_members_title">Members</string>
     <string name="hangouts_exit_subtitle">Are you sure you want to leave this hangout? You will no longer be able to participate or see updates.</string>
     <string name="hangouts_owner_contact_ph">Enter owner contact</string>

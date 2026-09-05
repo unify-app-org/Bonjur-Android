@@ -58,7 +58,6 @@
     <string name="events_going">Participating</string>
     <string name="events_join">Join</string>
     <string name="events_request">Request</string>
-    <string name="events_owner_role">Owner</string>
     <string name="events_continue">Continue</string>
     <string name="events_required_hint">Fields marked with * are required.</string>
     <string name="events_about_label">About</string>

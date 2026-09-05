@@ -1,5 +1,6 @@
 package com.bonjur.profile.presentation.studentCard.components
 
+import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.profile.R
 import androidx.compose.ui.res.stringResource
 import com.bonjur.designsystem.R as DesignR
@@ -16,13 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -37,13 +34,11 @@ import com.bonjur.profile.presentation.studentCard.models.StudentCardAction
 import com.bonjur.profile.presentation.studentCard.models.StudentCardSideEffect
 import com.bonjur.profile.presentation.studentCard.models.StudentCardViewState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentCardView(
     store: FeatureStore<StudentCardViewState, StudentCardAction, StudentCardSideEffect>
 ) {
     val state = store.state
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val animSpec = tween<Float>(durationMillis = 250)
     val collapsedWeight by animateFloatAsState(
@@ -113,12 +108,8 @@ fun StudentCardView(
     }
 
     if (state.isChooseColorSheetPresented) {
-        ModalBottomSheet(
-            onDismissRequest = { store.send(StudentCardAction.CoverSheetDismissed) },
-            sheetState = sheetState,
-            containerColor = Palette.white,
-            dragHandle = { BottomSheetDefaults.DragHandle() }
-        ) {
+        // AppBottomSheet re-provides the localized context a sheet's own window drops.
+        AppBottomSheet(onDismiss = { store.send(StudentCardAction.CoverSheetDismissed) }) {
             StudentCardCoverPickerSheet(
                 selected = state.draftCover,
                 onCoverSelected = { store.send(StudentCardAction.CoverSelected(it)) },

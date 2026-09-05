@@ -37,4 +37,6 @@ interface DiscoverUseCase {
     ): List<HangoutsCardModel>
 
     suspend fun joinHangout(hangoutId: String)
+
+    suspend fun joinEvent(eventId: String)
 }

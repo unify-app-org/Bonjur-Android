@@ -117,6 +117,10 @@ class DiscoverUseCaseImpl @Inject constructor(
         dataSource.joinHangout(JoinHangoutRequest(hangoutId = hangoutId))
     }
 
+    override suspend fun joinEvent(eventId: String) {
+        dataSource.joinEvent(eventId)
+    }
+
     // MARK: - Mappers
 
     private fun DiscoverHangout.toCardModel(): HangoutsCardModel {

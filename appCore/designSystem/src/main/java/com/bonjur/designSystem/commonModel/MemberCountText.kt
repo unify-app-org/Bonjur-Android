@@ -19,6 +19,17 @@ fun clubCountText(count: Int): String =
 fun eventCountText(count: Int): String =
     LanguageManager.plural(R.plurals.events_count, count)
 
-/** "3 of 25 members" — capacity-style label. */
+/** "3 of 25 members" — the wording the **cards** use (iOS `count_of_members`). */
 fun memberOfCapacityText(count: Int, capacity: Int): String =
     LanguageManager.string(R.string.count_of_members, count, capacity)
+
+/**
+ * "3/25 members" — the **detail screens'** Capacity row.
+ *
+ * Deliberately a different shape from [memberOfCapacityText]: iOS renders the card with
+ * `count_of_members` ("3 of 25 members") and the detail row with a slash, and Android's
+ * detail rows were reusing the card wording. Unlike iOS — which hardcodes English
+ * " members" in every repo's `capacityText` — this reads a resource, so az/ru follow.
+ */
+fun capacityOfMembersText(count: Int, capacity: Int): String =
+    LanguageManager.string(R.string.capacity_of_members, count, capacity)

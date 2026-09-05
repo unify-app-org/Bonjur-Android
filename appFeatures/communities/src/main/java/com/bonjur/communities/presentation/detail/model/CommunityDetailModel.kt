@@ -42,12 +42,17 @@ data class CommunityDetailViewState(
             uiModel.userActivity != AppUIEntities.UserActivityRole.NOT_JOINED
 
     enum class SegmentTypes(
-        override val title: String
+        private val titleRes: Int
     ) : SegmentedPickerOption {
 
-        ABOUT(LanguageManager.string(DesignR.string.about)),
-        CLUBS(LanguageManager.string(DesignR.string.clubs)),
-        MEMBERS(LanguageManager.string(DesignR.string.common_members));
+        ABOUT(DesignR.string.about),
+        CLUBS(DesignR.string.clubs),
+        MEMBERS(DesignR.string.common_members);
+
+    /** Resolved per read, not in the constructor: enum constants are built once at class
+     *  load, so a title captured there keeps the language the app was launched in and the
+     *  tabs stop following a language switch. */
+        override val title: String get() = LanguageManager.string(titleRes)
 
         override val id: String get() = name
 

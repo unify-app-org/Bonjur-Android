@@ -76,6 +76,7 @@ class DiscoverViewModel @Inject constructor(
             is DiscoverAction.LoadMore -> loadMore(action.type)
             is DiscoverAction.CreateTapped -> createTapped(action.type)
             is DiscoverAction.JoinHangout -> joinHangout(action.hangoutId)
+            is DiscoverAction.JoinEvent -> joinEvent(action.eventId)
             is DiscoverAction.ViewAllTapped -> viewAllTapped(action.type)
             is DiscoverAction.CommunityItemTapped -> communityItemTapped(action.communityId)
             is DiscoverAction.CLubItemTapped -> clubItemTapped(action.clubId)
@@ -248,6 +249,21 @@ class DiscoverViewModel @Inject constructor(
                 useCase.joinHangout(id)
                 val data = useCase.fetchHangoutsData(size = hangoutsSize, categoryIds = selectedCategoryIds)
                 updateState(state.copy(uiModel = state.uiModel.copy(hangouts = data)))
+            } catch (e: ApiException) {
+                postEffect(DiscoverSideEffect.Error(e))
+            } finally {
+                postEffect(DiscoverSideEffect.Loading(false))
+            }
+        }
+    }
+
+    private fun joinEvent(id: String) {
+        viewModelScope.launch {
+            postEffect(DiscoverSideEffect.Loading(true))
+            try {
+                useCase.joinEvent(id)
+                val data = useCase.fetchEvents(size = eventsSize, categoryIds = selectedCategoryIds)
+                updateState(state.copy(uiModel = state.uiModel.copy(events = data)))
             } catch (e: ApiException) {
                 postEffect(DiscoverSideEffect.Error(e))
             } finally {

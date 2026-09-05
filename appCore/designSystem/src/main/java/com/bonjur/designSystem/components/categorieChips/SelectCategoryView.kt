@@ -1,6 +1,8 @@
 package com.bonjur.designSystem.components.categorieChips
 
 import androidx.compose.foundation.clickable
+import com.bonjur.designSystem.localization.LanguageManager
+import com.bonjur.designsystem.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +37,9 @@ fun SelectCategoryView(
     sections: List<CategorySection>,
     onToggle: (Int) -> Unit,
     onDone: () -> Unit,
+    /** Confirm-button label. iOS's `SelectableListView` takes the same parameter and
+     *  defaults to "Ok"; the profile edit form overrides it with "Select". */
+    doneTitle: String = LanguageManager.string(R.string.common_ok),
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     title: String = "Select category",
@@ -100,7 +105,7 @@ fun SelectCategoryView(
         }
 
         AppButton(
-            title = "Ok",
+            title = doneTitle,
             model = AppButtonModel(contentSize = ContentSize.Fill),
             onClick = onDone,
             enabled = selectedCount >= minimumSelectionCount,

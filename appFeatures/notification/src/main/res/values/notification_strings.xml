@@ -30,4 +30,9 @@
     <string name="notif_reject_note_desc">You\'re rejecting %1$s\'s verification request.</string>
     <string name="notif_reject_note_label">Note (optional)</string>
     <string name="notif_reject_note_hint">The club organiser sees this note in their notification. Leave it blank to reject without a reason.</string>
+
+    <!-- Needs action: per-tab empty states -->
+    <string name="notif_no_pending_events">No pending event requests right now.</string>
+    <string name="notif_no_pending_hangouts">No pending hangout requests right now.</string>
+    <string name="notif_no_pending_clubs">No pending club requests right now.</string>
 </resources>

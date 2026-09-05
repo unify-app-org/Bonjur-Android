@@ -26,6 +26,7 @@
     <string name="count_members">%1$d members</string>
     <string name="count_of_members">%1$d of %2$d members</string>
     <string name="count_of">%1$d of %2$d</string>
+    <string name="capacity_of_members">%1$d/%2$d members</string>
     <string name="count_clubs">%1$d clubs</string>
     <string name="field_optional">(optional)</string>
     <string name="field_write_something">Write something</string>

@@ -509,7 +509,7 @@ private fun DateTimeField(
                     pickedMillis = dateState.selectedDateMillis
                     showDate = false
                     if (pickedMillis != null) showTime = true
-                }) { Text(text = "Next") }
+                }) { Text(text = LanguageManager.string(R.string.common_next)) }
             },
             dismissButton = {
                 TextButton(onClick = { showDate = false }) { Text(text = LanguageManager.string(R.string.common_cancel)) }
@@ -528,7 +528,7 @@ private fun DateTimeField(
             ) {
                 TimePicker(state = timeState)
                 AppButton(
-                    title = "Done",
+                    title = LanguageManager.string(R.string.common_done),
                     model = AppButtonModel(contentSize = ContentSize.Fill),
                     onClick = {
                         val millis = pickedMillis

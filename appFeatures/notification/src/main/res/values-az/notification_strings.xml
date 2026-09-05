@@ -30,4 +30,9 @@
     <string name="notif_reject_note_desc">%1$s klubunun təsdiq sorğusunu rədd edirsiniz.</string>
     <string name="notif_reject_note_label">Qeyd (istəyə bağlı)</string>
     <string name="notif_reject_note_hint">Klub təşkilatçısı bu qeydi bildirişində görəcək. Səbəb göstərmədən rədd etmək üçün boş buraxın.</string>
+
+    <!-- Needs action: per-tab empty states -->
+    <string name="notif_no_pending_events">Hazırda gözləyən tədbir sorğusu yoxdur.</string>
+    <string name="notif_no_pending_hangouts">Hazırda gözləyən görüş sorğusu yoxdur.</string>
+    <string name="notif_no_pending_clubs">Hazırda gözləyən klub sorğusu yoxdur.</string>
 </resources>

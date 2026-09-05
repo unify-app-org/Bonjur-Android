@@ -30,4 +30,9 @@
     <string name="notif_reject_note_desc">Вы отклоняете запрос на верификацию клуба %1$s.</string>
     <string name="notif_reject_note_label">Заметка (необязательно)</string>
     <string name="notif_reject_note_hint">Организатор клуба увидит эту заметку в уведомлении. Оставьте поле пустым, чтобы отклонить без причины.</string>
+
+    <!-- Needs action: per-tab empty states -->
+    <string name="notif_no_pending_events">Сейчас нет ожидающих заявок на события.</string>
+    <string name="notif_no_pending_hangouts">Сейчас нет ожидающих заявок на тусовки.</string>
+    <string name="notif_no_pending_clubs">Сейчас нет ожидающих заявок на клубы.</string>
 </resources>

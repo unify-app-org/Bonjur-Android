@@ -46,4 +46,11 @@ sealed class DiscoverEndPoints : AppEndpoint {
         override val method = NetworkMethod.POST
         override val body = request
     }
+
+    // POST api/es/v1/events/{id}/join — the event id rides in the path, no body
+    // (mirrors iOS `DiscoverEndPoint.joinEvent`).
+    data class JoinEvent(val eventId: String) : DiscoverEndPoints() {
+        override val path = "api/es/v1/events/$eventId/join"
+        override val method = NetworkMethod.POST
+    }
 }

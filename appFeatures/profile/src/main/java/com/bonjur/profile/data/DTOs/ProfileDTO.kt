@@ -10,16 +10,19 @@ data class ProfileUpdateRequest(
     val birthDate: String? = null,
     val gender: String? = null,
     val about: String? = null,
-    val categoriesId: List<Int> = emptyList(),
-    val languagesId: List<Int> = emptyList(),
+    // null = leave the server's list alone (the options failed to load, so the form
+    // has nothing trustworthy to send); an empty list = clear every entry.
+    val categoriesId: List<Int>? = null,
+    val languagesId: List<Int>? = null,
     @SerialName("backgroundColour") val backgroundColour: String? = null
 )
 
 // ── Responses ─────────────────────────────────────────────────────────────────
 
 // Mirrors iOS `AppPresentationModel.UserResponse` (GET api/us/v1/users/{id}).
-// Display name comes from `username`, course from `faculty`, email from `mail`,
-// avatar from `fileUrl`, cover from `backgroundColour` — matching the iOS profile mapping.
+// Display name comes from `fullName`, the card's "course" slot from `year` (rendered
+// "2nd year"), email from `mail`, avatar from `fileUrl`, cover from `backgroundColour` —
+// matching the iOS profile mapping. `faculty` is carried but never displayed, same as iOS.
 @Serializable
 data class UserProfileResponse(
     val userId: String? = null,

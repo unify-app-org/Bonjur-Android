@@ -1,6 +1,9 @@
 package com.bonjur.events.domain.useCase
 
-import com.bonjur.designSystem.commonModel.memberOfCapacityText
+import com.bonjur.designSystem.commonModel.capacityOfMembersText
+import com.bonjur.designSystem.utils.parseIsoDate
+import com.bonjur.designSystem.utils.asActivityAuditDate
+import com.bonjur.designSystem.utils.asActivityDateTime
 import com.bonjur.designSystem.commonModel.dialablePhone
 import com.bonjur.designsystem.R as DesignR
 import com.bonjur.designSystem.localization.LanguageManager
@@ -145,7 +148,12 @@ class EventsUseCaseImpl @Inject constructor(
     override suspend fun fetchEventMembers(eventId: String): GroupedMembersData {
         val users = dataSource.getEventMembers(eventId, mapOf("page" to "0", "size" to "10"))
             .content.map { it.toCellModel() }
-        return GroupedMembersData.from(users)
+        // An event's PRESIDENT reads "Owner" too — same override iOS applies in
+        // `EventsRepo` and when it opens the members list.
+        return GroupedMembersData.from(
+            users,
+            GroupedMembersData.titleOverrides(AppUIEntities.ActivityType.EVENTS)
+        )
     }
 
     override suspend fun fetchEventMembersPage(eventId: String, page: Int, size: Int, keyword: String?): MembersPage {
@@ -343,8 +351,8 @@ class EventsUseCaseImpl @Inject constructor(
         appendSection(LanguageManager.string(R.string.events_row_about), listOf(infoRow(title = null, value = detail.about)))
 
         val eventRows = mutableListOf<EventsDetails.SubInfo?>(
-            infoRow(title = LanguageManager.string(R.string.events_row_date), value = detail.eventDate.meetupDate()),
-            infoRow(title = LanguageManager.string(DesignR.string.created_updated_date), value = detail.modifiedAt.modifiedDate()),
+            infoRow(title = LanguageManager.string(R.string.events_row_date), value = detail.eventDate.asActivityDateTime()),
+            infoRow(title = LanguageManager.string(DesignR.string.created_updated_date), value = detail.modifiedAt.asActivityAuditDate()),
             infoRow(
                 title = LanguageManager.string(R.string.events_row_owner_contact),
                 value = cleaned(detail.ownerContact),
@@ -393,7 +401,9 @@ class EventsUseCaseImpl @Inject constructor(
 
     private fun capacityText(members: Int?, capacity: Int?): String? {
         if (capacity == null || capacity <= 0) return null
-        return memberOfCapacityText(members ?: 0, capacity)
+        // Detail rows use the slash shape ("1/2000 members"); the cards keep
+        // "1 of 2000 members". Same split as iOS.
+        return capacityOfMembersText(members ?: 0, capacity)
     }
 
     private fun isOrganizer(role: AppUIEntities.UserActivityRole): Boolean = role in setOf(
@@ -425,41 +435,9 @@ class EventsUseCaseImpl @Inject constructor(
         return DateParts(day = local("d"), month = local("MMM").uppercase(), time = local("HH:mm"))
     }
 
-    /** Meetup date+time in device-local time, e.g. "14 June 2026 18:00". */
-    private fun String?.meetupDate(): String? {
-        val date = parseIso(this) ?: return null
-        return SimpleDateFormat("d MMMM yyyy HH:mm", LanguageManager.locale).apply {
-            timeZone = TimeZone.getDefault()
-        }.format(date)
-    }
-
-    /** Audit stamp → date-only display. */
-    private fun String?.modifiedDate(): String? {
-        val v = cleaned(this) ?: return null
-        val parsed = runCatching {
-            SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US).parse(v)
-        }.getOrNull() ?: parseIso(v) ?: return v
-        return SimpleDateFormat("d MMMM yyyy", LanguageManager.locale).format(parsed)
-    }
-
-    private fun parseIso(value: String?): java.util.Date? {
-        val v = value?.trim().orEmpty()
-        if (v.isEmpty()) return null
-        val patterns = listOf(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss'Z'",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
-            "yyyy-MM-dd'T'HH:mm:ss"
-        )
-        for (p in patterns) {
-            runCatching {
-                SimpleDateFormat(p, Locale.US).apply {
-                    timeZone = TimeZone.getTimeZone("UTC")
-                }.parse(v)
-            }.getOrNull()?.let { return it }
-        }
-        return null
-    }
+    /** Still used by the card/picker helpers below; the pattern list itself lives in
+     *  `designSystem`'s `parseIsoDate` so there is one definition of the wire shapes. */
+    private fun parseIso(value: String?): java.util.Date? = parseIsoDate(value)
 
     /** Converts the picker's `yyyy-MM-dd HH:mm` (UTC) to backend ISO 8601. */
     private fun String.toIsoDate(): String {

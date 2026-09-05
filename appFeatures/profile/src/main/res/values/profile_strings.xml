@@ -53,4 +53,11 @@
     <string name="profile_card_default">Default</string>
     <string name="profile_card_choose_cover">Choose cover</string>
     <string name="profile_user_card">User Card</string>
+
+    <!-- Edit profile: category chips + gender values -->
+    <string name="editprofile_category_label">Category</string>
+    <string name="editprofile_add_category">Add category</string>
+    <string name="profile_gender_male">Male</string>
+    <string name="profile_gender_female">Female</string>
+    <string name="profile_gender_other">Other</string>
 </resources>

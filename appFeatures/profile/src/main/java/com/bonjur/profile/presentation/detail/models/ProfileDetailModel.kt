@@ -50,11 +50,16 @@ data class ProfileDetailViewState(
 ) : FeatureState {
 
     enum class SegmentTypes(
-        override val title: String
+        private val titleRes: Int
     ): SegmentedPickerOption {
-        CLUBS(LanguageManager.string(DesignR.string.clubs)),
-        EVENTS(LanguageManager.string(DesignR.string.events)),
-        HANGOUTS(LanguageManager.string(DesignR.string.hangouts));
+        CLUBS(DesignR.string.clubs),
+        EVENTS(DesignR.string.events),
+        HANGOUTS(DesignR.string.hangouts);
+
+    /** Resolved per read, not in the constructor: enum constants are built once at class
+     *  load, so a title captured there keeps the language the app was launched in and the
+     *  tabs stop following a language switch. */
+        override val title: String get() = LanguageManager.string(titleRes)
 
         override val id: String get() = name
 
