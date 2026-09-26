@@ -33,10 +33,10 @@
     <string name="auth_interests_subtitle">Выберите, что вам интересно</string>
     <string name="auth_onboarding_1_title">Найди \nсвоих людей</string>
     <string name="auth_onboarding_1_subtitle">Присоединяйся к университетскому сообществу и знакомься с единомышленниками.</string>
-    <string name="auth_onboarding_2_title">Общайся \nпо-своему</string>
-    <string name="auth_onboarding_2_subtitle">Отправляй сообщения и делись идеями мгновенно — через любимые приложения.</string>
-    <string name="auth_onboarding_3_title">Настрой \nпод себя</string>
-    <string name="auth_onboarding_3_subtitle">Настрой внешний вид приложения и общайся так, как удобно тебе.</string>
+    <string name="auth_onboarding_2_title">Клубы \nи события</string>
+    <string name="auth_onboarding_2_subtitle">Находи клубы по интересам и не пропускай ничего, что происходит в кампусе.</string>
+    <string name="auth_onboarding_3_title">Начни \nтусовку</string>
+    <string name="auth_onboarding_3_subtitle">Кофе, матч или совместная учёба — создай тусовку и позови кого угодно. Клуб не нужен.</string>
     <string name="auth_welcome_title">Добро пожаловать</string>
     <string name="auth_welcome_subtitle">Заполните профиль для лучшего взаимодействия. Это займёт всего 5 минут.</string>
     <string name="auth_gender_female">Женский</string>

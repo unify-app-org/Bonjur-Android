@@ -1,0 +1,38 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:2:1-17:12
+INJECTED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:2:1-17:12
+	package
+		INJECTED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:2:11-69
+application
+ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:4:5-16:19
+receiver#com.bonjur.appwidget.UserCardWidgetReceiver
+ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:5:9-15:20
+	android:label
+		ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:7:13-59
+	android:exported
+		ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:8:13-36
+	android:name
+		ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:6:13-71
+intent-filter#action:name:android.appwidget.action.APPWIDGET_UPDATE
+ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:9:13-11:29
+action#android.appwidget.action.APPWIDGET_UPDATE
+ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:10:17-84
+	android:name
+		ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:10:25-81
+meta-data#android.appwidget.provider
+ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:12:13-14:65
+	android:resource
+		ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:14:17-62
+	android:name
+		ADDED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml:13:17-58
+uses-sdk
+INJECTED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml
+INJECTED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /Users/huseynhasanov/Desktop/Mine/MyProject/Project Ideas/projects/Unify/Bonjur-Android/appCore/appWidget/src/main/AndroidManifest.xml

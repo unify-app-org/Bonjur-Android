@@ -153,10 +153,14 @@ fun FilterView(
                 modifier = Modifier.fillMaxSize(),
                 color = Color.White
             ) {
-                FilterScreen(
-                    viewModel = viewModel,
-                    onDismiss = { presentFilter = false }
-                )
+                // Dialog is its own edge-to-edge window: AppNavigation's global
+                // nav-bar inset doesn't reach it, so apply the system bars here.
+                Box(modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars)) {
+                    FilterScreen(
+                        viewModel = viewModel,
+                        onDismiss = { presentFilter = false }
+                    )
+                }
             }
         }
     }

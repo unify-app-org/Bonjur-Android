@@ -33,10 +33,10 @@
     <string name="auth_interests_subtitle">Maraqlandığınız sahələri seçin</string>
     <string name="auth_onboarding_1_title">Öz \ninsanlarını tap</string>
     <string name="auth_onboarding_1_subtitle">Universitet icmana qoşul və həmfikir dostlarla əlaqə qurmağa başla.</string>
-    <string name="auth_onboarding_2_title">Öz \ntərzində yaz</string>
-    <string name="auth_onboarding_2_subtitle">Sevimli tətbiqlərin vasitəsilə dərhal mesaj göndər və fikirlərini paylaş.</string>
-    <string name="auth_onboarding_3_title">Özünə \nuyğunlaşdır</string>
-    <string name="auth_onboarding_3_subtitle">Tətbiqin görünüşünü fərdiləşdir və söhbətlərdən öz tərzində zövq al.</string>
+    <string name="auth_onboarding_2_title">Klublar və \ntədbirlər</string>
+    <string name="auth_onboarding_2_subtitle">Maraqlarına uyğun klubları kəşf et və kampusda baş verənləri qaçırma.</string>
+    <string name="auth_onboarding_3_title">Görüş \nbaşlat</string>
+    <string name="auth_onboarding_3_subtitle">Qəhvə, oyun və ya birgə dərs — görüş yarat və istədiyini dəvət et. Klub lazım deyil.</string>
     <string name="auth_welcome_title">Xoş gəlmisiniz</string>
     <string name="auth_welcome_subtitle">Daha yaxşı ünsiyyət üçün profilinizi tamamlayın. Cəmi 5 dəqiqə çəkəcək.</string>
     <string name="auth_gender_female">Qadın</string>

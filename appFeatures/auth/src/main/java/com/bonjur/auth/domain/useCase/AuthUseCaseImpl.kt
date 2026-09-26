@@ -60,19 +60,19 @@ class AuthUseCaseImpl @Inject constructor(
             id = "1",
             titleRes = R.string.auth_onboarding_1_title,
             subtitleRes = R.string.auth_onboarding_1_subtitle,
-            image = { Images.Icons.bigGraduationHat() }
+            image = { Images.Icons.onboardingFindPeople() }
         ),
         OnboardingUIModel(
             id = "2",
             titleRes = R.string.auth_onboarding_2_title,
             subtitleRes = R.string.auth_onboarding_2_subtitle,
-            image = { Images.Icons.bigLamps() }
+            image = { Images.Icons.onboardingClubsEvents() }
         ),
         OnboardingUIModel(
             id = "3",
             titleRes = R.string.auth_onboarding_3_title,
             subtitleRes = R.string.auth_onboarding_3_subtitle,
-            image = { Images.Icons.bigPeopleGroups() }
+            image = { Images.Icons.onboardingHangouts() }
         )
     )
 

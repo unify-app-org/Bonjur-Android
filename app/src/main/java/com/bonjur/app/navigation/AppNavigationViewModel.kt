@@ -4,12 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import android.content.Context
 import com.bonjur.appwidget.UserCardWidgetStore
+import com.bonjur.navigation.AppScreens
 import com.bonjur.navigation.Navigator
+import com.bonjur.navigation.route
+import com.bonjur.network.manager.SessionEvents
 import com.bonjur.network.manager.TokenManager
 import com.bonjur.profile.domain.usecase.ProfileUseCase
 import com.bonjur.profile.presentation.detail.models.ProfileDetail
 import com.bonjur.profile.presentation.detail.widget.UserCardWidgetPublisher
 import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -22,8 +26,23 @@ class AppNavigationViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val profileUseCase: ProfileUseCase,
     private val widgetPublisher: UserCardWidgetPublisher,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    sessionEvents: SessionEvents
 ) : ViewModel() {
+
+    init {
+        // A 401 that `auth/refresh` couldn't recover: the tokens are already wiped by
+        // ApiClient, finish the teardown and drop to onboarding with nothing to go back
+        // to. Mirrors iOS `AppCoordinator.refreshFailure()` → `showRegisterVC()`, and the
+        // same steps as a manual logout in ProfileSettingsViewModel.finishSession().
+        viewModelScope.launch {
+            sessionEvents.expired.collect {
+                widgetPublisher.clear()
+                defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, false)
+                navigator.navigateAndClearStack(AppScreens.Auth.route)
+            }
+        }
+    }
 
     /**
      * Publishes the home-screen card once per install if the app has never written one.

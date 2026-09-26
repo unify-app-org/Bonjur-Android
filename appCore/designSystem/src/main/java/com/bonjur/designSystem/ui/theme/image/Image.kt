@@ -22,6 +22,15 @@ object Images {
         fun bigGraduationHat() = painterResource(R.drawable.big_lamps)
 
         @Composable
+        fun onboardingFindPeople() = painterResource(R.drawable.onboarding_find_people)
+
+        @Composable
+        fun onboardingClubsEvents() = painterResource(R.drawable.onboarding_clubs_events)
+
+        @Composable
+        fun onboardingHangouts() = painterResource(R.drawable.onboarding_hangouts)
+
+        @Composable
         fun selectedCheckBox() = painterResource(R.drawable.selected_check_box)
 
         @Composable

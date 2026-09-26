@@ -45,7 +45,7 @@ android {
                 "proguard-rules.pro"
             )
 
-            buildConfigField("String", "API_BASE_URL", "\"https://api.bonjur.app\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://myunify.app/\"")
             buildConfigField("boolean", "ENABLE_LOGGING", "false")
         }
     }

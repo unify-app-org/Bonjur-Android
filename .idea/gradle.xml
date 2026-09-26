@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/appCore" />
             <option value="$PROJECT_DIR$/appCore/appFoundation" />
             <option value="$PROJECT_DIR$/appCore/appUtils" />
+            <option value="$PROJECT_DIR$/appCore/appWidget" />
             <option value="$PROJECT_DIR$/appCore/designSystem" />
             <option value="$PROJECT_DIR$/appCore/navigation" />
             <option value="$PROJECT_DIR$/appCore/network" />

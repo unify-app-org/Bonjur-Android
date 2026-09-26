@@ -3,6 +3,7 @@ package com.bonjur.network.APIClient
 import com.bonjur.network.AppConfig
 import com.bonjur.storage.language.AppLanguageStore
 import com.bonjur.network.logger.NetworkLogger
+import com.bonjur.network.manager.SessionEvents
 import com.bonjur.network.manager.TokenManager
 import com.bonjur.network.model.ApiException
 import com.bonjur.network.model.NetworkError
@@ -20,6 +21,8 @@ import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -41,8 +44,12 @@ class ApiClient @Inject constructor(
     private val json: Json,
     private val tokenManager: TokenManager,
     private val logger: NetworkLogger,
-    private val configs: AppConfig
+    private val configs: AppConfig,
+    private val sessionEvents: SessionEvents
 ) : ApiClientProtocol {
+
+    /** Serialises `auth/refresh` so a burst of parallel 401s refreshes once, not N times. */
+    private val refreshMutex = Mutex()
 
     override suspend fun <T> request(endpoint: AppEndpoint, serializer: KSerializer<T>): T {
         val data = performRequest(endpoint)
@@ -60,6 +67,7 @@ class ApiClient @Inject constructor(
     private suspend fun requestRawData(endpoint: AppEndpoint, isRetry: Boolean): ByteArray {
         val url = buildUrl(endpoint)
         var durationMs = 0L
+        val sentToken = if (endpoint.requiresAuth) tokenManager.getAccessToken() else null
 
         try {
             val response: HttpResponse
@@ -80,10 +88,8 @@ class ApiClient @Inject constructor(
 
                     header("Accept-Language", acceptLanguage())
 
-                    if (endpoint.requiresAuth) {
-                        tokenManager.getAccessToken()?.let { token ->
-                            header("Authorization", "Bearer $token")
-                        }
+                    sentToken?.let { token ->
+                        header("Authorization", "Bearer $token")
                     }
 
                     if (multipart != null) {
@@ -122,7 +128,7 @@ class ApiClient @Inject constructor(
 
                 401 -> {
                     if (!isRetry && endpoint.requiresAuth) {
-                        refreshTokenIfNeeded()
+                        refreshTokenIfNeeded(staleAccessToken = sentToken)
                         return requestRawData(endpoint, isRetry = true)
                     }
                     throw decodeError(bytes) ?: ApiException.Unauthorized
@@ -152,6 +158,7 @@ class ApiClient @Inject constructor(
     ): String {
         val url = buildUrl(endpoint)
         var durationMs = 0L
+        val sentToken = if (endpoint.requiresAuth) tokenManager.getAccessToken() else null
 
         try {
             val response: HttpResponse
@@ -172,10 +179,8 @@ class ApiClient @Inject constructor(
 
                     header("Accept-Language", acceptLanguage())
 
-                    if (endpoint.requiresAuth) {
-                        tokenManager.getAccessToken()?.let { token ->
-                            header("Authorization", "Bearer $token")
-                        }
+                    sentToken?.let { token ->
+                        header("Authorization", "Bearer $token")
                     }
 
                     if (multipart != null) {
@@ -211,7 +216,7 @@ class ApiClient @Inject constructor(
 
                 401 -> {
                     if (!isRetry && endpoint.requiresAuth) {
-                        refreshTokenIfNeeded()
+                        refreshTokenIfNeeded(staleAccessToken = sentToken)
                         return performRequest(endpoint, isRetry = true)
                     } else {
                         val networkError = try {
@@ -307,35 +312,62 @@ class ApiClient @Inject constructor(
         }
     }
 
-    private suspend fun refreshTokenIfNeeded() {
+    /**
+     * Swaps the refresh token for a new pair so the caller can replay the 401'd request —
+     * mirrors iOS `APIClient.refreshTokenIfNeeded()`.
+     *
+     * [staleAccessToken] is the token the failed request was sent with. The backend rotates
+     * the refresh token on every refresh, so when several requests 401 together only the
+     * first may call `auth/refresh`; the rest wait on [refreshMutex], see the access token
+     * has already moved on, and just replay. Refreshing again with the spent refresh token
+     * would be rejected and log the user out for no reason.
+     */
+    private suspend fun refreshTokenIfNeeded(staleAccessToken: String?) = refreshMutex.withLock {
+        val current = tokenManager.getAccessToken()
+        if (current != null && current != staleAccessToken) return@withLock
+
         val refreshToken = tokenManager.getRefreshToken()
-            ?: throw ApiException.Unauthorized
+            ?: throw failRefresh()
 
-        try {
-            // Create refresh endpoint
-            val refreshEndpoint = object : AppEndpoint {
-                override val path = "/auth/refresh"
-                override val method = NetworkMethod.POST
-                override val requiresAuth = false
-                override val body = mapOf("refreshToken" to refreshToken)
-            }
-
-            @Serializable
-            data class RefreshTokenData(
-                val accessToken: String,
-                val refreshToken: String
-            )
-
-            val newTokens: RefreshTokenData = request(refreshEndpoint, serializer())
-
-            tokenManager.saveAccessToken(newTokens.accessToken)
-            tokenManager.saveRefreshToken(newTokens.refreshToken)
-
-        } catch (e: Exception) {
-            tokenManager.clearTokens()
-            throw ApiException.Unauthorized
+        val refreshEndpoint = object : AppEndpoint {
+            // Same route as iOS `RefreshEndpoint`. This used to be `/auth/refresh`, which
+            // doesn't exist behind the gateway, so every refresh failed, the tokens were
+            // wiped and the original request was never replayed.
+            override val path = "api/as/v1/auth/refresh"
+            override val method = NetworkMethod.POST
+            override val requiresAuth = false
+            override val body = RefreshTokenRequest(refreshToken)
         }
+
+        val newTokens: RefreshTokenResponse = try {
+            request(refreshEndpoint, serializer())
+        } catch (e: ApiException.NetworkException) {
+            // No connectivity says nothing about the session — keep it and let the caller
+            // surface a network error instead of bouncing the user to onboarding.
+            throw e
+        } catch (e: Exception) {
+            throw failRefresh()
+        }
+
+        tokenManager.saveAccessToken(newTokens.accessToken)
+        tokenManager.saveRefreshToken(newTokens.refreshToken)
     }
+
+    /** Tears the session down, tells the app shell to show onboarding, returns the error to throw. */
+    private fun failRefresh(): ApiException {
+        tokenManager.clearTokens()
+        sessionEvents.notifyExpired()
+        return ApiException.Unauthorized
+    }
+
+    @Serializable
+    internal data class RefreshTokenRequest(val refreshToken: String)
+
+    @Serializable
+    internal data class RefreshTokenResponse(
+        val accessToken: String,
+        val refreshToken: String
+    )
 
     /** Restrict device locale to supported languages; default to English. */
     // The in-app language, not `Locale.getDefault()`: Android re-applies the device

@@ -33,10 +33,10 @@
     <string name="auth_interests_subtitle">Choose what you\'re interested in</string>
     <string name="auth_onboarding_1_title">Find Your \nPeople</string>
     <string name="auth_onboarding_1_subtitle">Join your university community and start connecting with like-minded friends.</string>
-    <string name="auth_onboarding_2_title">Chat Your \nWay</string>
-    <string name="auth_onboarding_2_subtitle">Send messages and share idea instantly, all through your favorite apps.</string>
-    <string name="auth_onboarding_3_title">Make It \nYours</string>
-    <string name="auth_onboarding_3_subtitle">Customize your app style and enjoy conversations your way.</string>
+    <string name="auth_onboarding_2_title">Join Clubs \n&amp; Events</string>
+    <string name="auth_onboarding_2_subtitle">Discover clubs that match your interests and never miss what\'s happening on campus.</string>
+    <string name="auth_onboarding_3_title">Start a \nHangout</string>
+    <string name="auth_onboarding_3_subtitle">Coffee, a match or a study session — create a hangout and invite anyone. No club needed.</string>
     <string name="auth_welcome_title">Welcome</string>
     <string name="auth_welcome_subtitle">Complete your profile for better interaction. It will take only 5 minutes.</string>
     <string name="auth_gender_female">Female</string>
