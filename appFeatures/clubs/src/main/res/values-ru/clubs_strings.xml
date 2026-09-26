@@ -81,4 +81,8 @@
     <string name="clubs_request">Отправить запрос</string>
     <string name="clubs_name_locked_hint">Название клуба нельзя будет изменить позже.</string>
     <string name="clubs_logo_label">Фото клуба</string>
+    <string name="clubs_joined">Вы присоединились: %1$s</string>
+    <string name="clubs_join_request_review">%1$s рассмотрит ваш запрос</string>
+    <string name="clubs_join_failed">Не удалось присоединиться</string>
+    <string name="clubs_join_fallback_name">Клуб</string>
 </resources>

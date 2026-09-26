@@ -44,7 +44,7 @@ object HangoutDetails {
                             )
                         ),
                         Info(
-                            title = "Hangout info",
+                            title = LanguageManager.string(R.string.hangouts_info_section),
                             subItems = listOf(
                                 SubInfo(title = "Created/Updated Data", description = "30 noyabr 2025"),
                                 SubInfo(title = LanguageManager.string(R.string.hangouts_owner_contact_label), description = "+994 123 45 67"),

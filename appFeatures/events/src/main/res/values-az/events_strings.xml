@@ -90,4 +90,8 @@
     <string name="events_delete_on_exit_confirm">Çıx və sil</string>
     <string name="events_deleted">Tədbir silindi</string>
     <string name="events_delete_fail">Tədbiri silmək mümkün olmadı</string>
+    <string name="events_joined">Qoşuldunuz: %1$s</string>
+    <string name="events_join_request_review">%1$s sorğunuzu nəzərdən keçirəcək</string>
+    <string name="events_join_failed">Qoşulmaq mümkün olmadı</string>
+    <string name="events_join_fallback_name">Tədbir</string>
 </resources>

@@ -53,4 +53,8 @@
     <string name="hangouts_delete_on_exit_confirm">Выйти и удалить</string>
     <string name="hangouts_deleted">Тусовка удалена</string>
     <string name="hangouts_delete_fail">Не удалось удалить тусовку</string>
+    <string name="hangouts_joined">Вы присоединились: %1$s</string>
+    <string name="hangouts_join_request_review">%1$s рассмотрит ваш запрос</string>
+    <string name="hangouts_join_failed">Не удалось присоединиться</string>
+    <string name="hangouts_join_fallback_name">Тусовка</string>
 </resources>

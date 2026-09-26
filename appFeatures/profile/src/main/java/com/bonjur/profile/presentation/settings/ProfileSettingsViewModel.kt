@@ -73,8 +73,14 @@ class ProfileSettingsViewModel @Inject constructor(
                 LanguageManager.select(action.language)
                 updateState(state.copy(showLanguagePicker = false, sections = buildSections()))
             }
-            ProfileSettingsAction.HelpCenterTapped -> { /* no destination yet — same on iOS */ }
-            ProfileSettingsAction.TermsTapped -> { /* no destination yet — same on iOS */ }
+            ProfileSettingsAction.HelpCenterTapped ->
+                updateState(state.copy(showHelpCenter = true))
+            ProfileSettingsAction.DismissHelpCenter ->
+                updateState(state.copy(showHelpCenter = false))
+            ProfileSettingsAction.TermsTapped ->
+                updateState(state.copy(showTerms = true))
+            ProfileSettingsAction.DismissTerms ->
+                updateState(state.copy(showTerms = false))
             ProfileSettingsAction.DeleteAccountTapped -> confirmDeleteAccount()
             ProfileSettingsAction.LogOutTapped -> confirmLogOut()
             is ProfileSettingsAction.NotificationToggled -> toggleNotifications(action.isOn)

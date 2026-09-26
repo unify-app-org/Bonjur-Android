@@ -116,7 +116,7 @@ class HangoutDetailsViewModel @Inject constructor(
                 getDetails()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not join",
+                    title = LanguageManager.string(R.string.hangouts_join_failed),
                     subtitle = LanguageManager.string(DesignR.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
@@ -128,15 +128,15 @@ class HangoutDetailsViewModel @Inject constructor(
 
     /** Public hangouts join immediately; private hangouts create a pending request. */
     private fun showJoinSnackBar() {
-        val name = state.uiModel?.name ?: "the hangout"
+        val name = state.uiModel?.name ?: LanguageManager.string(R.string.hangouts_join_fallback_name)
         if (state.isPrivate) {
             AppSnackBar.show(
                 title = LanguageManager.string(R.string.hangouts_join_request_sent),
-                subtitle = "$name will review your request",
+                subtitle = LanguageManager.string(R.string.hangouts_join_request_review, name),
                 style = AppSnackBar.Style.SUCCESS
             )
         } else {
-            AppSnackBar.show(title = "Joined $name", style = AppSnackBar.Style.SUCCESS)
+            AppSnackBar.show(title = LanguageManager.string(R.string.hangouts_joined, name), style = AppSnackBar.Style.SUCCESS)
         }
     }
 

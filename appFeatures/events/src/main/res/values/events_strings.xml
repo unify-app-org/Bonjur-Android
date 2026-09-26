@@ -91,4 +91,8 @@
     <string name="events_delete_on_exit_confirm">Leave and delete</string>
     <string name="events_deleted">Event deleted</string>
     <string name="events_delete_fail">Could not delete event</string>
+    <string name="events_joined">Joined %1$s</string>
+    <string name="events_join_request_review">%1$s will review your request</string>
+    <string name="events_join_failed">Could not join</string>
+    <string name="events_join_fallback_name">the event</string>
 </resources>

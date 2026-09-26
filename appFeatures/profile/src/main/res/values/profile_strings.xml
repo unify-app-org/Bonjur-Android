@@ -13,6 +13,11 @@
     <string name="settings_logout_title">Log out?</string>
     <string name="settings_logout_subtitle">Are you sure you want to log out?</string>
     <string name="settings_logout_confirm">Log out</string>
+    <string name="help_center_description">Having a problem or a question? Describe it and send it to our email — we\'ll get back to you as soon as possible.</string>
+    <string name="help_center_email_label">Email</string>
+    <string name="help_center_copy">Copy email</string>
+    <string name="help_center_email_copied">Email copied</string>
+    <string name="settings_web_load_error">Couldn\'t load the page. Check your connection and try again.</string>
     <string name="common_cancel">Cancel</string>
     <string name="profile_title">Profile</string>
     <string name="profile_about">About</string>

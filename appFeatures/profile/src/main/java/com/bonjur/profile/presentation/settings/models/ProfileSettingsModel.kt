@@ -40,7 +40,11 @@ data class ProfileSettingsViewState(
     val sections: List<SettingsSectionModel> = emptyList(),
     val notificationsEnabled: Boolean = true,
     /** Language picker sheet (shared component, also used pre-auth in onboarding). */
-    val showLanguagePicker: Boolean = false
+    val showLanguagePicker: Boolean = false,
+    /** Help center sheet (support email). */
+    val showHelpCenter: Boolean = false,
+    /** Terms and conditions web page, shown in place of the list. */
+    val showTerms: Boolean = false
 ) : FeatureState
 
 // MARK: - Feature Action
@@ -51,7 +55,9 @@ sealed class ProfileSettingsAction : FeatureAction {
     object DismissLanguagePicker : ProfileSettingsAction()
     data class LanguageSelected(val language: AppLanguage) : ProfileSettingsAction()
     object HelpCenterTapped : ProfileSettingsAction()
+    object DismissHelpCenter : ProfileSettingsAction()
     object TermsTapped : ProfileSettingsAction()
+    object DismissTerms : ProfileSettingsAction()
     object DeleteAccountTapped : ProfileSettingsAction()
     object LogOutTapped : ProfileSettingsAction()
     data class NotificationToggled(val isOn: Boolean) : ProfileSettingsAction()

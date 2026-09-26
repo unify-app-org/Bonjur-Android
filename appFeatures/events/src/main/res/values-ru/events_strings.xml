@@ -90,4 +90,8 @@
     <string name="events_delete_on_exit_confirm">Выйти и удалить</string>
     <string name="events_deleted">Событие удалено</string>
     <string name="events_delete_fail">Не удалось удалить событие</string>
+    <string name="events_joined">Вы присоединились: %1$s</string>
+    <string name="events_join_request_review">%1$s рассмотрит ваш запрос</string>
+    <string name="events_join_failed">Не удалось присоединиться</string>
+    <string name="events_join_fallback_name">Событие</string>
 </resources>

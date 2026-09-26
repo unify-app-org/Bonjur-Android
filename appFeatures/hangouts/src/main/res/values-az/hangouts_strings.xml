@@ -53,4 +53,8 @@
     <string name="hangouts_delete_on_exit_confirm">Çıx və sil</string>
     <string name="hangouts_deleted">Görüş silindi</string>
     <string name="hangouts_delete_fail">Görüşü silmək mümkün olmadı</string>
+    <string name="hangouts_joined">Qoşuldunuz: %1$s</string>
+    <string name="hangouts_join_request_review">%1$s sorğunuzu nəzərdən keçirəcək</string>
+    <string name="hangouts_join_failed">Qoşulmaq mümkün olmadı</string>
+    <string name="hangouts_join_fallback_name">Görüş</string>
 </resources>

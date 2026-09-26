@@ -14,7 +14,7 @@
     <string name="hangouts_start_date">Start date</string>
     <string name="hangouts_rules_label">Rules</string>
     <string name="hangouts_about_label">About</string>
-    <string name="hangouts_info_section">Event info</string>
+    <string name="hangouts_info_section">Hangout info</string>
     <string name="hangouts_row_date">Date</string>
     <string name="hangouts_row_owner_contact">Owner Contact</string>
     <string name="hangouts_row_links">Links</string>
@@ -54,4 +54,8 @@
     <string name="hangouts_delete_on_exit_confirm">Leave and delete</string>
     <string name="hangouts_deleted">Hangout deleted</string>
     <string name="hangouts_delete_fail">Could not delete hangout</string>
+    <string name="hangouts_joined">Joined %1$s</string>
+    <string name="hangouts_join_request_review">%1$s will review your request</string>
+    <string name="hangouts_join_failed">Could not join</string>
+    <string name="hangouts_join_fallback_name">the hangout</string>
 </resources>

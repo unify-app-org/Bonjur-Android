@@ -245,7 +245,7 @@ class HangoutsUseCaseImpl @Inject constructor(
         appendSection(LanguageManager.string(R.string.hangouts_about_label), listOf(infoRow(title = null, value = detail.about)))
 
         appendSection(
-            "Hangout info",
+            LanguageManager.string(R.string.hangouts_info_section),
             listOf(
                 infoRow(title = LanguageManager.string(R.string.hangouts_row_date), value = detail.hangoutDate.asActivityDateTime()),
                 infoRow(

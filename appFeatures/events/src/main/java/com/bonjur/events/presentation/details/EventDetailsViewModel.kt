@@ -135,7 +135,7 @@ class EventDetailsViewModel @Inject constructor(
                 getDetails()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not join",
+                    title = LanguageManager.string(R.string.events_join_failed),
                     subtitle = LanguageManager.string(DesignR.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
@@ -147,15 +147,15 @@ class EventDetailsViewModel @Inject constructor(
 
     /** Public events join immediately; private events create a pending request. */
     private fun showJoinSnackBar() {
-        val name = state.uiModel?.name ?: "the event"
+        val name = state.uiModel?.name ?: LanguageManager.string(R.string.events_join_fallback_name)
         if (state.isPrivate) {
             AppSnackBar.show(
                 title = LanguageManager.string(R.string.events_join_request_sent),
-                subtitle = "$name will review your request",
+                subtitle = LanguageManager.string(R.string.events_join_request_review, name),
                 style = AppSnackBar.Style.SUCCESS
             )
         } else {
-            AppSnackBar.show(title = "Joined $name", style = AppSnackBar.Style.SUCCESS)
+            AppSnackBar.show(title = LanguageManager.string(R.string.events_joined, name), style = AppSnackBar.Style.SUCCESS)
         }
     }
 

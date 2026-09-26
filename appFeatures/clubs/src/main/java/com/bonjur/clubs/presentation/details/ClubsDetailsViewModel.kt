@@ -163,7 +163,7 @@ class ClubDetailsViewModel @Inject constructor(
                 fetchUIModel()
             } catch (e: Exception) {
                 AppSnackBar.show(
-                    title = "Could not join",
+                    title = LanguageManager.string(R.string.clubs_join_failed),
                     subtitle = LanguageManager.string(R.string.common_try_again),
                     style = AppSnackBar.Style.ERROR
                 )
@@ -175,15 +175,15 @@ class ClubDetailsViewModel @Inject constructor(
 
     /** Public clubs join immediately; private clubs create a pending request. */
     private fun showJoinSnackBar() {
-        val name = state.uiModel?.name ?: "the club"
+        val name = state.uiModel?.name ?: LanguageManager.string(R.string.clubs_join_fallback_name)
         if (state.isPrivate) {
             AppSnackBar.show(
                 title = LanguageManager.string(R.string.clubs_join_request_sent),
-                subtitle = "$name will review your request",
+                subtitle = LanguageManager.string(R.string.clubs_join_request_review, name),
                 style = AppSnackBar.Style.SUCCESS
             )
         } else {
-            AppSnackBar.show(title = "Joined $name", style = AppSnackBar.Style.SUCCESS)
+            AppSnackBar.show(title = LanguageManager.string(R.string.clubs_joined, name), style = AppSnackBar.Style.SUCCESS)
         }
     }
 
