@@ -258,16 +258,16 @@ class EventsUseCaseImpl @Inject constructor(
     /**
      * Bottom join/request button. Mirrors iOS `mapButtonModel`: hidden once
      * joined/accepted; a pending request shows a disabled "Request sent" button.
+     * A pending request can arrive only as role `REQUESTED` (which `toActivityRole()`
+     * folds into NOT_JOINED), so the raw role is checked before the role gate.
      */
     private fun EventDetailResponse.toJoinButton(): EventsDetails.JoinButton? {
-        val role = eventUserRole.toActivityRole()
         val request = joinStatus.toRequestType()
-        if (role != AppUIEntities.UserActivityRole.NOT_JOINED ||
-            request == AppUIEntities.RequestType.JOINED
-        ) return null
-        if (request == AppUIEntities.RequestType.PENDING) {
+        if (request == AppUIEntities.RequestType.JOINED) return null
+        if (request == AppUIEntities.RequestType.PENDING || eventUserRole.equals("REQUESTED", ignoreCase = true)) {
             return EventsDetails.JoinButton(title = LanguageManager.string(R.string.events_join_request_sent), disabled = true)
         }
+        if (eventUserRole.toActivityRole() != AppUIEntities.UserActivityRole.NOT_JOINED) return null
         val title = if (visibility?.uppercase() == "PUBLIC") LanguageManager.string(R.string.events_join) else LanguageManager.string(R.string.events_request)
         return EventsDetails.JoinButton(title = title, disabled = false)
     }

@@ -46,7 +46,8 @@ data class CommunityDetailViewState(
     ) : SegmentedPickerOption {
 
         ABOUT(DesignR.string.about),
-        CLUBS(DesignR.string.clubs),
+        // TODO: Clubs section temporarily hidden on community details.
+        // CLUBS(DesignR.string.clubs),
         MEMBERS(DesignR.string.common_members);
 
     /** Resolved per read, not in the constructor: enum constants are built once at class
@@ -60,8 +61,8 @@ data class CommunityDetailViewState(
             fun fromIndex(index: Int): SegmentTypes {
                 return when (index) {
                     0 -> ABOUT
-                    1 -> CLUBS
-                    2 -> MEMBERS
+                    // 1 -> CLUBS
+                    1 -> MEMBERS
                     else -> ABOUT
                 }
             }
@@ -70,8 +71,8 @@ data class CommunityDetailViewState(
         fun toIndex(): Int {
             return when (this) {
                 ABOUT -> 0
-                CLUBS -> 1
-                MEMBERS -> 2
+                // CLUBS -> 1
+                MEMBERS -> 1
             }
         }
     }

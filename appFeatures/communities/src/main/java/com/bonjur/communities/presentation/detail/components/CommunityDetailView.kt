@@ -104,7 +104,7 @@ fun CommunityDetailView(
     val listState = rememberLazyListState()
     val pagerState = rememberPagerState(
         initialPage = store.state.selectedSegment.toIndex(),
-        pageCount = { 3 }
+        pageCount = { CommunityDetailViewState.SegmentTypes.entries.size }
     )
     val coroutineScope = rememberCoroutineScope()
 
@@ -140,14 +140,15 @@ fun CommunityDetailView(
     // The Clubs tab's cards live in an eager Column inside the single "tabs" lazy item,
     // so a per-row callback would fire on entry and pull every page at once. Drive paging
     // off the outer list's scroll position instead.
-    val clubsPagingEnabled = store.state.selectedSegment ==
-        CommunityDetailViewState.SegmentTypes.CLUBS && store.state.clubsHasMore
-    LoadMoreOnScrollToEnd(
-        listState = listState,
-        enabled = clubsPagingEnabled
-    ) {
-        store.send(CommunityDetailAction.LoadMoreClubs)
-    }
+    // TODO: Clubs section temporarily hidden — paging disabled with it.
+    // val clubsPagingEnabled = store.state.selectedSegment ==
+    //     CommunityDetailViewState.SegmentTypes.CLUBS && store.state.clubsHasMore
+    // LoadMoreOnScrollToEnd(
+    //     listState = listState,
+    //     enabled = clubsPagingEnabled
+    // ) {
+    //     store.send(CommunityDetailAction.LoadMoreClubs)
+    // }
 
     LaunchedEffect(listState) {
         snapshotFlow {
@@ -239,16 +240,17 @@ fun CommunityDetailView(
                             CommunityDetailViewState.SegmentTypes.ABOUT ->
                                 InfoTab(store.state.uiModel?.infoData ?: emptyList())
 
-                            CommunityDetailViewState.SegmentTypes.CLUBS ->
-                                ClubsTab(
-                                    clubs = store.state.clubsData,
-                                    onClubTapped = { id ->
-                                        store.send(CommunityDetailAction.ClubItemTapped(id))
-                                    },
-                                    onCreateClub = {
-                                        store.send(CommunityDetailAction.CreateClubTapped)
-                                    }
-                                )
+                            // TODO: Clubs section temporarily hidden.
+                            // CommunityDetailViewState.SegmentTypes.CLUBS ->
+                            //     ClubsTab(
+                            //         clubs = store.state.clubsData,
+                            //         onClubTapped = { id ->
+                            //             store.send(CommunityDetailAction.ClubItemTapped(id))
+                            //         },
+                            //         onCreateClub = {
+                            //             store.send(CommunityDetailAction.CreateClubTapped)
+                            //         }
+                            //     )
 
                             CommunityDetailViewState.SegmentTypes.MEMBERS ->
                                 MembersTab(store = store)
@@ -257,9 +259,10 @@ fun CommunityDetailView(
                 }
             }
 
-            item(key = "paging_footer") {
-                PagingFooter(hasMore = clubsPagingEnabled)
-            }
+            // TODO: Clubs section temporarily hidden.
+            // item(key = "paging_footer") {
+            //     PagingFooter(hasMore = clubsPagingEnabled)
+            // }
 
             item(key = "bottom_spacer") {
                 Spacer(modifier = Modifier.height(60.dp))

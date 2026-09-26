@@ -1,9 +1,9 @@
 <libraries>
   <library
       name=":@@:appCore:designSystem::release"
-      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/8e0ded55d62f0c15e696f41a36b8ff66/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/8e0ded55d62f0c15e696f41a36b8ff66/transformed/out/jars/libs/R.jar"
+      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/00ddee94214438cc6fb80fc8546d7fd3/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/00ddee94214438cc6fb80fc8546d7fd3/transformed/out/jars/libs/R.jar"
       resolved="Bonjur.appCore:designSystem:unspecified"
-      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/8e0ded55d62f0c15e696f41a36b8ff66/transformed/out"
+      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/00ddee94214438cc6fb80fc8546d7fd3/transformed/out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -1146,9 +1146,9 @@
       resolved="androidx.constraintlayout:constraintlayout-solver:2.0.1"/>
   <library
       name=":@@:appCore:storage::release"
-      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/0e74365cb5504dc5966db6a8f77b1041/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/0e74365cb5504dc5966db6a8f77b1041/transformed/out/jars/libs/R.jar"
+      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/23f256c8d3157981580dcf456258ecee/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/23f256c8d3157981580dcf456258ecee/transformed/out/jars/libs/R.jar"
       resolved="Bonjur.appCore:storage:unspecified"
-      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/0e74365cb5504dc5966db6a8f77b1041/transformed/out"
+      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/23f256c8d3157981580dcf456258ecee/transformed/out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

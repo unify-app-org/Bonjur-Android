@@ -29,4 +29,19 @@ class SessionEvents @Inject constructor() {
     fun notifyExpired() {
         _expired.tryEmit(Unit)
     }
+
+    /**
+     * Fires once a login has stored its tokens. The app shell registers the device's FCM
+     * token on it — `PUT api/as/v1/device/{id}` needs a session, so the launch-time
+     * registration is skipped while signed out and this is where it catches up.
+     */
+    private val _loggedIn = MutableSharedFlow<Unit>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val loggedIn: SharedFlow<Unit> = _loggedIn.asSharedFlow()
+
+    fun notifyLoggedIn() {
+        _loggedIn.tryEmit(Unit)
+    }
 }

@@ -191,17 +191,18 @@ class CommunityDetailViewModel @Inject constructor(
         } catch (e: Exception) {
             print(e)
         }
-        try {
-            val clubs = dependencies.useCase.fetchClubs(
-                communityId = inputData.communityId,
-                page = 0,
-                size = CLUBS_PAGE_SIZE
-            )
-            clubsPage = clubs.page
-            updateState(state.copy(clubsData = clubs.items, clubsHasMore = clubs.hasMore))
-        } catch (e: Exception) {
-            // Clubs are best-effort; keep detail visible without them.
-        }
+        // TODO: Clubs section temporarily hidden — don't fetch community clubs.
+        // try {
+        //     val clubs = dependencies.useCase.fetchClubs(
+        //         communityId = inputData.communityId,
+        //         page = 0,
+        //         size = CLUBS_PAGE_SIZE
+        //     )
+        //     clubsPage = clubs.page
+        //     updateState(state.copy(clubsData = clubs.items, clubsHasMore = clubs.hasMore))
+        // } catch (e: Exception) {
+        //     // Clubs are best-effort; keep detail visible without them.
+        // }
         try {
             val members = dependencies.useCase.fetchCommunityMembers(
                 communityId = inputData.communityId

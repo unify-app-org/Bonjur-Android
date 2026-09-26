@@ -11,6 +11,7 @@ import com.bonjur.designSystem.components.categorieChips.CategoriesChipModel
 import com.bonjur.designSystem.components.selectableList.SelectableListItemModel
 import com.bonjur.designSystem.ui.theme.image.Images
 import com.bonjur.apputils.DeviceManager
+import com.bonjur.network.manager.SessionEvents
 import com.bonjur.network.manager.TokenManager
 import com.bonjur.storage.defaultPreference.DefaultStorage
 import com.bonjur.storage.defaultPreference.DefaultStorageKey
@@ -20,7 +21,8 @@ class AuthUseCaseImpl @Inject constructor(
     val dataSource: AuthDataSource,
     val tokenManager: TokenManager,
     val defaultStorage: DefaultStorage,
-    val deviceManager: DeviceManager
+    val deviceManager: DeviceManager,
+    private val sessionEvents: SessionEvents
 ) : AuthUseCase {
 
     override suspend fun login(
@@ -52,6 +54,7 @@ class AuthUseCaseImpl @Inject constructor(
             response.userCommunityRole
         )
         defaultStorage.saveBoolean(DefaultStorageKey.IS_AUTHENTICATED, true)
+        sessionEvents.notifyLoggedIn()
         return response.isFirstLogin
     }
 

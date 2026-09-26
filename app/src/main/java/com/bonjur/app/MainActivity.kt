@@ -24,6 +24,9 @@ import com.bonjur.app.navigation.AppNavigation
 import com.bonjur.designSystem.localization.AppLocalizationProvider
 import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designSystem.ui.theme.colors.BonjurTheme
+import com.bonjur.network.manager.SessionEvents
+import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.delay
@@ -36,6 +39,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var deviceDataSource: DeviceDataSource
     @Inject lateinit var deviceManager: DeviceManager
+    @Inject lateinit var defaultStorage: DefaultStorage
+    @Inject lateinit var sessionEvents: SessionEvents
 
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -50,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
         askNotificationPermission()
         registerDevice()
+        observeLogin()
         observeLanguageChanges()
 
         var keepSplashOnScreen = true
@@ -88,8 +94,15 @@ class MainActivity : ComponentActivity() {
      * Also how the backend learns the user's **language**: it reads that off the
      * `Accept-Language` header, so the payload stays token-only and any call re-registers
      * the language as a side effect. That's why [observeLanguageChanges] just calls this.
+     *
+     * Signed-out launches skip it: the endpoint needs a session, so the call would only
+     * 401. [observeLogin] registers once the user signs in.
      */
     private fun registerDevice() {
+        if (!defaultStorage.getBoolean(DefaultStorageKey.IS_AUTHENTICATED, default = false)) {
+            Log.d("FCM", "signed out, device registration deferred until login")
+            return
+        }
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("FCM", "Fetching FCM token failed", task.exception)
@@ -101,6 +114,12 @@ class MainActivity : ComponentActivity() {
                 runCatching { deviceDataSource.updateFcmToken(deviceManager.deviceId, token) }
                     .onFailure { Log.w("FCM", "updateFcmToken failed (unauthenticated?)", it) }
             }
+        }
+    }
+
+    private fun observeLogin() {
+        lifecycleScope.launch {
+            sessionEvents.loggedIn.collect { registerDevice() }
         }
     }
 

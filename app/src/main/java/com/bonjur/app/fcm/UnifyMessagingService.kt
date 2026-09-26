@@ -16,6 +16,8 @@ import com.bonjur.app.MainActivity
 import com.bonjur.app.R
 import com.bonjur.app.fcm.data.DeviceDataSource
 import com.bonjur.apputils.DeviceManager
+import com.bonjur.storage.defaultPreference.DefaultStorage
+import com.bonjur.storage.defaultPreference.DefaultStorageKey
 import com.bonjur.storage.notification.NotificationPreferences
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -33,12 +35,16 @@ class UnifyMessagingService : FirebaseMessagingService() {
     @Inject lateinit var deviceDataSource: DeviceDataSource
     @Inject lateinit var deviceManager: DeviceManager
     @Inject lateinit var notificationPreferences: NotificationPreferences
+    @Inject lateinit var defaultStorage: DefaultStorage
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /** Called when a new registration token is generated (install, reinstall, data wipe). */
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        // Signed out: nothing to attach the token to. Login re-reads the current token
+        // and registers it (MainActivity.observeLogin).
+        if (!defaultStorage.getBoolean(DefaultStorageKey.IS_AUTHENTICATED, default = false)) return
         // Mirrors iOS `messaging(_:didReceiveRegistrationToken:)` → PUT api/as/v1/device/{id}.
         scope.launch {
             runCatching { deviceDataSource.updateFcmToken(deviceManager.deviceId, token) }

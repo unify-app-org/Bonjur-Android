@@ -263,6 +263,8 @@ fun ClubsTabContent(
         // be found in the navigation graph" and the app crashes. Same fix as Discover/MyPlans.
         profileNavGraph(navigator)
         eventsNavGraph(navigator)
+        // A member profile pushed here can open its hangout cards.
+        hangoutsNavGraph(navigator)
         memberNavGraph(navigator)
     }
 }
@@ -314,6 +316,9 @@ fun MyPlansTabContent(
         clubsNavGraph(navigator)
         eventsNavGraph(navigator)
         hangoutsNavGraph(navigator)
+        // Member taps on those details push a profile in this stack; without the profile
+        // graph the route "cannot be found in the navigation graph" and the app crashes.
+        profileNavGraph(navigator)
         memberNavGraph(navigator)
     }
 }

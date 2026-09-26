@@ -756,8 +756,20 @@ private fun EmptyStateView(
         AppEmptyView(
             model = AppEmptyModel(
                 icon = Images.Icons.twoUsers(),
-                text = "You haven't joined any ${type.title.lowercase()} yet. Be the pioneer and start the very first one now!",
-                buttonTitle = "Create a ${type.title.lowercase().removeSuffix("s")} +"
+                text = stringResource(
+                    when (type) {
+                        ProfileDetailViewState.SegmentTypes.CLUBS -> R.string.profile_clubs_empty
+                        ProfileDetailViewState.SegmentTypes.EVENTS -> R.string.profile_events_empty
+                        ProfileDetailViewState.SegmentTypes.HANGOUTS -> R.string.profile_hangouts_empty
+                    }
+                ),
+                buttonTitle = stringResource(
+                    when (type) {
+                        ProfileDetailViewState.SegmentTypes.CLUBS -> R.string.profile_create_club
+                        ProfileDetailViewState.SegmentTypes.EVENTS -> R.string.profile_create_event
+                        ProfileDetailViewState.SegmentTypes.HANGOUTS -> R.string.profile_create_hangout
+                    }
+                )
             ),
             onButtonClick = onCreate
         )

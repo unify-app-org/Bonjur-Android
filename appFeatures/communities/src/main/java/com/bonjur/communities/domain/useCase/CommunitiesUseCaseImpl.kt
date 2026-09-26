@@ -286,7 +286,7 @@ class CommunitiesUseCaseImpl @Inject constructor(
     private fun AppUIEntities.UserActivityRole.toApiString(): String = when (this) {
         AppUIEntities.UserActivityRole.MEMBER -> "MEMBER"
         AppUIEntities.UserActivityRole.PRESIDENT -> "PRESIDENT"
-        AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "VISE_PRESIDENT"
+        AppUIEntities.UserActivityRole.VISE_PRESIDENT -> "VICE_PRESIDENT"
         AppUIEntities.UserActivityRole.EVENT_CREATOR -> "EVENT_CREATOR"
         AppUIEntities.UserActivityRole.NOT_JOINED -> ""
     }

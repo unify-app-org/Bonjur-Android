@@ -236,7 +236,7 @@ object AppUIEntities {
             fun fromApi(raw: String?): UserActivityRole = when (raw?.uppercase()) {
                 "MEMBER" -> MEMBER
                 "PRESIDENT" -> PRESIDENT
-                "VICE_PRESIDENT", "VISE_PRESIDENT" -> VISE_PRESIDENT
+                "VICE_PRESIDENT" -> VISE_PRESIDENT
                 "EVENT_CREATOR" -> EVENT_CREATOR
                 else -> NOT_JOINED
             }

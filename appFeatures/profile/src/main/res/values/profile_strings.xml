@@ -15,7 +15,7 @@
     <string name="settings_logout_confirm">Log out</string>
     <string name="help_center_description">Having a problem or a question? Describe it and send it to our email — we\'ll get back to you as soon as possible.</string>
     <string name="help_center_email_label">Email</string>
-    <string name="help_center_copy">Copy email</string>
+    <string name="help_center_send">Send email</string>
     <string name="help_center_email_copied">Email copied</string>
     <string name="settings_web_load_error">Couldn\'t load the page. Check your connection and try again.</string>
     <string name="common_cancel">Cancel</string>
@@ -65,4 +65,12 @@
     <string name="profile_gender_male">Male</string>
     <string name="profile_gender_female">Female</string>
     <string name="profile_gender_other">Other</string>
+
+    <!-- Profile activity tabs: empty state -->
+    <string name="profile_clubs_empty">You haven\'t joined any clubs yet. Be the pioneer and start the very first one now!</string>
+    <string name="profile_events_empty">You haven\'t joined any events yet. Be the pioneer and start the very first one now!</string>
+    <string name="profile_hangouts_empty">You haven\'t joined any hangouts yet. Be the pioneer and start the very first one now!</string>
+    <string name="profile_create_club">Create a club +</string>
+    <string name="profile_create_event">Create an event +</string>
+    <string name="profile_create_hangout">Create a hangout +</string>
 </resources>

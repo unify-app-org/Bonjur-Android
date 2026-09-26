@@ -15,7 +15,7 @@
     <string name="settings_logout_confirm">Выйти</string>
     <string name="help_center_description">Возникла проблема или вопрос? Опишите её и отправьте на нашу почту — мы ответим как можно скорее.</string>
     <string name="help_center_email_label">Эл. почта</string>
-    <string name="help_center_copy">Скопировать почту</string>
+    <string name="help_center_send">Написать письмо</string>
     <string name="help_center_email_copied">Почта скопирована</string>
     <string name="settings_web_load_error">Не удалось загрузить страницу. Проверьте подключение и попробуйте снова.</string>
     <string name="common_cancel">Отмена</string>
@@ -65,4 +65,12 @@
     <string name="profile_gender_male">Мужской</string>
     <string name="profile_gender_female">Женский</string>
     <string name="profile_gender_other">Другое</string>
+
+    <!-- Profile activity tabs: empty state -->
+    <string name="profile_clubs_empty">Вы ещё не вступили ни в один клуб. Станьте первым и создайте свой прямо сейчас!</string>
+    <string name="profile_events_empty">Вы ещё не присоединились ни к одному событию. Станьте первым и создайте своё прямо сейчас!</string>
+    <string name="profile_hangouts_empty">Вы ещё не присоединились ни к одной тусовке. Станьте первым и создайте свою прямо сейчас!</string>
+    <string name="profile_create_club">Создать клуб +</string>
+    <string name="profile_create_event">Создать событие +</string>
+    <string name="profile_create_hangout">Создать тусовку +</string>
 </resources>

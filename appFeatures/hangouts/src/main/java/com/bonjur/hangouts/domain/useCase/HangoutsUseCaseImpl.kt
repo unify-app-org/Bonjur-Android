@@ -203,16 +203,17 @@ class HangoutsUseCaseImpl @Inject constructor(
     /**
      * Bottom join/request button. Mirrors iOS `mapButtonModel`: hidden once
      * joined/accepted; a pending request shows a disabled "Request sent" button.
+     * The detail endpoint signals a pending request via `role: "REQUESTED"` (no
+     * `requestStatus`), and `toActivityRole()` folds that into NOT_JOINED, so it is
+     * checked on the raw string before the role gate.
      */
     private fun HangoutDetailResponse.toJoinButton(): HangoutDetails.JoinButton? {
-        val role = role.toActivityRole()
         val request = requestStatus.toRequestType()
-        if (role != AppUIEntities.UserActivityRole.NOT_JOINED ||
-            request == AppUIEntities.RequestType.JOINED
-        ) return null
-        if (request == AppUIEntities.RequestType.PENDING) {
+        if (request == AppUIEntities.RequestType.JOINED) return null
+        if (request == AppUIEntities.RequestType.PENDING || role.equals("REQUESTED", ignoreCase = true)) {
             return HangoutDetails.JoinButton(title = LanguageManager.string(R.string.hangouts_join_request_sent), disabled = true)
         }
+        if (role.toActivityRole() != AppUIEntities.UserActivityRole.NOT_JOINED) return null
         val title = if (visibility?.uppercase() == "PUBLIC") LanguageManager.string(R.string.hangouts_join) else LanguageManager.string(R.string.hangouts_request)
         return HangoutDetails.JoinButton(title = title, disabled = false)
     }

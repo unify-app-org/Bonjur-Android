@@ -102,10 +102,10 @@ internal fun HelpCenterView() {
                 }
             }
 
-            IconButton(onClick = { copySupportEmail(context) }) {
+            IconButton(onClick = { openSupportEmail(context) }) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_copy),
-                    contentDescription = stringResource(R.string.help_center_copy),
+                    painter = painterResource(R.drawable.ic_send),
+                    contentDescription = stringResource(R.string.help_center_send),
                     tint = Palette.blackMedium,
                     modifier = Modifier.size(20.dp)
                 )
@@ -114,11 +114,17 @@ internal fun HelpCenterView() {
     }
 }
 
-/** No mail app installed means `mailto:` can't open — fall back to copying the address. */
+/**
+ * Opens a pre-addressed draft in the user's mail app. No mail app installed means
+ * `mailto:` can't open — fall back to copying the address so it isn't lost.
+ */
 private fun openSupportEmail(context: Context) {
     // Sheet content runs under a re-provided (localized) context that may not be the
-    // Activity itself, so the launch can't rely on inheriting its task.
+    // Activity itself, so the launch can't rely on inheriting its task. Extras back up
+    // the `mailto:` query for clients (some Gmail builds) that ignore `?subject=`.
     val intent = Intent(Intent.ACTION_SENDTO, SupportContact.emailUri)
+        .putExtra(Intent.EXTRA_EMAIL, arrayOf(SupportContact.EMAIL))
+        .putExtra(Intent.EXTRA_SUBJECT, SupportContact.EMAIL_SUBJECT)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     try {
         context.startActivity(intent)
