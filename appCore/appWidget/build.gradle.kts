@@ -20,7 +20,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            // Library module: the app module's R8 shrinks the whole APK. Minifying here on its own
+            // fails with "Missing class com.bonjur.designSystem..." (designSystem isn't on its classpath).
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

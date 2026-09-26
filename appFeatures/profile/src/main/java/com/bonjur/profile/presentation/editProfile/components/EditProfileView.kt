@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package com.bonjur.profile.presentation.editProfile.components
 
 import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet

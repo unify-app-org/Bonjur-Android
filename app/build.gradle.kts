@@ -76,6 +76,9 @@ dependencies {
     implementation(project(":appCore:appUtils"))
     implementation(project(":appCore:designSystem"))
     implementation(project(":appCore:network"))
+    // Base class of every @HiltViewModel (FeatureViewModel); Hilt's release compile in :app
+    // must see it or fails with "FeatureViewModel<...> could not be resolved".
+    implementation(project(":appCore:appFoundation"))
     // Home-screen user-card widget (receiver is declared in that module's manifest)
     implementation(project(":appCore:appWidget"))
 

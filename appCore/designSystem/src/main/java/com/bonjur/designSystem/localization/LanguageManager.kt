@@ -34,7 +34,7 @@ enum class AppLanguage(val code: String, val title: String, val flag: String) {
 
     companion object {
         fun from(code: String?): AppLanguage =
-            entries.firstOrNull { it.code.equals(code, ignoreCase = true) } ?: EN
+            entries.firstOrNull { it.code.equals(code, ignoreCase = true) } ?: AZ
     }
 }
 
@@ -46,7 +46,7 @@ object LanguageManager {
      * Current language. Backed by Compose state, so every `stringResource` under
      * [AppLocalizationProvider] re-reads on change.
      */
-    var language by mutableStateOf(AppLanguage.EN)
+    var language by mutableStateOf(AppLanguage.AZ)
         private set
 
     val languageCode: String get() = language.code

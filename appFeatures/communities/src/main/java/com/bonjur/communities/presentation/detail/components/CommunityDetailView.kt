@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package com.bonjur.communities.presentation.detail.components
 
 import com.bonjur.designSystem.commonModel.eventCountText

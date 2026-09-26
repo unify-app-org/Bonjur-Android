@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package com.bonjur.events.presentation.details.components
 
 import com.bonjur.designsystem.R as DesignR

@@ -1,0 +1,6 @@
+-keep,allowobfuscation,allowshrinking class com.bonjur.notification.presentation.feed.NotificationFeedViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.notification.presentation.feed.NotificationFeedViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.notification.presentation.needsAction.NeedsActionViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.notification.presentation.needsAction.NeedsActionViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.notification.presentation.verification.VerificationViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.notification.presentation.verification.VerificationViewModel

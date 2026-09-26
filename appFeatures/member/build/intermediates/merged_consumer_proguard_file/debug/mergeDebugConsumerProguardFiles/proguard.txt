@@ -1,0 +1,4 @@
+# Consumer ProGuard rules for the shared :appFeatures:member module.
+
+-keep,allowobfuscation,allowshrinking class com.bonjur.member.list.MemberListViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.member.list.MemberListViewModel

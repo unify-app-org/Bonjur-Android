@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package com.bonjur.clubs.presentation.components
 
 import com.bonjur.designSystem.localization.LanguageManager

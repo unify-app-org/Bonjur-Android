@@ -5,8 +5,8 @@
     <string name="auth_continue">Davam et</string>
     <string name="auth_got_it">Anladım</string>
     <string name="auth_okay">Oldu</string>
-    <string name="auth_choose_university_title">Universiteti \nseçin</string>
-    <string name="auth_choose_university_subtitle">Hansı universitetdə oxuyursunuz?</string>
+    <string name="auth_choose_university_title">İcmanı \nseçin</string>
+    <string name="auth_choose_university_subtitle">Hansı icmaya aidsiniz?</string>
     <string name="auth_sign_in_title">Daxil ol</string>
     <string name="auth_sign_in_subtitle">Yalnız etibar etdiyiniz mağaza və ya saytdan yüklədinizsə davam edin.</string>
     <string name="auth_sign_in_button">Daxil ol</string>

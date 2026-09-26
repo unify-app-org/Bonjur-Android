@@ -5,8 +5,8 @@
     <string name="auth_continue">Продолжить</string>
     <string name="auth_got_it">Понятно</string>
     <string name="auth_okay">Хорошо</string>
-    <string name="auth_choose_university_title">Выберите \nуниверситет</string>
-    <string name="auth_choose_university_subtitle">В каком университете вы учитесь?</string>
+    <string name="auth_choose_university_title">Выберите \nсообщество</string>
+    <string name="auth_choose_university_subtitle">К какому сообществу вы относитесь?</string>
     <string name="auth_sign_in_title">Вход</string>
     <string name="auth_sign_in_subtitle">Продолжайте, только если вы скачали приложение из надёжного магазина или с надёжного сайта.</string>
     <string name="auth_sign_in_button">Войти</string>

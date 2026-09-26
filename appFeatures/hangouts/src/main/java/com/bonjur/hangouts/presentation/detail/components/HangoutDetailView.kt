@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package com.bonjur.hangouts.presentation.detail.components
 
 import com.bonjur.designsystem.R as DesignR

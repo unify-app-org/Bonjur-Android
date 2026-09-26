@@ -1,0 +1,2 @@
+-keep,allowobfuscation,allowshrinking class com.bonjur.member.list.MemberListViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.member.list.MemberListViewModel

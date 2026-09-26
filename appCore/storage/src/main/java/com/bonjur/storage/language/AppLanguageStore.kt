@@ -1,7 +1,6 @@
 package com.bonjur.storage.language
 
 import android.content.Context
-import java.util.Locale
 
 /**
  * The chosen app-language code, readable from any layer.
@@ -19,14 +18,17 @@ object AppLanguageStore {
 
     private val supported = setOf("en", "az", "ru")
 
+    /** Used until the user picks a language; the device language is not consulted. */
+    const val DEFAULT_CODE = "az"
+
     @Volatile
-    var code: String = "en"
+    var code: String = DEFAULT_CODE
         private set
 
     /** Restores the stored choice. Call once from the Application. */
     fun init(context: Context) {
         val stored = prefs(context).getString(KEY_LANGUAGE, null)
-        code = normalize(stored ?: Locale.getDefault().language)
+        code = normalize(stored ?: DEFAULT_CODE)
     }
 
     fun save(context: Context, newCode: String) {
@@ -36,7 +38,7 @@ object AppLanguageStore {
 
     private fun normalize(raw: String?): String {
         val lowered = raw?.lowercase().orEmpty()
-        return if (lowered in supported) lowered else "en"
+        return if (lowered in supported) lowered else DEFAULT_CODE
     }
 
     private fun prefs(context: Context) =

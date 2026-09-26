@@ -1,3 +1,5 @@
+@file:OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
+
 package com.bonjur.auth.presentation.optional.components
 
 import androidx.compose.foundation.layout.*

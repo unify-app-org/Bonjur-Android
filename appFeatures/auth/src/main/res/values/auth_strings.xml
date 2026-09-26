@@ -5,8 +5,8 @@
     <string name="auth_continue">Continue</string>
     <string name="auth_got_it">Got it</string>
     <string name="auth_okay">Okay</string>
-    <string name="auth_choose_university_title">Choose \nUniversity</string>
-    <string name="auth_choose_university_subtitle">In which university are you studying?</string>
+    <string name="auth_choose_university_title">Choose \nCommunity</string>
+    <string name="auth_choose_university_subtitle">Which community do you belong to?</string>
     <string name="auth_sign_in_title">Sign In</string>
     <string name="auth_sign_in_subtitle">Only continue if you downloaded the app from a store or website that you trust.</string>
     <string name="auth_sign_in_button">Sign in</string>
