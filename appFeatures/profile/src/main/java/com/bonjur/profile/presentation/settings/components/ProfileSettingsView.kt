@@ -29,6 +29,7 @@ import com.bonjur.profile.presentation.settings.models.ProfileSettingsViewState
 import com.bonjur.profile.presentation.settings.models.SettingsItemModel
 import com.bonjur.profile.presentation.settings.models.SupportContact
 import com.bonjur.designSystem.components.webView.AppWebView
+import com.bonjur.designSystem.components.webView.LegalLinks
 
 private val SectionSpacing = 16.dp
 private val ScreenPadding = 16.dp
@@ -56,6 +57,15 @@ fun ProfileSettingsView(
             title = stringResource(R.string.settings_terms),
             url = SupportContact.TERMS_URL,
             onBack = { store.send(ProfileSettingsAction.DismissTerms) }
+        )
+        return
+    }
+
+    if (store.state.showPrivacy) {
+        AppWebView(
+            title = stringResource(R.string.settings_privacy),
+            url = LegalLinks.PRIVACY_URL,
+            onBack = { store.send(ProfileSettingsAction.DismissPrivacy) }
         )
         return
     }

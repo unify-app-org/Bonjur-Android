@@ -52,6 +52,8 @@
     <string name="auth_communities_error">Nəsə səhv oldu. İcmaları yükləmək mümkün olmadı.</string>
     <string name="auth_try_again">Yenidən cəhd edin</string>
     <string name="auth_email_invalid">Düzgün e-poçt ünvanı daxil edin</string>
-    <string name="auth_terms_agree">%1$s ilə tanış oldum və razıyam</string>
+    <string name="auth_terms_agree">%1$s və %2$s ilə tanış oldum və razıyam</string>
     <string name="auth_terms_link">Şərtlər və qaydalar</string>
+    <string name="auth_privacy_link">Məxfilik siyasəti</string>
+    <string name="auth_privacy_title">Məxfilik siyasəti</string>
 </resources>

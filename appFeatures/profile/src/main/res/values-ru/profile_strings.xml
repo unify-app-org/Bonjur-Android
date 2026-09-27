@@ -72,4 +72,5 @@
     <string name="profile_create_club">Создать клуб +</string>
     <string name="profile_create_event">Создать событие +</string>
     <string name="profile_create_hangout">Создать тусовку +</string>
+    <string name="settings_privacy">Политика конфиденциальности</string>
 </resources>

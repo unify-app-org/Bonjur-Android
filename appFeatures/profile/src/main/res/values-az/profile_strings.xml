@@ -72,4 +72,5 @@
     <string name="profile_create_club">Klub yarat +</string>
     <string name="profile_create_event">Tədbir yarat +</string>
     <string name="profile_create_hangout">Görüş yarat +</string>
+    <string name="settings_privacy">Məxfilik siyasəti</string>
 </resources>

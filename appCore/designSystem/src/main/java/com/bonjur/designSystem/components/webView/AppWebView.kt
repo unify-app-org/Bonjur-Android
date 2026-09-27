@@ -29,8 +29,9 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
 import com.bonjur.designsystem.R
 
 /**
- * Google's reader view ships its own title bar (with a back arrow that goes nowhere inside
- * the app) and an "open in the Docs app" banner. Our top bar already covers both.
+ * Google Docs' reader view ships its own title bar and an "open in the Docs app" banner;
+ * this hides them. A no-op on the Google Sites pages in use now, kept so a Docs link still
+ * renders cleanly.
  */
 private const val HIDE_GOOGLE_CHROME_JS = """
 (function() {
@@ -44,16 +45,12 @@ private const val HIDE_GOOGLE_CHROME_JS = """
 
 /** Public legal documents. Keep in sync with iOS `LegalLinks` (AppUIKit). */
 object LegalLinks {
-    /**
-     * Google Doc (shared "anyone with the link"). `/mobilebasic` is Google's read-only
-     * reader view — `/edit` would drop the user into the editor.
-     */
-    const val TERMS_URL =
-        "https://docs.google.com/document/d/15iHIcgQvaHAG80U_0mOgehCm8RQfvn68Qdgdwv8viY0/mobilebasic"
+    const val TERMS_URL = "https://sites.google.com/view/myunify-app-terms-conditions/home"
+    const val PRIVACY_URL = "https://sites.google.com/view/myunify-app-privacy-policy/home"
 }
 
 /**
- * Read-only in-app page for legal documents (Terms and conditions), shown from Settings
+ * Read-only in-app page for legal documents (Terms, Privacy Policy), shown from Settings
  * and from the sign-in terms checkbox. Mirrors iOS `AppWebViewController`. Callers render
  * it in place of their content rather than as a nav destination, so it inherits the
  * app-level insets and localization as-is.

@@ -19,7 +19,8 @@ data class ChooseUniversityViewState(
      * content, so sign-in (MSAL and credentials) is gated on this. Mirrors iOS.
      */
     val termsAccepted: Boolean = false,
-    val showTerms: Boolean = false
+    val showTerms: Boolean = false,
+    val showPrivacy: Boolean = false
 ) : FeatureState
 
 sealed class ChooseUniversityAction : FeatureAction {
@@ -30,6 +31,8 @@ sealed class ChooseUniversityAction : FeatureAction {
     object TermsToggled : ChooseUniversityAction()
     object TermsTapped : ChooseUniversityAction()
     object DismissTerms : ChooseUniversityAction()
+    object PrivacyTapped : ChooseUniversityAction()
+    object DismissPrivacy : ChooseUniversityAction()
 }
 
 sealed class ChooseUniversitySideEffect : SideEffect {

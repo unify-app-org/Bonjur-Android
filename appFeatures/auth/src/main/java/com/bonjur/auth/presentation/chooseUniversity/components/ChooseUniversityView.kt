@@ -9,7 +9,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withLink
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -105,7 +104,8 @@ fun ChooseUniversityView(
         TermsAgreement(
             accepted = state.termsAccepted,
             onToggle = { store.send(ChooseUniversityAction.TermsToggled) },
-            onOpenTerms = { store.send(ChooseUniversityAction.TermsTapped) }
+            onOpenTerms = { store.send(ChooseUniversityAction.TermsTapped) },
+            onOpenPrivacy = { store.send(ChooseUniversityAction.PrivacyTapped) }
         )
 
         AppButton(
@@ -122,35 +122,35 @@ fun ChooseUniversityView(
     }
 }
 
-/** Checkbox toggles acceptance; only the underlined title opens the document. Mirrors iOS. */
+/** Checkbox toggles acceptance; only the underlined titles open the documents. Mirrors iOS. */
 @Composable
 private fun TermsAgreement(
     accepted: Boolean,
     onToggle: () -> Unit,
-    onOpenTerms: () -> Unit
+    onOpenTerms: () -> Unit,
+    onOpenPrivacy: () -> Unit
 ) {
-    val linkTitle = stringResource(R.string.auth_terms_link)
-    val sentence = stringResource(R.string.auth_terms_agree, linkTitle)
+    val termsTitle = stringResource(R.string.auth_terms_link)
+    val privacyTitle = stringResource(R.string.auth_privacy_link)
+    val sentence = stringResource(R.string.auth_terms_agree, termsTitle, privacyTitle)
+    val linkStyles = TextLinkStyles(
+        style = SpanStyle(color = Palette.appBlue, textDecoration = TextDecoration.Underline)
+    )
     val text = buildAnnotatedString {
-        val start = sentence.indexOf(linkTitle)
-        if (start < 0) {
-            append(sentence)
-            return@buildAnnotatedString
-        }
-        append(sentence.substring(0, start))
-        withLink(
-            LinkAnnotation.Clickable(
-                tag = "terms",
-                styles = TextLinkStyles(
-                    style = SpanStyle(
-                        color = Palette.appBlue,
-                        textDecoration = TextDecoration.Underline
-                    )
+        append(sentence)
+        listOf(termsTitle to onOpenTerms, privacyTitle to onOpenPrivacy).forEach { (title, open) ->
+            val start = sentence.indexOf(title)
+            if (start < 0) return@forEach
+            addLink(
+                LinkAnnotation.Clickable(
+                    tag = title,
+                    styles = linkStyles,
+                    linkInteractionListener = { open() }
                 ),
-                linkInteractionListener = { onOpenTerms() }
+                start,
+                start + title.length
             )
-        ) { append(linkTitle) }
-        append(sentence.substring(start + linkTitle.length))
+        }
     }
 
     Row(
@@ -159,7 +159,7 @@ private fun TermsAgreement(
     ) {
         Image(
             painter = if (accepted) Images.Icons.selectedCheckBox() else Images.Icons.notSelectedCheckBox(),
-            contentDescription = linkTitle,
+            contentDescription = termsTitle,
             modifier = Modifier
                 .size(22.dp)
                 .toggleable(value = accepted, role = Role.Checkbox, onValueChange = { onToggle() })

@@ -64,6 +64,8 @@ class ChooseUniversityViewModel @Inject constructor(
                 updateState(state.copy(termsAccepted = !state.termsAccepted))
             is ChooseUniversityAction.TermsTapped -> updateState(state.copy(showTerms = true))
             is ChooseUniversityAction.DismissTerms -> updateState(state.copy(showTerms = false))
+            is ChooseUniversityAction.PrivacyTapped -> updateState(state.copy(showPrivacy = true))
+            is ChooseUniversityAction.DismissPrivacy -> updateState(state.copy(showPrivacy = false))
         }
     }
 

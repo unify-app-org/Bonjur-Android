@@ -1,9 +1,9 @@
 <libraries>
   <library
       name=":@@:appCore:designSystem::release"
-      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/00ddee94214438cc6fb80fc8546d7fd3/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/00ddee94214438cc6fb80fc8546d7fd3/transformed/out/jars/libs/R.jar"
+      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/34ec35df303f2da7bbe6a5736f97f23c/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/34ec35df303f2da7bbe6a5736f97f23c/transformed/out/jars/libs/R.jar"
       resolved="Bonjur.appCore:designSystem:unspecified"
-      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/00ddee94214438cc6fb80fc8546d7fd3/transformed/out"
+      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/34ec35df303f2da7bbe6a5736f97f23c/transformed/out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

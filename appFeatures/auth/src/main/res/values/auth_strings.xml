@@ -52,6 +52,8 @@
     <string name="auth_communities_error">Something went wrong. We couldn\'t load the communities.</string>
     <string name="auth_try_again">Try again</string>
     <string name="auth_email_invalid">Enter a valid email address</string>
-    <string name="auth_terms_agree">I have read and agree to the %1$s</string>
+    <string name="auth_terms_agree">I have read and agree to the %1$s and %2$s</string>
     <string name="auth_terms_link">Terms and Conditions</string>
+    <string name="auth_privacy_link">Privacy Policy</string>
+    <string name="auth_privacy_title">Privacy Policy</string>
 </resources>

@@ -81,6 +81,10 @@ class ProfileSettingsViewModel @Inject constructor(
                 updateState(state.copy(showTerms = true))
             ProfileSettingsAction.DismissTerms ->
                 updateState(state.copy(showTerms = false))
+            ProfileSettingsAction.PrivacyTapped ->
+                updateState(state.copy(showPrivacy = true))
+            ProfileSettingsAction.DismissPrivacy ->
+                updateState(state.copy(showPrivacy = false))
             ProfileSettingsAction.DeleteAccountTapped -> confirmDeleteAccount()
             ProfileSettingsAction.LogOutTapped -> confirmLogOut()
             is ProfileSettingsAction.NotificationToggled -> toggleNotifications(action.isOn)
@@ -146,6 +150,12 @@ class ProfileSettingsViewModel @Inject constructor(
                     title = LanguageManager.string(R.string.settings_terms),
                     iconRes = DesignR.drawable.ic_clipboard_list,
                     action = ProfileSettingsAction.TermsTapped
+                ),
+                SettingsItemModel(
+                    id = "privacy",
+                    title = LanguageManager.string(R.string.settings_privacy),
+                    iconRes = DesignR.drawable.ic_shield_lock,
+                    action = ProfileSettingsAction.PrivacyTapped
                 ),
                 SettingsItemModel(
                     id = "version",

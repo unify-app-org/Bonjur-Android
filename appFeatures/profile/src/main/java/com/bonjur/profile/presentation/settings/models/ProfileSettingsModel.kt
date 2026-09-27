@@ -44,7 +44,9 @@ data class ProfileSettingsViewState(
     /** Help center sheet (support email). */
     val showHelpCenter: Boolean = false,
     /** Terms and conditions web page, shown in place of the list. */
-    val showTerms: Boolean = false
+    val showTerms: Boolean = false,
+    /** Privacy policy web page, shown in place of the list. */
+    val showPrivacy: Boolean = false
 ) : FeatureState
 
 // MARK: - Feature Action
@@ -58,6 +60,8 @@ sealed class ProfileSettingsAction : FeatureAction {
     object DismissHelpCenter : ProfileSettingsAction()
     object TermsTapped : ProfileSettingsAction()
     object DismissTerms : ProfileSettingsAction()
+    object PrivacyTapped : ProfileSettingsAction()
+    object DismissPrivacy : ProfileSettingsAction()
     object DeleteAccountTapped : ProfileSettingsAction()
     object LogOutTapped : ProfileSettingsAction()
     data class NotificationToggled(val isOn: Boolean) : ProfileSettingsAction()

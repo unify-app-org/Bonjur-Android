@@ -72,6 +72,14 @@ fun ChooseUniversityScreen(
             )
             return@FeatureScreen
         }
+        if (store.state.showPrivacy) {
+            AppWebView(
+                title = stringResource(R.string.auth_privacy_title),
+                url = LegalLinks.PRIVACY_URL,
+                onBack = { store.send(ChooseUniversityAction.DismissPrivacy) }
+            )
+            return@FeatureScreen
+        }
         Column(
             modifier = Modifier
                 .statusBarsPadding()
