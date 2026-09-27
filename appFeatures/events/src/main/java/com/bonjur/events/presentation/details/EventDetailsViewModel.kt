@@ -115,6 +115,8 @@ class EventDetailsViewModel @Inject constructor(
     }
 
     private fun navigateToEdit() {
+        // Organizers only — the backend's event update has no permission check.
+        if (!state.isOrganizer) return
         val prefill = state.uiModel?.editPrefillData ?: return
         viewModelScope.launch {
             navigator.navigateTo(

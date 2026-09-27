@@ -35,6 +35,14 @@ data class EventDetailsViewState(
     val isPrivate: Boolean
         get() = uiModel?.accessType == AppUIEntities.AccessType.PRIVATE
 
+    /** President / vice president / event creator: may edit, add docs, remind. */
+    val isOrganizer: Boolean
+        get() = uiModel?.userActivityType in listOf(
+            AppUIEntities.UserActivityRole.PRESIDENT,
+            AppUIEntities.UserActivityRole.VISE_PRESIDENT,
+            AppUIEntities.UserActivityRole.EVENT_CREATOR
+        )
+
     enum class SegmentTypes(
         @StringRes private val titleRes: Int
     ) : SegmentedPickerOption {

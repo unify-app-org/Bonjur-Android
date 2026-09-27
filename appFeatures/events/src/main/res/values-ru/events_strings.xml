@@ -12,6 +12,7 @@
     <string name="events_attachments">Вложения</string>
     <string name="events_attachment_hint">Можно загрузить файлы общим объёмом до 15 МБ.</string>
     <string name="events_attachments_empty">Пока нет вложений. Можно загрузить до 15 МБ.</string>
+    <string name="events_attachments_empty_viewer">Пока нет вложений.</string>
     <string name="events_category_label">Категория</string>
     <string name="events_add_category">Добавить категорию</string>
     <string name="events_add_link">Добавить ссылку</string>

@@ -234,6 +234,7 @@ fun EventDetailsView(
             selectedSegment = store.state.selectedSegment,
             onBackClick = { store.send(EventDetailsAction.BackTapped) },
             onMoreClick = { showOptions = true },
+            showEdit = store.state.isOrganizer,
             onEditClick = { store.send(EventDetailsAction.EditTapped) },
             onSegmentSelected = { segment ->
                 store.send(EventDetailsAction.SegmentChanged(segment))
@@ -503,7 +504,11 @@ private fun AttachmentsView(
             AppEmptyView(
                 model = AppEmptyModel(
                     icon = null,
-                    text = stringResource(R.string.events_attachments_empty),
+                    // The upload-limit hint only makes sense to someone who can upload.
+                    text = stringResource(
+                        if (canAdd) R.string.events_attachments_empty
+                        else R.string.events_attachments_empty_viewer
+                    ),
                     buttonTitle = if (canAdd) stringResource(R.string.events_add_plus) else null
                 ),
                 onButtonClick = onAddAttachment
@@ -521,6 +526,7 @@ private fun NavigationOverlay(
     selectedSegment: EventDetailsViewState.SegmentTypes,
     onBackClick: () -> Unit,
     onMoreClick: () -> Unit,
+    showEdit: Boolean,
     onEditClick: () -> Unit,
     onSegmentSelected: (EventDetailsViewState.SegmentTypes) -> Unit,
     onNavBarPositioned: (Dp) -> Unit,
@@ -558,12 +564,14 @@ private fun NavigationOverlay(
                             onClick = onMoreClick
                         )
 
-                        // Edit — always shown (iOS toolbar penLine is unconditional)
-                        NavBarButton(
-                            icon = Images.Icons.penLine(),
-                            isScrolled = isScrolled,
-                            onClick = onEditClick
-                        )
+                        // Edit — organizers only (president / VP / event creator)
+                        if (showEdit) {
+                            NavBarButton(
+                                icon = Images.Icons.penLine(),
+                                isScrolled = isScrolled,
+                                onClick = onEditClick
+                            )
+                        }
                     }
                 }
 
