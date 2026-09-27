@@ -1,5 +1,7 @@
 package com.bonjur.hangouts.presentation.detail
 
+import com.bonjur.member.report.ReportViewModel
+import com.bonjur.network.report.ReportTarget
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -15,7 +17,8 @@ import com.bonjur.hangouts.presentation.detail.model.HangoutDetailsAction
 fun HangoutDetailsScreen(
     inputData: HangoutDetailsInputData,
     navigator: Navigator,
-    viewModel: HangoutDetailsViewModel = hiltViewModel()
+    viewModel: HangoutDetailsViewModel = hiltViewModel(),
+    reporter: ReportViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
@@ -41,6 +44,11 @@ fun HangoutDetailsScreen(
             }
         }
     ) { store ->
-        HangoutDetailsView(store = store)
+        HangoutDetailsView(
+            store = store,
+            onReport = { reason, onResult ->
+                reporter.reportActivity(ReportTarget.Hangout(inputData.hangoutId), reason, onResult)
+            }
+        )
     }
 }

@@ -52,6 +52,19 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
+      name=":@@:appCore:network::release"
+      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/fa56a20253dfaa77c93bd7eca52f8444/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/fa56a20253dfaa77c93bd7eca52f8444/transformed/out/jars/libs/R.jar"
+      resolved="Bonjur.appCore:network:unspecified"
+      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/fa56a20253dfaa77c93bd7eca52f8444/transformed/out"
+      manifest="AndroidManifest.xml"
+      resFolder="res"
+      assetsFolder="assets"
+      lintJar="lint.jar"
+      publicResources="public.txt"
+      symbolFile="R.txt"
+      externalAnnotations="annotations.zip"
+      proguardRules="proguard.txt"/>
+  <library
       name="io.coil-kt:coil-compose:2.6.0@aar"
       jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/7bad9830813af3e46d95a2c3ac0a5587/transformed/coil-compose-2.6.0/jars/classes.jar"
       resolved="io.coil-kt:coil-compose:2.6.0"
@@ -1253,6 +1266,66 @@
       externalAnnotations="annotations.zip"
       proguardRules="proguard.txt"/>
   <library
+      name="io.ktor:ktor-client-android-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-client-android-jvm/2.3.7/2a267fde6984315e35434850ba003fadfeb0bd14/ktor-client-android-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-client-android-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-client-content-negotiation-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-client-content-negotiation-jvm/2.3.7/8cc9a5030927aa6dead77504c71d9c7a3bc1669/ktor-client-content-negotiation-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-client-content-negotiation-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-serialization-kotlinx-json-jvm/2.3.7/f5eec5c4d7f4f35709a28fe27178ca7309becc77/ktor-serialization-kotlinx-json-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-client-logging-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-client-logging-jvm/2.3.7/44ae6630ae75148327a464824024f4f55907cb5d/ktor-client-logging-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-client-logging-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-client-core-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-client-core-jvm/2.3.7/4f6ad3be8d4c35d3075f4a6f28fa80b9e20674d5/ktor-client-core-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-client-core-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-serialization-kotlinx-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-serialization-kotlinx-jvm/2.3.7/d6d60c2456b4c41b4f2ab6520b7d6554d132348e/ktor-serialization-kotlinx-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-serialization-kotlinx-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-websocket-serialization-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-websocket-serialization-jvm/2.3.7/65944d3e9b84b9d8fe195183e43cd1d0ccb863cd/ktor-websocket-serialization-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-websocket-serialization-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-serialization-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-serialization-jvm/2.3.7/821a9ccf848665dca11337f2c0f7c2b05d1ac046/ktor-serialization-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-serialization-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-events-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-events-jvm/2.3.7/a0d00d60f13b5dd647954a7858c486eff75a2898/ktor-events-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-events-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-websockets-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-websockets-jvm/2.3.7/97b1335582ae9bbde88c077ff0fe5b05a3663fdf/ktor-websockets-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-websockets-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-http-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-http-jvm/2.3.7/6a1915fc373718c058d247da28f27b2e008b84ef/ktor-http-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-http-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-utils-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-utils-jvm/2.3.7/23be7e37eee5c81925a5bde2ad67fb483e320967/ktor-utils-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-utils-jvm:2.3.7"/>
+  <library
+      name="io.ktor:ktor-io-jvm:2.3.7@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/io.ktor/ktor-io-jvm/2.3.7/709b23a387b23d709ee87c32ab2b541b3b03b454/ktor-io-jvm-2.3.7.jar"
+      resolved="io.ktor:ktor-io-jvm:2.3.7"/>
+  <library
+      name="org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.1@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-jdk8/1.8.1/a9c5828df815ab41dd9063fda549715c41e8bfab/kotlinx-coroutines-jdk8-1.8.1.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.1"/>
+  <library
+      name="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.8.1@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlinx/kotlinx-coroutines-slf4j/1.8.1/a64ea6ebcb63208589fd45a00a1f47985ecd34c3/kotlinx-coroutines-slf4j-1.8.1.jar"
+      resolved="org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.8.1"/>
+  <library
       name="androidx.security:security-crypto:1.1.0-alpha06@aar"
       jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/6f888378476859e0313a11fb4b4c746f/transformed/security-crypto-1.1.0-alpha06/jars/classes.jar"
       resolved="androidx.security:security-crypto:1.1.0-alpha06"
@@ -1333,6 +1406,10 @@
       name="com.google.crypto.tink:tink-android:1.8.0@jar"
       jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/com.google.crypto.tink/tink-android/1.8.0/bda82b49568d444a3b54773ca5aa487816473295/tink-android-1.8.0.jar"
       resolved="com.google.crypto.tink:tink-android:1.8.0"/>
+  <library
+      name="org.slf4j:slf4j-api:1.7.36@jar"
+      jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.36/6c62681a2f655b49963a5983b8b0950a6120ae14/slf4j-api-1.7.36.jar"
+      resolved="org.slf4j:slf4j-api:1.7.36"/>
   <library
       name="com.google.code.gson:gson:2.8.9@jar"
       jars="/Users/huseynhasanov/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.8.9/8a432c1d6825781e21a02db2e2c33c5fde2833b9/gson-2.8.9.jar"

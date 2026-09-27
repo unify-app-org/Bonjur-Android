@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +26,9 @@ import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
+import com.bonjur.member.components.ReportReasonsScreen
+import com.bonjur.member.policy.ActivityReportReason
+import com.bonjur.member.policy.MemberOptionsPolicy
 
 /**
  * Club 3-dot options sheet: Report club / Exit club / Share.
@@ -29,8 +36,8 @@ import com.bonjur.designSystem.ui.theme.colors.Palette
  * [viewerRole]; the exit orchestration (confirm + owner-transfer gate) lives in
  * `ClubDetailsViewModel`. This sheet only renders rows and delegates out.
  *
- * NOTE: Report and Share are "Coming soon" — the report flow (iOS
- * `ActivityReportScreen`) has no Android screen yet. See parity-clubs.md.
+ * Report opens the shared reason screen in place; the sheet closes once the
+ * report is accepted. Share is still "Coming soon".
  */
 private val DestructiveRed = Color(0xFFE5484D)
 
@@ -38,15 +45,34 @@ private val DestructiveRed = Color(0xFFE5484D)
 fun ClubOptionsSheet(
     viewerRole: AppUIEntities.UserActivityRole,
     onExit: () -> Unit,
+    onReport: (ActivityReportReason, onResult: (Boolean) -> Unit) -> Unit,
     onDismiss: () -> Unit
 ) {
     // Exit shows for joined members; Report shows for everyone but the owner
     // (you can't report your own club).
     val showExit = viewerRole != AppUIEntities.UserActivityRole.NOT_JOINED
-    val showReport = viewerRole != AppUIEntities.UserActivityRole.PRESIDENT
+    val showReport = MemberOptionsPolicy.canReportActivity(viewerRole)
+
+    var showReportScreen by remember { mutableStateOf(false) }
+    var isReporting by remember { mutableStateOf(false) }
 
     AppBottomSheet(onDismiss = onDismiss) {
-        Column(
+        if (showReportScreen) {
+            ReportReasonsScreen(
+                title = stringResource(DesignR.string.common_report),
+                reasons = ActivityReportReason.entries,
+                reasonTitle = { it.displayTitle },
+                isSubmitting = isReporting,
+                onBack = { showReportScreen = false },
+                onSubmit = { reason ->
+                    isReporting = true
+                    onReport(reason) { ok ->
+                        isReporting = false
+                        if (ok) onDismiss()
+                    }
+                }
+            )
+        } else Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 8.dp)
@@ -54,10 +80,8 @@ fun ClubOptionsSheet(
             if (showReport) {
                 ClubOptionRow(
                     title = stringResource(R.string.clubs_report),
-                    tint = DestructiveRed,
-                    trailing = stringResource(DesignR.string.common_coming_soon),
-                    enabled = false
-                ) {}
+                    tint = DestructiveRed
+                ) { showReportScreen = true }
                 RowDivider()
             }
 

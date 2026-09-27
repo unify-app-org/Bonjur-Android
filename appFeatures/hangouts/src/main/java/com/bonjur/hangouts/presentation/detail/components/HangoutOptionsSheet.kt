@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,12 +26,16 @@ import com.bonjur.designSystem.commonModel.AppUIEntities
 import com.bonjur.designSystem.components.bottomSheet.AppBottomSheet
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
+import com.bonjur.member.components.ReportReasonsScreen
+import com.bonjur.member.policy.ActivityReportReason
+import com.bonjur.member.policy.MemberOptionsPolicy
 
 /**
  * Hangout 3-dot options sheet: Report hangout / Leave hangout / Share.
  * Compose port of iOS `HangoutOptionsSheet`. Pure UI — visibility decided from
  * [viewerRole]; the exit confirmation lives in `HangoutDetailsViewModel` (hangouts
- * have no owner-transfer gate). Report and Share are "Coming soon" (mirrors Events).
+ * have no owner-transfer gate). Report opens the shared reason screen in place;
+ * the sheet closes once the report is accepted. Share is still "Coming soon".
  */
 private val DestructiveRed = Color(0xFFE5484D)
 
@@ -35,15 +43,33 @@ private val DestructiveRed = Color(0xFFE5484D)
 fun HangoutOptionsSheet(
     viewerRole: AppUIEntities.UserActivityRole,
     onExit: () -> Unit,
+    onReport: (ActivityReportReason, onResult: (Boolean) -> Unit) -> Unit,
     onDismiss: () -> Unit
 ) {
     // Leave shows for joined members; Report shows for everyone but the creator/owner.
     val showExit = viewerRole != AppUIEntities.UserActivityRole.NOT_JOINED
-    val showReport = viewerRole != AppUIEntities.UserActivityRole.PRESIDENT &&
-        viewerRole != AppUIEntities.UserActivityRole.EVENT_CREATOR
+    val showReport = MemberOptionsPolicy.canReportActivity(viewerRole)
+
+    var showReportScreen by remember { mutableStateOf(false) }
+    var isReporting by remember { mutableStateOf(false) }
 
     AppBottomSheet(onDismiss = onDismiss) {
-        Column(
+        if (showReportScreen) {
+            ReportReasonsScreen(
+                title = stringResource(DesignR.string.common_report),
+                reasons = ActivityReportReason.entries,
+                reasonTitle = { it.displayTitle },
+                isSubmitting = isReporting,
+                onBack = { showReportScreen = false },
+                onSubmit = { reason ->
+                    isReporting = true
+                    onReport(reason) { ok ->
+                        isReporting = false
+                        if (ok) onDismiss()
+                    }
+                }
+            )
+        } else Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 8.dp)
@@ -51,10 +77,8 @@ fun HangoutOptionsSheet(
             if (showReport) {
                 HangoutOptionRow(
                     title = stringResource(R.string.hangouts_report),
-                    tint = DestructiveRed,
-                    trailing = stringResource(DesignR.string.common_coming_soon),
-                    enabled = false
-                ) {}
+                    tint = DestructiveRed
+                ) { showReportScreen = true }
                 RowDivider()
             }
 

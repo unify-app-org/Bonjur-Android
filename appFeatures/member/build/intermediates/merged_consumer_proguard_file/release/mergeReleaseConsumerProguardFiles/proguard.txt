@@ -2,3 +2,5 @@
 
 -keep,allowobfuscation,allowshrinking class com.bonjur.member.list.MemberListViewModel
 -keep,allowobfuscation,allowshrinking class com.bonjur.member.list.MemberListViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.member.report.ReportViewModel
+-keep,allowobfuscation,allowshrinking class com.bonjur.member.report.ReportViewModel

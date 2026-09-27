@@ -2,6 +2,7 @@
 
 package com.bonjur.events.presentation.details.components
 
+import com.bonjur.member.policy.ActivityReportReason
 import com.bonjur.designsystem.R as DesignR
 import androidx.compose.ui.res.stringResource
 import com.bonjur.events.R
@@ -77,7 +78,8 @@ import com.bonjur.designSystem.utils.asBrowsableUri
 
 @Composable
 fun EventDetailsView(
-    store: FeatureStore<EventDetailsViewState, EventDetailsAction, EventDetailsSideEffect>
+    store: FeatureStore<EventDetailsViewState, EventDetailsAction, EventDetailsSideEffect>,
+    onReport: (ActivityReportReason, onResult: (Boolean) -> Unit) -> Unit
 ) {
     val density = LocalDensity.current
     val listState = rememberLazyListState()
@@ -271,6 +273,7 @@ fun EventDetailsView(
             viewerRole = store.state.uiModel?.userActivityType
                 ?: AppUIEntities.UserActivityRole.NOT_JOINED,
             onExit = { store.send(EventDetailsAction.ExitTapped) },
+            onReport = onReport,
             onDismiss = { showOptions = false }
         )
     }

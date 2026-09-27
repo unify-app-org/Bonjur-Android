@@ -2,6 +2,7 @@
 
 package com.bonjur.clubs.presentation.components
 
+import com.bonjur.member.policy.ActivityReportReason
 import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designSystem.commonModel.clubCountText
 import com.bonjur.designSystem.commonModel.eventCountText
@@ -79,7 +80,8 @@ import com.bonjur.designSystem.components.paging.PagingFooter
 
 @Composable
 fun ClubDetailsView(
-    store: FeatureStore<ClubDetailsViewState, ClubDetailsAction, ClubDetailsSideEffect>
+    store: FeatureStore<ClubDetailsViewState, ClubDetailsAction, ClubDetailsSideEffect>,
+    onReport: (ActivityReportReason, onResult: (Boolean) -> Unit) -> Unit
 ) {
 
     val density = LocalDensity.current
@@ -313,6 +315,7 @@ fun ClubDetailsView(
             viewerRole = store.state.uiModel?.userActivityType
                 ?: AppUIEntities.UserActivityRole.NOT_JOINED,
             onExit = { store.send(ClubDetailsAction.ExitTapped) },
+            onReport = onReport,
             onDismiss = { showOptions = false }
         )
     }

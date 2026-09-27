@@ -1,5 +1,7 @@
 package com.bonjur.events.presentation.details
 
+import com.bonjur.member.report.ReportViewModel
+import com.bonjur.network.report.ReportTarget
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
@@ -13,7 +15,8 @@ import com.bonjur.events.presentation.details.model.EventDetailsAction
 fun EventDetailsScreen(
     inputData: EventDetailsInputData,
     navigator: Navigator,
-    viewModel: EventDetailsViewModel = hiltViewModel()
+    viewModel: EventDetailsViewModel = hiltViewModel(),
+    reporter: ReportViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
@@ -39,6 +42,11 @@ fun EventDetailsScreen(
             }
         }
     ) { store ->
-        EventDetailsView(store = store)
+        EventDetailsView(
+            store = store,
+            onReport = { reason, onResult ->
+                reporter.reportActivity(ReportTarget.Event(inputData.eventId), reason, onResult)
+            }
+        )
     }
 }

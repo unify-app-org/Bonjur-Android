@@ -1,5 +1,7 @@
 package com.bonjur.clubs.presentation
 
+import com.bonjur.member.report.ReportViewModel
+import com.bonjur.network.report.ReportTarget
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bonjur.appfoundation.FeatureScreen
@@ -11,7 +13,8 @@ import com.bonjur.navigation.Navigator
 fun ClubDetailsScreen(
     inputData: ClubDetailsInputData,
     navigator: Navigator,
-    viewModel: ClubDetailsViewModel = hiltViewModel()
+    viewModel: ClubDetailsViewModel = hiltViewModel(),
+    reporter: ReportViewModel = hiltViewModel()
 ) {
     LaunchedEffect(inputData) {
         viewModel.init(inputData, navigator)
@@ -38,7 +41,10 @@ fun ClubDetailsScreen(
         }
     ) { store ->
         ClubDetailsView(
-            store = store
+            store = store,
+            onReport = { reason, onResult ->
+                reporter.reportActivity(ReportTarget.Club(inputData.clubId), reason, onResult)
+            }
         )
     }
 }

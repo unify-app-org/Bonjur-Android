@@ -2,6 +2,7 @@
 
 package com.bonjur.hangouts.presentation.detail.components
 
+import com.bonjur.member.policy.ActivityReportReason
 import com.bonjur.designsystem.R as DesignR
 import androidx.compose.ui.res.stringResource
 import com.bonjur.hangouts.R
@@ -61,7 +62,8 @@ import com.bonjur.designSystem.utils.asBrowsableUri
 
 @Composable
 fun HangoutDetailsView(
-    store: FeatureStore<HangoutDetailsViewState, HangoutDetailsAction, HangoutDetailsSideEffect>
+    store: FeatureStore<HangoutDetailsViewState, HangoutDetailsAction, HangoutDetailsSideEffect>,
+    onReport: (ActivityReportReason, onResult: (Boolean) -> Unit) -> Unit
 ) {
     val density = LocalDensity.current
     val listState = rememberLazyListState()
@@ -238,6 +240,7 @@ fun HangoutDetailsView(
             viewerRole = store.state.uiModel?.userActivityType
                 ?: AppUIEntities.UserActivityRole.NOT_JOINED,
             onExit = { store.send(HangoutDetailsAction.ExitTapped) },
+            onReport = onReport,
             onDismiss = { showOptions = false }
         )
     }

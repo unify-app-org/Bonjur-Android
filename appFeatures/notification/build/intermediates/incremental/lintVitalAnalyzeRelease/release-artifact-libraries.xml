@@ -66,9 +66,9 @@
       proguardRules="proguard.txt"/>
   <library
       name=":@@:appCore:network::release"
-      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/653f64e21369dac6a49cccfdc80d8478/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/653f64e21369dac6a49cccfdc80d8478/transformed/out/jars/libs/R.jar"
+      jars="/Users/huseynhasanov/.gradle/caches/8.13/transforms/fa56a20253dfaa77c93bd7eca52f8444/transformed/out/jars/classes.jar:/Users/huseynhasanov/.gradle/caches/8.13/transforms/fa56a20253dfaa77c93bd7eca52f8444/transformed/out/jars/libs/R.jar"
       resolved="Bonjur.appCore:network:unspecified"
-      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/653f64e21369dac6a49cccfdc80d8478/transformed/out"
+      folder="/Users/huseynhasanov/.gradle/caches/8.13/transforms/fa56a20253dfaa77c93bd7eca52f8444/transformed/out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

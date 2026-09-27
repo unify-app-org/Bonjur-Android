@@ -1,6 +1,5 @@
 package com.bonjur.member.list
 
-import com.bonjur.designSystem.localization.LanguageManager
 import androidx.compose.ui.res.stringResource
 import com.bonjur.designsystem.R
 import androidx.compose.foundation.background
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.bonjur.appfoundation.FeatureStore
 import com.bonjur.designSystem.components.serach.SearchView
-import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.designSystem.components.topBar.AppTopBar
 import com.bonjur.designSystem.ui.theme.Typography.AppTypography
 import com.bonjur.designSystem.ui.theme.colors.Palette
@@ -38,6 +36,8 @@ import com.bonjur.member.components.MemberSectionHeader
 import com.bonjur.member.components.memberOptionsAccessory
 import com.bonjur.member.model.MemberCellModel
 import com.bonjur.member.policy.MemberOptionsPolicy
+import com.bonjur.member.report.ReportViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun MemberListView(
@@ -49,6 +49,7 @@ fun MemberListView(
     val activityType = store.state.activityType
 
     var optionsMember by remember { mutableStateOf<MemberCellModel?>(null) }
+    val reporter: ReportViewModel = hiltViewModel()
 
     val isScrolled by remember {
         derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0 }
@@ -160,7 +161,7 @@ fun MemberListView(
                 ),
                 showReport = MemberOptionsPolicy.canReport(isSelf),
                 onAssignRole = { role -> store.send(MemberListAction.AssignRole(member.id, role)) },
-                onReport = { AppSnackBar.show(title = LanguageManager.string(R.string.common_report_submitted), style = AppSnackBar.Style.SUCCESS) }
+                onReport = { reason, onResult -> reporter.reportUser(member.id, reason, onResult) }
             ),
             onDismiss = { optionsMember = null }
         )

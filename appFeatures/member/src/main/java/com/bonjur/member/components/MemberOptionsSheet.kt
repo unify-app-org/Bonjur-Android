@@ -55,7 +55,8 @@ data class MemberOptionsInput(
     val showChangeRole: Boolean,
     val showReport: Boolean,
     val onAssignRole: (AppUIEntities.UserActivityRole) -> Unit,
-    val onReport: (ReportReason) -> Unit
+    /** Sends the report, then calls back with `true` on success (sheet closes only then). */
+    val onReport: (ReportReason, onResult: (Boolean) -> Unit) -> Unit
 )
 
 private enum class SheetScreen { MENU, ASSIGN_ROLE, REPORT }
@@ -71,6 +72,7 @@ fun MemberOptionsSheet(
     onDismiss: () -> Unit
 ) {
     var screen by remember { mutableStateOf(SheetScreen.MENU) }
+    var isReporting by remember { mutableStateOf(false) }
 
     AppBottomSheet(onDismiss = onDismiss) {
         when (screen) {
@@ -89,11 +91,18 @@ fun MemberOptionsSheet(
                 }
             )
 
-            SheetScreen.REPORT -> ReportScreen(
+            SheetScreen.REPORT -> ReportReasonsScreen(
+                title = stringResource(R.string.member_report_user),
+                reasons = ReportReason.entries,
+                reasonTitle = { it.displayTitle },
+                isSubmitting = isReporting,
                 onBack = { screen = SheetScreen.MENU },
                 onSubmit = { reason ->
-                    input.onReport(reason)
-                    onDismiss()
+                    isReporting = true
+                    input.onReport(reason) { ok ->
+                        isReporting = false
+                        if (ok) onDismiss()
+                    }
                 }
             )
         }
@@ -271,20 +280,29 @@ private fun RoleCard(
     }
 }
 
+/**
+ * Report screen shared by every report sheet (member / club / event / hangout):
+ * close + title, radio reason rows, destructive Report button. The first reason
+ * is preselected. Compose port of iOS `ActivityReportScreen` /
+ * `MemberOptionsSheet`'s report page.
+ */
 @Composable
-private fun ReportScreen(
+fun <T> ReportReasonsScreen(
+    title: String,
+    reasons: List<T>,
+    reasonTitle: (T) -> String,
+    isSubmitting: Boolean,
     onBack: () -> Unit,
-    onSubmit: (ReportReason) -> Unit
+    onSubmit: (T) -> Unit
 ) {
-    var selected by remember { mutableStateOf(ReportReason.FAKE_PROFILE) }
-    val reasons = ReportReason.entries
+    var selected by remember { mutableStateOf(reasons.first()) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 8.dp)
     ) {
-        SheetHeader(title = stringResource(R.string.member_report_user), onBack = onBack)
+        SheetHeader(title = title, onBack = onBack)
 
         Column(
             modifier = Modifier
@@ -293,7 +311,7 @@ private fun ReportScreen(
         ) {
             reasons.forEachIndexed { index, reason ->
                 ReportReasonRow(
-                    title = reason.displayTitle,
+                    title = reasonTitle(reason),
                     isSelected = reason == selected,
                     showsDivider = index != reasons.lastIndex,
                     onClick = { selected = reason }
@@ -311,7 +329,8 @@ private fun ReportScreen(
                 type = ButtonType.Destructive,
                 contentSize = ContentSize.Fill,
                 size = AppButtonSize.Medium
-            )
+            ),
+            enabled = !isSubmitting
         )
     }
 }
