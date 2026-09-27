@@ -1,6 +1,15 @@
 package com.bonjur.auth.presentation.chooseUniversity.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -93,6 +102,12 @@ fun ChooseUniversityView(
             }
         }
 
+        TermsAgreement(
+            accepted = state.termsAccepted,
+            onToggle = { store.send(ChooseUniversityAction.TermsToggled) },
+            onOpenTerms = { store.send(ChooseUniversityAction.TermsTapped) }
+        )
+
         AppButton(
             title = stringResource(R.string.auth_next),
             model = AppButtonModel(
@@ -102,7 +117,58 @@ fun ChooseUniversityView(
                 store.send(ChooseUniversityAction.NextTapped)
             },
             modifier = Modifier.fillMaxWidth(),
-            enabled = state.enabled && state.uiModel.isNotEmpty()
+            enabled = state.enabled && state.termsAccepted && state.uiModel.isNotEmpty()
+        )
+    }
+}
+
+/** Checkbox toggles acceptance; only the underlined title opens the document. Mirrors iOS. */
+@Composable
+private fun TermsAgreement(
+    accepted: Boolean,
+    onToggle: () -> Unit,
+    onOpenTerms: () -> Unit
+) {
+    val linkTitle = stringResource(R.string.auth_terms_link)
+    val sentence = stringResource(R.string.auth_terms_agree, linkTitle)
+    val text = buildAnnotatedString {
+        val start = sentence.indexOf(linkTitle)
+        if (start < 0) {
+            append(sentence)
+            return@buildAnnotatedString
+        }
+        append(sentence.substring(0, start))
+        withLink(
+            LinkAnnotation.Clickable(
+                tag = "terms",
+                styles = TextLinkStyles(
+                    style = SpanStyle(
+                        color = Palette.appBlue,
+                        textDecoration = TextDecoration.Underline
+                    )
+                ),
+                linkInteractionListener = { onOpenTerms() }
+            )
+        ) { append(linkTitle) }
+        append(sentence.substring(start + linkTitle.length))
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Image(
+            painter = if (accepted) Images.Icons.selectedCheckBox() else Images.Icons.notSelectedCheckBox(),
+            contentDescription = linkTitle,
+            modifier = Modifier
+                .size(22.dp)
+                .toggleable(value = accepted, role = Role.Checkbox, onValueChange = { onToggle() })
+        )
+        Text(
+            text = text,
+            style = AppTypography.TextMd.regular,
+            color = Palette.blackHigh,
+            modifier = Modifier.weight(1f)
         )
     }
 }

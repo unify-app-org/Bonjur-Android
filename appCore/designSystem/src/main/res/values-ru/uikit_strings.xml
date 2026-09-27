@@ -50,4 +50,5 @@
     <!-- API error popups -->
     <string name="error_generic_title">Что-то пошло не так</string>
     <string name="error_generic_subtitle">Пожалуйста, попробуйте снова.</string>
+    <string name="web_load_error">Не удалось загрузить страницу. Проверьте подключение и попробуйте снова.</string>
 </resources>

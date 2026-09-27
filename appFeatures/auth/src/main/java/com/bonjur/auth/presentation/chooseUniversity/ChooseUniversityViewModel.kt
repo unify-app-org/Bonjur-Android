@@ -60,10 +60,15 @@ class ChooseUniversityViewModel @Inject constructor(
             is ChooseUniversityAction.SelectedCell -> selectCell(action.index)
             is ChooseUniversityAction.Dismiss -> dismiss()
             is ChooseUniversityAction.NextTapped -> nextTapped()
+            is ChooseUniversityAction.TermsToggled ->
+                updateState(state.copy(termsAccepted = !state.termsAccepted))
+            is ChooseUniversityAction.TermsTapped -> updateState(state.copy(showTerms = true))
+            is ChooseUniversityAction.DismissTerms -> updateState(state.copy(showTerms = false))
         }
     }
 
     private fun nextTapped() {
+        if (!state.termsAccepted) return
         viewModelScope.launch {
             val selectedUniversity = state.uiModel.firstOrNull { item -> item.selected } ?: return@launch
             selectedCommunityId = selectedUniversity.id

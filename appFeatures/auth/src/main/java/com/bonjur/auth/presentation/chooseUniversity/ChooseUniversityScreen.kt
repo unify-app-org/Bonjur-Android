@@ -20,6 +20,10 @@ import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityActio
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversityInputData
 import com.bonjur.auth.presentation.chooseUniversity.model.ChooseUniversitySideEffect
 import com.bonjur.designSystem.ui.theme.image.Images
+import com.bonjur.designSystem.components.webView.AppWebView
+import com.bonjur.designSystem.components.webView.LegalLinks
+import androidx.compose.ui.res.stringResource
+import com.bonjur.auth.R
 
 private fun Context.findActivity(): Activity? {
     var ctx = this
@@ -60,6 +64,14 @@ fun ChooseUniversityScreen(
             }
         }
     ) { store ->
+        if (store.state.showTerms) {
+            AppWebView(
+                title = stringResource(R.string.auth_terms_link),
+                url = LegalLinks.TERMS_URL,
+                onBack = { store.send(ChooseUniversityAction.DismissTerms) }
+            )
+            return@FeatureScreen
+        }
         Column(
             modifier = Modifier
                 .statusBarsPadding()

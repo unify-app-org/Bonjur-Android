@@ -28,6 +28,7 @@ import com.bonjur.profile.presentation.settings.models.ProfileSettingsSideEffect
 import com.bonjur.profile.presentation.settings.models.ProfileSettingsViewState
 import com.bonjur.profile.presentation.settings.models.SettingsItemModel
 import com.bonjur.profile.presentation.settings.models.SupportContact
+import com.bonjur.designSystem.components.webView.AppWebView
 
 private val SectionSpacing = 16.dp
 private val ScreenPadding = 16.dp
@@ -51,7 +52,7 @@ fun ProfileSettingsView(
     }
 
     if (store.state.showTerms) {
-        SettingsWebView(
+        AppWebView(
             title = stringResource(R.string.settings_terms),
             url = SupportContact.TERMS_URL,
             onBack = { store.send(ProfileSettingsAction.DismissTerms) }

@@ -50,4 +50,5 @@
     <!-- API error popups -->
     <string name="error_generic_title">Nəsə səhv getdi</string>
     <string name="error_generic_subtitle">Zəhmət olmasa yenidən cəhd edin.</string>
+    <string name="web_load_error">Səhifə yüklənmədi. İnternet bağlantınızı yoxlayıb yenidən cəhd edin.</string>
 </resources>

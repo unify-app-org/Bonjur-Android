@@ -50,4 +50,5 @@
     <!-- API error popups -->
     <string name="error_generic_title">Something went wrong</string>
     <string name="error_generic_subtitle">Please try again.</string>
+    <string name="web_load_error">Couldn\'t load the page. Check your connection and try again.</string>
 </resources>

@@ -52,4 +52,6 @@
     <string name="auth_communities_error">Что-то пошло не так. Не удалось загрузить сообщества.</string>
     <string name="auth_try_again">Попробовать снова</string>
     <string name="auth_email_invalid">Введите корректный адрес электронной почты</string>
+    <string name="auth_terms_agree">Я прочитал(а) и принимаю %1$s</string>
+    <string name="auth_terms_link">Условия и положения</string>
 </resources>

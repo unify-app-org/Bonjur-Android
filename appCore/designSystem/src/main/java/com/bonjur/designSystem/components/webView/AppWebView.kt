@@ -1,4 +1,4 @@
-package com.bonjur.profile.presentation.settings.components
+package com.bonjur.designSystem.components.webView
 
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
@@ -26,7 +26,7 @@ import com.bonjur.designSystem.components.snackbar.AppSnackBar
 import com.bonjur.designSystem.components.topBar.AppTopBar
 import com.bonjur.designSystem.localization.LanguageManager
 import com.bonjur.designSystem.ui.theme.colors.Palette
-import com.bonjur.profile.R
+import com.bonjur.designsystem.R
 
 /**
  * Google's reader view ships its own title bar (with a back arrow that goes nowhere inside
@@ -42,14 +42,25 @@ private const val HIDE_GOOGLE_CHROME_JS = """
 })();
 """
 
+/** Public legal documents. Keep in sync with iOS `LegalLinks` (AppUIKit). */
+object LegalLinks {
+    /**
+     * Google Doc (shared "anyone with the link"). `/mobilebasic` is Google's read-only
+     * reader view — `/edit` would drop the user into the editor.
+     */
+    const val TERMS_URL =
+        "https://docs.google.com/document/d/15iHIcgQvaHAG80U_0mOgehCm8RQfvn68Qdgdwv8viY0/mobilebasic"
+}
+
 /**
- * Read-only in-app page for Settings documents (Terms and conditions). Mirrors iOS
- * `SettingsWebViewController`. Rendered in place of the settings list rather than as its
- * own nav destination, so it inherits the app-level insets and localization as-is.
+ * Read-only in-app page for legal documents (Terms and conditions), shown from Settings
+ * and from the sign-in terms checkbox. Mirrors iOS `AppWebViewController`. Callers render
+ * it in place of their content rather than as a nav destination, so it inherits the
+ * app-level insets and localization as-is.
  */
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-internal fun SettingsWebView(
+fun AppWebView(
     title: String,
     url: String,
     onBack: () -> Unit
@@ -117,7 +128,7 @@ internal fun SettingsWebView(
                                 if (!request.isForMainFrame) return
                                 isLoading = false
                                 AppSnackBar.showError(
-                                    LanguageManager.string(R.string.settings_web_load_error)
+                                    LanguageManager.string(R.string.web_load_error)
                                 )
                             }
                         }

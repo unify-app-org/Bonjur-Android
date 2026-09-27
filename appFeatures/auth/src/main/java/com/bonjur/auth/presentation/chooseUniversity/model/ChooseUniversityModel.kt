@@ -13,7 +13,13 @@ enum class CommunitiesPhase { LOADING, LOADED, FAILED }
 data class ChooseUniversityViewState(
     val uiModel: List<SelectableListItemModel> = emptyList(),
     val enabled: Boolean = false,
-    val phase: CommunitiesPhase = CommunitiesPhase.LOADING
+    val phase: CommunitiesPhase = CommunitiesPhase.LOADING,
+    /**
+     * App Store / Play UGC policy: users accept the terms before reaching any user
+     * content, so sign-in (MSAL and credentials) is gated on this. Mirrors iOS.
+     */
+    val termsAccepted: Boolean = false,
+    val showTerms: Boolean = false
 ) : FeatureState
 
 sealed class ChooseUniversityAction : FeatureAction {
@@ -21,6 +27,9 @@ sealed class ChooseUniversityAction : FeatureAction {
     data class SelectedCell(val index: Int) : ChooseUniversityAction()
     object Dismiss : ChooseUniversityAction()
     object NextTapped: ChooseUniversityAction()
+    object TermsToggled : ChooseUniversityAction()
+    object TermsTapped : ChooseUniversityAction()
+    object DismissTerms : ChooseUniversityAction()
 }
 
 sealed class ChooseUniversitySideEffect : SideEffect {
